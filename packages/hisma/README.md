@@ -533,4 +533,21 @@ You can also watch a short video about executing the above described sequence in
 
 ## Additional information
 
+### Next steps
+
+- Finalize API.
+- Increase test coverage.
+- Improve documentation.
+- More helper classes in hisma_extra.
+
+### Help needed
+
+- Feedback, especially about things you would like to change.
+- Finding bugs are always welcomed.
+  - Providing a failing test to demonstrate the bug is even better.
+- Creating tests.
+- Creating documentation.
+
+### Contact
+
 If you have any questions, comments please go to [Hisma GitHub Discussions](https://github.com/tamas-p/hisma/discussions) to start or join discussions.
