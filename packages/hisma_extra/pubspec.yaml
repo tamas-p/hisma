@@ -1,5 +1,5 @@
 name: hisma_extra
-description: A starting point for Dart libraries or applications.
+description: Extra classes on top of the Hisma hierarchical state machine implementation to simplify its usage.
 homepage: https://github.com/tamas-p/hisma
 repository: https://github.com/tamas-p/hisma
 version: 0.1.0

@@ -1,5 +1,5 @@
 name: hisma_console_monitor
-description: A starting point for Dart libraries or applications.
+description: Simple state machine monitor implementation that writes to the console for the Hisma package.
 homepage: https://github.com/tamas-p/hisma
 repository: https://github.com/tamas-p/hisma
 version: 0.1.0
