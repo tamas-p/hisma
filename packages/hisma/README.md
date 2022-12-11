@@ -543,7 +543,7 @@ You can also watch a short video about executing the above described sequence in
 ### Help needed
 
 - Feedback, especially about things you would like to change.
-- Finding bugs are always welcomed.
+- Finding bugs either in code or in documentation are always welcomed.
   - Providing a failing test to demonstrate the bug is even better.
 - Creating tests.
 - Creating documentation.
