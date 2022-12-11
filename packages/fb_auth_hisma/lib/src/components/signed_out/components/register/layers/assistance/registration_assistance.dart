@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../../../../../assistance.dart';
+import '../../../../../../assistance.dart';
 import '../../../../../../layers/assistance/auth_assistance.dart';
 import '../../../login/layers/assistance/login_assistance.dart';
 

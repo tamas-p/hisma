@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
-import '../../../assistance.dart';
+import '../../assistance.dart';
 import '../../components/signed_in/layers/machine/signed_in_machine.dart';
 import '../../components/signed_out/layers/machines/signed_out_machine.dart';
 

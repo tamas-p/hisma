@@ -1,6 +1,9 @@
 /// Hisma, a hierarchical state machine.
 ///
-/// More dart docs go here.
+/// Hisma provides a declarative hierarchical state machine implementation that
+/// loosely follows the [UML](https://www.omg.org/spec/UML/) State Machine
+/// specification that is in turn based on
+/// [Harel's statechart](https://en.wikipedia.org/wiki/State_diagram#Harel_statechart).
 library hisma;
 
 export 'src/action.dart';

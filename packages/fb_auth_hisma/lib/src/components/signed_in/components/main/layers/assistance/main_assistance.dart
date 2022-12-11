@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../../../../../assistance.dart';
+import '../../../../../../assistance.dart';
 
 const String loggerName = 'main_assistance';
 final log = getLogger(loggerName);

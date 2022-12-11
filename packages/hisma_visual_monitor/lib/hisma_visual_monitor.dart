@@ -1,6 +1,12 @@
-/// Support for doing something awesome.
+/// Visual monitor for Hisma, a hierarchical state machine implementation.
 ///
-/// More dartdocs go here.
+/// Hisma defines a monitoring API: One can register monitor creator functions
+/// and the monitors created by these will be invoked by Hisma when the state
+/// machines are created or their active state changes.
+/// This monitor is a visual monitor implementation for hisma. It transforms
+/// and then sends state machine information to its counterpart, the `visma`
+/// application. `visma` in turn renders these state machines to its
+/// interactive web user interface.
 library hisma_visual_monitor;
 
 export 'src/constants.dart';

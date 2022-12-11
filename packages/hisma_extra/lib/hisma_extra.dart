@@ -1,8 +1,7 @@
-/// Support for doing something awesome.
+/// Extra classes on top of Hisma to simplify Hisma usage.
 ///
-/// More dartdocs go here.
+/// This package intended to contain all classes that is built on top
+/// of [hisma](../hisma/) in order to simplify its usage.
 library hisma_extra;
 
 export 'src/state_machine_toggle.dart';
-
-// TODO: Export any libraries intended for clients of this package.

@@ -1,5 +1,9 @@
 // ignore_for_file: directives_ordering
 
+/// Provides state machines for Firebase authentication.
+///
+/// [Hisma](../hisma/) state machines for user management with
+/// [Firebase Authentication](https://firebase.google.com/docs/auth).
 library fb_auth_hisma;
 
 export 'src/layers/machine/auth_machine.dart';

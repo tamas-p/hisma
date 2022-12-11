@@ -4,9 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:visma/src/assistance.dart';
-import 'package:visma/src/visualizer/plantuml/plantuml_hacker.dart';
-import 'package:visma/src/visualizer/visual_monitor/server/visualization_server.dart';
+import 'package:visma/visma.dart';
 
 final _log = getLogger(appName);
 
