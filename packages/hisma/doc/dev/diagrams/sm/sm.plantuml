@@ -1,0 +1,77 @@
+@startuml
+set namespaceSeparator ::
+!startsub SM
+class "BaseState" {
+  +S? to
+  +Map<E, List<T>>? etm
+  +List<Region<S, E, T, dynamic>>? regions
+  +Action<S>? onEntry
+  +Action<S>? doActivity
+  +Action<S>? onExit
+}
+
+class "State" {
+}
+
+class "EntryPoint" {
+}
+
+class "ExitPoint" {
+}
+
+class "Trigger" {
+  +S? source
+  +E? event
+  +T? transition
+  +int hashCode
+  +bool ==()
+}
+
+class "StateMachine" {
+  +S initialStateId
+  +Map<S, BaseState<E, T, S>> states
+  +Map<T, Transition<S>> transitions
+  -S? _activeStateId
+  +void start()
+  +void fire()
+  +List<dynamic> getActiveState()
+  -S? _getTargetState()
+  -void _enterState()
+  -void _enterRegions()
+  -_TransitionWithId<S, T>? _getTransitionByEvent()
+}
+
+class "_TransitionWithId" {
+  +Transition<S> transition
+  +T id
+}
+
+class "Transition" {
+  +S to
+  +Guard? guard
+  +int priority
+  +Action<S>? onAction
+  +int hashCode
+  +bool ==()
+}
+
+class "Region" {
+  +Map<Trigger<S, E, T>, SS>? entryConnectors
+  +Map<SS, E>? exitConnectors
+  +StateMachine<dynamic, dynamic, dynamic> machine
+  +void Function(E?)? notifyParent
+  +void processChildNotification()
+}
+
+class "Guard" {
+  +bool Function() condition
+  +String description
+}
+
+class "Action" {
+  +String description
+  +void Function(S) action
+}
+
+!endsub
+@enduml

@@ -1,0 +1,67 @@
+@startuml Exit
+!includesub sm.plantuml!SM
+title "Class diagram (TODO: needs update)"
+
+skinparam class {
+    BackgroundColor<<contract>> PaleGreen
+    BackgroundColor<<parent>> LightBlue
+    BackgroundColor<<child>> LightYellow
+}
+
+EntryPointID <<contract>>
+ExitPointID <<contract>>
+
+State <<parent>>
+Region <<parent>>
+Trigger <<parent>>
+EventID <<<<parent>>
+
+StateMachine <<child>>
+Transition <<child>>
+SubEventID <<child>>
+StateID <<child>>
+
+EntryPointID -o "entryConnectors" Region
+Trigger .. (Region, EntryPointID) 
+
+Region "exitConnectors" o- EventID
+(Region, EventID) .. ExitPointID 
+
+
+
+State "regions" *-- Region
+' (State, Region) .. RegionID
+Region o-- StateMachine
+' (State, StateMachine) .. MachineID
+
+' StateMachine "1" -- "10..*" State
+' (StateMachine , State) .. StateID
+
+StateMachine "transitions" *-- Transition
+StateMachine "states" *-- BaseState
+(StateMachine, BaseState) .. EntryPointID
+BaseState <|-- EntryPoint
+(StateMachine, Transition) .. SubEventID
+' List "1" -- "0..*" Transition
+
+StateMachine "exitPoints" *- ExitPointID
+(StateMachine, ExitPointID) .. StateID
+Transition "to" - StateID
+
+
+' (StateMachine, Transition) .. ExitEvent 
+' Transition "0..*" -- "1" StateMachine
+' (StateMachine, Transition) .. ExitEvent 
+
+note top of State: (1)\tParent machine visits\n\tall Region entry connectors\n\tafter moved to this state and\n\tafter its onEntry() executed.
+note left of Trigger: (2)\tIncoming to state\n\tidentified uniquely as Trigger\n\t(source state + source event + Transition)\n\tin parent SM.
+note left of EntryPointID: (3)\tBased on that trigger parent SM tries to find\n\tentry point for a certain child machine\n\tin the registered entryConnectors.
+note left of StateMachine: (4)\tParent invokes the given child\n\tmachine with EntryPointID.
+note left of Transition: (5)\tRegion machine executes one of the transitions\n\tfrom the list selected by EntryPointID or the initial\n\ttransition of the machine if none received.
+
+note left of SubEventID: (a)\tEvent\n\tin child.
+note bottom of Transition: (b)\tChild machine selects\n\ta transition from the list\n\tand in case of an ExitPointID \n\tinvokes Region's callback\n\twith ExitPointID.
+note right of ExitPointID: (c)\tRegion in its callback finds the next\n\tevent by the received ExitPointID\n\tand invoke parent machine's\n\tcallback with it.
+note right of EventID: (d)\tParent processes the\n\tevent and moves to\n\tthe calculated state.
+
+@enduml

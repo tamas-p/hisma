@@ -1,0 +1,1 @@
+See [fb_auth_hisma_example](../../../examples/fb_auth_hisma_example/) for an example how to create a basic Flutter application that is using fb_auth_hisma for managing authentication and user management.

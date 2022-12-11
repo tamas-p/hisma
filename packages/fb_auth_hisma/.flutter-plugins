@@ -1,0 +1,6 @@
+# This is a generated file; do not edit or check into version control.
+cloud_firestore_web=/home/tamas/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/cloud_firestore_web-3.0.3/
+firebase_auth=/home/tamas/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-4.1.0/
+firebase_auth_web=/home/tamas/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth_web-5.1.0/
+firebase_core=/home/tamas/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-2.1.1/
+firebase_core_web=/home/tamas/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-2.0.1/

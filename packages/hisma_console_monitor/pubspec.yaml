@@ -1,0 +1,15 @@
+name: hisma_console_monitor
+description: A starting point for Dart libraries or applications.
+homepage: https://github.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma
+version: 0.1.0
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+dependencies:
+  hisma: ^0.1.0
+
+dev_dependencies:
+  lint: ^1.10.0
+  test: ^1.16.0

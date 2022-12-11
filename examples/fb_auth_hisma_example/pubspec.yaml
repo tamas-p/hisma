@@ -1,0 +1,61 @@
+name: fb_auth_hisma_example
+description: Contains example application for using the fb_auth_hisma package.
+
+publish_to: 'none' 
+
+version: 0.1.0+1
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+dependencies:
+  cupertino_icons: ^1.0.2
+  fb_auth_hisma: ^0.1.0
+  firebase_core: ^2.1.1
+  flutter:
+    sdk: flutter
+  hisma: ^0.1.0
+  hisma_console_monitor: ^0.1.0
+  hisma_flutter: ^0.1.0
+  hisma_visual_monitor: ^0.1.0
+  logging: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+  lint: ^1.10.0
+
+flutter:
+  uses-material-design: true
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

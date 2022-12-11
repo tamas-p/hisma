@@ -1,0 +1,44 @@
+# This is the default analysis_options.yaml for all packages and examples.
+# In case a package needs specific rules, create the analysis_options.yaml
+# inside it and include this file:
+#
+# include: ../../analysis_options.yaml
+
+# For apps, use the default set
+# include: package:lint/analysis_options.yaml
+
+# Packages, that may be distributed (i.e. via pub.dev) should use the package 
+# version, resulting in a better pub score.
+include: package:lint/analysis_options_package.yaml
+
+# Uncomment the following section to specify additional rules.
+
+linter:
+  rules:
+    omit_local_variable_types: true
+    sort_constructors_first: true
+    avoid_print: true
+    prefer_single_quotes: true
+    #flutter_style_todos: true
+    public_member_api_docs: true
+    avoid_classes_with_only_static_members: false
+    
+    # This is how we want: 1) dart: 2) package: 3) relative imports inside lib.
+    always_use_package_imports: false
+    prefer_relative_imports: true
+
+analyzer:    
+  language:
+    strict-raw-types: true
+    strict-inference: true
+
+  strong-mode:
+    implicit-casts: false    
+    implicit-dynamic: false
+
+  errors:
+     todo: ignore
+     public_member_api_docs: ignore
+# analyzer:
+#   exclude:
+#     - path/to/excluded/files/**

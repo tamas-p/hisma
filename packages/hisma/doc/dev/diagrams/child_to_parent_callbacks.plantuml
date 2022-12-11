@@ -1,0 +1,58 @@
+@startuml SMObjectDiagram1
+title Class diagram showing how child machine can communicate with its parent machine through callbacks
+
+object "parentSM : StateMachine" as parentSM
+object "state : State" as state
+object "region : Region" as region
+object "childSM : StateMachine" as child
+
+object "event : Event" as event
+region "exitConnectors" o- event : \t\t\t
+
+object "exitPointId : Enum" as exitPointId
+exitPointId .. (region, event) 
+
+object "trigger : Trigger" as trigger
+object "entryPointId : Enum" as entryPointId
+entryPointId -o "entryConnectors" region : \t\t
+(region, entryPointId) .. trigger
+
+
+parentSM "states" o-- "0..*" state
+state "regions" o-- "0..*" region
+region "machine" o-- "1" child
+
+object "_processMachineNotification : void Function(Message message)" as _processMachineNotification 
+region *-- _processMachineNotification 
+child "notifyRegion" - _processMachineNotification  : \t\t\t
+
+object "_processRegionNotification : void Function(Message message)" as _processRegionNotification
+state *- _processRegionNotification
+_processRegionNotification -- "notifyState" region
+
+object "_processStateNotification : void Function(Message message)" as _processStateNotification
+parentSM *-left _processStateNotification : \t\t
+state "notifyMachine" - _processStateNotification
+
+' object "_processStateChangeNotification : void Function(E event)" as _processStateChangeNotification
+' parentSM *-right _processStateChangeNotification : \t\t
+' child "notifyParentAboutMyStateChange" - _processStateChangeNotification
+
+@enduml
+
+@startuml SMObjectDiagram2
+title SMObjectDiagram for visualization
+
+object "parentSM : StateMachine" as parentSM
+object "state : State" as state
+object "region : Region" as region
+object "childSM : StateMachine" as child
+object "_pushStateMachine : Function" as push
+
+parentSM "states" o-- "0..*" state
+parentSM *- push
+push - child
+state "regions" o-- "0..*" region
+region "machine" o-- "1" child
+
+@enduml

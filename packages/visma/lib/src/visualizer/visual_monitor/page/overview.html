@@ -1,0 +1,24 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/vis_server.css" />
+  <script type="text/javascript" src="/js/vis_server.js"></script>
+</head>
+
+<body>
+  <div class="container" , id="mainContainer">
+    <!-- iframe bellow does not include 'src=/overview/rendered'
+           in order to avoid double load/cancellation as load shall
+           only happen when the websocket is opened to the server. -->
+    <!-- <iframe id="rendered" class="image" width="100%" height="100%" frameborder="0">
+      State machines overview
+    </iframe> -->
+    <div id="rendered">RENDERED</div>
+  </div>
+
+  <script type="text/javascript">
+    window.onload = register("/overview/rendered", "/overview/subscribe");
+  </script>
+</body>
+
+</html>

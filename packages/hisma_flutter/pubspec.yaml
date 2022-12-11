@@ -1,0 +1,54 @@
+name: hisma_flutter
+description: Flutter navigation with Hisma hierarchical state machines.
+homepage: https://github.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma
+version: 0.1.0
+
+environment:
+  sdk: ">=2.17.1 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  hisma: ^0.1.0
+  logging: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+  lint: ^1.7.2
+
+flutter:
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

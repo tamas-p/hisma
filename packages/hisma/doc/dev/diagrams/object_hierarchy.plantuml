@@ -1,0 +1,67 @@
+@startmindmap State machine hierarchy diagram
+title Object hierachy diagram created to help designing StateMachine.copyWith() 
+<style>
+mindmapDiagram {
+    .simple { 
+        BackgroundColor LightGreen 
+    }
+    .recurse { 
+        BackgroundColor LightSalmon 
+    }
+    .iterate { 
+        BackgroundColor Gray 
+    }
+    .complex {
+        BackgroundColor LightGray 
+    }
+}
+</style>
+* recursive <<recurse>>
+** collection <<iterate>>
+*** complex <<complex>>
+**** simple <<simple>>
+* machine : StateMachine <<recurse>>
+** name : String <<simple>>
+** initialStateId : Enum <<simple>>
+** history : Enum <<simple>>
+** events : List <<iterate>>
+*** eventId : Enum <<simple>>
+** transitions : Map <<iterate>>
+*** k = transitionId : Enum <<simple>>
+*** v = transition : Transition <<complex>>
+**** to : Enum <<simple>>
+**** priority : int <<simple>>
+**** minInterval : Duration <<simple>>
+**** guard : Guard <<complex>>
+***** condition : Function <<simple>>
+***** description : String <<simple>>
+**** onAction : Action <<complex>>
+***** action : Function <<simple>>
+***** description : String <<simple>>
+** states : Map <<iterate>>
+*** k = stateId : Enum <<simple>>
+*** v = state : State\t <<complex>>
+**** onEntry : Action <<complex>>
+***** action : Function <<simple>>
+***** description : String <<simple>>
+**** onExit : Action <<complex>>
+***** action : Function <<simple>>
+***** description : String <<simple>>
+**** etm : Map <<iterate>>
+***** k = event : Enum <<simple>>
+***** v = transitions : List <<iterate>>
+****** transitionId : Enum <<simple>>
+**** regions : List <<iterate>>
+***** region : Region <<complex>>
+****** machine : StateMachine <<recurse>>
+****** entryConnectors : Map <<iterate>>
+******* k = trigger : Trigger <<complex>>
+******** source : Enum <<simple>>
+******** event : Enum <<simple>>
+******** transition : Enum <<simple>>
+******* v = stateId : Enum <<simple>>
+****** exitConnectors : Map <<iterate>>
+******* k = stateId : Enum <<simple>>
+******* v = event : Enum <<simple>>
+
+@endmindmap

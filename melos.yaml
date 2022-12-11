@@ -1,0 +1,47 @@
+name: my_project
+
+repository: https://gitlab.com/tamas-p/hisma
+
+packages:
+  - packages/*
+  - examples/*
+
+command:
+  bootstrap:
+    usePubspecOverrides: true
+
+scripts:
+  analyze:
+    run: dart analyze .
+    exec:
+      concurrency: 1
+    
+  doc:
+    run: dart doc
+    exec:
+      concurrency: 1
+  
+  pana:
+    run: pana --no-warning
+    select-package:
+      no-private: true
+    exec:
+      concurrency: 1
+
+  test:
+    run: melos run test:dart --no-select && melos run test:flutter --no-select
+    description: Run all Dart & Flutter tests in this monorepo for all packages.
+
+  test:dart:
+    run: melos exec -c 1 "dart test"
+    description: Run Dart tests for a specific package in this monorepo.
+    select-package:
+      flutter: false
+      dir-exists: test
+
+  test:flutter:
+    run: melos exec --dir-exists="test" -c 1 "flutter test"
+    description: Run Flutter tests for a specific package in this monorepo.
+    select-package:
+      flutter: true
+      dir-exists: test

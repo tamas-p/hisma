@@ -1,0 +1,60 @@
+name: hisma_flutter_discovery_app
+description: Manual test/playground application for hisma_flutter package.
+
+publish_to: 'none' 
+
+version: 0.1.0+1
+
+environment:
+  sdk: ">=2.17.1 <3.0.0"
+
+dependencies:
+  cupertino_icons: ^1.0.2
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^1.0.4
+  hisma: ^0.1.1
+  hisma_console_monitor: ^0.1.0
+  hisma_flutter: ^0.1.0
+  hisma_visual_monitor: ^0.1.0
+  logging: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+  lint: ^1.10.0
+
+flutter:
+  uses-material-design: true
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

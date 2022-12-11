@@ -1,0 +1,821 @@
+' Overview ---------------------------------------------------------------------
+
+@startuml Component diagram
+[SM Visualizer] as vs
+[State Machine] as sm1
+[Web Browser] as wb
+
+[sm1] .> Websocket2
+Websocket2 --- [vs] : /m/smId
+[sm1] ...> REST : /push/smId
+REST - [vs]
+
+[vs] --- Websocket : /notif/smId
+Websocket <. [wb]
+[vs] - HTTP
+HTTP <... [wb] : /diagram/smId
+
+@enduml
+
+@startmindmap State machine hierarchy diagram
+<style>
+mindmapDiagram {
+    node {
+        ' BackgroundColor lightGreen
+    }
+    :depth(0) {
+      BackGroundColor white
+    }
+}
+</style>
+* All machines
+** sm1
+*** subSm1
+**** subSubSm0
+*** subSm2
+**** subSubSm1
+**** subSubSm2
+**** subSubSm3
+** sm2
+@endmindmap
+
+
+
+@startmindmap State machine hierarchy diagram2
+<style>
+  mindmapDiagram {
+    node {
+      ' BackgroundColor lightGreen
+    }
+    :depth(0) {
+      BackGroundColor white
+    }
+  }
+</style>
+* All machines
+** SM 1
+*** SM 1.1
+*** SM 1.2
+**** SM 1.2.1
+**** SM 1.2.2
+**** SM 1.2.3
+** SM 2
+*** SM 2.1
+*** SM 2.2
+*** SM 2.3
+*** SM 2.4
+** SM 3
+*** SM 3.1
+*** SM 3.1.1
+*** SM 3.1.2
+*** SM 3.1.3
+*** SM 3.1.4
+@endmindmap
+
+
+' Server side -----------------------------------------------------------------
+
+@startuml Server side sequence diagram
+box Dart
+participant "Isolate" as sm1
+end box
+box Server
+participant "SM Visualizer" as vs
+participant "Web Browser" as wb
+end box
+
+sm1 -> vs : push(diagram with machineId)
+
+activate vs
+vs -> vs : find BrowserConnection by machineId
+vs -> wb : notification
+deactivate vs
+
+activate wb
+wb -> vs : GET diagram
+deactivate wb
+activate vs
+vs -> vs : find diagram by machineId
+vs --> wb : SVG diagram
+deactivate vs
+
+@enduml
+
+@startuml Server side class diagram
+class VisServer {
+    + startServer()
+}
+class BrowserConnection {
+    + String diagram
+    - Websocket notifications
+}
+VisServer *-- BrowserConnection
+(VisServer, BrowserConnection) . StateMachineId
+
+class SmConnection {
+    - Websocket events
+}
+VisServer *-- SmConnection
+StateMachineId . (VisServer, SmConnection) 
+@enduml
+
+' Client side -----------------------------------------------------------------
+
+@startuml Use-cases
+:Dart code: as dc
+:Visualizer user: as vu
+
+(Register State machine) as uc1
+(GET overview of\nstate machines) as go
+(GET digram of\na state machine) as gm
+(Firing an event) as fe
+(Disconnecting) as ddc
+
+dc --> uc1
+dc --> fe
+dc -> ddc
+
+vu --> go
+vu --> gm
+
+@enduml
+
+
+@startuml Common
+!startsub COMMON
+box Main Dart Isolate
+participant Code as c
+participant StateMachine as sm
+participant VisClient as vc
+end box
+box Dart Isolate
+participant WS as wsiso
+end box
+box Dart Isolate
+participant REST as iso
+end box
+box Server
+participant "VisualizerServer" as vs
+participant "OverviewManager" as om
+participant "StateMachineManager" as smm
+participant "Machine" as m
+participant "ClientWebsocket" as cws
+participant "OverviewRenderer" as or
+participant "StateMachineRenderer" as smr
+participant "BrowserConnection" as bc
+' participant "BrowserConnection" as bc
+end box
+box Browser
+participant "Overview HTML" as oh
+participant "Machine HTML" as u
+participant "Overview JS" as ojs
+participant "Machine JS" as js
+end box
+!endsub
+@enduml
+
+
+@startuml Registration
+title Registration
+!includesub %filename()!COMMON
+activate c
+c -> sm : create
+activate sm
+sm -> vc : register(this)
+activate vc
+vc -> vc : convert(this) : diagram
+vc ->> wsiso : spawn({d, sm, p})
+activate wsiso
+vc --> sm
+deactivate vc
+sm --> c
+deactivate sm
+deactivate c
+
+loop connected
+    wsiso -> vs : connect websocet
+    activate vs
+    vs --> wsiso : connected
+end
+vs -> cws : create()
+activate cws
+vs -> smm : add(smId, ws)
+activate smm
+smm -> m : addToMap(ws, onDisconnect)
+activate m
+m ->> cws : listen()
+m --> smm
+deactivate m
+smm --> vs
+deactivate smm
+deactivate vs
+
+wsiso -> vs : POST({d, sm, p})
+activate vs
+vs --> wsiso
+
+vs -> smm : add(smId : diagram)
+activate smm
+smm --> vs
+deactivate smm
+
+vs -> om : add(smId, parentId)
+activate om
+loop all ws
+    om -> ojs : notify
+    activate ojs
+    ojs --> om
+    om --> vs
+    deactivate om
+
+    ojs -> oh : reload()
+    deactivate ojs
+    activate oh
+    oh -> vs : GET /overview
+    activate vs
+    ref over vs
+        GET /overview
+    end ref
+    vs --> oh : SVG
+    deactivate vs
+    deactivate oh
+end
+@enduml
+
+
+@startuml WebEvent
+title Event from VisServer web ui
+!includesub %filename()!COMMON
+
+activate wsiso
+activate m
+...
+' u -> js : onClick()
+' activate js
+u -> vs : sendEvent(event)
+activate u
+activate vs
+vs -> m : sendEvent(event)
+m -> wsiso : sendEvent(event)
+wsiso --> m
+m --> vs
+vs --> u
+deactivate vs
+deactivate u
+wsiso ->> vc : sendEvent(event)
+activate vc
+vc -> sm : fire(event)
+activate sm
+sm --> vc
+deactivate sm
+
+@enduml
+
+
+@startuml Disconnect
+title Disconnect
+!includesub %filename()!COMMON
+activate wsiso
+...
+wsiso -> m : ws disconnect
+destroy wsiso
+activate m
+m -> smm : remove(smId)
+activate smm
+
+loop all ws
+    smm -> js : notify
+    activate js
+    js --> smm
+    smm --> m
+    deactivate smm
+    js -> u : reload()
+    deactivate js
+    activate u
+    u -> vs : GET /rendered/smId
+    activate vs
+    ref over vs
+        GET /rendered/smId
+    end ref
+    vs --> u : SVG
+    deactivate vs
+    deactivate js
+    deactivate u
+end
+
+m -> om : remove(smId)
+activate om
+loop all ws
+    om -> ojs : notify
+    activate ojs
+    ojs --> om
+    om --> m
+    deactivate om
+    destroy m
+
+    ojs -> oh : reload()
+    deactivate ojs
+    activate oh
+    oh -> vs : GET /overview
+    activate vs
+    ref over vs
+        GET /overview
+    end ref
+    vs --> oh : SVG
+    deactivate vs
+    deactivate oh
+end
+deactivate m
+@enduml
+
+@startuml GET overview page
+title Overview page
+!includesub %filename()!COMMON
+
+' Getting the overview SVG
+activate u
+u -> vs : GET /
+deactivate u
+activate vs
+vs --> u : HTML
+deactivate vs
+activate u
+
+loop connected
+    u -> vs : ws connect /notification/overview
+    activate vs
+end
+vs --> u
+vs -> om : addSubscriber(ws)
+activate om
+om --> vs
+deactivate om
+deactivate vs
+
+u -> vs : GET /overview
+activate vs
+ref over vs
+    GET /overview
+end ref
+vs --> u : SVG
+deactivate vs
+deactivate u
+@enduml
+
+@startuml GET overview SVG
+title Overview SVG
+!includesub %filename()!COMMON
+
+activate oh
+oh -> vs : GET /overview
+activate vs
+vs -> smm : getRootSMs()
+activate smm
+smm --> vs : List<SM>
+deactivate smm
+vs -> or : render(List<SM>)
+activate or
+or --> vs : SVG
+deactivate or
+vs --> oh : SVG
+deactivate vs
+deactivate oh
+@enduml
+
+@startuml GET a state machine HTML
+title State-machine page
+!includesub %filename()!COMMON
+
+' Getting one state machine
+activate u
+u -> vs : GET /sm/smId
+deactivate u
+activate vs
+vs --> u : HTML with smId img src
+deactivate vs
+activate u
+u -> js : onLoad()
+activate js
+loop connected
+    js -> vs : ws connect /notification/machine/smId
+    activate vs
+end
+vs --> js
+vs -> smm : add(ws)
+activate smm
+smm --> vs
+deactivate smm
+deactivate vs
+
+u -> vs : GET /rendered/smId
+activate vs
+ref over vs
+GET /rendered/smId
+end ref
+vs --> u : SVG
+deactivate vs
+deactivate u
+@enduml
+
+@startuml GET /rendered/smId
+title Rendered state-machine SVG
+!includesub %filename()!COMMON
+
+activate u
+u -> vs : GET /rendered/smId
+activate vs
+vs -> smm : get(smId)
+alt diagram found
+    activate smm
+    smm --> vs : diagram
+    deactivate smm
+    
+    vs -> smr : render(diagram)
+    activate smr
+    smr --> vs : SVG
+    deactivate smr
+    vs --> u : SVG
+else
+    vs --> u : NOT FOUND
+    deactivate u
+end
+deactivate vs
+deactivate u
+@enduml
+
+
+@startuml Fire
+title Firing an event
+!includesub %filename()!COMMON
+activate c
+c -> sm : fire
+activate sm
+sm -> vc : push(smId:diagram)
+
+activate vc
+vc ->> iso : spawn(smId:diagram)
+activate iso
+vc --> sm
+deactivate vc
+sm --> c
+deactivate sm
+deactivate c
+
+iso -> vs : POST smId:diagram
+activate vs
+vs --> iso
+deactivate iso
+
+vs -> smm : update(smId:diagram)
+activate smm
+smm --> vs
+loop all ws
+    smm -> js : notify
+    activate js
+    js --> smm
+    smm --> vs
+    deactivate smm
+    deactivate vs
+
+    js -> u : reload()
+    deactivate js
+    activate u
+    u -> vs : GET /rendered/smId
+    activate vs
+    ref over vs
+        GET /rendered/smId
+    end ref
+    vs --> u : SVG
+    deactivate vs
+    deactivate js    
+end
+@enduml
+
+
+@startuml Client side Class Diagram
+class VisClient {
+    + String host
+    + int port
+    + void pushDiagram(String diagram)
+}
+@enduml
+
+
+' ==============================
+
+
+
+
+@startuml Fire2
+!includesub %filename()!COMMON
+activate c
+c -> sm : fire
+activate sm
+sm -> vc : push(smId:diagram)
+
+activate vc
+vc ->> iso : spawn(smId:diagram)
+activate iso
+vc --> sm
+deactivate vc
+sm --> c
+deactivate sm
+deactivate c
+
+iso -> vs : POST smId:diagram
+activate vs
+vs --> iso
+deactivate iso
+vs -> smm : update(smId:diagram)
+activate smm
+smm -> smr : render(diagram)
+activate smr
+smr --> smm : SVG
+deactivate smr
+smm -> smm : store(smId:SVG)
+smm --> vs
+smm -> smm : find(smId) : BrowserConnection
+loop List<BrowserConnection>.forEach
+    smm -> bc : notify
+    activate bc
+    bc -> js : notify
+    activate js
+    js --> bc
+    bc --> smm
+    deactivate bc
+    smm --> vs
+    deactivate smm
+    deactivate vs
+
+    js -> u : reload()
+    deactivate js
+    activate u
+
+    u -> vs : GET /sm/smId
+    activate vs
+    vs -> smm : get(smId)
+    activate smm
+    smm --> vs : SVG
+    deactivate smm
+    vs --> u : SVG
+    deactivate vs
+    deactivate u
+end
+@enduml
+
+@startuml GET a SVG
+title GET a state machine
+!includesub %filename()!COMMON
+
+' Getting one state machine
+u -> vs : GET /sm/smId
+activate vs
+vs -> smm : get(smId)
+alt diagram found
+    activate smm
+    smm --> vs : diagram
+    deactivate smm
+    vs -> u : HTML
+    vs -> smr : render(diagram)
+    activate smr
+    smr --> vs : SVG
+    deactivate smr
+    vs --> u : SVG
+else
+    vs --> u : NOT FOUND
+end
+deactivate vs
+@enduml
+
+
+@startuml GET a Machine2
+title GET a state machine
+!includesub %filename()!COMMON
+
+' Getting one state machine
+u -> vs : GET /sm/smId
+activate vs
+vs -> smm : getConnection(smId)
+activate smm
+smm --> vs : SmConnection
+deactivate smm
+vs -> m : get()
+activate m
+m -> wsiso : get()
+activate wsiso
+wsiso -> sm : get()
+activate sm
+sm --> wsiso : diagram
+deactivate sm
+wsiso --> m : diagram
+deactivate wsiso
+m --> vs : diagram
+deactivate m
+vs -> smr : render(diagram)
+activate smr
+smr --> vs : SVG
+deactivate smr
+vs --> u : SVG
+deactivate vs
+@enduml
+
+@startuml GET a Machine
+title GET a state machine
+!includesub %filename()!COMMON
+
+' Getting one state machine
+u -> vs : GET /sm/smId
+activate vs
+vs -> smm : get(smId)
+alt SVG found
+    activate smm
+    smm --> vs : SVG
+    deactivate smm
+    vs --> u : SVG
+else
+
+end
+vs -> smm : getConnection(smId)
+activate smm
+smm --> vs : SmConnection
+deactivate smm
+vs -> m : activate()
+activate m
+m -> wsiso : activate()
+activate wsiso
+wsiso -> sm : activate()
+activate sm
+sm --> wsiso
+deactivate sm
+wsiso --> m
+deactivate wsiso
+m --> vs
+deactivate m
+deactivate vs
+@enduml
+
+@startuml FireWS
+!includesub %filename()!COMMON
+activate c
+c -> sm : fire
+activate sm
+sm -> vc : push(smId:diagram)
+
+activate vc
+vc ->> iso : spawn(smId:diagram)
+activate iso
+vc --> sm
+deactivate vc
+sm --> c
+deactivate sm
+deactivate c
+
+iso -> vs : ws connect /machine/smId
+activate vs
+vs --> iso
+vs -> m : create(ws)
+deactivate vs
+activate m
+
+iso -> m : diagram
+
+m -> om : set(parentId : smId)
+activate om
+loop all ws
+    om -> ojs : notify
+    activate ojs
+    ojs --> om
+    om --> m
+    deactivate om
+
+    ojs -> oh : reload()
+    deactivate ojs
+    activate oh
+    oh -> vs : GET /overview
+    activate vs
+    ref over vs
+        GET /overview
+    end ref
+    vs --> oh : SVG
+    deactivate vs
+    deactivate oh
+end
+
+m -> smm : update(smId:diagram)
+activate smm
+smm -> smm : find(smId) : BrowserConnection
+loop browserConnections.forEach
+    smm -> bc : notify
+    activate bc
+    bc -> js : notify
+    activate js
+    js --> bc
+    bc --> smm
+    deactivate bc
+    smm --> m
+    deactivate smm
+    deactivate vs
+
+    js -> u : reload()
+    deactivate js    
+    activate u
+    u -> vs : GET /rendered/smId
+    activate vs
+    ref over vs
+    GET /rendered/smId
+    end ref
+    vs --> u : SVG
+    deactivate vs
+    deactivate u
+end
+    destroy iso
+    iso -> m : ws disconnect
+
+@enduml
+
+@startuml Fire3
+!includesub %filename()!COMMON
+activate c
+c -> sm : fire
+activate sm
+sm -> vc : push(smId:diagram)
+
+activate vc
+vc ->> iso : spawn(smId:diagram)
+activate iso
+vc --> sm
+deactivate vc
+sm --> c
+deactivate sm
+deactivate c
+
+iso -> vs : POST smId:diagram
+activate vs
+vs --> iso
+deactivate iso
+
+vs -> om : set(parentId : smId)
+activate om
+loop all ws
+    om -> ojs : notify
+    activate ojs
+    ojs --> om
+    om --> vs
+    deactivate om
+
+    ojs -> oh : reload()
+    deactivate ojs
+    activate oh
+    oh -> vs : GET /overview
+    activate vs
+    ref over vs
+        GET /overview
+    end ref
+    vs --> oh : SVG
+    deactivate vs
+    deactivate oh
+end
+
+vs -> smm : update(smId:diagram)
+activate smm
+smm --> vs
+smm -> smm : find(smId) : BrowserConnection
+loop browserConnections.forEach
+    smm -> bc : notify
+    activate bc
+    bc -> js : notify
+    activate js
+    js --> bc
+    bc --> smm
+    deactivate bc
+    smm --> vs
+    deactivate smm
+    deactivate vs
+
+    js -> u : reload()
+    activate u
+    u -> vs : GET /rendered/smId
+    activate vs
+    ref over vs
+        GET /rendered/smId
+    end ref
+    vs --> u : SVG
+    deactivate vs
+    deactivate js    
+end
+@enduml
+
+
+@startmindmap State machine hierarchy diagram3
+<style>
+  mindmapDiagram {
+    node {
+      ' BackgroundColor lightGreen
+    }
+    :depth(0) {
+      BackGroundColor white
+    }
+  }
+</style>
+* All machines
+@endmindmap

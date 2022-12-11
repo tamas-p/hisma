@@ -1,0 +1,58 @@
+name: fb_auth_hisma
+description: Provides a hisma hierarchical state machine that implements Firebase authentication and user management.
+homepage: https://github.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma
+version: 0.1.0
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  firebase_auth: ^4.1.0
+  firebase_core: ^2.1.1
+  flutter:
+    sdk: flutter
+  hisma: ^0.1.0
+  hisma_flutter: ^0.1.0
+  
+  logging: ^1.1.0
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+  lint: ^1.10.0
+
+flutter:
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
