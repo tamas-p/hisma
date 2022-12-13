@@ -20,8 +20,5 @@ pubspec.lock
 *.iml
 pubspec_overrides.yaml
 
-# Firebase configuration
-firebase_options.dart
-
 # Flutter
 .flutter-plugins-dependencies
