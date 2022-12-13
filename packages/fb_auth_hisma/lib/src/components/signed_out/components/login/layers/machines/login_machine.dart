@@ -72,12 +72,14 @@ Action _createEmailSignInAction() => Action(
             case 'user-disabled':
             case 'user-not-found':
             case 'wrong-password':
-              _log.info('Auth error: ${e.code}');
-              machine.fire(ELiM.fail, data: e.code);
+            case 'configuration-not-found':
+              _log.info('Handled Auth error: ${e.code}');
               break;
             default:
-              assert(false, 'Unhandled code: ${e.code}');
+              _log.info('Not handled Auth error: ${e.code}');
+              break;
           }
+          machine.fire(ELiM.fail, data: e.code);
         }
       },
     );
