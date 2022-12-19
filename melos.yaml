@@ -1,6 +1,6 @@
 name: hisma
 
-repository: https://gitlab.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma
 
 packages:
   - packages/*
