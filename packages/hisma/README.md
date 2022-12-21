@@ -11,9 +11,6 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-> **Warning**
-> As package version indicates this is an experimental package, not ready for prime use. API changes are expected and test coverage is low.
-
 # Hisma, a hierarchical state machine.
 
 Hisma provides a declarative hierarchical state machine implementation that loosely follows the [UML](https://www.omg.org/spec/UML/) State Machine specification that is in turn based on [Harel's statechart](https://en.wikipedia.org/wiki/State_diagram#Harel_statechart). This is the core package of the hisma packages collection:
@@ -532,6 +529,10 @@ You can also watch a short video about executing the above described sequence in
 [![hisma history example on YouTube](doc/resources/hisma_history_youtube.png)](https://youtu.be/f17P9PbJ6UI)
 
 ## Additional information
+
+### Disclaimer
+
+As the package version indicates this is an experimental package, not ready for prime use. API changes are expected and test coverage is low.
 
 ### Next steps
 
