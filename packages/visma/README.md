@@ -13,7 +13,7 @@ and the Flutter guide for
 
 Visma is visualizing state machines.
 
-This package can install a command line tool called `visma` that renders hierarchical state machines created with the `hisma` package to interactive state machine diagrams. It gets state machine status updates from its counterpart hisma monitor called `hisma_visual_monitor` and renders them to interactive web pages with the help of the `pumli` package.
+This package can install a command line tool called `visma` that renders hierarchical state machines created with the [hisma](../hisma/) package to interactive state machine diagrams. It gets state machine status updates from its counterpart hisma monitor called [hisma_visual_monitor](../hisma_visual_monitor/) and renders them to interactive web pages with the help of the [pumli](https://github.com/tamas-p/pumli) package.
 
 ## Features
 
@@ -67,7 +67,7 @@ $ visma
 webPort=4020
 ```
 
-Finally, use `hisma_visual_monitor` to send state machine updates to visma.
+Finally, use [hisma_visual_monitor](../hisma_visual_monitor/) to send state machine updates to visma.
 
 ## Additional information
 

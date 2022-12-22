@@ -1,7 +1,7 @@
 name: fb_auth_hisma
 description: Provides a hisma hierarchical state machine that implements Firebase authentication and user management.
 homepage: https://github.com/tamas-p/hisma
-repository: https://github.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma/tree/master/packages/fb_auth_hisma
 version: 0.1.1+1
 
 environment:

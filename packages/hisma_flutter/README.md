@@ -11,9 +11,9 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-Flutter navigation with `Hisma` hierarchical state machines.
+Flutter navigation with [Hisma](../hisma/) hierarchical state machines.
 
-Hierarchical state machines can perfectly describe your workflow, roaming from screens to screens or dialogs. This package gives you a router generator that can do this for your `hisma` state machines. Under the hood `hisma_flutter` is using Flutter's Navigator 2.0 API.
+Hierarchical state machines can perfectly describe your workflow, roaming from screens to screens or dialogs. This package gives you a router generator that can do this for your [hisma](../hisma/) state machines. Under the hood `hisma_flutter` is using Flutter's Navigator 2.0 API.
 
 ## Features
 
@@ -25,7 +25,7 @@ Hierarchical state machines can perfectly describe your workflow, roaming from s
 
 See it in action in the [fb_auth_hisma_example](../../examples/fb_auth_hisma_example/) app that maps screens and dialogs to a `hisma` hierarchical state machine which implements authentication, user management workflows with Firebase Authentication:
 
-![](../../examples/fb_auth_hisma_example/doc/resources/fb_auth_hisma_example.gif)
+![fb_auth_hisma_example.gif](../../examples/fb_auth_hisma_example/doc/resources/fb_auth_hisma_example.gif)
 
 ## Getting started
 

@@ -1,7 +1,7 @@
 name: hisma_visual_monitor
 description: Visual monitor for Hisma, a hierarchical state machine implementation.
 homepage: https://github.com/tamas-p/hisma
-repository: https://github.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma/tree/master/packages/hisma_visual_monitor
 version: 0.1.1+1
 
 environment:
