@@ -1,3 +1,7 @@
+## 0.1.1+2
+
+ - **DOCS**: Fixed relative links to other packages.
+
 ## 0.1.1+1
 
  - **DOCS**: Changed repository URL that points to package in monorepo to address [#5](https://github.com/tamas-p/hisma/issues/5).

@@ -1,3 +1,7 @@
+## 0.1.1+2
+
+ - **DOCS**: Fixed relative links issue in README.md files described in [#5](https://github.com/tamas-p/hisma/issues/5).
+
 ## 0.1.1+1
 
  - Update a dependency to the latest release.
