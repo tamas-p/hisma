@@ -27,7 +27,7 @@ Hisma provides a declarative hierarchical state machine implementation for [Dart
 
 ## Features
 
-See an example Flutter application ([fb_auth_hisma_example](examples/fb_auth_hisma_example/)) in action that is using [hisma](packages/hisma/) state machine defined in [fb_auth_hisma](packages/fb_auth_hisma/) for the user management workflow, [hisma_flutter](packages/hisma_flutter/) for Flutter routing based on the state machine and [visma](packages/visma/) to monitor and visualize the state machine:
+See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_auth_hisma_example/)) in action that is using `hisma` state machine defined in [fb_auth_hisma](../fb_auth_hisma/) for the user management workflow, [hisma_flutter](../hisma_flutter/) for Flutter routing based on the state machine and [visma](../visma/) to monitor and visualize the state machine:
 
 ![fb_auth_hisma_example.gif](../../examples/fb_auth_hisma_example/doc/resources/fb_auth_hisma_example.gif)
 
