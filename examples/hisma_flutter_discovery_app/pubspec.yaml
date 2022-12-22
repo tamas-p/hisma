@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^1.0.4
   hisma: ^0.1.1
-  hisma_console_monitor: ^0.1.1
+  hisma_console_monitor: ^0.1.1+1
   hisma_flutter: ^0.1.1
   hisma_visual_monitor: ^0.1.1
   logging: ^1.1.0

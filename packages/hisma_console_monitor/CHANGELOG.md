@@ -1,3 +1,7 @@
+## 0.1.1+1
+
+ - **DOCS**: Changed repository URL to see if pub.dev handles relative links correctly with this.
+
 ## 0.1.1
 
  - **FIX**: Renamed hisma_vis_server.dart to visma.dart and added dart docs to library declarations.
