@@ -2,7 +2,7 @@ name: hisma_flutter
 description: Flutter navigation controlled by Hisma hierarchical state machines.
 homepage: https://github.com/tamas-p/hisma
 repository: https://github.com/tamas-p/hisma
-version: 0.1.1
+version: 0.1.1+1
 
 environment:
   sdk: ">=2.17.1 <3.0.0"
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hisma: ^0.1.1
+  hisma: ^0.1.1+1
   logging: ^1.1.0
 
 dev_dependencies:
