@@ -13,9 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
   hisma: ^0.1.1
-  hisma_flutter: ^0.1.0
-  hisma_visual_monitor: ^0.1.0
-
+  hisma_flutter: ^0.1.1
+  hisma_visual_monitor: ^0.1.1
 dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:
