@@ -13,7 +13,7 @@ and the Flutter guide for
 
 # Hisma, a hierarchical state machine.
 
-Hisma provides a declarative hierarchical state machine implementation that loosely follows the [UML](https://www.omg.org/spec/UML/) State Machine specification that is in turn based on [Harel's statechart](https://en.wikipedia.org/wiki/State_diagram#Harel_statechart). This is the core package of the hisma packages collection:
+Hisma provides a declarative hierarchical state machine implementation for [Dart](https://dart.dev/) and [Flutter](https://flutter.dev/) that loosely follows the [UML](https://www.omg.org/spec/UML/) State Machine specification that is in turn based on [Harel's statechart](https://en.wikipedia.org/wiki/State_diagram#Harel_statechart). This is the core package of the hisma packages collection:
 
 | Package name                                       | Description                                                                                        |
 | -------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
