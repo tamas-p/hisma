@@ -1,7 +1,7 @@
 name: hisma
 description: Provides a declarative hierarchical state machine implementation that loosely follows the UML State Machine specification. 
 homepage: https://github.com/tamas-p/hisma
-repository: https://github.com/tamas-p/hisma
+repository: https://github.com/tamas-p/hisma/tree/master/packages/hisma
 version: 0.1.1
 
 environment:
