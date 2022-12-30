@@ -4,20 +4,13 @@ import 'package:hisma/hisma.dart';
 class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     with ChangeNotifier {
   StateMachineWithChangeNotifier({
-    List<E> events = const [],
-    required String name,
-    HistoryLevel? history,
-    required S initialStateId,
-    required StateMap<S, E, T> states,
-    required TransitionMap<T, S> transitions,
-  }) : super(
-          events: events,
-          name: name,
-          history: history,
-          initialStateId: initialStateId,
-          states: states,
-          transitions: transitions,
-        );
+    super.events = const [],
+    required super.name,
+    super.history,
+    required super.initialStateId,
+    required super.states,
+    required super.transitions,
+  });
 
   factory StateMachineWithChangeNotifier.fromStateMachine(
     StateMachine<S, E, T> sm,

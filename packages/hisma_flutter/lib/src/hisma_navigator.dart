@@ -7,18 +7,15 @@ import 'hisma_router_generator.dart';
 class HismaNavigator<S, W, E> extends Navigator {
   HismaNavigator({
     required HismaRouterGenerator<S, W, E> myRouter,
-    required List<Page<dynamic>> pages,
-    required Key key,
+    required super.pages,
+    required super.key,
     required Set<String> shown,
   }) : super(
-          pages: pages,
-
           // [
           //   if (myRouter.stateUIs[myRouter.machine.activeStateId] != null)
           //     myRouter.stateUIs[myRouter.machine.activeStateId]!
           //         .create(myRouter.machine.activeStateId)
           // ],
-          key: key,
           onPopPage: (route, dynamic result) {
             _log.info('MyNavigator.onPopPage($route, $result)');
             _log.info('${route.settings.name}');
