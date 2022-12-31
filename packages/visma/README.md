@@ -31,17 +31,27 @@ This package can install a command line tool called `visma` that renders hierarc
 
 ## Getting started
 
-Install visma by
+### Prerequisites
+
+As stated in the first paragraph, visma is using PlantUML, hence PlantUML is a prerequisite for visma. See https://plantuml.com/starting for PlantUML installation details.
+Prefer using PlantUML [V1.2022.1](https://sourceforge.net/projects/plantuml/files/1.2022.1/) as described in [pumli](https://github.com/tamas-p/pumli) (visma internally uses the pumli package to render state machine diagrams).
+
+### Installing visma
+
+If PlantUML and its prerequisites (Java, Graphviz) are installed you can install visma as follows:
 
 ```bash
 $ dart pub global activate visma
 ```
 
+> **Note** In order to simplify visma installation, a docker container of visma
+> with preinstalled prerequisites is in the make.
+
 ## Usage
 
-You can check usage:
+You can check visma command line parameters:
 
-```bash
+```
 $ visma -h
 A visualization server for Hisma the hierarchical state machine.
 Without parameters it will try running the 'plantuml -picoweb' command as the renderer for visma.
@@ -59,12 +69,24 @@ Options:
 -h, --help               Shows this help.
 ```
 
-Start visma in command line:
+### Examples
 
-```bash
+#### Simple start from cmd, default parameters
+
+```
 $ visma
 "plantuml -picoweb:4020:127.0.0.1":
 webPort=4020
+```
+
+#### Start from cmd, using specific plantuml jar
+
+```
+$ visma --plantuml_jar files/plantuml/plantuml.1.2022.1.jar
+"java -jar, files/plantuml/plantuml.1.2022.1.jar, -Djava.net.useSystemProxies=true, -picoweb:4020:127.0.0.1":
+webPort=4020
+
+INFO: 2022-12-31 13:41:31.163360: visma.VisualizationServer: SM PlantUML visualization server stated on InternetAddress('127.0.0.1', IPv4):4040
 ```
 
 Finally, use [hisma_visual_monitor](../hisma_visual_monitor/) to send state machine updates to visma.
