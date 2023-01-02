@@ -10,12 +10,12 @@ RUN apt-get -y update && \
     rm -fr /var/lib/apt/lists/*
 
 # Copy the plantuml jar.
-COPY build/plantuml.jar /opt/visma/
+COPY tmp/plantuml.jar /opt/visma/
 
 # Copy the visma service itsef and its assets.
-COPY assets/package_config.json /opt/visma/.dart_tool/ && \
-    build/hisma/packages/visma/lib/src/visualizer/visual_monitor/page/ /opt/visma/lib/src/visualizer/visual_monitor/page/ && \
-    build/visma /opt/visma/bin/
+COPY assets/package_config.json /opt/visma/.dart_tool/ 
+COPY tmp/hisma/packages/visma/lib/src/visualizer/visual_monitor/page/ /opt/visma/lib/src/visualizer/visual_monitor/page/ 
+COPY tmp/visma /opt/visma/bin/
 
 # Visma service listens on TCP port 4040. 
 EXPOSE 4040
