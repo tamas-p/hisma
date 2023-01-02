@@ -9,3 +9,6 @@ build/
 # https://dart.dev/guides/libraries/private-files#pubspeclock.
 # Visma is an app, so we were advised checkink it in.
 # pubspec.lock
+
+# Omit docker tmp directory.
+docker/tmp
