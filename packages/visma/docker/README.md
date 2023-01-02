@@ -28,9 +28,17 @@ $ docker run -d -p 127.0.0.1:4040:4040 tamasp/visma
 # Using visma
 
 After you started visma with the previous docker run command you can simply access visma by opening
-the http://127.0.0.1:4040/ URL. This will show in the web browser the state machine overview page similar to this:
+the http://127.0.0.1:4040/ URL. This will show in the web browser the state machine (initially empty) overview page:
 
-![hisma_visual_monitor_domain.png](https://github.com/tamas-p/hisma/raw/master/packages/hisma_visual_monitor/doc/resources/hisma_visual_monitor_domain.png)
+![visma_overview_empty.png](https://raw.githubusercontent.com/tamas-p/hisma/master/packages/visma/docker/assets/visma_overview_empty.png)
+
+If you run the [04_entry_and_exit_points.dart](https://github.com/tamas-p/hisma/blob/master/packages/hisma/example/04_entry_and_exit_points.dart) example the overview page will look like:
+
+![visma_overview_example.png](https://raw.githubusercontent.com/tamas-p/hisma/master/packages/visma/docker/assets/visma_overview_example.png)
+
+Monitoring hierarchical state machines example:
+
+![visma_light_machine.png](https://raw.githubusercontent.com/tamas-p/hisma/master/packages/visma/docker/assets/visma_light_machine.png)
 
 # More information
 
