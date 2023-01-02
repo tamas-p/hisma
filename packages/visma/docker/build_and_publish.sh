@@ -29,7 +29,6 @@ DOCKER_TAG=$(echo $GITHUB_TAG | sed 's/visma-//' | sed 's/+/_/' )
 IMAGE=tamasp/visma
 IMAGE_WITH_TAG=$IMAGE:$DOCKER_TAG
 
-
 cecho "Last visma tag on GitHub is $GITHUB_TAG"
 cecho "The Docker tag created from $GITHUB_TAG is $DOCKER_TAG (to be compliant with docker naming rules)."
 cecho "Trying to pull image $IMAGE_WITH_TAG ..."
@@ -67,7 +66,8 @@ coff
 cecho "Progressing to create $IMAGE_WITH_TAG"
 
 cecho "Cleaning ${TMP_DIR} directory."
-rm -fr ${TMP_DIR}/*
+rm -fr ${TMP_DIR}
+mkdir ${TMP_DIR}
 
 cecho "Getting Hisma by tag ${GITHUB_TAG}"
 
