@@ -1,22 +1,8 @@
 #!/usr/bin/env bash
+source ../../../scripts/utilities.sh
 
-# This script will publish into the tamasp/visma Docker repository the
-# latest tag.
-
-color='\033[0;33m'
-nc='\033[0m' # No color
-
-function cecho {
-    echo -e "${color}${@}${nc}"
-}
-
-function con {
-    echo -n -e "${color}"
-}
-
-function coff {
-    echo -n -e "${nc}"
-}
+message "This script will publish into the tamasp/visma Docker repository the\n\
+latest tag."
 
 TMP_DIR=tmp
 
@@ -32,11 +18,10 @@ IMAGE_WITH_TAG=$IMAGE:$DOCKER_TAG
 cecho "Last visma tag on GitHub is $GITHUB_TAG"
 cecho "The Docker tag created from $GITHUB_TAG is $DOCKER_TAG (to be compliant with docker naming rules)."
 cecho "Trying to pull image $IMAGE_WITH_TAG ..."
+separator
 docker pull $IMAGE_WITH_TAG
-EXISTS=$?
-
-if [ $EXISTS -eq 0 ]; then
-    cecho "${color}Tag $DOCKER_TAG already exists in the repository: ${IMAGE_WITH_TAG}. Exiting."
+if [ $? -eq 0 ]; then
+    message "Tag $DOCKER_TAG already exists in the repository: ${IMAGE_WITH_TAG}. Exiting."
     exit 1
 fi
 cecho "Good, $IMAGE_WITH_TAG is not in $IMAGE repository. We can progress."
@@ -44,8 +29,6 @@ cecho "Good, $IMAGE_WITH_TAG is not in $IMAGE repository. We can progress."
 HISMA_URL=https://github.com/tamas-p/hisma/archive/refs/tags/${GITHUB_TAG}.tar.gz
 
 cecho
-cecho "Creating docker image for Visma"
-cecho "-------------------------------"
 cecho "GITHUB_TAG=$GITHUB_TAG"
 cecho "GITHUB_DOWNLOAD_TAG=$GITHUB_DOWNLOAD_TAG"
 cecho "DOCKER_TAG=$DOCKER_TAG"
@@ -54,23 +37,15 @@ cecho "IMAGE_WITH_TAG=$IMAGE_WITH_TAG"
 cecho "HISMA_URL=$HISMA_URL"
 cecho "PLANTUML_JAR_URL=$PLANTUML_JAR_URL"
 cecho
+cecho "Next steps are getting dependencies and building the docker image."
+proceed "Note: ./${TMP_DIR} directory will be cleaned."
 
-con
-read -p "Are you sure you want to proceed? Note: ${TMP_DIR} directory will be cleaned. (y/N)" confirm
-if [[ $confirm != "y" && $confirm != "Y" ]]; then
-    cecho "${color}Operation canceled.${nc}"
-    exit 1
-fi
-coff
-
-cecho "Progressing to create $IMAGE_WITH_TAG"
-
-cecho "Cleaning ${TMP_DIR} directory."
+echo rm -fr ${TMP_DIR}
 rm -fr ${TMP_DIR}
+echo mkdir ${TMP_DIR}
 mkdir ${TMP_DIR}
 
-cecho "Getting Hisma by tag ${GITHUB_TAG}"
-
+message "Getting Hisma by tag ${GITHUB_TAG}"
 HISMA_TARGZ=visma.tar.gz
 wget $HISMA_URL -O ${TMP_DIR}/$HISMA_TARGZ
 tar xvfz ${TMP_DIR}/$HISMA_TARGZ -C ${TMP_DIR}/ > /dev/null
@@ -79,28 +54,23 @@ mv ${TMP_DIR}/hisma-${GITHUB_DOWNLOAD_TAG} ${TMP_DIR}/hisma
 VISMA_DIR=${TMP_DIR}/hisma/packages/visma
 echo $VISMA_DIR
 
-cecho "Building visma executable:"
+message "Building visma executable:"
 dart compile exe ${VISMA_DIR}/bin/visma.dart -o ${TMP_DIR}/visma
 
-cecho "Fetching PlantUML:"
+message "Fetching PlantUML:"
 wget $PLANTUML_JAR_URL -O ${TMP_DIR}/plantuml.zip
 unzip -o ${TMP_DIR}/plantuml.zip -d ${TMP_DIR}/
 
-cecho "Building docker image ${IMAGE_WITH_TAG}:"
+message "Building docker image ${IMAGE_WITH_TAG}:"
 docker build -t $IMAGE:latest -t $IMAGE_WITH_TAG .
-if [ $? -eq 1 ]; then
-    cecho "Docker build of $IMAGE_WITH_TAG failed. Exiting."
-    exit 1
-fi
+echeck "Docker build of $IMAGE_WITH_TAG failed. Exiting."
 
-con
-read -p "Do you want to push $IMAGE_WITH_TAG? (y/N) " confirm
-echo
-if [[ $confirm != "y" && $confirm != "Y" ]]; then
-    echo -e "${color}docker push canceled.${nc}"
-    exit 1
-fi
-coff
+separator
+cecho "Docker image $IMAGE_WITH_TAG is successfully built."
+cecho "Next step is pushing $IMAGE_WITH_TAG to Docker Hub."
+proceed
 
 docker push $IMAGE_WITH_TAG
 docker push $IMAGE:latest
+
+message "Docker build & push of $IMAGE_WITH_TAG is completed."

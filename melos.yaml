@@ -12,7 +12,7 @@ command:
 
 scripts:
   analyze:
-    run: dart analyze .
+    run: dart analyze --fatal-infos .
     exec:
       concurrency: 1
     
@@ -22,7 +22,7 @@ scripts:
       concurrency: 1
   
   pana:
-    run: pana --no-warning
+    run: pana --no-warning --exit-code-threshold=0 .
     select-package:
       no-private: true
     exec:
