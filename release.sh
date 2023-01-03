@@ -17,10 +17,10 @@ fi
 
 if [[ `git status --porcelain` ]]; then
     cecho "GIT: You have modifications and/or untracked files! Exiting."
-    # exit 1
+    exit 1
 fi
 
-cecho "Next step is analyzing all packages by melos analyze."
+cecho "Next steps are going to analyze, test and pana all packages."
 proceed
 
 melos analyze
