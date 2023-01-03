@@ -4,6 +4,14 @@ Visma is visualizing Hisma state machines.
 
 This image provides the [visma](https://pub.dev/packages/visma) tool that renders hierarchical state machines created with the [hisma](https://pub.dev/packages/hisma) package to interactive state machine diagrams. It gets state machine status updates from its counterpart hisma monitor called [hisma_visual_monitor](https://pub.dev/packages/hisma_visual_monitor) and renders them to interactive web pages with the help of the [pumli](https://pub.dev/packages/pumli) package.
 
+# Changelog
+
+Changelog is available on https://pub.dev/packages/visma/changelog.
+
+> **NOTE** In case character '\_' is seen in docker tag it is character '+' on the Changelog page.
+> It is to be compliant to docker tag naming rules, the '+' character is replaced with '\_' when
+> docker image is tagged.
+
 # Running visma
 
 Visma can be started by the standard `docker run` command as shown in the examples bellow. Please note that the port
@@ -42,4 +50,4 @@ Monitoring hierarchical state machines example:
 
 # More information
 
-https://pub.dev/packages/visma
+Please visit https://pub.dev/packages/visma and other [hisma](https://pub.dev/packages/hisma) pages for more information.
