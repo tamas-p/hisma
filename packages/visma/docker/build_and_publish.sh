@@ -24,7 +24,7 @@ PLANTUML_JAR_URL=https://sourceforge.net/projects/plantuml/files/1.2022.1/plantu
 
 GITHUB_TAG=$(git tag | grep visma | tail -1)
 GITHUB_DOWNLOAD_TAG=$(echo $GITHUB_TAG | sed 's/+/-/')
-DOCKER_TAG=$(echo $GITHUB_TAG | sed 's/visma-//' | sed 's/+/_/' )
+DOCKER_TAG=$(echo $GITHUB_TAG | sed 's/visma-v//' | sed 's/+/_/' )
 
 IMAGE=tamasp/visma
 IMAGE_WITH_TAG=$IMAGE:$DOCKER_TAG
