@@ -17,7 +17,7 @@ Changelog is available on https://pub.dev/packages/visma/changelog.
 Visma can be started by the standard `docker run` command as shown in the examples bellow. Please note that the port
 mapping `-p 127.0.0.1:4040:4040` is restricting the visma service to be accessible only from the localhost. If you want to enable access visma from remote hosts please remove 127.0.0.1 from the port mapping: `-p 4040:4040` (firewall rules of your machine might also need to be adjusted).
 
-## Running in the foreground
+## Running in interactive mode
 
 This way visma will be running in the foreground and you will see the logs in the console and you can easily stop visma by pressing CTRL+C.
 
@@ -25,9 +25,10 @@ This way visma will be running in the foreground and you will see the logs in th
 $ docker run -it -p 127.0.0.1:4040:4040 tamasp/visma
 ```
 
-## Running as a daemon
+## Running in detached mode
 
-This way visma will be running as a daemon in the background.
+This way visma will be running detached from the terminal in the background. To stop visma
+started this way you need to use `docker stop`.
 
 ```
 $ docker run -d -p 127.0.0.1:4040:4040 tamasp/visma
