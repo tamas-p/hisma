@@ -11,12 +11,17 @@ cecho "pushed to Docker Hub."
 cecho
 
 if [ "$(git branch)" == "master" ]; then
-    cecho "GIT: You are not on the master branch! Exiting."
+    cecho "GIT: You are not on the master branch. Exiting."
     exit 1
 fi
 
 if [[ `git status --porcelain` ]]; then
-    cecho "GIT: You have modifications and/or untracked files! Exiting."
+    cecho "GIT: You have modifications and/or untracked files. Exiting."
+    exit 1
+fi
+
+if [ -n "$(git cherry -v origin/master)" ]; then
+    cecho "GIT: There are commits that have not been pushed. Exiting."
     exit 1
 fi
 
