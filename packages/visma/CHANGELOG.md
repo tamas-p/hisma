@@ -1,3 +1,7 @@
+## 0.1.1+4
+
+ - **DOCS**: Added docker option to Visma README.md.
+
 ## 0.1.1+3
 
  - **DOCS**: Explained PlantUML related prerequisites.
