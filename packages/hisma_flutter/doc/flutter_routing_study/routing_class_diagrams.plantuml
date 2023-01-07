@@ -1,0 +1,99 @@
+@startuml Route
+class Route<T>
+class OverlayRoute<T>
+class TransitionRoute<T>
+class ModalRoute<T>
+class PageRoute<T>
+class PopupRoute<T>
+class CupertinoModalPopupRoute<T>
+class RawDialogRoute<T> 
+class MaterialPageRoute<T>
+class CupertinoPageRoute<T>
+class PageRouteBuilder<T>
+class DialogRoute<T>
+
+Route <|-- OverlayRoute
+OverlayRoute <|-- TransitionRoute
+TransitionRoute <|-- ModalRoute
+ModalRoute <|-- PageRoute
+ModalRoute <|-- PopupRoute
+PopupRoute <|-- CupertinoModalPopupRoute
+PopupRoute <|-- RawDialogRoute
+RawDialogRoute <|-- DialogRoute
+PageRoute <|-- MaterialPageRoute
+PageRoute <|-- CupertinoPageRoute
+PageRoute <|-- PageRouteBuilder
+@enduml
+
+@startuml Page
+class RouteSettings
+class Page<T>
+class MaterialPage<T>
+class CupertinoPage<T>
+
+RouteSettings <|-- Page
+Page <|-- MaterialPage
+Page <|-- CupertinoPage
+@enduml
+
+@startuml routing
+class MaterialApp <<StatefulWidget>>
+class RootNavigator <<StatefulWidget>>
+class RouterDelegate<T> <<Listenable>>
+class RouteInformationParser<T>
+class RouteInformation
+class RouteInformationProvider <<ValueListenable<RouteInformation>>>
+class Router<T>
+
+RootNavigator -> NavigatorState
+NavigatorState -> Overlay
+MaterialApp --> RouterDelegate
+MaterialApp --> RouteInformationParser
+
+RouterDelegate --> RootNavigator
+RootNavigator *-- "*" Page
+Page *- Screen
+Route "settings" -> Page
+@enduml
+
+@startuml
+class Router<T>
+class StatefulWidget
+class Widget
+class DiagnosticableTree
+class Object
+
+Object <|-- DiagnosticableTree
+DiagnosticableTree <|-- Widget
+Widget <|-- StatefulWidget
+StatefulWidget <|-- Router
+
+@enduml
+
+@startuml
+object BookRouterDelegate
+object BookRouteInformationParser
+object BookAppState
+object RootNavigator
+object AppShell
+object Scaffold
+object Router
+object InnerRouterDelegate
+object ChildBackButtonDispatcher
+object InnerNavigator
+class List<Page>
+
+RouterDelegate <|-- BookRouterDelegate
+BookRouterDelegate -> BookAppState : addListener(notifyListener)
+BookRouterDelegate -- RootNavigator : build
+RootNavigator *-- AppShell : pages
+AppShell -- Scaffold : build
+Scaffold *-- Router : body
+Router *-- InnerRouterDelegate
+Router *-- ChildBackButtonDispatcher
+InnerRouterDelegate -- InnerNavigator : build
+InnerNavigator *-- List
+List *-- BookListScreen
+List *-- BookDetailsScreen
+List *-- SettingsScreen
+@enduml

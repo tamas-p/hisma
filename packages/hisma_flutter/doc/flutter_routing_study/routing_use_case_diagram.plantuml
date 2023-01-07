@@ -1,0 +1,38 @@
+@startuml Use cases
+usecase UcUrl as "Open app URL" #palegreen
+usecase UcUrlValid as "Open a valid app URL"
+usecase UcUrlInvalid as "Open an invalid app URL"
+
+usecase UcClickApp as "Click on app button" #palegreen
+usecase UcClickAppForward as "Click on app button to\nmove to next screen"
+usecase UcClickAppBack as "Click on app button to\nmove to previous screen"
+
+usecase UcClickSystemForward as "Click on browser forward button"
+usecase UcClickSystemBack as "Click on browser back button"
+
+usecase UcClickPopUp as "Click on AppBar back button"
+usecase UcClickOSBack as "Click Android back button"
+usecase UcClickback as "Click any back button" #palegreen
+
+User -- UcUrl
+User -- UcClickSystemBack
+User -- UcClickSystemForward
+UcClickSystemBack ..> UcUrl : <<include>>
+UcClickSystemForward ..> UcUrl : <<include>>
+
+' UcUrl ..> UcUrlValid : extend
+' UcUrl ..> UcUrlInvalid : extend
+
+UcUrl <|-- UcUrlValid
+UcUrl <|-- UcUrlInvalid
+
+User -- UcClickAppForward
+User -- UcClickAppBack
+UcClickAppForward ..> UcClickApp : <<include>>
+UcClickAppBack ..> UcClickApp : <<include>>
+
+UcClickOSBack -- User
+UcClickPopUp -- User
+UcClickback -- UcClickOSBack
+UcClickback -- UcClickPopUp
+@enduml

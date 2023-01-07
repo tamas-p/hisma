@@ -1,0 +1,156 @@
+@startuml Common
+!startsub Common
+actor User
+participant Framework
+participant BackButton
+participant BackButtonDispatcher
+participant Router
+participant RouteInformationParser #lightgreen
+participant RouterDelegate #lightgreen
+participant Navigator #lightgreen
+participant Screen #lightgreen
+participant State #lightgreen
+
+note over of Navigator
+Navigator is used for
+- Page transition
+- Show a dialog
+end note
+!endsub
+@enduml
+
+' -----------------------------------------------------------------------------
+
+@startuml Rebuild
+title Rebuild
+!includesub %filename()!Common
+
+Framework -> RouterDelegate ++ : build
+RouterDelegate -> Navigator ++ : construct
+Navigator -> State ++ : get
+State --> Navigator -- : 1
+Navigator -> Screen ++ : construct
+Screen --> Navigator --
+Navigator --> RouterDelegate --
+RouterDelegate --> Framework --
+@enduml
+
+' -----------------------------------------------------------------------------
+
+@startuml Update URL in browser
+title Update URL in browser
+!includesub %filename()!Common
+
+activate Router
+Router -> RouterDelegate ++ : currentConfiguration()
+RouterDelegate --> State ++ : get
+State --> RouterDelegate -- : 1
+RouterDelegate --> Router -- : 1
+Router -> RouteInformationParser ++ : restoreRouteInformation(1)
+RouteInformationParser --> Router -- : RouteInformation(location: '/1')
+Router -> Framework ++ : update URL
+Framework --> Router --
+
+@enduml
+
+' -----------------------------------------------------------------------------
+' -----------------------------------------------------------------------------
+
+@startuml User click triggered state change
+title User click triggered state change
+!includesub %filename()!Common
+
+User ->> Framework ++ : click
+Framework -> Screen ++ : onPressed()
+Screen -> State ++ : 1
+State --> Screen --
+Screen -> RouterDelegate ++ : notifyListeners()
+RouterDelegate -> Router ++ : notify
+
+ref over Framework, State : Update URL in browser
+
+Router --> RouterDelegate --
+RouterDelegate --> Screen --
+
+ref over Framework, State : rebuild
+@enduml
+
+' -----------------------------------------------------------------------------
+
+@startuml User enters app URL
+title User enters app URL
+!includesub %filename()!Common
+
+User ->> Framework ++ : enter URL
+Framework -> Router ++ : didPushRouteInformation
+Router -> RouteInformationParser ++ : parseRouteInformation('/2')
+RouteInformationParser --> Router -- : 2
+
+Router -> RouterDelegate ++ : setNewRoutePath(2)
+RouterDelegate -> State ++ : 2
+State --> RouterDelegate --
+RouterDelegate --> Router --
+Router --> Framework --
+
+Framework -> Router ++ : notify
+
+ref over Framework, State : Update URL in browser
+
+Router --> Framework --
+
+ref over Framework, State : rebuild
+@enduml
+
+' -----------------------------------------------------------------------------
+
+@startuml User clicks Android back button
+title User clicks Android back button
+!includesub %filename()!Common
+
+User ->> Framework ++ : click back button
+Framework --> BackButtonDispatcher ++ : didPopRoute
+BackButtonDispatcher -> Router ++ : invokeCallback
+Router -> RouterDelegate ++ : popRoute
+' RouterDelegate -> State ++ : _state > 0 ? --_state : _state - 1
+' State --> RouterDelegate --
+RouterDelegate -> Navigator ++ : maybePop
+Navigator -> State ++ : _state > 0 ? --_state : _state - 1
+State --> Navigator --
+Navigator --> RouterDelegate --
+RouterDelegate --> Router --
+Router --> BackButtonDispatcher --
+BackButtonDispatcher --> Framework --
+
+Framework -> Router ++ : notify
+
+ref over Framework, State : Update URL in browser
+
+Router --> Framework --
+
+ref over Framework, State : rebuild
+@enduml
+
+' -----------------------------------------------------------------------------
+
+@startuml User clicks AppBar back button
+title User clicks AppBar back button
+!includesub %filename()!Common
+
+User ->> Framework ++ : click back button
+Framework --> BackButton ++ : onPressed
+BackButton -> Navigator ++ : maybePop
+Navigator -> State ++ : _state > 0 ? --_state : _state - 1
+State --> Navigator --
+Navigator --> BackButton --
+BackButton --> Framework --
+
+Framework -> Router ++ : notify
+
+ref over Framework, State : Update URL in browser
+
+Router --> Framework --
+
+ref over Framework, State : rebuild
+@enduml
+
+' -----------------------------------------------------------------------------
