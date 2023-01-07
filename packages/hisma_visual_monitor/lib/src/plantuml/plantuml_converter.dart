@@ -11,7 +11,6 @@ import '../visual_monitor/dto/s2c/toggle_expand_dto.dart';
 import 'theme.dart';
 
 const _up = '(^)';
-// TODO: Add (++) and (--) that will add/remove all machines/states from shown.
 const _open = '(+)';
 const _close = '(-)';
 
