@@ -17,7 +17,7 @@ final m1 = StateMachine<S, E, T>(
   name: 'm1 machine 机器 機械 기계 машина something &&% #^',
   initialStateId: S.s1,
   states: {
-    S.en1: EntryPoint(S.s2),
+    S.en1: EntryPoint([T.t1]),
     S.s1: State(
       etm: {
         E.e1: [T.t1],
@@ -117,7 +117,7 @@ final m1s1 = StateMachine<SS, SE, ST>(
   name: 'm1s1',
   initialStateId: SS.s1,
   states: {
-    SS.en1: EntryPoint(SS.s2),
+    SS.en1: EntryPoint([ST.t1]),
     SS.s1: State(
       etm: {
         SE.e1: [ST.t3],
@@ -243,7 +243,7 @@ final m1s1s1 = StateMachine<SSS0, SSE0, SST0>(
   name: 'm1s1s1',
   initialStateId: SSS0.s3,
   states: {
-    SSS0.en1: EntryPoint(SSS0.s1),
+    SSS0.en1: EntryPoint([SST0.t3]),
     SSS0.s1: State(
       etm: {
         SSE0.e1: [SST0.t1],
@@ -288,7 +288,7 @@ final m1s2s1 = StateMachine<SSS1, SSE1, SST1>(
   name: 'm1s2s1',
   initialStateId: SSS1.s1,
   states: {
-    SSS1.en1: EntryPoint(SSS1.s2),
+    SSS1.en1: EntryPoint([SST1.t1]),
     SSS1.s1: State(
       etm: {
         SSE1.e1: [SST1.t1],
@@ -330,7 +330,7 @@ final m1s2s2 = StateMachine<SSS2, SSE2, SST2>(
   name: 'm1s2s2',
   initialStateId: SSS2.s1,
   states: {
-    SSS2.en1: EntryPoint(SSS2.s2),
+    SSS2.en1: EntryPoint([SST2.t1]),
     SSS2.s1: State(
       etm: {
         SSE2.e1: [SST2.t4],
@@ -374,7 +374,7 @@ final m1s2s3 = StateMachine<SSS3, SSE3, SST3>(
   name: 'm1s2s3',
   initialStateId: SSS3.s1,
   states: {
-    SSS3.en1: EntryPoint(SSS3.s3),
+    SSS3.en1: EntryPoint([SST3.t2]),
     SSS3.s1: State(
       etm: {
         SSE3.e1: [SST3.t2],

@@ -16,7 +16,7 @@ final sm = StateMachine<S, E, T>(
   name: 'm1',
   initialStateId: S.s1,
   states: {
-    S.en1: EntryPoint(S.s1),
+    S.en1: EntryPoint([T.t2]),
     S.s1: State(
       etm: {
         E.e1: [T.t1],
@@ -61,7 +61,7 @@ final ssm = StateMachine<SS, SE, ST>(
   name: 'cm1',
   initialStateId: SS.s1,
   states: {
-    SS.en1: EntryPoint(SS.s2),
+    SS.en1: EntryPoint([ST.t1]),
     SS.s1: State(
       etm: {
         SE.e1: [ST.t1],

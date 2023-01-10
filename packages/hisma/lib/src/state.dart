@@ -121,8 +121,8 @@ abstract class BaseEntryPoint<E, T, S> extends PseudoState<E, T, S> {}
 /// Enclosing region in parent machine will map a [Trigger] to
 /// the EntryPoint in the child machine.
 class EntryPoint<E, T, S> extends BaseEntryPoint<E, T, S> {
-  EntryPoint(this.to);
-  final S to;
+  EntryPoint(this.transitionIds);
+  final List<T> transitionIds;
 }
 
 /// Enclosing region in the parent machine will map this ExitPoint

@@ -167,7 +167,7 @@ final sm = StateMachine<S, E, T>(
                             SSE.sse2: [SST.t2],
                           },
                         ),
-                        SSS.en1: EntryPoint(SSS.sss1),
+                        SSS.en1: EntryPoint([SST.t2]),
                       },
                     ),
                     entryConnectors: {

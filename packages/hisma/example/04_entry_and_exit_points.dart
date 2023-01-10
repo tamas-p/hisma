@@ -20,8 +20,8 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
       events: E.values,
       initialStateId: S.grid,
       states: {
-        S.epGrid: EntryPoint(S.grid),
-        S.epBattery: EntryPoint(S.battery),
+        S.epGrid: EntryPoint([T.toGrid, T.toBattery]),
+        S.epBattery: EntryPoint([T.toBattery]),
         S.exDown: ExitPoint(),
         S.grid: State(
           etm: {
@@ -45,7 +45,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
         ),
       },
       transitions: {
-        T.toBattery: Transition(to: S.battery),
+        T.toBattery: Transition(to: S.battery, priority: 100),
         T.toGrid: Transition(to: S.grid),
         T.toDown: Transition(to: S.exDown),
       },
@@ -141,5 +141,5 @@ Future<void> main() async {
   ];
 
   await lightMachine.start();
-  play();
+  // play();
 }

@@ -210,19 +210,15 @@ class StateMachine<S, E, T> {
           );
         }
       } else if (state is EntryPoint<E, T, S>) {
-        final targetState = state.to;
-        final trigger = Trigger<S, E, T>.entryPoint(source: entryPointId);
-        await _enterState(
-          trigger: trigger,
-          stateId: targetState,
-          data: data,
-          historyFlowDown: false,
-        );
+        final transitionWithId = _selectTransition(state.transitionIds);
+        assert(transitionWithId != null);
+        if (transitionWithId == null) return;
+        await _executeTransition(transitionWithId: transitionWithId);
       } else {
         assert(
           false,
           'State defined by $entryPointId entryPointId is neither '
-          'HistoryEntrypoint nor EntryPoint',
+          'HistoryEntrypoint nor EntryPoint.',
         );
       }
     } else if (history != null) {
@@ -297,6 +293,16 @@ Changed: $changed
     if (_activeStateId == null) return false;
 
     final transitionWithId = _getTransitionByEvent(eventId);
+    return _executeTransition(
+      transitionWithId: transitionWithId,
+      eventId: eventId,
+    );
+  }
+
+  Future<bool> _executeTransition({
+    required _TransitionWithId<S, T>? transitionWithId,
+    E? eventId,
+  }) async {
     if (transitionWithId == null) return false;
 
     await transitionWithId.transition.onAction?.action.call(this, data);
@@ -310,8 +316,12 @@ Changed: $changed
     // was not already changed by some other asynchronous operation.
     // This bellow only manages if the machine was stopped in another async
     // operation.
+    //
+    // Null eventId means that method is invoked from machine start()
+    // when EntryPoint is used. In this case machine is not yet started.
+    //
     // ignore: invariant_booleans
-    if (_activeStateId == null) {
+    if (eventId != null && _activeStateId == null) {
       _log.fine('Another asynchronous operation stopped our machine, '
           'we stop the transition.');
       return false;
@@ -591,10 +601,7 @@ Changed: $changed
     }
   }
 
-  /// Calculates which transition shall be used for the eventId parameter
-  /// by looping for the list of transitions that are defined for the
-  /// active state in case of the event identified by eventId and selecting the
-  /// one with highest priority whose guard condition (or lack of it) allows it.
+  /// Calculates which transition shall be used for the eventId parameter.
   _TransitionWithId<S, T>? _getTransitionByEvent(E eventId) {
     final state = states[activeStateId];
     assert(
@@ -615,6 +622,13 @@ Changed: $changed
     );
     if (transitionIds.isEmpty) return null;
 
+    return _selectTransition(transitionIds);
+  }
+
+  /// Calculates which transition shall be used from the list of transitions
+  /// by looping though them and selecting the one with highest priority whose
+  /// guard condition (or lack of it) allows it.
+  _TransitionWithId<S, T>? _selectTransition(List<T> transitionIds) {
     _TransitionWithId<S, T>? selectedTransitionWithId;
     for (final transitionId in transitionIds) {
       final transition = transitions[transitionId];
@@ -632,6 +646,7 @@ Changed: $changed
           transition.lastTime != null &&
           now.difference(transition.lastTime!) < transition.minInterval!) {
         _log.info('Throwing hismaIntervalException.');
+        // TODO: Shall we drop or simply continue (selecting the transition)?
         throw HismaIntervalException(
           reason: 'Too little time passed since last transition: '
               '${now.difference(transition.lastTime!)}',

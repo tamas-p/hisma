@@ -506,15 +506,19 @@ class MachineConverter {
         active ? theme.activeTransitionColor : theme.passiveTransitionColor;
     sb.write('$source -[#$color]${_getTransitionPrefix()}> $target : ');
 
-    if (active) {
-      final fireMessageDTO = FireMessageDTO(
-        event: '$event',
-        machine: machine.name,
-      );
-      sb.write(_getOnClickHack(message: fireMessageDTO, label: '$event'));
-    } else {
-      sb.write(event);
+    // If event is null we are handling transitions from an EntryPoint.
+    if (event != null) {
+      if (active) {
+        final fireMessageDTO = FireMessageDTO(
+          event: '$event',
+          machine: machine.name,
+        );
+        sb.write(_getOnClickHack(message: fireMessageDTO, label: '$event'));
+      } else {
+        sb.write(event);
+      }
     }
+
     sb.write('\\n:$transitionId');
 
     final guard = transition.guard;
@@ -676,41 +680,68 @@ class MachineConverter {
 
   /// Handling EntryPoint together with its internal transition.
   /// These must be inserted after ESM-s are processed as PlantUML only
-  /// handles entry points correctly if the are used after the state where
-  /// it connects to is already defined.
+  /// handles entry points correctly if they are used after the state
+  /// where it connects to is already defined.
   void _writeEntryPointInternalTransitions(
     dynamic sourceStateId,
     EntryPoint<dynamic, dynamic, dynamic> entryPoint,
   ) {
     final sourceStateIdPrefixed = '$prefix.$sourceStateId';
 
+    for (final transitionId in entryPoint.transitionIds) {
+      final transition = machine.transitions[transitionId];
+      assert(transition != null);
+      if (transition == null) continue;
+      _drawEntryPointTransition(
+        transition: transition,
+        transitionId: transitionId,
+        sourceStateId: sourceStateId,
+        sourceStateIdPrefixed: sourceStateIdPrefixed,
+      );
+    }
+  }
+
+  void _drawEntryPointTransition({
+    required Transition<dynamic> transition,
+    required dynamic transitionId,
+    required dynamic sourceStateId,
+    required String sourceStateIdPrefixed,
+  }) {
     // First we check each region of the target state defined by the
     // EntryPoint if their entryConnector map includes a matching
     // entrypoint id.
-    final toState = machine.stateAt(entryPoint.to);
+    final toState = machine.stateAt(transition.to);
     final trigger =
         Trigger<dynamic, dynamic, dynamic>.entryPoint(source: sourceStateId);
     var handled = false;
 
     final prefixedEpToStateId =
-        _getPrefixed(prefix: prefix, id: '${entryPoint.to}');
+        _getPrefixed(prefix: prefix, id: '${transition.to}');
     if (_shallWeShowRegions(_getStateName(prefixedEpToStateId))) {
       for (var i = 0; i < (toState?.regions.length ?? 0); i++) {
         final region = toState?.regions[i];
         final toEntryPointId = region?.entryConnectors?[trigger];
         if (toEntryPointId != null) {
           final toConnector = _getEntryConnectorId(
-            statePrefix: '$prefix.${entryPoint.to}',
+            statePrefix: '$prefix.${transition.to}',
             trigger: trigger,
           );
           // First draw transition from source state to entry connector.
+          // '$sourceStateIdPrefixed -${_getTransitionPrefix()}> $toConnector';
           _cWriteln(
-            '$sourceStateIdPrefixed -${_getTransitionPrefix()}> $toConnector',
+            _getTransition(
+              stateId: sourceStateId,
+              source: sourceStateIdPrefixed,
+              target: toConnector,
+              transitionId: transitionId,
+              transition: transition,
+              event: null,
+            ),
           );
 
           final toSubMachineEntryPoint = _getPrefixedId(
             prefix: prefix,
-            parentId: entryPoint.to,
+            parentId: transition.to,
             regionNumber: i,
             childId: toEntryPointId,
           );
@@ -728,7 +759,14 @@ class MachineConverter {
     // we connect to the state defined in the entry-point.
     if (!handled) {
       _cWriteln(
-        '$sourceStateIdPrefixed -${_getTransitionPrefix()}> $prefix.${entryPoint.to}',
+        _getTransition(
+          stateId: sourceStateId,
+          source: sourceStateIdPrefixed,
+          target: '$prefix.${transition.to}',
+          transitionId: transitionId,
+          transition: transition,
+          event: null,
+        ),
       );
     }
   }
@@ -793,7 +831,7 @@ final sm = StateMachine<St, Ev, Tr>(
   name: 'm1',
   initialStateId: St.s1,
   states: {
-    St.en1: EntryPoint(St.s2),
+    St.en1: EntryPoint([Tr.t1]),
     St.s1: State(
       etm: {
         Ev.e1: [Tr.t1],
@@ -844,7 +882,7 @@ final ssm1 = StateMachine<SS1, SE1, ST1>(
   name: 'cm1',
   initialStateId: SS1.s1,
   states: {
-    SS1.en1: EntryPoint(SS1.s1),
+    SS1.en1: EntryPoint([ST1.t2]),
     SS1.s1: State(
       etm: {
         SE1.e1: [ST1.t1]
@@ -878,7 +916,7 @@ final ssm2 = StateMachine<SS2, SE2, ST2>(
   name: 'cm2',
   initialStateId: SS2.s1,
   states: {
-    SS2.en1: EntryPoint(SS2.s1),
+    SS2.en1: EntryPoint([ST2.t2]),
     SS2.s1: State(
       etm: {
         SE2.e1: [ST2.t1]
