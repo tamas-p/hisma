@@ -395,9 +395,9 @@ Changed: $changed
   /// TODO: Add StateMachine.name to the activeStateId.
   List<dynamic> getActiveStateRecursive() {
     final result = <dynamic>[];
-    result.add(_activeStateId);
 
     if (_activeStateId != null) {
+      result.add(_activeStateId);
       final state = states[_activeStateId];
       assert(
         state != null,
@@ -408,7 +408,10 @@ Changed: $changed
         final regions = <dynamic>[];
 
         for (final region in state.regions) {
-          regions.add(region.machine.getActiveStateRecursive());
+          final as = region.machine.getActiveStateRecursive();
+          if (as.isNotEmpty) {
+            regions.add(region.machine.getActiveStateRecursive());
+          }
         }
         if (regions.isNotEmpty) result.addAll(regions);
       }
