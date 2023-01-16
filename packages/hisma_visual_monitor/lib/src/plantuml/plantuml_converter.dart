@@ -206,6 +206,12 @@ class MachineConverter {
       _writeln();
     });
 
+    _cWriteln("'FinalStates");
+    machine.states.forEach((stateId, state) {
+      if (state is FinalState) _writeStateWithStereotype(stateId, 'end');
+      _writeln();
+    });
+
     _cWriteln("'EntryPoint transitions");
     machine.states.forEach((stateId, state) {
       if (state is EntryPoint) {
@@ -222,12 +228,6 @@ class MachineConverter {
       });
       _writeln();
     }
-
-    _cWriteln("'FinalStates");
-    machine.states.forEach((stateId, state) {
-      if (state is FinalState) _writeStateWithStereotype(stateId, 'end');
-      _writeln();
-    });
 
     // Writing transitions. It must come at the end as PlantUML needs all
     // states defined before we define transitions between them.
@@ -711,8 +711,11 @@ class MachineConverter {
     // EntryPoint if their entryConnector map includes a matching
     // entrypoint id.
     final toState = machine.stateAt(transition.to);
-    final trigger =
-        Trigger<dynamic, dynamic, dynamic>.entryPoint(source: sourceStateId);
+    final trigger = Trigger<dynamic, dynamic, dynamic>(
+      source: sourceStateId,
+      event: null,
+      transition: transitionId,
+    );
     var handled = false;
 
     final prefixedEpToStateId =

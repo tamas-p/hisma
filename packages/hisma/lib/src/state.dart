@@ -16,6 +16,7 @@ RegularState <|-- State
 BaseState <|-- PseudoState
 PseudoState <|-- BaseEntryPoint
 PseudoState <|-- ExitPoint
+PseudoState <|-- FinalState
 BaseEntryPoint <|-- EntryPoint
 BaseEntryPoint <|-- HistoryEntryPoint
 @enduml

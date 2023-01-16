@@ -112,12 +112,9 @@ class StateMachine<S, E, T> {
 
   //----------------------------------------------------------------------------
 
+  /// Convenience method to give back either a State or null.
   State<E, T, S>? stateAt(S stateId) {
     final state = states[stateId];
-    assert(
-      state is State<E, T, S>,
-      'Type os state $state with stateId $stateId is not State<E, T, S>.',
-    );
     return state is State<E, T, S> ? state : null;
   }
 
@@ -155,24 +152,6 @@ class StateMachine<S, E, T> {
   }
 
   //----------------------------------------------------------------------------
-
-  // Future<void> startOld({S? entryPointId, dynamic data}) async {
-  //   assert(_activeStateId == null, 'Machine is already started.');
-  //   if (_activeStateId != null) return;
-
-  //   if (history != null && _historyStateId != null) {
-  //     await _enterState(stateId: _historyStateId!, data: data);
-  //   } else if (entryPointId == null) {
-  //     await _enterState(stateId: initialStateId, data: data);
-  //   } else {
-  //     final targetState = _getTargetState(entryPointId);
-  //     if (targetState == null) return;
-  //     final trigger = Trigger<S, E, T>.entryPoint(source: entryPointId);
-  //     await _enterState(trigger: trigger, stateId: targetState, data: data);
-  //   }
-
-  //   // await pushStateMachine();
-  // }
 
   Future<void> start({
     S? entryPointId,
@@ -213,6 +192,7 @@ class StateMachine<S, E, T> {
         final transitionWithId = _selectTransition(state.transitionIds);
         assert(transitionWithId != null);
         if (transitionWithId == null) return;
+        _activeStateId = entryPointId;
         await _executeTransition(transitionWithId: transitionWithId);
       } else {
         assert(
@@ -512,11 +492,10 @@ Changed: $changed
     );
     if (state == null) return;
     assert(
-      state is State<E, T, S>,
-      'state is not State but ${state.runtimeType}',
+      state is State<E, T, S> || state is EntryPoint,
+      'state is not State or EntryPoint but ${state.runtimeType}',
     );
     if (state is! State<E, T, S>) return;
-
     await state.onExit?.action.call(this, data);
     await _exitRegions(state, data);
   }

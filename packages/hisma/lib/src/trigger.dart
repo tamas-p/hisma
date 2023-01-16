@@ -8,12 +8,6 @@ class Trigger<S, E, T> {
     required this.transition,
   });
 
-  factory Trigger.entryPoint({required S source}) => Trigger(
-        source: source,
-        event: null,
-        transition: null,
-      );
-
   final S? source;
   final E? event;
   final T? transition;
