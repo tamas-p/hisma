@@ -1,3 +1,14 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **FIX**: Inactive machine shall not be shown by getActiveStateRecursive().
+ - **FIX**: EntryPoint to EntryPoint.
+ - **DOCS**: Changed EntryPoint/ExitPoint documentation according to [#4](https://github.com/tamas-p/hisma/issues/4).
+ - **DOCS**: Added example for EntryPoint transitions.
+ - **BREAKING** **FEAT**: Guard method got machine & data parameters [#13](https://github.com/tamas-p/hisma/issues/13).
+ - **BREAKING** **FEAT**: Added transitions to EntryPoints per [#4](https://github.com/tamas-p/hisma/issues/4).
+
 ## 0.1.1+2
 
  - **DOCS**: Fixed relative links to other packages.

@@ -1,3 +1,7 @@
+## 0.1.1+4
+
+ - **DOCS**: Added plantuml diagrams created when studied Flutter routing.
+
 ## 0.1.1+3
 
  - **FIX**: Changed to use super-initializer parameters.

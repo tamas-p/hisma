@@ -1,3 +1,9 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: Guard method got machine & data parameters [#13](https://github.com/tamas-p/hisma/issues/13).
+
 ## 0.1.1+3
 
  - Update a dependency to the latest release.
