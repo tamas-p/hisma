@@ -299,36 +299,52 @@ Let's summarize what we achieved so far:
 
 ### Entry and exit points
 
-What if in certain cases, instead of activating the state defined by the initialStateId of these machines, we want some other state of those to be activated? Also, what if from inside these machines we want some events to trigger events in the parent machine? Entry and exit points are there to help with these use cases. We optionally declare them for the Region as mappings between the parent and the child machines as we will see them in detail.
+What if, in certain cases, instead of activating the state defined by the initialStateId of these machines, we want another state to be activated? Also, what if, from inside these machines, we want some events to trigger events in the parent machine? Entry and exit points are there to help with these use cases. We optionally declare them for the Region as mappings between the parent and the child machines as we will see them in detail.
 
-Entry and exit points can be also viewed as the interface for the state machine.
+> **Note**
+> Entry and exit points can also be viewed as the **interface** for the state machine
+> as they can be connected to triggers and event in the parent machine.
 
 #### Entry connector and EntryPoint
 
-Entry connector mapping define that for a certain trigger (defined as source state id, transition id and event id trio of the parent state machine) which EntryPoint (that is a kind of state, an entry point pseudo state) in the state machine of the region (child machine) needs to be used to define which State shall be activated.
+Entry connector mapping define that for a certain trigger (defined as source state id, transition id and event id trio of the parent state machine) which EntryPoint (that is a also a kind of state: an entry point pseudo state) in the state machine of the region (child machine) needs to be used.
+When this EntryPoint is selected the child state machine will be in this state momentarily to select the transition to be used from a defined list of Transition objects of the EntryPoint.
 
-When we design our state machine we define these entry points with a constructor argument that defines the target state to be activated (instead of the initialStateId of the state machine) when this entry point is activated.
+When we design our state machine we define these Transition objects in the constructor of the EntryPoint objects. These Transition objects then can take the machine to
 
-For example if we want the S.b state to be activated if our entry point is activated we define it like this:
+- a regular state
+  - which in turn can also be used to map to an EntryPoint of a Region of this state
+    (its child) if this is what we want.
+- an ExitPoint
+- a Final State
+
+For example if we want the `T.toB` Transition to be used if our entry point is activated we define it like this:
 
 ```dart
-EntryPoint(SC.b),
+EntryPoint([T.toB]),
 ```
 
-Later when we integrate this (child) state machine into a (parent) state machine we can define that what Trigger in the parent machine is triggering activation of this entry point we defined in the child state machine. We do this inside the entryPoints attribute of the Region enclosing our child machine:
+Optionally you can give multiple transitions in the list and in that case the same transition selection process is in place that [we learned earlier](#light-machine) for the regular State:
+
+```dart
+EntryPoint([T.toB, T.toC]),
+```
+
+Later when we integrate this (child) state machine into a (parent) state machine we can define that what Trigger in the parent machine is triggering activation of this entry point we defined in the child state machine. We do this inside the `entryConnectors` attribute of the Region enclosing our child machine:
 
 ```dart
 Region(
   machine: childMachine,
   entryConnectors: {
-    Trigger(source: SP.first, event: EP.e1, transition: TP.toSecond): SC.b,
+    Trigger(source: SP.first, event: EP.e1, transition: TP.toSecond): SC.ep1,
   },
 ),
 ```
 
 where SP, EP and TP are defined for the parent state machine and SC is defined for the child state machine.
 
-> Note: currently all three of the Trigger must be defined. In future versions it might ne optional to define all three.
+> **Note**
+> Currently all three of the Trigger must be defined. In future versions it might be optional to define all three.
 
 #### Exit connector and ExitPoint
 
@@ -358,7 +374,7 @@ Let's create a new machine that will "power" our lightMachine: the powerMachine.
 - `S.grid` indicating that the power is coming from the grid.
 - `S.battery` indicating that we are on battery power.
 
-The power machine can alter between these states on the `E.change` event, but even more importantly for our example it is also prepared for customized integration into a parent state machine:
+The power machine can alter between these states on the `E.change` event, but even more importantly for our example, it is also prepared for customized integration into a parent state machine:
 
 - `E.epGrid` and `E.epBattery` entry points are defined to let parent explicitly define how the powerMachine shall be started: in grid or in battery mode.
 - `E.exDown` exit point let parent machine to manage the power down situation in the parent machine: moving the parent state machine to the `LMS.off` state.
@@ -379,8 +395,8 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
       events: E.values,
       initialStateId: S.grid,
       states: {
-        S.epGrid: EntryPoint(S.grid),
-        S.epBattery: EntryPoint(S.battery),
+        S.epGrid: EntryPoint([T.toGrid]),
+        S.epBattery: EntryPoint([T.toBattery]),
         S.exDown: ExitPoint(),
         S.grid: State(
           etm: {
@@ -404,7 +420,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
         ),
       },
       transitions: {
-        T.toBattery: Transition(to: S.battery),
+        T.toBattery: Transition(to: S.battery, priority: 100),
         T.toGrid: Transition(to: S.grid),
         T.toDown: Transition(to: S.exDown),
       },
@@ -465,7 +481,8 @@ final lightMachine = createLightMachine(
       machine: createPowerMachine(),
       entryConnectors: {
         Trigger(
-          source: LMS.off, event: LME.turnOnGrid,
+          source: LMS.off,
+          event: LME.turnOnGrid,
           transition: LMT.toOn,
         ): S.epGrid,
         Trigger(
@@ -482,8 +499,9 @@ final lightMachine = createLightMachine(
 
 If we monitor this lightMachine we just have created in `visma` it looks similar to the image bellow. Pay attention to that our
 
-- Triggers are indicated with a square on the state that has the region inside.
+- Entry connector definitions are indicated with an empty square on the state that has the region inside.
 - Round icons are indicating the entry points to the child machine.
+- Exit connector definitions are indicated with filled squares on on the state that has the region inside.
 - Round icon with X in it indicates the exit point of the child machine
 - Yellow curves are indicating the entry and exit connectors that are mapping between
   - parent Triggers and child entry points

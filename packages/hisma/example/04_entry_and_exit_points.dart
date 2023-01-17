@@ -20,7 +20,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
       events: E.values,
       initialStateId: S.grid,
       states: {
-        S.epGrid: EntryPoint([T.toGrid, T.toBattery]),
+        S.epGrid: EntryPoint([T.toGrid]),
         S.epBattery: EntryPoint([T.toBattery]),
         S.exDown: ExitPoint(),
         S.grid: State(
