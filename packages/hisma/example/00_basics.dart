@@ -58,7 +58,7 @@ final guardsMachine = StateMachine(
       to: S.work,
       guard: Guard(
         description: 'only if inside of working hours',
-        condition: () {
+        condition: (machine, data) async {
           final now = DateTime.now();
           if (now.hour >= 9 && now.hour <= 17) {
             return true;
@@ -72,7 +72,7 @@ final guardsMachine = StateMachine(
       to: S.finish,
       guard: Guard(
         description: 'only if outside of working hours',
-        condition: () {
+        condition: (machine, data) async {
           final now = DateTime.now();
           if (now.hour < 9 || now.hour > 17) {
             return true;

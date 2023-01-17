@@ -111,7 +111,10 @@ final sm = StateMachine<S, E, T>(
     T.t1: Transition(to: S.s2),
     T.t3: Transition(
       to: S.s2,
-      guard: Guard(description: 'always', condition: () => true),
+      guard: Guard(
+        description: 'always',
+        condition: (machine, data) async => true,
+      ),
       priority: 1,
     ),
     T.t2: Transition(to: S.s1),

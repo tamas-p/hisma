@@ -189,7 +189,7 @@ class StateMachine<S, E, T> {
           );
         }
       } else if (state is EntryPoint<E, T, S>) {
-        final transitionWithId = _selectTransition(state.transitionIds);
+        final transitionWithId = await _selectTransition(state.transitionIds);
         assert(transitionWithId != null);
         if (transitionWithId == null) return;
         _activeStateId = entryPointId;
@@ -272,7 +272,7 @@ Changed: $changed
     assert(_activeStateId != null, 'Machine has not been started.');
     if (_activeStateId == null) return false;
 
-    final transitionWithId = _getTransitionByEvent(eventId);
+    final transitionWithId = await _getTransitionByEvent(eventId);
     return _executeTransition(
       transitionWithId: transitionWithId,
       eventId: eventId,
@@ -584,7 +584,7 @@ Changed: $changed
   }
 
   /// Calculates which transition shall be used for the eventId parameter.
-  _TransitionWithId<S, T>? _getTransitionByEvent(E eventId) {
+  Future<_TransitionWithId<S, T>?> _getTransitionByEvent(E eventId) async {
     final state = states[activeStateId];
     assert(
       state is State<E, T, S>,
@@ -610,7 +610,9 @@ Changed: $changed
   /// Calculates which transition shall be used from the list of transitions
   /// by looping though them and selecting the one with highest priority whose
   /// guard condition (or lack of it) allows it.
-  _TransitionWithId<S, T>? _selectTransition(List<T> transitionIds) {
+  Future<_TransitionWithId<S, T>?> _selectTransition(
+    List<T> transitionIds,
+  ) async {
     _TransitionWithId<S, T>? selectedTransitionWithId;
     for (final transitionId in transitionIds) {
       final transition = transitions[transitionId];
@@ -620,7 +622,8 @@ Changed: $changed
       );
       if (transition == null) continue;
 
-      final guardAllows = transition.guard?.condition.call() ?? true;
+      final guardAllows =
+          await transition.guard?.condition.call(this, data) ?? true;
       if (!guardAllows) continue;
 
       final now = DateTime.now();

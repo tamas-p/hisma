@@ -1,14 +1,21 @@
+import '../hisma.dart';
+
+typedef GuardFunction = Future<bool> Function(
+  StateMachine<dynamic, dynamic, dynamic> machine,
+  dynamic parameter,
+);
+
 class Guard {
   Guard({
     required this.condition,
     required this.description,
   });
 
-  final bool Function() condition;
+  final GuardFunction condition;
   final String description;
 
   Guard copyWith({
-    bool Function()? condition,
+    GuardFunction? condition,
     String? description,
   }) {
     return Guard(

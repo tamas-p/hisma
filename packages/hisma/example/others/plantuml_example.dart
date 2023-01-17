@@ -62,12 +62,15 @@ final m1 = StateMachine<S, E, T>(
       to: S.s2,
       guard: Guard(
         description: 'always',
-        condition: () => true,
+        condition: (machine, data) async => true,
       ),
     ),
     T.t2: Transition(
       to: S.s1,
-      guard: Guard(description: 'a < b', condition: () => true),
+      guard: Guard(
+        description: 'a < b',
+        condition: (machine, data) async => true,
+      ),
       // onAction: Action(
       //   description: 'do that',
       //   action: (state) {},
@@ -77,14 +80,14 @@ final m1 = StateMachine<S, E, T>(
       to: S.s2,
       guard: Guard(
         description: 'only if empty',
-        condition: () => true,
+        condition: (machine, data) async => true,
       ),
     ),
     T.t4: Transition(
       to: S.s3,
       guard: Guard(
         description: 'i == 10',
-        condition: () {
+        condition: (machine, data) async {
           var i = 10;
           i++;
           i--;
@@ -97,7 +100,7 @@ final m1 = StateMachine<S, E, T>(
       to: S.s3,
       priority: 12,
       guard: Guard(
-        condition: () => true,
+        condition: (machine, data) async => true,
         description: 'just for test',
       ),
     ),

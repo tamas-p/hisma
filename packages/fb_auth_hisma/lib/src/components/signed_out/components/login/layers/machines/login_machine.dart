@@ -43,7 +43,7 @@ StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
           to: SLiM.emailSigningIn,
           guard: Guard(
             description: 'Only if password is not empty.',
-            condition: () {
+            condition: (machine, dynamic data) async {
               return true;
             },
           ),
