@@ -15,15 +15,15 @@ and the Flutter guide for
 
 Hisma provides a declarative hierarchical state machine implementation for [Dart](https://dart.dev/) and [Flutter](https://flutter.dev/) that loosely follows the [UML](https://www.omg.org/spec/UML/) State Machine specification that is in turn based on [Harel's statechart](https://en.wikipedia.org/wiki/State_diagram#Harel_statechart). This is the core package of the hisma packages collection:
 
-| Package name                                       | Description                                                                                        |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| hisma                                              | This package. It is the core package of Hisma. You can create hierarchical state machines with it. |
-| [hisma_extra](../hisma_extra/)                     | Extra classes on top of Hisma to simplify Hisma usage.                                             |
-| [hisma_console_monitor](../hisma_console_monitor/) | Monitors state machine status on console.                                                          |
-| [hisma_visual_monitor](../hisma_visual_monitor/)   | Monitors state machine status in a web browser.                                                    |
-| [visma](../visma/)                                 | Visualize state machine status reported by hisma_visual_monitor.                                   |
-| [hisma_flutter](../hisma_flutter/)                 | Router generator that turns a state machine into a Flutter routing engine.                         |
-| [fb_auth_hisma](../fb_auth_hisma/)                 | Firebase authentication state machine with hisma                                                   |
+| Package on pub.dev                                                      | GitHub                            | Description                                                                                        |
+| ----------------------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| hisma                                                                   | [repo](.)                         | This package. It is the core package of Hisma. You can create hierarchical state machines with it. |
+| [hisma_extra](https://pub.dev/packages/hisma_extra)                     | [repo](../hisma_extra/)           | Extra classes on top of Hisma to simplify Hisma usage.                                             |
+| [hisma_console_monitor](https://pub.dev/packages/hisma_console_monitor) | [repo](../hisma_console_monitor/) | Monitors state machine status on console.                                                          |
+| [hisma_visual_monitor](https://pub.dev/packages/hisma_visual_monitor)   | [repo](../hisma_visual_monitor/)  | Reports state machine status to visma.                                                             |
+| [visma](https://pub.dev/packages/visma)                                 | [repo](../visma/)                 | Tool that visualizes state machine status reported by hisma_visual_monitor.                        |
+| [hisma_flutter](https://pub.dev/packages/hisma_flutter)                 | [repo](../hisma_flutter/)         | Router generator that turns a state machine into a Flutter routing engine.                         |
+| [fb_auth_hisma](https://pub.dev/packages/fb_auth_hisma)                 | [repo](../fb_auth_hisma/)         | Firebase authentication state machine with hisma                                                   |
 
 ## Features
 
