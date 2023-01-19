@@ -33,18 +33,21 @@ See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_au
 
 ### Feature overview
 
-- basics
-  - states
-    - actions
-  - transactions
-    - actions
-- hierarchy
-- connecting state machines through hierarchy
+- Basics
+  - States
+    - Actions
+  - Transactions
+    - Guards
+    - Actions
+- Hierarchy
+  - Regions
+- Connecting state machines through hierarchy
   - EntryPoints and entryConnectors
   - ExitPoints and exitConnectors
-- history
-  - shallow history
-  - deep history
+- History
+  - Shallow history
+  - Deep history
+- Monitoring
 
 ## Getting started
 
