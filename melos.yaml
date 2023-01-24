@@ -33,15 +33,27 @@ scripts:
     description: Run all Dart & Flutter tests in this monorepo for all packages.
 
   test:dart:
-    run: melos exec -c 1 "dart test"
+    run: melos exec -c 1 "dart pub global run coverage:test_with_coverage"
     description: Run Dart tests for a specific package in this monorepo.
     select-package:
       flutter: false
       dir-exists: test
 
   test:flutter:
-    run: melos exec --dir-exists="test" -c 1 "flutter test"
+    run: melos exec --dir-exists="test" -c 1 "flutter test --coverage"
     description: Run Flutter tests for a specific package in this monorepo.
     select-package:
       flutter: true
       dir-exists: test
+
+  lcov:genhtml:
+    run: melos exec -c 1 "genhtml ./coverage/lcov.info -o coverage/html/"
+    description: Generate code coverage HTML report.
+    select-package:
+      dir-exists: coverage
+
+  lcov:list:
+    run: melos exec -c 1 "lcov --list ./coverage/lcov.info"
+    description: Generate code coverage report.
+    select-package:
+      dir-exists: coverage
