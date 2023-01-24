@@ -5,6 +5,9 @@
 .dart_tool/
 .packages
 
+# Code coverage related directory.
+coverage/
+
 # Conventional directory for build outputs.
 build/
 
