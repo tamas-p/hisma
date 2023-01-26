@@ -27,6 +27,7 @@ class StateMachine<S, E, T> {
     required this.transitions,
     this.events = const [],
     this.history,
+    this.data,
   }) {
     setIt();
   }
@@ -129,7 +130,7 @@ class StateMachine<S, E, T> {
 
   /// This callback is invoked when transitioning to an [ExitPoint].
   /// It is implemented by the enclosing [Region].
-  /// We need to bubble the exitPointId (and the data coming with the
+  /// We need to bubble the exitPointId (and the arg coming with the
   /// triggering event) up to the enclosing Region where exitConnectors will
   /// define the event that must be bubble up to the parent state and then
   /// state machine to fire with this event.
@@ -155,7 +156,7 @@ class StateMachine<S, E, T> {
 
   Future<void> start({
     S? entryPointId,
-    dynamic data,
+    dynamic arg,
     bool historyFlowDown = false,
   }) async {
     assert(_activeStateId == null, 'Machine ($name) is already started.');
@@ -164,7 +165,7 @@ class StateMachine<S, E, T> {
     if (historyFlowDown) {
       await _enterState(
         stateId: _historyStateId ?? initialStateId,
-        data: data,
+        arg: arg,
         historyFlowDown: true,
       );
     } else if (entryPointId != null) {
@@ -178,22 +179,23 @@ class StateMachine<S, E, T> {
         if (_historyStateId != null) {
           await _enterState(
             stateId: _historyStateId as S,
-            data: data,
+            arg: arg,
             historyFlowDown: state.level == HistoryLevel.deep,
           );
         } else {
           await _enterState(
             stateId: initialStateId,
-            data: data,
+            arg: arg,
             historyFlowDown: false,
           );
         }
       } else if (state is EntryPoint<E, T, S>) {
-        final transitionWithId = await _selectTransition(state.transitionIds);
+        final transitionWithId =
+            await _selectTransition(state.transitionIds, arg);
         assert(transitionWithId != null);
         if (transitionWithId == null) return;
         _activeStateId = entryPointId;
-        await _executeTransition(transitionWithId: transitionWithId);
+        await _executeTransition(transitionWithId: transitionWithId, arg: arg);
       } else {
         assert(
           false,
@@ -207,14 +209,14 @@ class StateMachine<S, E, T> {
       // historyTriggered = true;
       await _enterState(
         stateId: _historyStateId ?? initialStateId,
-        data: data,
+        arg: arg,
         historyFlowDown: history == HistoryLevel.deep || historyFlowDown,
       );
     } else {
       // As the last resort we start the machine with the initial state.
       await _enterState(
         stateId: initialStateId,
-        data: data,
+        arg: arg,
         historyFlowDown: false,
       );
     }
@@ -233,14 +235,14 @@ class StateMachine<S, E, T> {
   /// to false to avoid notifying parent state machines about a state change as
   /// the original external fire will do that and this way we avoid sending
   /// multiple notifications for parent state machine about a state change.
-  Future<void> fire(E eventId, {dynamic data, bool external = true}) async {
+  Future<void> fire(E eventId, {dynamic arg, bool external = true}) async {
     _log.info('FIRE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     _log.info(
-      'FIRE >>> machine: $name, event: $eventId, data: $data, external: $external',
+      'FIRE >>> machine: $name, event: $eventId, arg: $arg, external: $external',
     );
-    final changed = await _internalFire(eventId, data: data);
+    final changed = await _internalFire(eventId, arg: arg);
     _log.info(
-      'FIRE <<< machine: $name, event: $eventId, data: $data, external: $external',
+      'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: $external',
     );
     _log.info('FIRE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     _log.fine(
@@ -266,26 +268,27 @@ Changed: $changed
 
   /// Manages potential state transition based on the eventId parameter.
   /// It returns true if state change ocurred, false otherwise.
-  Future<bool> _internalFire(E eventId, {required dynamic data}) async {
-    this.data = data;
+  Future<bool> _internalFire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
     assert(_activeStateId != null, 'Machine has not been started.');
     if (_activeStateId == null) return false;
 
-    final transitionWithId = await _getTransitionByEvent(eventId);
+    final transitionWithId = await _getTransitionByEvent(eventId, arg);
     return _executeTransition(
       transitionWithId: transitionWithId,
       eventId: eventId,
+      arg: arg,
     );
   }
 
   Future<bool> _executeTransition({
     required _TransitionWithId<S, T>? transitionWithId,
     E? eventId,
+    required dynamic arg,
   }) async {
     if (transitionWithId == null) return false;
 
-    await transitionWithId.transition.onAction?.action.call(this, data);
+    await transitionWithId.transition.onAction?.action.call(this, arg);
     // Machine was stopped in an asynchronous operation.
     // TODO: After all async operations we shall check if the machine is stopped
     // or its state already changed.
@@ -319,16 +322,16 @@ Changed: $changed
     if (targetState is FinalState) {
       // TODO maybe combine with ExitPoint.
       // First we stop this state machine.
-      await stop(data: data);
+      await stop(arg: arg);
     } else if (targetState is ExitPoint) {
       // First we stop this state machine.
-      await stop(data: data);
+      await stop(arg: arg);
       // Then we notify region that this (child) machine exited due to
       // reaching an exitPoint.
       await notifyRegion?.call(
         ExitNotificationFromMachine(
           exitPointId: transitionWithId.transition.to,
-          data: data,
+          arg: arg,
         ),
       );
     } else if (targetState is State) {
@@ -337,11 +340,11 @@ Changed: $changed
         event: eventId,
         transition: transitionWithId.id,
       );
-      await _exitState(data: data);
+      await _exitState(arg: arg);
       await _enterState(
         trigger: trigger,
         stateId: transitionWithId.transition.to,
-        data: data,
+        arg: arg,
         historyFlowDown: false,
       );
     } else {
@@ -479,7 +482,7 @@ Changed: $changed
 
   /// Exits from currently active state and also exits all region of the
   /// active state.
-  Future<void> _exitState({required dynamic data}) async {
+  Future<void> _exitState({required dynamic arg}) async {
     // Commented out this assert to allow stop() to be invoked on a stopped
     // state machine:
     // assert(
@@ -499,23 +502,23 @@ Changed: $changed
       'state is not State or EntryPoint but ${state.runtimeType}',
     );
     if (state is! State<E, T, S>) return;
-    await state.onExit?.action.call(this, data);
-    await _exitRegions(state, data);
+    await state.onExit?.action.call(this, arg);
+    await _exitRegions(state, arg);
   }
 
   // Stops child state machines of each region of a given state.
-  Future<void> _exitRegions(State<E, T, S> state, dynamic data) async {
+  Future<void> _exitRegions(State<E, T, S> state, dynamic arg) async {
     for (final region in state.regions) {
       if (region.machine.activeStateId != null) {
-        await region.machine.stop(data: data);
+        await region.machine.stop(arg: arg);
       }
     }
   }
 
   /// Stopping the state machine also exiting active state and
   /// recursively stopping all potential child machines.
-  Future<void> stop({required dynamic data}) async {
-    await _exitState(data: data);
+  Future<void> stop({required dynamic arg}) async {
+    await _exitState(arg: arg);
     _activeStateId = null;
     _log.fine('$name  stop');
     await notifyMonitors();
@@ -528,7 +531,7 @@ Changed: $changed
   Future<void> _enterState({
     Trigger<S, E, T>? trigger,
     required S stateId,
-    required dynamic data,
+    required dynamic arg,
     required bool historyFlowDown,
   }) async {
     _log.fine('> $name  _enterState');
@@ -547,16 +550,16 @@ Changed: $changed
     _activeStateId = stateId;
     _historyStateId = _activeStateId;
 
-    _log.fine('fireData: $data');
+    _log.fine('fire arg: $arg');
     try {
-      await state.onEntry?.action.call(this, data);
+      await state.onEntry?.action.call(this, arg);
     } catch (e) {
       _log.severe('Exception during onEntry: $e');
     }
     await _enterRegions(
       trigger: trigger,
       state: state,
-      data: data,
+      arg: arg,
       historyFlowDown: historyFlowDown,
     );
 
@@ -570,21 +573,24 @@ Changed: $changed
   Future<void> _enterRegions({
     Trigger<S, E, T>? trigger,
     required State<E, T, S> state,
-    required dynamic data,
+    required dynamic arg,
     required bool historyFlowDown,
   }) async {
     for (final region in state.regions) {
       final entryPointId = region.entryConnectors?[trigger];
       await region.machine.start(
         entryPointId: entryPointId,
-        data: data,
+        arg: arg,
         historyFlowDown: historyFlowDown,
       );
     }
   }
 
   /// Calculates which transition shall be used for the eventId parameter.
-  Future<_TransitionWithId<S, T>?> _getTransitionByEvent(E eventId) async {
+  Future<_TransitionWithId<S, T>?> _getTransitionByEvent(
+    E eventId,
+    dynamic arg,
+  ) async {
     final state = states[activeStateId];
     assert(
       state is State<E, T, S>,
@@ -604,7 +610,7 @@ Changed: $changed
     );
     if (transitionIds.isEmpty) return null;
 
-    return _selectTransition(transitionIds);
+    return _selectTransition(transitionIds, arg);
   }
 
   /// Calculates which transition shall be used from the list of transitions
@@ -612,6 +618,7 @@ Changed: $changed
   /// guard condition (or lack of it) allows it.
   Future<_TransitionWithId<S, T>?> _selectTransition(
     List<T> transitionIds,
+    dynamic arg,
   ) async {
     _TransitionWithId<S, T>? selectedTransitionWithId;
     for (final transitionId in transitionIds) {
@@ -623,7 +630,7 @@ Changed: $changed
       if (transition == null) continue;
 
       final guardAllows =
-          await transition.guard?.condition.call(this, data) ?? true;
+          await transition.guard?.condition.call(this, arg) ?? true;
       if (!guardAllows) continue;
 
       final now = DateTime.now();
@@ -653,9 +660,9 @@ Changed: $changed
     if (notification is ExitNotificationFromRegion<E>) {
       _log.info(
         '$name _processNotification: Notification event=${notification.event} '
-        'data=${notification.data}',
+        'arg=${notification.arg}',
       );
-      await fire(notification.event, data: notification.data, external: false);
+      await fire(notification.event, arg: notification.arg, external: false);
     } else if (notification is StateChangeNotification) {
       _log.fine('$name  _processNotification: StateChangeNotification');
       await notifyMonitors();

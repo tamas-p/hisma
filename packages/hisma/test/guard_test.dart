@@ -54,9 +54,9 @@ void main() {
       expect(machine.activeStateId, equals(S.a));
       await machine.fire(E.sync);
       expect(machine.activeStateId, equals(S.a));
-      await machine.fire(E.sync, data: 10);
+      await machine.fire(E.sync, arg: 10);
       expect(machine.activeStateId, equals(S.a));
-      await machine.fire(E.sync, data: 11);
+      await machine.fire(E.sync, arg: 11);
       expect(machine.activeStateId, equals(S.b));
     });
 
@@ -65,9 +65,9 @@ void main() {
       expect(machine.activeStateId, equals(S.a));
       await machine.fire(E.async);
       expect(machine.activeStateId, equals(S.a));
-      await machine.fire(E.async, data: () => Future.value(10));
+      await machine.fire(E.async, arg: () => Future.value(10));
       expect(machine.activeStateId, equals(S.a));
-      await machine.fire(E.async, data: () => Future.value(11));
+      await machine.fire(E.async, arg: () => Future.value(11));
       expect(machine.activeStateId, equals(S.b));
     });
   });

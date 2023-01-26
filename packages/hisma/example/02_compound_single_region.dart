@@ -28,7 +28,7 @@ StateMachine<S, E, T> createBrightnessMachine({
           },
           onEntry: Action(
             description: 'Half light.',
-            action: (machine, parameter) async => print('HALF'),
+            action: (machine, arg) async => print('HALF'),
           ),
         ),
         S.full: State(
@@ -37,7 +37,7 @@ StateMachine<S, E, T> createBrightnessMachine({
           },
           onEntry: Action(
             description: 'Full light.',
-            action: (machine, parameter) async => print('FULL'),
+            action: (machine, arg) async => print('FULL'),
           ),
         ),
       },

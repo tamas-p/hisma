@@ -27,11 +27,11 @@ final minimalMachine = StateMachine(
       },
       onEntry: Action(
         description: 'say that we enter',
-        action: (machine, parameter) async => print('we enter'),
+        action: (machine, arg) async => print('we enter'),
       ),
       onExit: Action(
         description: 'say that we leave',
-        action: (machine, parameter) async => print('we leave'),
+        action: (machine, arg) async => print('we leave'),
       ),
     ),
     S.finish: FinalState(),

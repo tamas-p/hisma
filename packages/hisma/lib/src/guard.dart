@@ -2,7 +2,7 @@ import '../hisma.dart';
 
 typedef GuardFunction = Future<bool> Function(
   StateMachine<dynamic, dynamic, dynamic> machine,
-  dynamic parameter,
+  dynamic arg,
 );
 
 class Guard {

@@ -5,19 +5,19 @@ class StateChangeNotification extends Message {}
 class ExitNotificationFromRegion<E> extends Message {
   ExitNotificationFromRegion({
     required this.event,
-    required this.data,
+    required this.arg,
   });
   E event;
-  dynamic data;
+  dynamic arg;
 }
 
 class ExitNotificationFromMachine<E> extends Message {
   ExitNotificationFromMachine({
     required this.exitPointId,
-    required this.data,
+    required this.arg,
   });
   E exitPointId;
-  dynamic data;
+  dynamic arg;
 }
 
 class GetName extends Message {

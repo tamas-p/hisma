@@ -26,7 +26,7 @@ StateMachine<S, E, T> createColorMachine() => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'Turning blue.',
-            action: (machine, parameter) async => print('BLUE'),
+            action: (machine, arg) async => print('BLUE'),
           ),
         ),
         S.red: State(
@@ -35,7 +35,7 @@ StateMachine<S, E, T> createColorMachine() => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'Turning red.',
-            action: (machine, parameter) async => print('RED'),
+            action: (machine, arg) async => print('RED'),
           ),
         ),
       },

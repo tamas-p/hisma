@@ -106,7 +106,7 @@ StateMachine<S, E, T> createLightMachine({
           },
           onEntry: Action(
             description: 'Turning off.',
-            action: (machine, parameter) async => print('OFF'),
+            action: (machine, arg) async => print('OFF'),
           ),
         ),
         S.on: State(
@@ -116,7 +116,7 @@ StateMachine<S, E, T> createLightMachine({
           regions: regions,
           onEntry: Action(
             description: 'Turning on.',
-            action: (machine, parameter) async => print('ON'),
+            action: (machine, arg) async => print('ON'),
           ),
         ),
       },
@@ -211,7 +211,7 @@ StateMachine<S, E, T> createBrightnessMachine({
           },
           onEntry: Action(
             description: 'Half light.',
-            action: (machine, parameter) async => print('HALF'),
+            action: (machine, arg) async => print('HALF'),
           ),
         ),
         S.full: State(
@@ -220,7 +220,7 @@ StateMachine<S, E, T> createBrightnessMachine({
           },
           onEntry: Action(
             description: 'Full light.',
-            action: (machine, parameter) async => print('FULL'),
+            action: (machine, arg) async => print('FULL'),
           ),
         ),
       },
@@ -408,7 +408,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'Switching to grid.',
-            action: (machine, parameter) async => print('GRID'),
+            action: (machine, arg) async => print('GRID'),
           ),
         ),
         S.battery: State(
@@ -418,7 +418,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'Switching to battery.',
-            action: (machine, parameter) async => print('BATTERY'),
+            action: (machine, arg) async => print('BATTERY'),
           ),
         ),
       },
@@ -454,7 +454,7 @@ StateMachine<LMS, LME, LMT> createLightMachine({
           },
           onEntry: Action(
             description: 'Turning off.',
-            action: (machine, parameter) async => print('OFF'),
+            action: (machine, arg) async => print('OFF'),
           ),
         ),
         LMS.on: State(
@@ -464,7 +464,7 @@ StateMachine<LMS, LME, LMT> createLightMachine({
           regions: regions,
           onEntry: Action(
             description: 'Turning on.',
-            action: (machine, parameter) async => print('ON'),
+            action: (machine, arg) async => print('ON'),
           ),
         ),
       },

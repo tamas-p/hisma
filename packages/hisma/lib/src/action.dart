@@ -3,7 +3,7 @@ import 'state_machine.dart';
 // TODO: shall we clone a Function??
 typedef ActionFunction = Future<void> Function(
   StateMachine<dynamic, dynamic, dynamic> machine,
-  dynamic parameter,
+  dynamic arg,
 );
 
 /// Represents an action with its description.

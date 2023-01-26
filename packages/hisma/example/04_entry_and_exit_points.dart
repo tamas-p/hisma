@@ -30,7 +30,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'Switching to grid.',
-            action: (machine, parameter) async => print('GRID'),
+            action: (machine, arg) async => print('GRID'),
           ),
         ),
         S.battery: State(
@@ -40,7 +40,7 @@ StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'Switching to battery.',
-            action: (machine, parameter) async => print('BATTERY'),
+            action: (machine, arg) async => print('BATTERY'),
           ),
         ),
       },
@@ -72,7 +72,7 @@ StateMachine<LMS, LME, LMT> createLightMachine({
           },
           onEntry: Action(
             description: 'Turning off.',
-            action: (machine, parameter) async => print('OFF'),
+            action: (machine, arg) async => print('OFF'),
           ),
         ),
         LMS.on: State(
@@ -82,7 +82,7 @@ StateMachine<LMS, LME, LMT> createLightMachine({
           regions: regions,
           onEntry: Action(
             description: 'Turning on.',
-            action: (machine, parameter) async => print('ON'),
+            action: (machine, arg) async => print('ON'),
           ),
         ),
       },

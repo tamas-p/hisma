@@ -51,7 +51,7 @@ class Region<S, E, T, SS> {
       );
       if (event == null) return;
       await notifyState.call(
-        ExitNotificationFromRegion(event: event, data: notification.data),
+        ExitNotificationFromRegion(event: event, arg: notification.arg),
       );
     } else {
       await notifyState.call(notification);
