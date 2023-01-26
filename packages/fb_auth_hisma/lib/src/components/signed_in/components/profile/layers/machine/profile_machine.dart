@@ -50,9 +50,9 @@ StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
           onAction: Action(
             description: 'Updating profile',
             action: (machine, dynamic arg) async {
-              assert(machine.data is String);
+              assert(arg is String);
               await ProfileAssistance.updateProfile(
-                Profile(displayName: machine.data as String),
+                Profile(displayName: arg as String),
               );
             },
           ),
