@@ -43,10 +43,10 @@ final machine = StateMachineWithChangeNotifier<S, E, T>(
       },
       onEntry: hisma.Action(
         description: 'Fetch weather report.',
-        action: (machine, dynamic parameter) async {
+        action: (machine, dynamic arg) async {
           Future<void>.delayed(const Duration(seconds: 1), () {
             print('Weather data is fetched.');
-            machine.fire(E.backward, data: 'Sunny weather.');
+            machine.fire(E.backward, arg: 'Sunny weather.');
           });
         },
       ),
@@ -73,8 +73,8 @@ final machine = StateMachineWithChangeNotifier<S, E, T>(
       to: S.b,
       onAction: hisma.Action(
         description: 'Weather info received.',
-        action: (machine, dynamic parameter) async {
-          print('Weather info received: $parameter');
+        action: (machine, dynamic arg) async {
+          print('Weather info received: $arg');
         },
       ),
     ),
@@ -85,8 +85,7 @@ final machine = StateMachineWithChangeNotifier<S, E, T>(
 
 hisma.Action getAction() => hisma.Action(
       description: 'Print out data passed.',
-      action: (machine, dynamic parameter) async =>
-          print('Data passed: $parameter'),
+      action: (machine, dynamic arg) async => print('Arg passed: $arg'),
     );
 
 //------------------------------------------------------------------------------

@@ -62,8 +62,7 @@ final machine = StateMachineWithChangeNotifier<S, E, T>(
 
 hisma.Action getAction() => hisma.Action(
       description: 'Print out data passed.',
-      action: (machine, dynamic parameter) async =>
-          print('Data passed: $parameter'),
+      action: (machine, dynamic arg) async => print('Arg passed: $arg'),
     );
 
 //------------------------------------------------------------------------------

@@ -25,9 +25,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       );
 
   @override
-  Future<void> fire(E eventId, {dynamic data, bool external = true}) async {
+  Future<void> fire(E eventId, {dynamic arg, bool external = true}) async {
     final before = activeStateId;
-    await super.fire(eventId, data: data, external: external);
+    await super.fire(eventId, arg: arg, external: external);
     final after = activeStateId;
     if (before != after) notifyListeners();
   }
@@ -35,11 +35,11 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   @override
   Future<void> start({
     S? entryPointId,
-    dynamic data,
+    dynamic arg,
     bool historyFlowDown = false,
   }) async {
     final before = activeStateId;
-    await super.start(entryPointId: entryPointId, data: data);
+    await super.start(entryPointId: entryPointId, arg: arg);
     final after = activeStateId;
     if (before != after) notifyListeners();
   }
@@ -49,9 +49,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   // to allow transition from old to new state.
   //
   @override
-  Future<void> stop({required dynamic data}) async {
+  Future<void> stop({required dynamic arg}) async {
     final before = activeStateId;
-    await super.stop(data: data);
+    await super.stop(arg: arg);
     final after = activeStateId;
     if (before != after) notifyListeners();
   }

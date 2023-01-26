@@ -24,7 +24,7 @@ StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
           },
           onEntry: Action(
             description: 'Check if email is verified.',
-            action: (machine, dynamic parameter) async {
+            action: (machine, dynamic arg) async {
               final verified = isEmailVerified();
               if (verified) {
                 await machine.fire(EMM.emailVerified);
@@ -56,7 +56,7 @@ StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
           to: SMM.emailNotVerified,
           onAction: Action(
             description: 'Reloading user profile.',
-            action: (machine, dynamic parameter) async {
+            action: (machine, dynamic arg) async {
               machine.data = await reload();
             },
           ),
@@ -66,7 +66,7 @@ StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
           to: SMM.emailNotVerified,
           onAction: Action(
             description: 'Resending verification email.',
-            action: (machine, dynamic parameter) async {
+            action: (machine, dynamic arg) async {
               await sendEmailVerification();
             },
           ),

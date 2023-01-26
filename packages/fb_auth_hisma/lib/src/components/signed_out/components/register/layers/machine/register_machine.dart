@@ -34,9 +34,9 @@ StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
           },
           onEntry: Action(
             description: 'Registering user',
-            action: (machine, dynamic parameter) async {
-              assert(parameter is Credentials);
-              final uCredentials = parameter as Credentials;
+            action: (machine, dynamic arg) async {
+              assert(arg is Credentials);
+              final uCredentials = arg as Credentials;
 
               try {
                 await createUserWithEmailAndPassword(uCredentials);
@@ -47,7 +47,7 @@ StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
                   'Auth error: errorCode:${e.errorCode} message:${e.message}',
                 );
                 // TODO i18n
-                await machine.fire(ERM.fail, data: e.message);
+                await machine.fire(ERM.fail, arg: e.message);
               }
             },
           ),

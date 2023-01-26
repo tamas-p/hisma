@@ -26,7 +26,7 @@ class HismaNavigator<S, W, E> extends Navigator {
               final machine = myRouter.machine;
               final creator = myRouter.creators[machine.activeStateId];
               if (creator is OverlayPageCreator<W, S, E>) {
-                machine.fire(creator.event, data: result);
+                machine.fire(creator.event, arg: result);
               } else {
                 assert(
                   false,

@@ -254,7 +254,7 @@ class HismaRouterDelegate<S, W, E> extends RouterDelegate<S>
                   // Only fire if we are still in the state we were created.
                   // It avoids unwanted fire() in case we got here by a fire().
                   if (_routerGenerator.machine.activeStateId == state) {
-                    _routerGenerator.machine.fire(creator.event, data: result);
+                    _routerGenerator.machine.fire(creator.event, arg: result);
                   }
                 }
               : null,

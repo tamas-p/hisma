@@ -23,7 +23,7 @@ StateMachine<S, E, T> createLightMachine({
           },
           onEntry: Action(
             description: 'Turning off.',
-            action: (machine, dynamic parameter) async => print('OFF'),
+            action: (machine, dynamic arg) async => print('OFF'),
           ),
         ),
         S.on: State(
@@ -33,7 +33,7 @@ StateMachine<S, E, T> createLightMachine({
           regions: regions,
           onEntry: Action(
             description: 'Turning on.',
-            action: (machine, dynamic parameter) async => print('ON'),
+            action: (machine, dynamic arg) async => print('ON'),
           ),
         ),
       },

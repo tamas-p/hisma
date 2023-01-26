@@ -52,9 +52,9 @@ final appMachineProvider = Provider((ref) {
       ),
       S.d: State(
         onEntry: Action(
-          description: 'Parameter passing test.',
-          action: (machine, dynamic parameter) async {
-            print('PARAMETER: $parameter');
+          description: 'Argument passing test.',
+          action: (machine, dynamic arg) async {
+            print('ARG: $arg');
           },
         ),
         etm: {

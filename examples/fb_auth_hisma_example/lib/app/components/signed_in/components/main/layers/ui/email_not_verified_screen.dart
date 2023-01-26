@@ -52,7 +52,7 @@ class _EmailNotVerifiedScreenState extends State<EmailNotVerifiedScreen> {
               } on hisma.HismaIntervalException catch (e) {
                 log.info(e);
                 log.info(e.reason);
-                await mainMachine.fire(EMM.error, data: e.reason);
+                await mainMachine.fire(EMM.error, arg: e.reason);
                 log.fine('data: ${mainMachine.data}');
               }
             },

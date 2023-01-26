@@ -50,7 +50,7 @@ StateMachineWithChangeNotifier<SSiM, ESiM, TSiM> createSignedInMachine() =>
           to: SSiM.confirmSignOut,
           onAction: Action(
             description: 'Initiate sign out',
-            action: (machine, dynamic parameter) async {
+            action: (machine, dynamic arg) async {
               signOut();
             },
           ),

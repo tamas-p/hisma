@@ -36,7 +36,7 @@ StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
           to: SPM.profile,
           onAction: Action(
             description: 'Load profile information',
-            action: (machine, dynamic parameter) async {
+            action: (machine, dynamic arg) async {
               final profile = ProfileAssistance.getProfile();
               // await Future<void>.delayed(const Duration(seconds: 5));
               machine.data = profile;
@@ -49,7 +49,7 @@ StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
           to: SPM.profile,
           onAction: Action(
             description: 'Updating profile',
-            action: (machine, dynamic parameter) async {
+            action: (machine, dynamic arg) async {
               assert(machine.data is String);
               await ProfileAssistance.updateProfile(
                 Profile(displayName: machine.data as String),

@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
               );
               final loginMachine =
                   authMachine.find<SLiM, ELiM, TLiM>(loginMachineName);
-              await loginMachine.fire(ELiM.emailSignIn, data: uCredentials);
+              await loginMachine.fire(ELiM.emailSignIn, arg: uCredentials);
             },
             child: const Text('Login'),
           ),

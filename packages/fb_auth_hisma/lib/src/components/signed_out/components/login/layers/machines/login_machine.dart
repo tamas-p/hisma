@@ -55,9 +55,9 @@ StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
 
 Action _createEmailSignInAction() => Action(
       description: 'Executing email authentication.',
-      action: (machine, dynamic parameter) async {
-        assert(parameter is Credentials);
-        final uCredentials = parameter as Credentials;
+      action: (machine, dynamic arg) async {
+        assert(arg is Credentials);
+        final uCredentials = arg as Credentials;
 
         try {
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -79,7 +79,7 @@ Action _createEmailSignInAction() => Action(
               _log.info('Not handled Auth error: ${e.code}');
               break;
           }
-          machine.fire(ELiM.fail, data: e.code);
+          machine.fire(ELiM.fail, arg: e.code);
         }
       },
     );

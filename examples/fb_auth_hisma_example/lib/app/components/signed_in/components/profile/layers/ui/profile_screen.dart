@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             list.add(
               ElevatedButton(
                 onPressed: () {
-                  profileMachine.fire(EPM.update, data: displayName);
+                  profileMachine.fire(EPM.update, arg: displayName);
                 },
                 child: const Text('Update'),
               ),
@@ -147,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             list.add(const Text('Failed loading profile'));
             profileMachine.fire(
               EPM.error,
-              data: 'Profile could not be loaded.',
+              arg: 'Profile could not be loaded.',
             );
           }
         } else if (snapshot.hasError) {

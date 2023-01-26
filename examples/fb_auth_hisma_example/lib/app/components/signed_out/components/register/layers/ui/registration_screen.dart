@@ -63,7 +63,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               );
               final registerMachine =
                   authMachine.find<SRM, ERM, TRM>(registerMachineName);
-              await registerMachine.fire(ERM.register, data: uCredentials);
+              await registerMachine.fire(ERM.register, arg: uCredentials);
             },
             child: const Text('Register'),
           ),

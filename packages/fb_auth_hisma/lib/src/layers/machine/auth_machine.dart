@@ -56,7 +56,7 @@ StateMachineWithChangeNotifier<SAM, EAM, TAM> createAuthMachine() =>
 Action _createAuthChangeAction() => Action(
       // TODO: move these to assistance layer.
       description: 'Set callbacks for auth change.',
-      action: (machine, dynamic parameter) async {
+      action: (machine, dynamic arg) async {
         // await Firebase.initializeApp(
         //   options: DefaultFirebaseOptions.currentPlatform,
         // );

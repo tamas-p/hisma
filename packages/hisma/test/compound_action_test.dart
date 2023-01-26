@@ -1,6 +1,6 @@
+// ignore_for_file: avoid_print
+
 import 'package:hisma/hisma.dart';
-import 'package:hisma_console_monitor/hisma_console_monitor.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:test/test.dart';
 
 enum S { ep1, ep3, ep4, ep2, a, b, c, fs, ex }
@@ -36,7 +36,8 @@ StateMachine<S, E, T> createMachine({
             description: 'add',
             action: (machine, arg) async {
               print(
-                  '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg');
+                '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg',
+              );
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) + arg;
               }
@@ -46,7 +47,8 @@ StateMachine<S, E, T> createMachine({
             description: 'subtract',
             action: (machine, arg) async {
               print(
-                  '${machine.name}/${machine.activeStateId} - onExit - data: ${machine.data}, arg: $arg');
+                '${machine.name}/${machine.activeStateId} - onExit - data: ${machine.data}, arg: $arg',
+              );
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) - arg;
               }
@@ -97,7 +99,8 @@ StateMachine<S, E, T> createMachine({
             description: 'add',
             action: (machine, arg) async {
               print(
-                  '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg');
+                '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg',
+              );
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) + arg;
               }
@@ -107,7 +110,8 @@ StateMachine<S, E, T> createMachine({
             description: 'subtract',
             action: (machine, arg) async {
               print(
-                  '${machine.name}/${machine.activeStateId} - data: ${machine.data}, arg: $arg');
+                '${machine.name}/${machine.activeStateId} - data: ${machine.data}, arg: $arg',
+              );
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) - arg;
               }
@@ -165,11 +169,6 @@ void checkData(StateMachine<S, E, T> m, List<int> data) {
 }
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    // (machine) => ConsoleMonitor(machine),
-  ];
-
   group('Group A', () {
     test('Test 1', () async {
       final m = createMachine(
