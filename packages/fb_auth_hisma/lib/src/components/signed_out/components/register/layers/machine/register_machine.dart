@@ -56,6 +56,12 @@ StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
           etm: {
             ERM.ok: [TRM.toRest],
           },
+          onEntry: Action(
+            description: 'set data to arg',
+            action: (machine, dynamic arg) async {
+              machine.data = arg;
+            },
+          ),
         ),
         SRM.exBack: ExitPoint(),
       },

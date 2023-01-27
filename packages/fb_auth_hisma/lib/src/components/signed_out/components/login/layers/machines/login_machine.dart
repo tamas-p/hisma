@@ -36,6 +36,12 @@ StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
           etm: {
             ELiM.ok: [TLiM.toLogin],
           },
+          onEntry: Action(
+            description: 'set data to arg',
+            action: (machine, dynamic arg) async {
+              machine.data = arg;
+            },
+          ),
         ),
       },
       transitions: {
