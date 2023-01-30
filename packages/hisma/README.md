@@ -547,7 +547,7 @@ The l1 machines were just **returned** to the `S.on` states - check the differen
 
 You can also watch a short video about executing the above described sequence in these three different machines side-by-side:
 
-[![hisma history example on YouTube](doc/resources/hisma_history_youtube.png)](https://youtu.be/f17P9PbJ6UI)
+[![hisma history example on YouTube](doc/resources/hisma_history_youtube.png)](https://youtu.be/f17P9PbJ6UI?cc_load_policy=1)
 
 ## Additional information
 
