@@ -35,7 +35,7 @@ class StateMachine<S, E, T> {
   static final _log = getLogger('$StateMachine');
 
   void setIt() {
-    states.forEach((_, state) {
+    states.forEach((_, state) async {
       _log.fine('myName=$name');
       if (state is State<E, T, S>) {
         // TODO: Do ww need ?? here?
@@ -60,7 +60,7 @@ class StateMachine<S, E, T> {
           _log.fine(
             '$name StateMachine $name constructor for ${region.machine.name}',
           );
-          region.machine.notifyMonitors();
+          // await region.machine.notifyMonitors();
         }
       }
     });
@@ -148,7 +148,7 @@ class StateMachine<S, E, T> {
     await _initCompleted;
     _log.fine('Notify from $name');
     for (final monitor in monitors) {
-      monitor.notifyStateChange();
+      await monitor.notifyStateChange();
     }
   }
 
@@ -159,6 +159,9 @@ class StateMachine<S, E, T> {
     dynamic arg,
     bool historyFlowDown = false,
   }) async {
+    _log.fine(
+      'start: machine:$name, state:$activeStateId, entryPointId:$entryPointId, arg:$arg, historyFlowDown:$historyFlowDown',
+    );
     assert(_activeStateId == null, 'Machine ($name) is already started.');
     if (_activeStateId != null) return;
 
@@ -194,6 +197,7 @@ class StateMachine<S, E, T> {
             await _selectTransition(state.transitionIds, arg);
         assert(transitionWithId != null);
         if (transitionWithId == null) return;
+        // Need to set here as it is used as part of the Trigger.
         _activeStateId = entryPointId;
         await _executeTransition(transitionWithId: transitionWithId, arg: arg);
       } else {
@@ -238,7 +242,7 @@ class StateMachine<S, E, T> {
   Future<void> fire(E eventId, {dynamic arg, bool external = true}) async {
     _log.info('FIRE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     _log.info(
-      'FIRE >>> machine: $name, event: $eventId, arg: $arg, external: $external',
+      'FIRE >>> machine: $name, state: $_activeStateId, : $eventId, arg: $arg, external: $external',
     );
     final changed = await _internalFire(eventId, arg: arg);
     _log.info(
@@ -518,9 +522,9 @@ Changed: $changed
   /// Stopping the state machine also exiting active state and
   /// recursively stopping all potential child machines.
   Future<void> stop({required dynamic arg}) async {
+    _log.fine('$name  stop, state:$activeStateId, arg:$arg');
     await _exitState(arg: arg);
     _activeStateId = null;
-    _log.fine('$name  stop');
     await notifyMonitors();
   }
 
@@ -534,7 +538,9 @@ Changed: $changed
     required dynamic arg,
     required bool historyFlowDown,
   }) async {
-    _log.fine('> $name  _enterState');
+    _log.fine(
+      '> $name  _enterState, activeStateId:$activeStateId, trigger:$trigger, stateId:$stateId, arg:$arg, historyFlowDown:$historyFlowDown',
+    );
     final state = states[stateId];
     assert(
       state != null,
@@ -564,7 +570,7 @@ Changed: $changed
     );
 
     _log.fine('< $name  _enterState');
-    notifyMonitors();
+    await notifyMonitors();
   }
 
   /// For each region of [state] the state machine of a specific region is
