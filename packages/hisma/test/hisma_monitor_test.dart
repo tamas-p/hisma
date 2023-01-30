@@ -6,12 +6,6 @@ import 'package:test/test.dart';
 
 import '../example/others/entrypoint_exitpoint.dart';
 
-enum S1 { a, b, end }
-
-enum E1 { change, finish }
-
-enum T1 { toA, toB, toEnd }
-
 void initLogging() {
   // This shall be done 1st to allow Logger configuration for a hierarchy.
   hierarchicalLoggingEnabled = true;
@@ -26,6 +20,12 @@ void initLogging() {
     );
   });
 }
+
+enum S1 { a, b, end }
+
+enum E1 { change, finish }
+
+enum T1 { toA, toB, toEnd }
 
 StateMachine<S1, E1, T1> createSimpleMachine(String name) =>
     StateMachine<S1, E1, T1>(
