@@ -74,7 +74,7 @@ class Checker {
   final createCounterMap = <String, int>{};
   final changeCounterMap = <String, int>{};
 
-  void check(String name, int? create, int? change) {
+  void call(String name, int? create, int? change) {
     expect(createCounterMap[name], equals(create));
     expect(changeCounterMap[name], equals(change));
   }
@@ -92,23 +92,23 @@ void main() {
         ];
 
         const mn = 'm1';
-        checker.check(mn, null, null);
+        checker(mn, null, null);
         final m1 = createSimpleMachine(mn);
-        checker.check(mn, 1, null);
+        checker(mn, 1, null);
 
         await m1.start();
-        checker.check(mn, 1, 1);
+        checker(mn, 1, 1);
 
         await m1.fire(E1.change);
-        checker.check(mn, 1, 2);
+        checker(mn, 1, 2);
 
         for (var i = 0; i < 100; i++) {
           await m1.fire(E1.change);
         }
-        checker.check(mn, 1, 102);
+        checker(mn, 1, 102);
 
         await m1.fire(E1.finish);
-        checker.check(mn, 1, 103);
+        checker(mn, 1, 103);
       },
       skip: true,
     );
@@ -138,136 +138,136 @@ void main() {
       ),
     );
 
-    checker.check(l0, 1, null);
-    checker.check(l1, 1, null);
-    checker.check(l2, 1, null);
-    checker.check(l3, 1, null);
+    checker(l0, 1, null);
+    checker(l1, 1, null);
+    checker(l2, 1, null);
+    checker(l3, 1, null);
 
     await m.start();
-    checker.check(l0, 1, 1);
-    checker.check(l1, 1, null);
-    checker.check(l2, 1, null);
-    checker.check(l3, 1, null);
+    checker(l0, 1, 1);
+    checker(l1, 1, null);
+    checker(l2, 1, null);
+    checker(l3, 1, null);
 
     await m.fire(E.deep);
-    checker.check(l0, 1, 2);
-    checker.check(l1, 1, 1);
-    checker.check(l2, 1, 1);
-    checker.check(l3, 1, 1);
+    checker(l0, 1, 2);
+    checker(l1, 1, 1);
+    checker(l2, 1, 1);
+    checker(l3, 1, 1);
 
     await m.find<S, E, T>(l3).fire(E.next);
-    checker.check(l0, 1, 3);
-    checker.check(l1, 1, 2);
-    checker.check(l2, 1, 2);
-    checker.check(l3, 1, 2);
+    checker(l0, 1, 3);
+    checker(l1, 1, 2);
+    checker(l2, 1, 2);
+    checker(l3, 1, 2);
 
     await m.find<S, E, T>(l2).fire(E.next);
-    checker.check(l0, 1, 4);
-    checker.check(l1, 1, 3);
-    checker.check(l2, 1, 3);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 4);
+    checker(l1, 1, 3);
+    checker(l2, 1, 3);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l2).fire(E.next);
-    checker.check(l0, 1, 5);
-    checker.check(l1, 1, 4);
-    checker.check(l2, 1, 4);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 5);
+    checker(l1, 1, 4);
+    checker(l2, 1, 4);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.next);
-    checker.check(l0, 1, 6);
-    checker.check(l1, 1, 5);
-    checker.check(l2, 1, 5);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 6);
+    checker(l1, 1, 5);
+    checker(l2, 1, 5);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.next);
-    checker.check(l0, 1, 7);
-    checker.check(l1, 1, 6);
-    checker.check(l2, 1, 5);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 7);
+    checker(l1, 1, 6);
+    checker(l2, 1, 5);
+    checker(l3, 1, 3);
 
     // TODO: Shall we optimize l1 level to have only one notification and
     // l2 to have no notification?
     await m.find<S, E, T>(l1).fire(E.exit);
-    checker.check(l0, 1, 8);
-    checker.check(l1, 1, 8); // S.a -> S.b, S.b -> S.c
-    checker.check(l2, 1, 6); // S.ep4 -> S.ex
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 8);
+    checker(l1, 1, 8); // S.a -> S.b, S.b -> S.c
+    checker(l2, 1, 6); // S.ep4 -> S.ex
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.next);
-    checker.check(l0, 1, 9);
-    checker.check(l1, 1, 9);
-    checker.check(l2, 1, 6);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 9);
+    checker(l1, 1, 9);
+    checker(l2, 1, 6);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.next);
-    checker.check(l0, 1, 10);
-    checker.check(l1, 1, 10);
-    checker.check(l2, 1, 7);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 10);
+    checker(l1, 1, 10);
+    checker(l2, 1, 7);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.next);
     expect(m.find<S, E, T>(l1).activeStateId, equals(S.c));
-    checker.check(l0, 1, 11);
-    checker.check(l1, 1, 11);
-    checker.check(l2, 1, 8);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 11);
+    checker(l1, 1, 11);
+    checker(l2, 1, 8);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.next);
     expect(m.find<S, E, T>(l1).activeStateId, equals(S.a));
-    checker.check(l0, 1, 12);
-    checker.check(l1, 1, 12);
-    checker.check(l2, 1, 8);
-    checker.check(l3, 1, 3);
+    checker(l0, 1, 12);
+    checker(l1, 1, 12);
+    checker(l2, 1, 8);
+    checker(l3, 1, 3);
 
     await m.find<S, E, T>(l1).fire(E.inside);
     expect(m.find<S, E, T>(l1).activeStateId, equals(S.b));
-    checker.check(l0, 1, 13);
-    checker.check(l1, 1, 13);
-    checker.check(l2, 1, 9);
-    checker.check(l3, 1, 4);
+    checker(l0, 1, 13);
+    checker(l1, 1, 13);
+    checker(l2, 1, 9);
+    checker(l3, 1, 4);
 
     await m.find<S, E, T>(l1).fire(E.next);
     expect(m.find<S, E, T>(l1).activeStateId, equals(S.c));
-    checker.check(l0, 1, 14);
-    checker.check(l1, 1, 14);
-    checker.check(l2, 1, 10);
-    checker.check(l3, 1, 5);
+    checker(l0, 1, 14);
+    checker(l1, 1, 14);
+    checker(l2, 1, 10);
+    checker(l3, 1, 5);
 
     await m.find<S, E, T>(l1).fire(E.next);
     expect(m.find<S, E, T>(l1).activeStateId, equals(S.a));
-    checker.check(l0, 1, 15);
-    checker.check(l1, 1, 15);
-    checker.check(l2, 1, 10);
-    checker.check(l3, 1, 5);
+    checker(l0, 1, 15);
+    checker(l1, 1, 15);
+    checker(l2, 1, 10);
+    checker(l3, 1, 5);
 
     await m.find<S, E, T>(l1).fire(E.finish);
     expect(m.find<S, E, T>(l0).activeStateId, equals(S.b));
     expect(m.find<S, E, T>(l1).activeStateId, equals(S.b));
     expect(m.find<S, E, T>(l2).activeStateId, equals(null));
     expect(m.find<S, E, T>(l3).activeStateId, equals(null));
-    checker.check(l0, 1, 16);
-    checker.check(l1, 1, 16);
-    checker.check(l2, 1, 11);
-    checker.check(l3, 1, 5);
+    checker(l0, 1, 16);
+    checker(l1, 1, 16);
+    checker(l2, 1, 11);
+    checker(l3, 1, 5);
 
     await m.find<S, E, T>(l0).fire(E.next);
     expect(m.find<S, E, T>(l0).activeStateId, equals(S.c));
     expect(m.find<S, E, T>(l1).activeStateId, equals(null));
     expect(m.find<S, E, T>(l2).activeStateId, equals(null));
     expect(m.find<S, E, T>(l3).activeStateId, equals(null));
-    checker.check(l0, 1, 17);
-    checker.check(l1, 1, 17);
-    checker.check(l2, 1, 11);
-    checker.check(l3, 1, 5);
+    checker(l0, 1, 17);
+    checker(l1, 1, 17);
+    checker(l2, 1, 11);
+    checker(l3, 1, 5);
 
     await m.find<S, E, T>(l0).fire(E.done);
     expect(m.find<S, E, T>(l0).activeStateId, equals(null));
     expect(m.find<S, E, T>(l1).activeStateId, equals(null));
     expect(m.find<S, E, T>(l2).activeStateId, equals(null));
     expect(m.find<S, E, T>(l3).activeStateId, equals(null));
-    checker.check(l0, 1, 18);
-    checker.check(l1, 1, 17);
-    checker.check(l2, 1, 11);
-    checker.check(l3, 1, 5);
+    checker(l0, 1, 18);
+    checker(l1, 1, 17);
+    checker(l2, 1, 11);
+    checker(l3, 1, 5);
   });
 }
