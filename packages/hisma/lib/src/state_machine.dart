@@ -430,7 +430,9 @@ Changed: $changed
   StateMachine<S1, E1, T1> find<S1, E1, T1>(String name) {
     final machine = _findIt(name);
     // TODO: Create specific exception instead of Exception('') bellow.
-    if (machine is! StateMachine<S1, E1, T1>) throw Exception('');
+    if (machine is! StateMachine<S1, E1, T1>) {
+      throw Exception('');
+    }
     return machine;
   }
 
