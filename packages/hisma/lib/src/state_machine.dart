@@ -684,8 +684,9 @@ Changed: $changed
     }
   }
 
-  // TODO: Analyze and and create proper copyWith through all layers of the
-  // StateMachine class.
+  /// WARNING: Work in progress. Do not use it.
+  /// TODO: Analyze and and create proper copyWith through all layers of the
+  /// StateMachine class.
   StateMachine<S, E, T> copyWith({
     String? name,
     S? initialStateId,
