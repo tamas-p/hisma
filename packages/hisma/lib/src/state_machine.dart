@@ -429,9 +429,12 @@ Changed: $changed
 
   StateMachine<S1, E1, T1> find<S1, E1, T1>(String name) {
     final machine = _findIt(name);
-    // TODO: Create specific exception instead of Exception('') bellow.
     if (machine is! StateMachine<S1, E1, T1>) {
-      throw Exception('');
+      throw HismaMachineNotFoundException(
+        machine == null
+            ? '$name machine is not found in ${this.name} hierarchy. '
+            : '$name machine is not a StateMachine<$S1, $E1, $T1>.',
+      );
     }
     return machine;
   }
@@ -648,8 +651,8 @@ Changed: $changed
         _log.info('Throwing hismaIntervalException.');
         // TODO: Shall we drop or simply continue (selecting the transition)?
         throw HismaIntervalException(
-          reason: 'Too little time passed since last transition: '
-              '${now.difference(transition.lastTime!)}',
+          'Too little time passed since last transition: '
+          '${now.difference(transition.lastTime!)}',
         );
       }
       transition.lastTime = now;

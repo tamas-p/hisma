@@ -1,8 +1,15 @@
 class HismaException implements Exception {
-  HismaException({required this.reason});
-  String reason;
+  HismaException(this.message);
+  final String message;
+
+  @override
+  String toString() => message;
 }
 
 class HismaIntervalException extends HismaException {
-  HismaIntervalException({required String reason}) : super(reason: reason);
+  HismaIntervalException(String message) : super(message);
+}
+
+class HismaMachineNotFoundException extends HismaException {
+  HismaMachineNotFoundException(String message) : super(message);
 }
