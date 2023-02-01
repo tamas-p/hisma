@@ -78,7 +78,7 @@ This is for no other use than show you how it will be visualized if you use the 
 
 Let's create something more useful than our previous example: a light machine. This (rather typical) state machine example declares a machine with two states: `on` and `off` and user will be able to switch between these states with the `turnOn` and `turnOff` events.
 
-First crete enums that represent states, events and transitions
+First create enums that represent states, events and transitions
 
 ```dart
 enum S { on, off }
