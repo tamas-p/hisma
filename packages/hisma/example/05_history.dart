@@ -40,34 +40,46 @@ StateMachine<S, E, T> createMachine({
       },
     );
 
+const nhl1 = 'noHistory-l1';
+const nhl2 = 'noHistory-l2';
+const nhl3 = 'noHistory-l3';
+
 final smNoHistory = createMachine(
-  name: 'noHistory-l1',
+  name: nhl1,
   sm: createMachine(
-    name: 'noHistory-l2',
+    name: nhl2,
     sm: createMachine(
-      name: 'noHistory-l3',
+      name: nhl3,
     ),
   ),
 );
+
+const shl1 = 'shallow-l1';
+const shl2 = 'shallow-l2';
+const shl3 = 'shallow-l3';
 
 final smShallow = createMachine(
-  name: 'shallow-l1',
+  name: shl1,
   sm: createMachine(
-    name: 'shallow-l2',
+    name: shl2,
     history: HistoryLevel.shallow,
     sm: createMachine(
-      name: 'shallow-l3',
+      name: shl3,
     ),
   ),
 );
 
+const dhl1 = 'deep-l1';
+const dhl2 = 'deep-l2';
+const dhl3 = 'deep-l3';
+
 final smDeep = createMachine(
-  name: 'deep-l1',
+  name: dhl1,
   sm: createMachine(
-    name: 'deep-l2',
+    name: dhl2,
     history: HistoryLevel.deep,
     sm: createMachine(
-      name: 'deep-l3',
+      name: dhl3,
     ),
   ),
 );
