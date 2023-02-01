@@ -64,7 +64,7 @@ void main() {
       await m1.fire(E.change);
       expect(m1.activeStateId, equals(S.a));
 
-      await Future<void>.delayed(const Duration(milliseconds: 90));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(
         m1.fire(E.change),
         throwsA(const TypeMatcher<HismaIntervalException>()),
