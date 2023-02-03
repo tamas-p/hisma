@@ -29,12 +29,12 @@ class StateMachine<S, E, T> {
     this.history,
     this.data,
   }) {
-    setIt();
+    _setIt();
   }
 
   static final _log = getLogger('$StateMachine');
 
-  void setIt() {
+  void _setIt() {
     states.forEach((_, state) async {
       _log.fine('myName=$name');
       if (state is State<E, T, S>) {
@@ -65,13 +65,13 @@ class StateMachine<S, E, T> {
       }
     });
 
-    _initCompleted = initMonitor();
+    _initCompleted = _initMonitor();
     _log.info('SM $name created.');
   }
 
   late Future<void> _initCompleted;
 
-  Future<void> initMonitor() async {
+  Future<void> _initMonitor() async {
     for (final monitorCreator in monitorCreators) {
       final monitor = monitorCreator.call(this);
       monitors.add(monitor);
@@ -140,7 +140,7 @@ class StateMachine<S, E, T> {
   /// about state changes in those child machines. It is set to the
   /// parent StateMachine's [_processStateChangeNotification] method in
   /// parent's constructor. It is used to notify monitors up in the hierarchy.
-  Future<void> Function()? notifyParentAboutMyStateChange2;
+  // Future<void> Function()? notifyParentAboutMyStateChange2;
 
   Future<void> notifyMonitors() async {
     // Before notifying monitors make sure that their initialization
@@ -253,7 +253,6 @@ class StateMachine<S, E, T> {
       '''
 Changed: $changed
   monitors: $monitors
-  notifyStateChange: $notifyParentAboutMyStateChange2
   external: $external''',
     );
     if (changed && external) {
