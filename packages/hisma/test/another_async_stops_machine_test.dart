@@ -27,29 +27,41 @@ final m1 = StateMachine(
     S.f: FinalState(),
   },
   transitions: {
-    T.toA: Transition(to: S.a),
+    T.toA: Transition(
+      to: S.a,
+      onAction: createAction(),
+    ),
     T.toB: Transition(
       to: S.b,
-      onAction: Action(
-        description: 'slow',
-        action: (machine, arg) async {
-          print('Started...');
-          await Future<void>.delayed(const Duration(seconds: 1));
-          print(machine.activeStateId);
-        },
-      ),
+      onAction: createAction(),
     ),
-    T.toF: Transition(to: S.f),
+    T.toF: Transition(
+      to: S.f,
+      onAction: createAction(),
+    ),
   },
 );
+
+Action createAction() => Action(
+      description: 'delay',
+      action: (machine, arg) async {
+        await Future<void>.delayed(Duration(seconds: arg as int));
+        print(machine.activeStateId);
+      },
+    );
 
 void main() {
   group('Asynchronous state change tests.', () {
     test('Async Test 1', () async {
       await m1.start();
-      m1.fire(E.change);
-      await m1.fire(E.finish);
-      await Future<void>.delayed(const Duration(seconds: 3));
+      m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+      m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+      m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+      m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
     });
   });
 }
