@@ -63,11 +63,14 @@ class VisualMonitor implements Monitor {
 
   /// Establishes cord between this state machine and the visualization server.
   /// This socket allows detecting disconnect between the two.
-  Future<void> _tryConnectCord() {
+  Future<void> _tryConnectCord() async {
     _log.info('connectCord');
     final uriStr = 'ws://$host:$port$cord';
     _log.fine('${DateTime.now().toString()} Starting connection to $uriStr');
     _ws = WebSocketChannel.connect(Uri.parse(uriStr));
+    // This await is needed to get exceptions per adityabansalx's comment
+    // at https://github.com/dart-lang/web_socket_channel/issues/38
+    await _ws?.ready;
     _log.fine(
       '${DateTime.now().toString()} Connection attempt completed: $_ws',
     );
