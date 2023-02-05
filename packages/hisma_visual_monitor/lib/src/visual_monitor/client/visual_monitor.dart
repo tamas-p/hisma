@@ -66,13 +66,13 @@ class VisualMonitor implements Monitor {
   Future<void> _tryConnectCord() async {
     _log.info('connectCord');
     final uriStr = 'ws://$host:$port$cord';
-    _log.fine('${DateTime.now().toString()} Starting connection to $uriStr');
+    _log.fine('${DateTime.now()} Starting connection to $uriStr');
     _ws = WebSocketChannel.connect(Uri.parse(uriStr));
     // This await is needed to get exceptions per adityabansalx's comment
     // at https://github.com/dart-lang/web_socket_channel/issues/38
     await _ws?.ready;
     _log.fine(
-      '${DateTime.now().toString()} Connection attempt completed: $_ws',
+      '${DateTime.now()} Connection attempt completed: $_ws',
     );
     if (_ws == null) {
       _log.severe('Could not connect. Returning.');

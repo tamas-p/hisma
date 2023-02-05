@@ -48,8 +48,7 @@ String pretty(
       localTab =
           localTab.substring(0, localTab.length - sectionSpaces.length - 1);
     } else {
-      str =
-          '$tab${tab.isEmpty ? '' : last ? '└─' : '├─'}${element.toString()}\n';
+      str = '$tab${tab.isEmpty ? '' : last ? '└─' : '├─'}$element\n';
     }
   }
 

@@ -16,7 +16,7 @@ enum E { go }
 
 enum T { toFinish, toWork }
 
-final minimalMachine = StateMachine(
+final minimalMachine = StateMachine<S, E, T>(
   events: E.values,
   name: 'onActions',
   initialStateId: S.work,
@@ -41,7 +41,7 @@ final minimalMachine = StateMachine(
   },
 );
 
-final guardsMachine = StateMachine(
+final guardsMachine = StateMachine<S, E, T>(
   events: E.values,
   name: 'guards',
   initialStateId: S.work,
