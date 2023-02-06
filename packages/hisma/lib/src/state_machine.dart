@@ -76,7 +76,7 @@ class StateMachine<S, E, T> {
       final monitor = monitorCreator.call(this);
       monitors.add(monitor);
       _log.info('Initializing $monitor');
-      monitor.notifyCreation();
+      await monitor.notifyCreation();
       _log.info('DONE Initializing $monitor');
     }
   }

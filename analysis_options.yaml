@@ -27,6 +27,9 @@ linter:
     always_use_package_imports: false
     prefer_relative_imports: true
 
+    # Async code
+    unawaited_futures: true
+
 analyzer:    
   language:
     strict-raw-types: true
@@ -39,6 +42,8 @@ analyzer:
   errors:
      todo: ignore
      public_member_api_docs: ignore
+     unawaited_futures: warning
+
 # analyzer:
 #   exclude:
 #     - path/to/excluded/files/**

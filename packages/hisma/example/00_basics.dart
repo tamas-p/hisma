@@ -91,6 +91,6 @@ Future<void> main(List<String> args) async {
   ];
 
   emptyMachine.activeStateId;
-  minimalMachine.start();
-  guardsMachine.start();
+  await minimalMachine.start();
+  await guardsMachine.start();
 }

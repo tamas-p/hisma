@@ -85,7 +85,7 @@ Action _createEmailSignInAction() => Action(
               _log.info('Not handled Auth error: ${e.code}');
               break;
           }
-          machine.fire(ELiM.fail, arg: e.code);
+          await machine.fire(ELiM.fail, arg: e.code);
         }
       },
     );

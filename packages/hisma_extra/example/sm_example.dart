@@ -45,11 +45,11 @@ Future<void> main() async {
     name: 'toggleMachine',
     initialId: ToggleState.on,
   );
-  tsm.start();
+  await tsm.start();
   await tsm.toggle();
 
-  sm1.start();
-  sm2.start();
+  await sm1.start();
+  await sm2.start();
 
   print('main exited.');
 }

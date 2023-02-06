@@ -33,7 +33,7 @@ class VisualizationServer {
       try {
         // We are not await here as we want request to be
         // served asynchronously.
-        _serve(request);
+        await _serve(request);
       } catch (err) {
         _log.warning('Caught error: $err');
         _setBadRequest(request);
@@ -79,12 +79,12 @@ class VisualizationServer {
 
     if (served) {
       _log.fine('Request served.');
-      request.response.close();
+      await request.response.close();
     } else {
       _log.warning('ERROR: "$currentPath" is not found.');
       request.response.statusCode = HttpStatus.notFound;
       request.response.write('This is 404.');
-      request.response.close();
+      await request.response.close();
     }
   }
 
@@ -168,7 +168,7 @@ class VisualizationServer {
     String argument,
   ) async {
     final svg = await _stateMachineManager.renderOverview();
-    _writeSvg(request: request, svg: svg);
+    await _writeSvg(request: request, svg: svg);
   }
 
   Future<void> _processMachineRenderRequest(
@@ -181,7 +181,7 @@ class VisualizationServer {
 // </svg>
 //     ''';
     final svg = await _stateMachineManager.renderMachine(uniqueSmIdPath);
-    _writeSvg(request: request, svg: svg);
+    await _writeSvg(request: request, svg: svg);
     _log.fine('Response sent:\n$svg');
   }
 

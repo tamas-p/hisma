@@ -74,5 +74,5 @@ Future<void> main() async {
   ];
 
   await lightMachine.start();
-  play();
+  await play();
 }

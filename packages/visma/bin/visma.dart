@@ -87,7 +87,7 @@ Options:''');
 }
 
 Future<void> main(List<String> args) async {
-  runZonedGuarded(() async {
+  await runZonedGuarded(() async {
     initLogging();
     final argResults = parseArgs(args);
 

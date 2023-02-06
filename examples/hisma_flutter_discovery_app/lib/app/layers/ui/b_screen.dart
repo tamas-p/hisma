@@ -35,7 +35,7 @@ class BScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () async {
-              ref.read(appMachineProvider).fire(E.forward);
+              await ref.read(appMachineProvider).fire(E.forward);
             },
             child: const Text('Forward'),
           ),

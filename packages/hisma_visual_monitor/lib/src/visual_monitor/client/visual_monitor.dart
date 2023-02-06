@@ -92,7 +92,7 @@ class VisualMonitor implements Monitor {
           _log.fine('completer is complete (cord was registered).');
           await _shutDownWebSocket();
           await Future<void>.delayed(const Duration(seconds: retryDelay));
-          _connectCord();
+          await _connectCord();
         } else {
           _log.fine('completer is NOT complete (cord was NOT registered).');
           completer.completeError('onDone');

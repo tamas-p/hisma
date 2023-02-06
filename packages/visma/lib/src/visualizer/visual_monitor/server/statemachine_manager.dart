@@ -153,11 +153,11 @@ class StateMachineManager {
             ),
           ),
         );
-        ws.close();
+        await ws.close();
       }
     } else {
       _log.fine('Could not register: $rd');
-      ws.close();
+      await ws.close();
     }
   }
 

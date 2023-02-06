@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
@@ -54,13 +56,13 @@ void main() {
   group('Asynchronous state change tests.', () {
     test('Async Test 1', () async {
       await m1.start();
-      m1.fire(E.change, arg: 0);
+      unawaited(m1.fire(E.change, arg: 0));
       print('Active state: ${m1.activeStateId}');
-      m1.fire(E.change, arg: 0);
+      unawaited(m1.fire(E.change, arg: 0));
       print('Active state: ${m1.activeStateId}');
-      m1.fire(E.change, arg: 0);
+      unawaited(m1.fire(E.change, arg: 0));
       print('Active state: ${m1.activeStateId}');
-      m1.fire(E.change, arg: 0);
+      unawaited(m1.fire(E.change, arg: 0));
       print('Active state: ${m1.activeStateId}');
     });
   });

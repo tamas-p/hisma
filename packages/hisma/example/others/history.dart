@@ -172,7 +172,8 @@ Future<void> main(List<String> args) async {
         return MapEntry(stateId, state);
       }
     }),
-  )..start();
+  );
+  await heh.start();
 
   final heh2 = template.copyWith(
     name: 'heh2',
@@ -185,7 +186,8 @@ Future<void> main(List<String> args) async {
             : state,
       ),
     ),
-  )..start();
+  );
+  await heh2.start();
 
   final heh3 = template.copyWith(
     name: 'heh3',
@@ -194,7 +196,8 @@ Future<void> main(List<String> args) async {
       S0.c: (template.states[S0.c]! as State<E0, T0, S0>)
           .copyWith(regions: [Region(machine: al3b2a)]),
     },
-  )..start();
+  );
+  await heh3.start();
 
   StateMachine<S0, E0, T0> getMachine({
     required String name,
@@ -567,7 +570,8 @@ Future<void> main(List<String> args) async {
         ],
       ),
     ],
-  )..start();
+  );
+  await l0.start();
 
   // final heh4 = template.copyWith(
   //   name: 'heh3',

@@ -33,7 +33,7 @@ class Checker {
     await machine.find<S, E, T>(ml3).fire(E.on);
   }
 
-  Future<void> call({required S? l1, required S? l2, required S? l3}) async {
+  void call({required S? l1, required S? l2, required S? l3}) {
     expect(machine.find<S, E, T>(ml1).activeStateId, equals(l1));
     expect(machine.find<S, E, T>(ml2).activeStateId, equals(l2));
     expect(machine.find<S, E, T>(ml3).activeStateId, equals(l3));
