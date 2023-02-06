@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hisma/hisma.dart' as hsm;
+import 'package:hisma/hisma.dart' as hisma;
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
@@ -38,7 +38,7 @@ void main() async {
 
   initLogging();
 
-  hsm.StateMachine.monitorCreators = [
+  hisma.StateMachine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     // (machine) => ActiveStateMonitor(machine, printer: log.info),
     (machine) => ConsoleMonitor(machine),

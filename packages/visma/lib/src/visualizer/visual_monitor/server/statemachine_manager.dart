@@ -187,7 +187,7 @@ class StateMachineManager {
     final svg = diagram != null
         ? await converter.convertToSvg(diagram)
         : getSvgText(
-            'Requested machine is not available in HSM Monitor.',
+            'Requested machine is not available in Visma.',
             description: 'Machine id: $decoded',
           );
     return svg;
