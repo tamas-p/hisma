@@ -1,3 +1,18 @@
+## 0.3.0
+
+> Note: This release has breaking changes.
+
+ - **FIX**: Added unawaited_futures to analysis. Fixed findings.
+ - **FIX**: Few linter fixes after flutter upgrade.
+ - **FIX**: While adding monitor tests few async issues fixed.
+ - **DOCS**: Fixed a typo.
+ - **DOCS**: Added warning not to use copyWith.
+ - **DOCS**: Added arg to YouTube link to set captions on.
+ - **BREAKING** **FIX**: Changed methods to private where public was not needed.
+ - **BREAKING** **FIX**: Hisma exceptions used instead of Exception. Also added machine find tests.
+ - **BREAKING** **FIX**: Added files accidentally left out from previous commit.
+ - **BREAKING** **FIX**: arg for actions, data for StateMachin constructor.
+
 ## 0.2.0+1
 
  - **DOCS**: Improved feature overview section.

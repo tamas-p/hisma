@@ -1,3 +1,11 @@
+## 0.2.0
+
+> Note: This release has breaking changes.
+
+ - **FIX**: Added unawaited_futures to analysis. Fixed findings.
+ - **FIX**: Few linter fixes after flutter upgrade.
+ - **BREAKING** **FIX**: Added files accidentally left out from previous commit.
+
 ## 0.1.1+5
 
  - Update a dependency to the latest release.
