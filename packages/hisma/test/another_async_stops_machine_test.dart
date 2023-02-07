@@ -56,13 +56,13 @@ void main() {
   group('Asynchronous state change tests.', () {
     test('Async Test 1', () async {
       await m1.start();
-      unawaited(m1.fire(E.change, arg: 0));
+      await m1.fire(E.change, arg: 0);
       print('Active state: ${m1.activeStateId}');
-      unawaited(m1.fire(E.change, arg: 0));
+      await m1.fire(E.change, arg: 0);
       print('Active state: ${m1.activeStateId}');
-      unawaited(m1.fire(E.change, arg: 0));
+      await m1.fire(E.change, arg: 0);
       print('Active state: ${m1.activeStateId}');
-      unawaited(m1.fire(E.change, arg: 0));
+      await m1.fire(E.change, arg: 0);
       print('Active state: ${m1.activeStateId}');
     });
   });

@@ -244,7 +244,7 @@ class StateMachine<S, E, T> {
     _log.info(
       'FIRE >>> machine: $name, state: $_activeStateId, : $eventId, arg: $arg, external: $external',
     );
-    final changed = await _internalFire(eventId, arg: arg);
+    final changed = await _fire(eventId, arg: arg);
     _log.info(
       'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: $external',
     );
@@ -271,7 +271,7 @@ Changed: $changed
 
   /// Manages potential state transition based on the eventId parameter.
   /// It returns true if state change ocurred, false otherwise.
-  Future<bool> _internalFire(E eventId, {required dynamic arg}) async {
+  Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
     assert(_activeStateId != null, 'Machine has not been started.');
     if (_activeStateId == null) return false;
@@ -292,21 +292,10 @@ Changed: $changed
     if (transitionWithId == null) return false;
 
     await transitionWithId.transition.onAction?.action.call(this, arg);
-    // Machine was stopped in an asynchronous operation.
-    // TODO: After all async operations we shall check if the machine is stopped
-    // or its state already changed.
-    // One way to manage it could be kind of transaction approach to state
-    // machine state changes: it would be atomic - either succeed or dropped.
-    // The 1st one that completes would win. This way state change could go
-    // asynchronously, but the final atomic change would only happen if state
-    // was not already changed by some other asynchronous operation.
-    // This bellow only manages if the machine was stopped in another async
-    // operation.
-    //
+
+    // Check if machine was stopped in an asynchronous operation.
     // Null eventId means that method is invoked from machine start()
     // when EntryPoint is used. In this case machine is not yet started.
-    //
-    // ignore: invariant_booleans
     if (eventId != null && _activeStateId == null) {
       _log.fine('Another asynchronous operation stopped our machine, '
           'we stop the transition.');
