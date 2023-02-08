@@ -26,3 +26,6 @@ pubspec_overrides.yaml
 # Flutter
 .flutter-plugins-dependencies
 .flutter-plugins
+
+# FVM
+.fvm/flutter_sdk
