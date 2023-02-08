@@ -1,3 +1,6 @@
+# FVM support
+sdkPath: .fvm/flutter_sdk
+
 name: hisma
 
 repository: https://github.com/tamas-p/hisma
