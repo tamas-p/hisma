@@ -31,7 +31,7 @@ function echeck {
         cecho $1
         cecho "Exiting."
         separator
-        exit 1
+        proceed
     fi
 }
 
