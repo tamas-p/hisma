@@ -36,30 +36,9 @@ class StateMachine<S, E, T> {
     states.forEach((_, state) async {
       _log.fine('myName=$name');
       if (state is State<E, T, S>) {
-        // TODO: Do ww need ?? here?
+        // TODO: Do we need ?? here?
         state.notifyMachine ??= _processNotification;
         state.machine = this;
-        // State
-        // state.notifyStateChange = _pushStateMachine;
-        // state.parentName = name;
-        for (final region in state.regions) {
-          // Region
-          // region.notifyStateChange = _pushStateMachine;
-          // region.parentName = name;
-          // Machine
-/*
-          region.machine.notifyParentAboutMyStateChange =
-              _processStateChangeNotification;
-          region.machine.parentName = name;
-*/
-          // Since now we became the parent we must make sure that monitors of
-          // child machines are notified about this change. Without this a
-          // monitor that uses parentName would miss this change.
-          _log.fine(
-            '$name StateMachine $name constructor for ${region.machine.name}',
-          );
-          // await region.machine.notifyMonitors();
-        }
       }
     });
 
@@ -80,13 +59,6 @@ class StateMachine<S, E, T> {
   /// State machine name.
   final String name;
 
-  /// OLD, TB Deleted:
-  /// Name of the parent state machine if that exist, null otherwise.
-  /// It can be used e.g. by state machine monitors that implement [Monitor]
-  /// interface to register state machine to the visualization server under
-  /// their parent state machine.
-  // String? parentName;
-
   /// Returns name of the parent state machine if that exist, null otherwise.
   /// It can be used e.g. by state machine monitors that implement [Monitor]
   /// interface to display parent related actions for a state machine (e.g. in
@@ -94,7 +66,6 @@ class StateMachine<S, E, T> {
   String? get parentName {
     final nameMessage = GetName();
     notifyRegion?.call(nameMessage);
-    // if (nameMessage.name != null) notifyMonitors();
     return nameMessage.name;
   }
 
@@ -131,12 +102,6 @@ class StateMachine<S, E, T> {
   /// define the event that must be bubble up to the parent state and then
   /// state machine to fire with this event.
   Future<void> Function(Message)? notifyRegion;
-
-  /// This callback is used notify this state machine by its children
-  /// about state changes in those child machines. It is set to the
-  /// parent StateMachine's [_processStateChangeNotification] method in
-  /// parent's constructor. It is used to notify monitors up in the hierarchy.
-  // Future<void> Function()? notifyParentAboutMyStateChange2;
 
   void notifyMonitors() {
     _log.fine('Notify from $name');
@@ -223,14 +188,6 @@ class StateMachine<S, E, T> {
     }
   }
 
-  /// Holds data just passed with start() or fire() that is about to result
-  /// machine to go to the next state.
-  // dynamic _newData;
-
-  /// Holds data passed with previous start() or fire() when machine
-  /// entered to current state.
-  // dynamic _oldData;
-
   /// [external] indicates if caller was external to this class. Defaults to
   /// true. Mainly (only?) internal invocations from StateMachine will set it
   /// to false to avoid notifying parent state machines about a state change as
@@ -253,11 +210,9 @@ Changed: $changed
   external: $external''',
     );
     if (changed && external) {
-      // await pushStateMachine();
       // Notify parent that active state of
       // this state machine was changed.
       _log.fine('$name sending notifyRegion?.call(StateChangeNotification())');
-      // await notifyParentAboutMyStateChange2?.call();
       await notifyRegion?.call(StateChangeNotification());
     }
   }
@@ -445,34 +400,6 @@ Changed: $changed
   }
 
   //----------------------------------------------------------------------------
-
-  /// Returns target state (.to) of the EntryPoint identified by the
-  /// entryPointId parameter. It is only in a separate method to have
-  /// list of checks here thus resulting more readable code.
-  //
-  // This could be deleted as start() was refactored.
-  //
-  // S? _getTargetState(S entryPointId) {
-  //   final entryPoint = states[entryPointId];
-  //   assert(
-  //     entryPoint != null,
-  //     'EntryPoint can not be found by $entryPointId.',
-  //   );
-  //   if (entryPoint == null) return null;
-  //   assert(
-  //     entryPoint is EntryPoint<E, T, S>,
-  //     'Object is not EntryPoint: $entryPoint by $entryPointId.',
-  //   );
-  //   if (entryPoint is! EntryPoint<E, T, S>) return null;
-  //   final to = entryPoint.to;
-  //   assert(
-  //     to != null,
-  //     'EntryPoint does not include to State ($entryPointId : $entryPoint).',
-  //   );
-  //   if (to == null) return null;
-
-  //   return to;
-  // }
 
   /// Exits from currently active state and also exits all region of the
   /// active state.
