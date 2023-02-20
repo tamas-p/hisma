@@ -144,6 +144,11 @@ void main() {
     checker(l3, 1, null);
 
     await m.start();
+
+    // Only to ensure that the event loop processed the ongoing notifications.
+    // This is needed since StateMachine do not wait the notifyStateChange.
+    await Future<void>.delayed(Duration.zero);
+
     checker(l0, 1, 1);
     checker(l1, 1, null);
     checker(l2, 1, null);

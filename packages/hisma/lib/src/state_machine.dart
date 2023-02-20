@@ -16,8 +16,6 @@ typedef MonitorGenerator = Monitor Function(
 /// [S] State identifier type for the machine.
 /// [E] State transition identifier type.
 /// [T] Transition identifier type.
-///
-/// {@animation 100 200 https://flutter.github.io/assets-for-api-docs/assets/widgets/loading_progress_image.mp4}
 class StateMachine<S, E, T> {
   // Map storing all state objects indexed by their state ids.
   StateMachine({
@@ -65,19 +63,17 @@ class StateMachine<S, E, T> {
       }
     });
 
-    _initCompleted = _initMonitor();
+    _initMonitor();
     _log.info('SM $name created.');
   }
 
-  late Future<void> _initCompleted;
-
-  Future<void> _initMonitor() async {
+  void _initMonitor() {
     for (final monitorCreator in monitorCreators) {
       final monitor = monitorCreator.call(this);
-      monitors.add(monitor);
-      _log.info('Initializing $monitor');
-      await monitor.notifyCreation();
-      _log.info('DONE Initializing $monitor');
+      _log.info('notifyCreation for $monitor');
+      _monitors.add(
+        MonitorAndStatus(monitor: monitor, completed: monitor.notifyCreation()),
+      );
     }
   }
 
@@ -106,7 +102,7 @@ class StateMachine<S, E, T> {
   final StateMap<S, E, T> states;
   final TransitionMap<T, S> transitions;
 
-  final monitors = <Monitor>[];
+  final _monitors = <MonitorAndStatus>[];
   static List<MonitorGenerator> monitorCreators = [];
   final List<E> events;
   final HistoryLevel? history;
@@ -142,13 +138,14 @@ class StateMachine<S, E, T> {
   /// parent's constructor. It is used to notify monitors up in the hierarchy.
   // Future<void> Function()? notifyParentAboutMyStateChange2;
 
-  Future<void> notifyMonitors() async {
-    // Before notifying monitors make sure that their initialization
-    // has completed.
-    await _initCompleted;
+  void notifyMonitors() {
     _log.fine('Notify from $name');
-    for (final monitor in monitors) {
-      await monitor.notifyStateChange();
+    for (final ms in _monitors) {
+      // Before notifying a monitor we make sure that its initialization
+      // (notifyCreation) has completed.
+      ms.completed.then((value) {
+        ms.monitor.notifyStateChange();
+      });
     }
   }
 
@@ -252,7 +249,7 @@ class StateMachine<S, E, T> {
     _log.fine(
       '''
 Changed: $changed
-  monitors: $monitors
+  monitors: $_monitors
   external: $external''',
     );
     if (changed && external) {
@@ -518,7 +515,7 @@ Changed: $changed
     _log.fine('$name  stop, state:$activeStateId, arg:$arg');
     await _exitState(arg: arg);
     _activeStateId = null;
-    await notifyMonitors();
+    notifyMonitors();
   }
 
   /// Enters state machine to the given state, executes onEntry() and
@@ -563,7 +560,7 @@ Changed: $changed
     );
 
     _log.fine('< $name  _enterState');
-    await notifyMonitors();
+    notifyMonitors();
   }
 
   /// For each region of [state] the state machine of a specific region is
@@ -664,7 +661,7 @@ Changed: $changed
       await fire(notification.event, arg: notification.arg, external: false);
     } else if (notification is StateChangeNotification) {
       _log.fine('$name  _processNotification: StateChangeNotification');
-      await notifyMonitors();
+      notifyMonitors();
       // await notifyParentAboutMyStateChange?.call();
       await notifyRegion?.call(StateChangeNotification());
     } else if (notification is GetName) {
@@ -711,4 +708,16 @@ class _TransitionWithId<S, T> {
 
   Transition<S> transition;
   T id;
+}
+
+/// Helper class to hold both the monitor and the returned Future value of its
+/// notifyCreation method. It is used in [notifyMonitors] to send
+/// state change notification only after the notifyCreation was completed.
+class MonitorAndStatus {
+  MonitorAndStatus({
+    required this.monitor,
+    required this.completed,
+  });
+  Monitor monitor;
+  Future<void> completed;
 }
