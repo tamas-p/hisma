@@ -1,3 +1,7 @@
+## 0.1.1+6
+
+ - Update a dependency to the latest release.
+
 ## 0.1.1+5
 
  - **FIX**: Added unawaited_futures to analysis. Fixed findings.

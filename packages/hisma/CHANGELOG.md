@@ -1,3 +1,7 @@
+## 0.3.0+1
+
+ - **FIX**: StateMachine now does not await on monitor notifications.
+
 ## 0.3.0
 
 > Note: This release has breaking changes.
