@@ -7,7 +7,7 @@ import 'transition.dart';
 import 'trigger.dart';
 
 typedef StateMap<S, E, T> = Map<S, BaseState<E, T, S>>;
-typedef TransitionMap<T, S> = Map<T, Transition<S>>;
+typedef TransitionMap<T, S> = Map<T, Edge>;
 typedef MonitorGenerator = Monitor Function(
   StateMachine<dynamic, dynamic, dynamic>,
 );
@@ -237,13 +237,13 @@ Changed: $changed
   }
 
   Future<bool> _executeTransition({
-    required _TransitionWithId<S, T>? transitionWithId,
+    required _TransitionWithId<T>? transitionWithId,
     E? eventId,
     required dynamic arg,
   }) async {
     if (transitionWithId == null) return false;
 
-    await transitionWithId.transition.onAction?.action.call(this, arg);
+    await transitionWithId.edge.onAction?.action.call(this, arg);
 
     // Check if machine was stopped in an asynchronous operation.
     // Null eventId means that method is invoked from machine start()
@@ -254,53 +254,65 @@ Changed: $changed
       return false;
     }
 
-    final targetState = states[transitionWithId.transition.to];
-    assert(
-      targetState != null,
-      'Target state is null identified by "${transitionWithId.transition.to}"',
-    );
-    if (targetState == null) return false;
+    if (transitionWithId.edge is Transition<S>) {
+      final transition = transitionWithId.edge as Transition<S>;
+      final targetState = states[transition.to];
+      assert(
+        targetState != null,
+        'Target state is null identified by "${transition.to}"',
+      );
+      if (targetState == null) return false;
 
-    // From here we know active state will change.
+      // From here we know active state will change.
 
-    if (targetState is FinalState) {
-      // TODO maybe combine with ExitPoint.
-      // First we stop this state machine.
-      await stop(arg: arg);
-    } else if (targetState is ExitPoint) {
-      // First we stop this state machine.
-      await stop(arg: arg);
-      // Then we notify region that this (child) machine exited due to
-      // reaching an exitPoint.
-      await notifyRegion?.call(
-        ExitNotificationFromMachine(
-          exitPointId: transitionWithId.transition.to,
+      if (targetState is FinalState) {
+        // TODO maybe combine with ExitPoint.
+        // First we stop this state machine.
+        await stop(arg: arg);
+      } else if (targetState is ExitPoint) {
+        // First we stop this state machine.
+        await stop(arg: arg);
+        // Then we notify region that this (child) machine exited due to
+        // reaching an exitPoint.
+        await notifyRegion?.call(
+          ExitNotificationFromMachine(
+            exitPointId: transition.to,
+            arg: arg,
+          ),
+        );
+      } else if (targetState is State) {
+        final trigger = Trigger(
+          source: _activeStateId,
+          event: eventId,
+          transition: transitionWithId.id,
+        );
+        await _exitState(arg: arg);
+        await _enterState(
+          trigger: trigger,
+          stateId: transition.to,
           arg: arg,
-        ),
-      );
-    } else if (targetState is State) {
-      final trigger = Trigger(
-        source: _activeStateId,
-        event: eventId,
-        transition: transitionWithId.id,
-      );
-      await _exitState(arg: arg);
-      await _enterState(
-        trigger: trigger,
-        stateId: transitionWithId.transition.to,
-        arg: arg,
-        historyFlowDown: false,
-      );
+          historyFlowDown: false,
+        );
+      } else {
+        assert(
+          false,
+          'targetState shall be either '
+          'ExitState or State but it is ${targetState.runtimeType}',
+        );
+      }
+
+      // If we get to this point the activeState has changed.
+      return true;
+    } else if (transitionWithId.edge is InternalTransition) {
+      // Since it is an internal transition the active state does not change.
+      return false;
     } else {
       assert(
         false,
-        'targetState shall be either '
-        'ExitState or State but it is ${targetState.runtimeType}',
+        '${transitionWithId.edge} is neither Transition nor TransitionInt',
       );
+      return false;
     }
-
-    // If we get to this point the activeState has changed.
-    return true;
   }
 
   S? get activeStateId => _activeStateId;
@@ -510,7 +522,7 @@ Changed: $changed
   }
 
   /// Calculates which transition shall be used for the eventId parameter.
-  Future<_TransitionWithId<S, T>?> _getTransitionByEvent(
+  Future<_TransitionWithId<T>?> _getTransitionByEvent(
     E eventId,
     dynamic arg,
   ) async {
@@ -539,11 +551,11 @@ Changed: $changed
   /// Calculates which transition shall be used from the list of transitions
   /// by looping though them and selecting the one with highest priority whose
   /// guard condition (or lack of it) allows it.
-  Future<_TransitionWithId<S, T>?> _selectTransition(
+  Future<_TransitionWithId<T>?> _selectTransition(
     List<T> transitionIds,
     dynamic arg,
   ) async {
-    _TransitionWithId<S, T>? selectedTransitionWithId;
+    _TransitionWithId<T>? selectedTransitionWithId;
     for (final transitionId in transitionIds) {
       final transition = transitions[transitionId];
       assert(
@@ -570,9 +582,9 @@ Changed: $changed
       transition.lastTime = now;
 
       if (selectedTransitionWithId == null ||
-          selectedTransitionWithId.transition.priority < transition.priority) {
+          selectedTransitionWithId.edge.priority < transition.priority) {
         selectedTransitionWithId =
-            _TransitionWithId(transition: transition, id: transitionId);
+            _TransitionWithId(edge: transition, id: transitionId);
       }
     }
 
@@ -627,13 +639,13 @@ Changed: $changed
 
 /// Helper class to allow return both Transition and its ID from
 /// the [_getTransitionByEvent] method.
-class _TransitionWithId<S, T> {
+class _TransitionWithId<T> {
   _TransitionWithId({
-    required this.transition,
+    required this.edge,
     required this.id,
   });
 
-  Transition<S> transition;
+  Edge edge;
   T id;
 }
 

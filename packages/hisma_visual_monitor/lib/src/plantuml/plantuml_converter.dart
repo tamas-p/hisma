@@ -290,6 +290,7 @@ class MachineConverter {
     _writeln();
 
     _writeStateActions(stateIdPrefixed, state);
+    _writeInternalTransitions(stateIdPrefixed, stateId, state);
 
     if (stateId == machine.initialStateId) {
       _cWriteln('[*] -$_transitionPrefix> $prefix.$stateId');
@@ -310,6 +311,69 @@ class MachineConverter {
     final onExit = state.onExit;
     if (onExit != null) _write('\\nexit / ${onExit.description}');
     _writeln();
+  }
+
+  void _writeInternalTransitions(
+    String stateIdPrefixed,
+    dynamic stateId,
+    State<dynamic, dynamic, dynamic> state,
+  ) {
+    state.etm.forEach((eventId, transitionIds) {
+      for (final transitionId in transitionIds) {
+        final transition = machine.transitions[transitionId];
+        if (transition is InternalTransition) {
+          _cWrite('$stateIdPrefixed : ');
+          _write(
+            _getInternalTransitionLabel(
+              stateId: stateId,
+              transitionId: transitionId,
+              transition: transition,
+              eventId: eventId,
+            ),
+          );
+          _writeln();
+        }
+      }
+    });
+  }
+
+  String _getInternalTransitionLabel({
+    required dynamic stateId,
+    required dynamic transitionId,
+    required InternalTransition transition,
+    required dynamic eventId,
+  }) {
+    final sb = StringBuffer();
+    final active = stateId == machine.activeStateId;
+
+    assert(eventId != null);
+    if (active) {
+      final fireMessageDTO = FireMessageDTO(
+        event: '$eventId',
+        machine: machine.name,
+      );
+      sb.write(_getOnClickHack(message: fireMessageDTO, label: '$eventId'));
+    } else {
+      sb.write('$eventId');
+    }
+
+    sb.write(' / $transitionId');
+
+    final guard = transition.guard;
+    if (guard != null) sb.write(' [${guard.description}]');
+
+    final onAction = transition.onAction;
+    if (onAction != null) sb.write(' {${onAction.description}}');
+
+    if (transition.minInterval != null) {
+      sb.write(' <${transition.minInterval}>');
+    }
+
+    if (transition.priority != 0) {
+      sb.write(' (${transition.priority})');
+    }
+
+    return sb.toString();
   }
 
   void _iterateRegions(
@@ -524,12 +588,16 @@ class MachineConverter {
     final guard = transition.guard;
     if (guard != null) sb.write('\\n[${guard.description}]');
 
-    if (transition.priority != 0) {
-      sb.write('\\nP = ${transition.priority}');
-    }
-
     final onAction = transition.onAction;
     if (onAction != null) sb.write('\\n{${onAction.description}}');
+
+    if (transition.minInterval != null) {
+      sb.write('\\n<${transition.minInterval}>');
+    }
+
+    if (transition.priority != 0) {
+      sb.write('\\n(${transition.priority})');
+    }
 
     return sb.toString();
   }
@@ -547,116 +615,137 @@ class MachineConverter {
         );
         if (transition == null) continue;
 
-        var handled = false;
-
-        // ---------------------------------------------------------------------
-        // EntryPoint
-        // ---------------------------------------------------------------------
-
-        // Only try connecting transition to entry points (through entry
-        // connectors) of regions of the target state if that target state
-        // id is in expandedItems.
-        final prefixedToStateId =
-            _getPrefixed(prefix: prefix, id: '${transition.to}');
-        if (_shallWeShowRegions(_getStateName(prefixedToStateId))) {
-          final toState = machine.stateAt(transition.to);
-
-          final trigger = Trigger(
-            source: stateId,
-            event: eventId,
-            transition: transitionId,
+        if (transition is Transition<dynamic>) {
+          _writeExternalTransitions(
+            stateId: stateId,
+            state: state,
+            eventId: eventId,
+            transitionId: transitionId,
+            transition: transition,
           );
-
-          final connectorIds = <String>{};
-          for (var i = 0; i < (toState?.regions.length ?? 0); i++) {
-            final region = toState?.regions[i];
-            final toEntryPointId = region?.entryConnectors?[trigger];
-            if (toEntryPointId != null) {
-              handled = true;
-              final connectorId = _getEntryConnectorId(
-                statePrefix: '$prefix.${transition.to}',
-                trigger: trigger,
-              );
-
-              // We only collects connectorIds here in a set as we need to
-              // draw a single transition line per defined transition.
-              connectorIds.add(connectorId);
-
-              // Draw connection from connector to targeted entry point.
-              final to = _getPrefixedId(
-                prefix: prefix,
-                parentId: transition.to,
-                regionNumber: i,
-                childId: toEntryPointId,
-              );
-              _cWriteln('$connectorId -[${theme.connectorStyle}]-> $to');
-            }
-          }
-
-          for (final connectorId in connectorIds) {
-            // Draw transition from source state to entry connector.
-            _cWriteln(
-              _getTransition(
-                stateId: stateId,
-                source: '$prefix.$stateId',
-                target: connectorId,
-                transitionId: transitionId,
-                transition: transition,
-                event: eventId,
-              ),
-            );
-          }
-        }
-
-        // ---------------------------------------------------------------------
-        // ExitConnector --> State
-        // ---------------------------------------------------------------------
-
-        final prefixedStateId = _getPrefixed(prefix: prefix, id: '$stateId');
-        if (_shallWeShowRegions(_getStateName(prefixedStateId))) {
-          for (final region in state.regions) {
-            region.exitConnectors?.forEach((exitStateId, triggerEventId) {
-              if (eventId == triggerEventId) {
-                final source = _getExitConnectorId(
-                  statePrefix: '$prefix.$stateId',
-                  eventId: eventId,
-                );
-                if (!handled) {
-                  _cWriteln(
-                    _getTransition(
-                      stateId: stateId,
-                      source: source,
-                      target: '$prefix.${transition.to}',
-                      transitionId: transitionId,
-                      transition: transition,
-                      event: eventId,
-                    ),
-                  );
-                }
-                handled = true;
-              }
-            });
-          }
-        }
-
-        // ---------------------------------------------------------------------
-        // State --> State || EndPoint
-        // ---------------------------------------------------------------------
-
-        if (!handled) {
-          _cWriteln(
-            _getTransition(
-              stateId: stateId,
-              source: '$prefix.$stateId',
-              target: '$prefix.${transition.to}',
-              transitionId: transitionId,
-              transition: transition,
-              event: eventId,
-            ),
-          );
+        } else if (transition is InternalTransition) {
+        } else {
+          assert(false, '$transition is neither Transition not TransitionInt.');
         }
       }
     });
+  }
+
+  void _writeExternalTransitions({
+    required dynamic stateId,
+    required State<dynamic, dynamic, dynamic> state,
+    required dynamic eventId,
+    required dynamic transitionId,
+    required Transition<dynamic> transition,
+  }) {
+    var handled = false;
+
+    // ---------------------------------------------------------------------
+    // EntryPoint
+    // ---------------------------------------------------------------------
+
+    // Only try connecting transition to entry points (through entry
+    // connectors) of regions of the target state if that target state
+    // id is in expandedItems.
+    final prefixedToStateId =
+        _getPrefixed(prefix: prefix, id: '${transition.to}');
+    if (_shallWeShowRegions(_getStateName(prefixedToStateId))) {
+      final toState = machine.stateAt(transition.to);
+
+      final trigger = Trigger(
+        source: stateId,
+        event: eventId,
+        transition: transitionId,
+      );
+
+      final connectorIds = <String>{};
+      for (var i = 0; i < (toState?.regions.length ?? 0); i++) {
+        final region = toState?.regions[i];
+        final toEntryPointId = region?.entryConnectors?[trigger];
+        if (toEntryPointId != null) {
+          handled = true;
+          final connectorId = _getEntryConnectorId(
+            statePrefix: '$prefix.${transition.to}',
+            trigger: trigger,
+          );
+
+          // We only collects connectorIds here in a set as we need to
+          // draw a single transition line per defined transition.
+          connectorIds.add(connectorId);
+
+          // Draw connection from connector to targeted entry point.
+          final to = _getPrefixedId(
+            prefix: prefix,
+            parentId: transition.to,
+            regionNumber: i,
+            childId: toEntryPointId,
+          );
+          _cWriteln('$connectorId -[${theme.connectorStyle}]-> $to');
+        }
+      }
+
+      for (final connectorId in connectorIds) {
+        // Draw transition from source state to entry connector.
+        _cWriteln(
+          _getTransition(
+            stateId: stateId,
+            source: '$prefix.$stateId',
+            target: connectorId,
+            transitionId: transitionId,
+            transition: transition,
+            event: eventId,
+          ),
+        );
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // ExitConnector --> State
+    // ---------------------------------------------------------------------
+
+    final prefixedStateId = _getPrefixed(prefix: prefix, id: '$stateId');
+    if (_shallWeShowRegions(_getStateName(prefixedStateId))) {
+      for (final region in state.regions) {
+        region.exitConnectors?.forEach((exitStateId, triggerEventId) {
+          if (eventId == triggerEventId) {
+            final source = _getExitConnectorId(
+              statePrefix: '$prefix.$stateId',
+              eventId: eventId,
+            );
+            if (!handled) {
+              _cWriteln(
+                _getTransition(
+                  stateId: stateId,
+                  source: source,
+                  target: '$prefix.${transition.to}',
+                  transitionId: transitionId,
+                  transition: transition,
+                  event: eventId,
+                ),
+              );
+            }
+            handled = true;
+          }
+        });
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // State --> State || EndPoint
+    // ---------------------------------------------------------------------
+
+    if (!handled) {
+      _cWriteln(
+        _getTransition(
+          stateId: stateId,
+          source: '$prefix.$stateId',
+          target: '$prefix.${transition.to}',
+          transitionId: transitionId,
+          transition: transition,
+          event: eventId,
+        ),
+      );
+    }
   }
 
   void _writeStateWithStereotype(
@@ -690,8 +779,8 @@ class MachineConverter {
 
     for (final transitionId in entryPoint.transitionIds) {
       final transition = machine.transitions[transitionId];
-      assert(transition != null);
-      if (transition == null) continue;
+      assert(transition != null && transition is Transition<dynamic>);
+      if (transition == null || transition is! Transition) continue;
       _drawEntryPointTransition(
         transition: transition,
         transitionId: transitionId,

@@ -1,10 +1,39 @@
 import 'action.dart';
 import 'guard.dart';
 
+abstract class Edge {
+  Edge({
+    this.guard,
+    this.priority = 0,
+    this.onAction,
+    this.minInterval,
+    this.lastTime,
+  });
+  final Guard? guard;
+  final int priority;
+  final Action? onAction;
+  final Duration? minInterval;
+  DateTime? lastTime;
+}
+
+class InternalTransition extends Edge {
+  InternalTransition({
+    Guard? guard,
+    int priority = 0,
+    required Action onAction,
+    Duration? minInterval,
+  }) : super(
+          guard: guard,
+          priority: priority,
+          onAction: onAction,
+          minInterval: minInterval,
+        );
+}
+
 /// Represents a transition including the corresponding guard and priority
 /// to this target and the action that happens at the transition.
 /// [S] State identifier type.
-class Transition<S> {
+class Transition<S> extends Edge {
   /// Creates the object that represents a transition.
   /// * [to] Target state of the transition.
   /// * [guard] The guard function that only returns true if transition allowed.
@@ -16,18 +45,18 @@ class Transition<S> {
   /// * [onAction] Function invoked when transition occurs.
   Transition({
     required this.to,
-    this.guard,
-    this.priority = 0,
-    this.onAction,
-    this.minInterval,
-  });
+    Guard? guard,
+    int priority = 0,
+    Action? onAction,
+    Duration? minInterval,
+  }) : super(
+          guard: guard,
+          priority: priority,
+          onAction: onAction,
+          minInterval: minInterval,
+        );
 
   final S to;
-  final Guard? guard;
-  final int priority;
-  final Action? onAction;
-  final Duration? minInterval;
-  DateTime? lastTime;
 
   @override
   bool operator ==(Object other) {
