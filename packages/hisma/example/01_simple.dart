@@ -4,11 +4,13 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+import '../test/hisma_monitor_test.dart';
+
 enum S { on, off, stop }
 
-enum E { turnOn, turnOff, stop, sing, dance }
+enum E { turnOn, turnOff, stop, setTimer }
 
-enum T { toOn, toOff, toStop, sing, dance }
+enum T { toOn, toOff, toStop, timedOff, timedOn }
 
 StateMachine<S, E, T> createLightMachine({
   RegionList<S, E, T>? regions,
@@ -21,24 +23,27 @@ StateMachine<S, E, T> createLightMachine({
         S.off: State(
           etm: {
             E.turnOn: [T.toOn],
-            E.dance: [T.dance, T.sing],
+            E.setTimer: [T.timedOn],
           },
           onEntry: Action(
-            description: 'Turning off.',
-            action: (machine, arg) async => print('OFF'),
+            description: 'Entering off state.',
+            action: (machine, arg) async => print('Entering Off.'),
+          ),
+          onExit: Action(
+            description: 'Leaving off state.',
+            action: (machine, arg) async => print('Leaving Off.'),
           ),
         ),
         S.on: State(
           etm: {
             E.turnOff: [T.toOff],
-            E.stop: [T.toStop, T.sing],
-            E.sing: [T.sing],
-            E.dance: [T.dance],
+            E.stop: [T.toStop],
+            E.setTimer: [T.timedOff],
           },
           regions: regions,
           onEntry: Action(
-            description: 'Turning on.',
-            action: (machine, arg) async => print('ON'),
+            description: 'Entering on state.',
+            action: (machine, arg) async => print('Entering On state.'),
           ),
         ),
         S.stop: FinalState(),
@@ -59,25 +64,34 @@ StateMachine<S, E, T> createLightMachine({
             action: (machine, arg) async => print('Closing'),
           ),
         ),
-        T.dance: InternalTransition(
+        T.timedOn: InternalTransition(
           onAction: Action(
-            description: 'dance',
+            description: 'Turn on in 3 sec.',
             action: (machine, arg) async {
-              print('Dancing.');
+              print('Initiating timer to turn on in 3 sec.');
+              await Future.delayed(
+                const Duration(seconds: 3),
+                () {
+                  print('Fire timedOn.');
+                  machine.fire(E.turnOn);
+                },
+              );
             },
           ),
         ),
-        T.sing: InternalTransition(
+        T.timedOff: InternalTransition(
           minInterval: const Duration(seconds: 1),
-          guard: Guard(
-            description: 'Always do it.',
-            condition: (machine, arg) async => true,
-          ),
-          priority: 11,
           onAction: Action(
-            description: 'test internal transition',
+            description: 'Turn off in 3 sec.',
             action: (machine, arg) async {
-              print('T.sing internal transition action.');
+              print('Initiating timer to turn off in 3 sec.');
+              await Future.delayed(
+                const Duration(seconds: 3),
+                () {
+                  print('Fire timedOff.');
+                  machine.fire(E.turnOff);
+                },
+              );
             },
           ),
         ),
