@@ -4,8 +4,6 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
-import '../test/hisma_monitor_test.dart';
-
 enum S { on, off, stop }
 
 enum E { turnOn, turnOff, stop, setTimer }
