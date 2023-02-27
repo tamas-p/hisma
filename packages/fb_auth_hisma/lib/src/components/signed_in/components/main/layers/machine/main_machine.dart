@@ -46,14 +46,17 @@ StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
           etm: {
             EMM.back: [TMM.back],
           },
+          onEntry: Action(
+            description: 'Set data to arg.',
+            action: (machine, dynamic arg) async => machine.data = arg,
+          ),
         ),
         SMM.app: State(),
       },
       transitions: {
         TMM.toEmailNotVerified: Transition(to: SMM.emailNotVerified),
         TMM.toApp: Transition(to: SMM.app),
-        TMM.reload: Transition(
-          to: SMM.emailNotVerified,
+        TMM.reload: InternalTransition(
           onAction: Action(
             description: 'Reloading user profile.',
             action: (machine, dynamic arg) async {
@@ -61,15 +64,19 @@ StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
             },
           ),
         ),
-        TMM.resendEmail: Transition(
-          minInterval: const Duration(days: 1),
-          to: SMM.emailNotVerified,
+        TMM.resendEmail: InternalTransition(
+          minInterval: const Duration(minutes: 1),
           onAction: Action(
             description: 'Resending verification email.',
             action: (machine, dynamic arg) async {
               await sendEmailVerification();
             },
           ),
+          onError: (machine, message) async {
+            log.info(message);
+            await machine.fire(EMM.error, arg: message);
+            log.fine('data: ${machine.data}');
+          },
         ),
         TMM.toError: Transition(to: SMM.error),
         TMM.back: Transition(to: SMM.emailNotVerified),

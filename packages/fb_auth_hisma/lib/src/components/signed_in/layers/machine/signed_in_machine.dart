@@ -46,8 +46,7 @@ StateMachineWithChangeNotifier<SSiM, ESiM, TSiM> createSignedInMachine() =>
       transitions: {
         TSiM.toConfirmSignOut: Transition(to: SSiM.confirmSignOut),
         TSiM.toMain: Transition(to: SSiM.main),
-        TSiM.initiateSignOut: Transition(
-          to: SSiM.confirmSignOut,
+        TSiM.initiateSignOut: InternalTransition(
           onAction: Action(
             description: 'Initiate sign out',
             action: (machine, dynamic arg) async {

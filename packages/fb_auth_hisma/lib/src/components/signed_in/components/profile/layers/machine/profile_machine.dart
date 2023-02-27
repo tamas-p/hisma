@@ -10,7 +10,7 @@ enum SPM { profile, error }
 
 enum EPM { load, error, update, back }
 
-enum TPM { load, toError, toProfile, toProfileWithUpdate }
+enum TPM { load, toError, toProfile, update }
 
 StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
     StateMachineWithChangeNotifier<SPM, EPM, TPM>(
@@ -20,7 +20,7 @@ StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
       states: {
         SPM.profile: State(
           etm: {
-            EPM.update: [TPM.toProfileWithUpdate],
+            EPM.update: [TPM.update],
             EPM.error: [TPM.toError],
             EPM.load: [TPM.load],
           },
@@ -32,8 +32,7 @@ StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
         ),
       },
       transitions: {
-        TPM.load: Transition(
-          to: SPM.profile,
+        TPM.load: InternalTransition(
           onAction: Action(
             description: 'Load profile information',
             action: (machine, dynamic arg) async {
@@ -45,8 +44,7 @@ StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
         ),
         TPM.toError: Transition(to: SPM.error),
         TPM.toProfile: Transition(to: SPM.profile),
-        TPM.toProfileWithUpdate: Transition(
-          to: SPM.profile,
+        TPM.update: InternalTransition(
           onAction: Action(
             description: 'Updating profile',
             action: (machine, dynamic arg) async {

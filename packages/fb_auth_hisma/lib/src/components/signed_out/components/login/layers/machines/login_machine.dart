@@ -9,11 +9,11 @@ final _log = getLogger(loginMachineName);
 
 const String loginMachineName = 'loginMachine';
 
-enum SLiM { login, emailSigningIn, failedSignIn }
+enum SLiM { login, failedSignIn }
 
 enum ELiM { emailSignIn, fail, ok }
 
-enum TLiM { toLogin, toEmailSigningIn, toFailed }
+enum TLiM { toLogin, emailSigningIn, toFailed }
 
 StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
     StateMachineWithChangeNotifier<SLiM, ELiM, TLiM>(
@@ -23,14 +23,9 @@ StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
       states: {
         SLiM.login: State(
           etm: {
-            ELiM.emailSignIn: [TLiM.toEmailSigningIn],
-          },
-        ),
-        SLiM.emailSigningIn: State(
-          etm: {
+            ELiM.emailSignIn: [TLiM.emailSigningIn],
             ELiM.fail: [TLiM.toFailed],
           },
-          onEntry: _createEmailSignInAction(),
         ),
         SLiM.failedSignIn: State(
           etm: {
@@ -45,8 +40,8 @@ StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
         ),
       },
       transitions: {
-        TLiM.toEmailSigningIn: Transition(
-          to: SLiM.emailSigningIn,
+        TLiM.emailSigningIn: InternalTransition(
+          onAction: _createEmailSignInAction(),
           guard: Guard(
             description: 'Only if password is not empty.',
             condition: (machine, dynamic data) async {

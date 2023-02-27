@@ -10,7 +10,6 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, Widget, ERM>(
   creators: {
     SRM.registration:
         MaterialPageCreator<SRM>(widget: const RegistrationScreen()),
-    SRM.registering: NoUIChange(),
     SRM.failed: PagelessCreator<ERM, void>(
       event: ERM.ok,
       show: (context) => showDialog(

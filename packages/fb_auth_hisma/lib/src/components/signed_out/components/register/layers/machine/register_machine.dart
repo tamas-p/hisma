@@ -10,11 +10,11 @@ final _log = getLogger(registerMachineName);
 
 const String registerMachineName = 'registerMachine';
 
-enum SRM { registration, registering, failed, exBack }
+enum SRM { registration, failed, exBack }
 
 enum ERM { back, register, fail, ok }
 
-enum TRM { toRegistering, toFailed, toRest, toExBack }
+enum TRM { register, toFailed, toRegistration, toExBack }
 
 StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
     StateMachineWithChangeNotifier<SRM, ERM, TRM>(
@@ -24,15 +24,27 @@ StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
       states: {
         SRM.registration: State(
           etm: {
-            ERM.register: [TRM.toRegistering],
+            ERM.register: [TRM.register],
+            ERM.fail: [TRM.toFailed],
             ERM.back: [TRM.toExBack],
           },
         ),
-        SRM.registering: State(
+        SRM.failed: State(
           etm: {
-            ERM.fail: [TRM.toFailed],
+            ERM.ok: [TRM.toRegistration],
           },
           onEntry: Action(
+            description: 'set data to arg',
+            action: (machine, dynamic arg) async {
+              machine.data = arg;
+            },
+          ),
+        ),
+        SRM.exBack: ExitPoint(),
+      },
+      transitions: {
+        TRM.register: InternalTransition(
+          onAction: Action(
             description: 'Registering user',
             action: (machine, dynamic arg) async {
               assert(arg is Credentials);
@@ -52,23 +64,8 @@ StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
             },
           ),
         ),
-        SRM.failed: State(
-          etm: {
-            ERM.ok: [TRM.toRest],
-          },
-          onEntry: Action(
-            description: 'set data to arg',
-            action: (machine, dynamic arg) async {
-              machine.data = arg;
-            },
-          ),
-        ),
-        SRM.exBack: ExitPoint(),
-      },
-      transitions: {
-        TRM.toRegistering: Transition(to: SRM.registering),
         TRM.toFailed: Transition(to: SRM.failed),
-        TRM.toRest: Transition(to: SRM.registration),
+        TRM.toRegistration: Transition(to: SRM.registration),
         TRM.toExBack: Transition(to: SRM.exBack),
       },
     );
