@@ -572,12 +572,16 @@ Changed: $changed
       if (transition.minInterval != null &&
           transition.lastTime != null &&
           now.difference(transition.lastTime!) < transition.minInterval!) {
-        _log.info('Throwing hismaIntervalException.');
-        // TODO: Shall we drop or simply continue (selecting the transition)?
-        throw HismaIntervalException(
-          'Too little time passed since last transition: '
-          '${now.difference(transition.lastTime!)}',
-        );
+        final message = 'Too little time passed since last transition: '
+            '${now.difference(transition.lastTime!)}';
+        if (transition.onError != null) {
+          _log.info('Calling onError() for $transitionId.');
+          await transition.onError!.call(this, message);
+        } else {
+          _log.info('Throwing hismaIntervalException.');
+          // TODO: Shall we drop or simply continue (selecting the transition)?
+          throw HismaIntervalException(message);
+        }
       }
       transition.lastTime = now;
 
