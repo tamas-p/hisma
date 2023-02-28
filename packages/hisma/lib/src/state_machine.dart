@@ -564,10 +564,6 @@ Changed: $changed
       );
       if (transition == null) continue;
 
-      final guardAllows =
-          await transition.guard?.condition.call(this, arg) ?? true;
-      if (!guardAllows) continue;
-
       final now = DateTime.now();
       if (transition.minInterval != null &&
           transition.lastTime != null &&
@@ -584,6 +580,11 @@ Changed: $changed
           throw HismaIntervalException(message);
         }
       }
+
+      final guardAllows =
+          await transition.guard?.condition.call(this, arg) ?? true;
+      if (!guardAllows) continue;
+
       transition.lastTime = now;
 
       if (selectedTransitionWithId == null ||

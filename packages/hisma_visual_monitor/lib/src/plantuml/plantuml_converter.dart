@@ -357,21 +357,22 @@ class MachineConverter {
       sb.write('$eventId');
     }
 
-    sb.write(' / $transitionId');
-
-    final guard = transition.guard;
-    if (guard != null) sb.write(' [${guard.description}]');
-
-    final onAction = transition.onAction;
-    if (onAction != null) sb.write(' {${onAction.description}}');
+    sb.write(' / ');
+    sb.write('$transitionId = ');
 
     if (transition.minInterval != null) {
       sb.write(' <${transition.minInterval}>');
     }
 
+    final guard = transition.guard;
+    if (guard != null) sb.write(' [${guard.description}]');
+
     if (transition.priority != 0) {
       sb.write(' (${transition.priority})');
     }
+
+    final onAction = transition.onAction;
+    if (onAction != null) sb.write(' ${onAction.description}');
 
     return sb.toString();
   }
@@ -583,21 +584,20 @@ class MachineConverter {
       }
     }
 
-    sb.write('\\n:$transitionId');
-
-    final guard = transition.guard;
-    if (guard != null) sb.write('\\n[${guard.description}]');
-
-    final onAction = transition.onAction;
-    if (onAction != null) sb.write('\\n{${onAction.description}}');
+    sb.write('\\n$transitionId');
 
     if (transition.minInterval != null) {
       sb.write('\\n<${transition.minInterval}>');
     }
+    final guard = transition.guard;
+    if (guard != null) sb.write('\\n[${guard.description}]');
 
     if (transition.priority != 0) {
       sb.write('\\n(${transition.priority})');
     }
+
+    final onAction = transition.onAction;
+    if (onAction != null) sb.write('\\n${onAction.description}');
 
     return sb.toString();
   }
