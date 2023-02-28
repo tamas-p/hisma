@@ -9,8 +9,9 @@ enum E { changeException, changeOnError, finish }
 
 enum T { toA, toBThrow, toBOnError, toEnd }
 
-StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
-      data: false,
+StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
+    StateMachine<S, E, T>(
+      data: value,
       name: name,
       initialStateId: S.a,
       states: {
@@ -34,12 +35,24 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
         T.toBThrow: Transition(
           to: S.b,
           minInterval: const Duration(milliseconds: 100),
+          onAction: Action(
+            description: 'double',
+            action: (machine, arg) async {
+              machine.data = (machine.data as int) * 2;
+            },
+          ),
         ),
         T.toBOnError: Transition(
           to: S.b,
           minInterval: const Duration(milliseconds: 100),
+          onAction: Action(
+            description: 'double',
+            action: (machine, arg) async {
+              machine.data = (machine.data as int) * 2;
+            },
+          ),
           onError: (machine, message) async {
-            machine.data = true;
+            machine.data = (machine.data as int) ~/ 2;
           },
         ),
         T.toEnd: Transition(to: S.end),
@@ -48,72 +61,109 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
 void main() {
   group('Transition interval test', () {
     test('Interval test positive - throw', () async {
-      final m1 = createSimpleMachine('m1');
-      expect(m1.activeStateId, equals(null));
+      var value = 100;
+      final m1 = createSimpleMachine('m1', value);
+      expect(m1.activeStateId, null);
+      expect(m1.data as int, value);
+
       await m1.start();
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await m1.fire(E.changeException);
-      expect(m1.activeStateId, equals(S.b));
+      value = value * 2;
+      expect(m1.activeStateId, S.b);
+      expect(m1.data as int, value);
+
       await m1.fire(E.changeException);
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await Future<void>.delayed(const Duration(milliseconds: 101));
       await m1.fire(E.changeException);
-      expect(m1.activeStateId, equals(S.b));
-      expect(m1.data as bool, false);
+      value = value * 2;
+      expect(m1.activeStateId, S.b);
+      expect(m1.data as int, value);
     });
 
     test('Interval test positive - onError', () async {
-      final m1 = createSimpleMachine('m1');
-      expect(m1.activeStateId, equals(null));
+      var value = 100;
+      final m1 = createSimpleMachine('m1', value);
+      expect(m1.activeStateId, null);
+      expect(m1.data as int, value);
+
       await m1.start();
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await m1.fire(E.changeOnError);
-      expect(m1.activeStateId, equals(S.b));
+      value = value * 2;
+      expect(m1.activeStateId, S.b);
+      expect(m1.data as int, value);
+
       await m1.fire(E.changeOnError);
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await Future<void>.delayed(const Duration(milliseconds: 101));
       await m1.fire(E.changeOnError);
-      expect(m1.activeStateId, equals(S.b));
-      expect(m1.data as bool, false);
+      value = value * 2;
+      expect(m1.activeStateId, S.b);
+      expect(m1.data as int, value);
     });
 
     test('Interval test negative - throw', () async {
-      final m1 = createSimpleMachine('m1');
-      expect(m1.activeStateId, equals(null));
+      var value = 100;
+      final m1 = createSimpleMachine('m1', value);
+      expect(m1.activeStateId, null);
+      expect(m1.data as int, value);
+
       await m1.start();
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await m1.fire(E.changeException);
-      expect(m1.activeStateId, equals(S.b));
+      value *= 2;
+      expect(m1.activeStateId, S.b);
+      expect(m1.data as int, value);
+
       await m1.fire(E.changeException);
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(
         m1.fire(E.changeException),
         throwsA(const TypeMatcher<HismaIntervalException>()),
       );
-      expect(m1.data as bool, false);
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
     });
 
     test('Interval test negative - onError', () async {
-      final m1 = createSimpleMachine('m1');
-      expect(m1.activeStateId, equals(null));
+      var value = 100;
+      final m1 = createSimpleMachine('m1', value);
+      expect(m1.activeStateId, null);
+      expect(m1.data as int, value);
+
       await m1.start();
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await m1.fire(E.changeOnError);
-      expect(m1.activeStateId, equals(S.b));
+      value *= 2;
+      expect(m1.activeStateId, S.b);
+      expect(m1.data as int, value);
+
       await m1.fire(E.changeOnError);
-      expect(m1.activeStateId, equals(S.a));
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
 
       await Future<void>.delayed(const Duration(milliseconds: 10));
       await m1.fire(E.changeOnError);
-      expect(m1.data as bool, true);
+      value ~/= 2;
+      expect(m1.activeStateId, S.a);
+      expect(m1.data as int, value);
     });
   });
 }

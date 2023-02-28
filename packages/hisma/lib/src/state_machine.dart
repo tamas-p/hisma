@@ -577,6 +577,7 @@ Changed: $changed
         if (transition.onError != null) {
           _log.info('Calling onError() for $transitionId.');
           await transition.onError!.call(this, message);
+          return null;
         } else {
           _log.info('Throwing hismaIntervalException.');
           // TODO: Shall we drop or simply continue (selecting the transition)?
