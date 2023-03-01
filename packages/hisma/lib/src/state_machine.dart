@@ -570,9 +570,10 @@ Changed: $changed
           now.difference(transition.lastTime!) < transition.minInterval!) {
         final message = 'Too little time passed since last transition: '
             '${now.difference(transition.lastTime!)}';
-        if (transition.onError != null) {
+        final onError = transition.onError;
+        if (onError != null) {
           _log.info('Calling onError() for $transitionId.');
-          await transition.onError!.call(this, message);
+          await onError.action.call(this, message);
           return null;
         } else {
           _log.info('Throwing hismaIntervalException.');

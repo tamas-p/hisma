@@ -51,9 +51,12 @@ StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
               machine.data = (machine.data as int) * 2;
             },
           ),
-          onError: (machine, message) async {
-            machine.data = (machine.data as int) ~/ 2;
-          },
+          onError: Action(
+            description: 'divide',
+            action: (machine, message) async {
+              machine.data = (machine.data as int) ~/ 2;
+            },
+          ),
         ),
         T.toEnd: Transition(to: S.end),
       },

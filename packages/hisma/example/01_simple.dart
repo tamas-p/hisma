@@ -61,6 +61,10 @@ StateMachine<S, E, T> createLightMachine({
             description: 'Closing.',
             action: (machine, arg) async => print('Closing'),
           ),
+          onError: Action(
+            description: 'Print error message.',
+            action: (machine, arg) async => print(arg),
+          ),
         ),
         T.timedOn: InternalTransition(
           onAction: Action(
@@ -78,7 +82,12 @@ StateMachine<S, E, T> createLightMachine({
           ),
         ),
         T.timedOff: InternalTransition(
-          minInterval: const Duration(seconds: 1),
+          guard: Guard(
+            description: 'always',
+            condition: (machine, arg) async => true,
+          ),
+          minInterval: const Duration(seconds: 5),
+          priority: 12,
           onAction: Action(
             description: 'Turn off in 3 sec.',
             action: (machine, arg) async {
@@ -91,6 +100,10 @@ StateMachine<S, E, T> createLightMachine({
                 },
               );
             },
+          ),
+          onError: Action(
+            description: 'Print error message.',
+            action: (machine, message) async => print(message),
           ),
         ),
       },
