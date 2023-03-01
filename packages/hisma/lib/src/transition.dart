@@ -1,5 +1,6 @@
 import 'action.dart';
 import 'guard.dart';
+import 'state_machine.dart';
 
 abstract class Edge {
   Edge({
@@ -13,7 +14,7 @@ abstract class Edge {
   final Guard? guard;
   final int priority;
   final Action? onAction;
-  final Action? onError;
+  final OnErrorAction? onError;
   final Duration? minInterval;
   DateTime? lastTime;
 }
@@ -23,7 +24,7 @@ class InternalTransition extends Edge {
     Guard? guard,
     int priority = 0,
     required Action onAction,
-    Action? onError,
+    OnErrorAction? onError,
     Duration? minInterval,
   }) : super(
           guard: guard,
@@ -52,7 +53,7 @@ class Transition<S> extends Edge {
     Guard? guard,
     int priority = 0,
     Action? onAction,
-    Action? onError,
+    OnErrorAction? onError,
     Duration? minInterval,
   }) : super(
           guard: guard,
@@ -95,4 +96,24 @@ class Transition<S> extends Edge {
       minInterval: minInterval ?? this.minInterval,
     );
   }
+}
+
+enum OnErrorSource { guard, maxInterval }
+
+class OnErrorData {
+  OnErrorData({required this.source, required this.message, required this.arg});
+  OnErrorSource source;
+  String? message;
+  dynamic arg;
+}
+
+typedef OnErrorActionFunction = Future<void> Function(
+  StateMachine<dynamic, dynamic, dynamic> machine,
+  OnErrorData data,
+);
+
+class OnErrorAction {
+  OnErrorAction({required this.description, required this.action});
+  String description;
+  OnErrorActionFunction action;
 }

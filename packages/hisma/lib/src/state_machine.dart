@@ -564,17 +564,26 @@ Changed: $changed
       );
       if (transition == null) continue;
 
+      final onError = transition.onError;
       final now = DateTime.now();
       if (transition.minInterval != null &&
           transition.lastTime != null &&
           now.difference(transition.lastTime!) < transition.minInterval!) {
         final message = 'Too little time passed since last transition: '
             '${now.difference(transition.lastTime!)}';
-        final onError = transition.onError;
         if (onError != null) {
-          _log.info('Calling onError() for $transitionId.');
-          await onError.action.call(this, message);
-          return null;
+          _log.info(
+            'Calling onError action for $transitionId due to failed maxInterval check.',
+          );
+          await onError.action.call(
+            this,
+            OnErrorData(
+              source: OnErrorSource.maxInterval,
+              message: message,
+              arg: arg,
+            ),
+          );
+          continue;
         } else {
           _log.info('Throwing hismaIntervalException.');
           // TODO: Shall we drop or simply continue (selecting the transition)?
@@ -584,7 +593,22 @@ Changed: $changed
 
       final guardAllows =
           await transition.guard?.condition.call(this, arg) ?? true;
-      if (!guardAllows) continue;
+      if (!guardAllows) {
+        if (onError != null) {
+          _log.info(
+            'Calling onError action for $transitionId due to failed guard.',
+          );
+          await onError.action.call(
+            this,
+            OnErrorData(
+              source: OnErrorSource.guard,
+              message: 'Guard failed.',
+              arg: arg,
+            ),
+          );
+        }
+        continue;
+      }
 
       transition.lastTime = now;
 

@@ -61,9 +61,9 @@ StateMachine<S, E, T> createLightMachine({
             description: 'Closing.',
             action: (machine, arg) async => print('Closing'),
           ),
-          onError: Action(
+          onError: OnErrorAction(
             description: 'Print error message.',
-            action: (machine, arg) async => print(arg),
+            action: (machine, onErrorData) async => print(onErrorData.message),
           ),
         ),
         T.timedOn: InternalTransition(
@@ -101,9 +101,9 @@ StateMachine<S, E, T> createLightMachine({
               );
             },
           ),
-          onError: Action(
+          onError: OnErrorAction(
             description: 'Print error message.',
-            action: (machine, message) async => print(message),
+            action: (machine, onErrorData) async => print(onErrorData.message),
           ),
         ),
       },

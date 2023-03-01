@@ -11,6 +11,7 @@ typedef AsyncFunction = Future<int> Function();
 
 StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
       name: 'guard',
+      data: false,
       initialStateId: S.a,
       states: {
         S.a: State(
@@ -30,6 +31,12 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
               return data is int && data > 10;
             },
           ),
+          onError: OnErrorAction(
+            description: 'Set data to true.',
+            action: (machine, data) async {
+              machine.data = true;
+            },
+          ),
         ),
         T.asyncToB: Transition(
           to: S.b,
@@ -37,6 +44,12 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
             description: 'only if data > 10',
             condition: (machine, data) async {
               return data is AsyncFunction && await data() > 10;
+            },
+          ),
+          onError: OnErrorAction(
+            description: 'Set data to true.',
+            action: (machine, data) async {
+              machine.data = true;
             },
           ),
         ),
@@ -51,24 +64,43 @@ void main() {
     });
     test('Guard synchronous', () async {
       await machine.start();
-      expect(machine.activeStateId, equals(S.a));
+      expect(machine.data as bool, false);
+      expect(machine.activeStateId, S.a);
+
       await machine.fire(E.sync);
-      expect(machine.activeStateId, equals(S.a));
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, true);
+
+      machine.data = false;
       await machine.fire(E.sync, arg: 10);
-      expect(machine.activeStateId, equals(S.a));
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, true);
+
+      machine.data = false;
       await machine.fire(E.sync, arg: 11);
-      expect(machine.activeStateId, equals(S.b));
+      expect(machine.activeStateId, S.b);
+      expect(machine.data as bool, false);
     });
 
     test('Guard asynchronous', () async {
       await machine.start();
-      expect(machine.activeStateId, equals(S.a));
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, false);
+
+      machine.data = false;
       await machine.fire(E.async);
-      expect(machine.activeStateId, equals(S.a));
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, true);
+
+      machine.data = false;
       await machine.fire(E.async, arg: () => Future.value(10));
-      expect(machine.activeStateId, equals(S.a));
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, true);
+
+      machine.data = false;
       await machine.fire(E.async, arg: () => Future.value(11));
-      expect(machine.activeStateId, equals(S.b));
+      expect(machine.activeStateId, S.b);
+      expect(machine.data as bool, false);
     });
   });
 }

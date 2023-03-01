@@ -72,12 +72,11 @@ StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
               await sendEmailVerification();
             },
           ),
-          onError: Action(
+          onError: OnErrorAction(
             description: 'Fire EMM.error.',
-            action: (machine, dynamic message) async {
-              log.info(message);
-              await machine.fire(EMM.error, arg: message);
-              log.fine('data: ${machine.data}');
+            action: (machine, onErrorData) async {
+              log.info(onErrorData.message);
+              await machine.fire(EMM.error, arg: onErrorData.message);
             },
           ),
         ),
