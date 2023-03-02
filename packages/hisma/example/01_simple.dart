@@ -50,13 +50,13 @@ StateMachine<S, E, T> createLightMachine({
         T.toOn: Transition(to: S.on),
         T.toOff: Transition(to: S.off),
         T.toStop: Transition(
+          to: S.stop,
+          minInterval: const Duration(seconds: 1),
           guard: Guard(
             description: 'If not empty.',
             condition: (machine, arg) async => true,
           ),
-          minInterval: const Duration(seconds: 1),
           priority: 10,
-          to: S.stop,
           onAction: Action(
             description: 'Closing.',
             action: (machine, arg) async => print('Closing'),

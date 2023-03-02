@@ -3,9 +3,9 @@ import 'package:test/test.dart';
 
 enum S { a, b }
 
-enum E { sync, async }
+enum E { sync, async, syncEx, asyncEx, back }
 
-enum T { syncToB, asyncToB }
+enum T { syncToBex, asyncToBex, syncToBonError, asyncToBonError, back }
 
 typedef AsyncFunction = Future<int> Function();
 
@@ -16,14 +16,39 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
       states: {
         S.a: State(
           etm: {
-            E.sync: [T.syncToB],
-            E.async: [T.asyncToB],
+            E.sync: [T.syncToBonError],
+            E.async: [T.asyncToBonError],
+            E.syncEx: [T.syncToBex],
+            E.asyncEx: [T.asyncToBex],
           },
         ),
-        S.b: State(),
+        S.b: State(
+          etm: {
+            E.back: [T.back],
+          },
+        ),
       },
       transitions: {
-        T.syncToB: Transition(
+        T.back: Transition(to: S.a),
+        T.syncToBex: Transition(
+          to: S.b,
+          guard: Guard(
+            description: 'only if data > 10',
+            condition: (machine, data) async {
+              return data is int && data > 10;
+            },
+          ),
+        ),
+        T.asyncToBex: Transition(
+          to: S.b,
+          guard: Guard(
+            description: 'only if data > 10',
+            condition: (machine, data) async {
+              return data is AsyncFunction && await data() > 10;
+            },
+          ),
+        ),
+        T.syncToBonError: Transition(
           to: S.b,
           guard: Guard(
             description: 'only if data > 10',
@@ -34,11 +59,12 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
           onError: OnErrorAction(
             description: 'Set data to true.',
             action: (machine, data) async {
+              expect(data.source, OnErrorSource.guard);
               machine.data = true;
             },
           ),
         ),
-        T.asyncToB: Transition(
+        T.asyncToBonError: Transition(
           to: S.b,
           guard: Guard(
             description: 'only if data > 10',
@@ -49,6 +75,7 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
           onError: OnErrorAction(
             description: 'Set data to true.',
             action: (machine, data) async {
+              expect(data.source, OnErrorSource.guard);
               machine.data = true;
             },
           ),
@@ -62,7 +89,31 @@ void main() {
     setUp(() async {
       machine = createMachine();
     });
-    test('Guard synchronous', () async {
+    test('Guard synchronous - Exception', () async {
+      await machine.start();
+      expect(machine.data as bool, false);
+      expect(machine.activeStateId, S.a);
+
+      expect(
+        machine.fire(E.syncEx),
+        throwsA(const TypeMatcher<HismaGuardException>()),
+      );
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, false);
+
+      expect(
+        machine.fire(E.syncEx, arg: 10),
+        throwsA(const TypeMatcher<HismaGuardException>()),
+      );
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, false);
+
+      await machine.fire(E.sync, arg: 11);
+      expect(machine.activeStateId, S.b);
+      expect(machine.data as bool, false);
+    });
+
+    test('Guard synchronous - onError', () async {
       await machine.start();
       expect(machine.data as bool, false);
       expect(machine.activeStateId, S.a);
@@ -81,8 +132,30 @@ void main() {
       expect(machine.activeStateId, S.b);
       expect(machine.data as bool, false);
     });
+    test('Guard asynchronous - Exception', () async {
+      await machine.start();
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, false);
 
-    test('Guard asynchronous', () async {
+      expect(
+        machine.fire(E.asyncEx),
+        throwsA(const TypeMatcher<HismaGuardException>()),
+      );
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, false);
+
+      expect(
+        machine.fire(E.asyncEx, arg: () => Future.value(10)),
+        throwsA(const TypeMatcher<HismaGuardException>()),
+      );
+      expect(machine.activeStateId, S.a);
+      expect(machine.data as bool, false);
+
+      await machine.fire(E.asyncEx, arg: () => Future.value(11));
+      expect(machine.activeStateId, S.b);
+      expect(machine.data as bool, false);
+    });
+    test('Guard asynchronous - onError', () async {
       await machine.start();
       expect(machine.activeStateId, S.a);
       expect(machine.data as bool, false);

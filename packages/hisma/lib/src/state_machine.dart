@@ -585,7 +585,7 @@ Changed: $changed
           );
           continue;
         } else {
-          _log.info('Throwing hismaIntervalException.');
+          _log.info('Throwing HismaIntervalException($message).');
           // TODO: Shall we drop or simply continue (selecting the transition)?
           throw HismaIntervalException(message);
         }
@@ -594,6 +594,7 @@ Changed: $changed
       final guardAllows =
           await transition.guard?.condition.call(this, arg) ?? true;
       if (!guardAllows) {
+        const message = 'Guard failed.';
         if (onError != null) {
           _log.info(
             'Calling onError action for $transitionId due to failed guard.',
@@ -602,10 +603,14 @@ Changed: $changed
             this,
             OnErrorData(
               source: OnErrorSource.guard,
-              message: 'Guard failed.',
+              message: message,
               arg: arg,
             ),
           );
+        } else {
+          _log.info('Throwing HismaGuardException($message).');
+          // TODO: Shall we drop or simply continue (selecting the transition)?
+          throw HismaGuardException(message);
         }
         continue;
       }

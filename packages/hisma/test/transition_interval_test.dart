@@ -54,6 +54,7 @@ StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
           onError: OnErrorAction(
             description: 'divide',
             action: (machine, onErrorData) async {
+              expect(onErrorData.source, OnErrorSource.maxInterval);
               machine.data = (machine.data as int) ~/ 2;
             },
           ),

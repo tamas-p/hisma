@@ -114,6 +114,12 @@ typedef OnErrorActionFunction = Future<void> Function(
 
 class OnErrorAction {
   OnErrorAction({required this.description, required this.action});
+
+  factory OnErrorAction.noAction() => OnErrorAction(
+        description: 'nope',
+        action: (_, __) async {},
+      );
+
   String description;
   OnErrorActionFunction action;
 }
