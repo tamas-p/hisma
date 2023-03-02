@@ -35,10 +35,14 @@ See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_au
 
 - Basics
   - States
-    - Actions
+    - OnEntry and OnExit actions
   - Transactions
+    - External and internal transitions
+    - minInterval check
     - Guards
-    - Actions
+    - Priority
+    - onAction actions
+    - onError actions
 - Hierarchy
   - Regions
 - Connecting state machines through hierarchy
@@ -48,6 +52,8 @@ See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_au
   - Shallow history
   - Deep history
 - Monitoring
+  - Console monitor
+  - Visual monitor
 
 ## Getting started
 
@@ -129,7 +135,7 @@ StateMachine<S, E, T> createLightMachine({
 final lightMachine = createLightMachine();
 ```
 
-StateMachine includes two very important attributes: `states` and `transitions`. Both are maps from their id to the actual state ot transition objects. Inside a State we see the event to transition map (`etm`) that as name suggest defines which transition to execute if a certain event occurs. Since not one but a list of transitions are defined for a certain event, one transition will be selected based on the guards and priority attributes of these transitions.
+StateMachine includes two very important attributes: `states` and `transitions`. Both are maps from their id to the actual state or transition objects. Inside a State we see the event to transition map (`etm`) that as name suggest defines which transition to execute if a certain event occurs. Since not one but a list of transitions are defined for a certain event, one transition will be selected based on the minInterval, guard and priority attributes of these transitions.
 
 Also note, that states and transitions can have Action attributes. A State can have onEntry and onExit Action attributes while a transition can have an onAction Action attribute. In our example as we saw we used the onEntry Actions to print out the state name our machine just entered.
 
@@ -137,7 +143,7 @@ If we start this machine it will be visualized by `visma` as
 
 ![hisma_light_machine](doc/resources/hisma_light_machine.png)
 
-We see that we have one machine and its name is lightMachine. The machine is active as indicated by the red dashed line of the state machine. We see the active state is S.off (indicated by its red color) and that E.turnOn event is valid (indicated by the light blue event name) from this state (that leads us to the S.on state). In the web browser you can click on this event to trigger it.
+We see that we have one machine and its name is lightMachine. The machine is active as indicated by the red dashed line of the state machine. We see the active state is S.off (indicated by its red color) and that E.turnOn event is valid (indicated by the light blue event name) from this state (that leads us to the S.on state). In the visma user interface in the web browser you can click on this event to trigger it.
 
 Now let's create a play function to play around with our newly created state machine. It will turn on and off the machine with one sec interval between operations:
 
@@ -152,7 +158,7 @@ Future<void> play() async {
 }
 ```
 
-and finally the main function where we start the machine and invoke our play function. Also we init here StateMachine.monitorCreators with a creator function of VisualMonitor (doing the communication with visma, our state machine visualizer server):
+and finally the main function where we start the machine and invoke our play function. Also we init here StateMachine.monitorCreators with a creator function of VisualMonitor (doing the communication with [visma](../visma/), our state machine visualizer server):
 
 ```dart
 Future<void> main() async {
@@ -172,6 +178,99 @@ This is what you get on the console as a result of the Actions defined for the s
 This is the what you see in visma (in the web browser):
 
 ![hisma_light_machine_play.gif](doc/resources/hisma_light_machine_play.gif)
+
+### More on transitions
+
+#### External transitions
+
+As we see transitions take us from one state to another state. However, it is also possible to start and end a transition in the same state. When transition occurs, the respective onExit and onEntry activities are executed as machine leaves the source and enters the target state (even if the source and target state machine is the same). UML specification refers to these transitions as external transitions.
+
+Let's define an external transition with all its optional attributes also included:
+
+```dart
+T.toStop: Transition(
+  to: S.stop,
+  minInterval: const Duration(seconds: 1),
+  guard: Guard(
+    description: 'If not empty.',
+    condition: (machine, arg) async => true,
+  ),
+  priority: 10,
+  onAction: Action(
+    description: 'Closing.',
+    action: (machine, arg) async => print('Closing'),
+  ),
+  onError: OnErrorAction(
+    description: 'Print error message.',
+    action: (machine, onErrorData) async => print(onErrorData.message),
+  ),
+),
+```
+
+When an this transition is visualized in [visma](../visma/) it is rendered as an arc with a label:
+
+![hisma_external_transition.png](doc/resources/hisma_external_transition.png)
+
+This label includes all attributes of the transition we defined above:
+
+- Mandatory items
+  - **Event Identifier**<br>
+    Clickable to trigger the event in the machine when corresponding state is active. This is for debugging purposes.
+  - **Transition Identifier**<br>
+    Transition id as it is in the transition map of the state machine.
+- Optional items (In our example they are defined, but they are optional attributes.)
+  - **minInterval**<br>
+    Minimum Duration that shall passed from last time this transition happened. If interval is shorter then a HismaIntervalException is thrown if onError is not defined. If onError is defined then its action will be called and no exception is thrown.
+  - **Guard description**<br>
+    Description of [Guard] whose action must return `true` to execute transition. If returned value
+    is false then a HismaGuardException is thrown if onError is not defined. If onError is defined then its action will be called and no exception is thrown.
+  - **Priority**<br>
+    If not otherwise selected priority can be used to select the transition from the transition list by this priority.
+  - **onAction Action description**<br>
+    Description of the Action that is executed when this transition occurs.
+  - **onError OnErrorAction description**<br>
+    Description of the OnErrorAction that is executed when minInterval or Guard blocked execution of this transition. In the label his section is in the same line as the onAction description and the two are divided by the `||` sign.
+
+#### Internal transitions
+
+In many cases in response to an event you do not want to change state, even further you do not want onExit and onEntry actions to be executed: you simple want an action to be executed. For such cases one can use an [InternalTransition].
+
+```dart
+T.timedOn: InternalTransition(
+  onAction: Action(
+    description: 'Turn on in 3 sec.',
+    action: (machine, arg) async {
+      print('Initiating timer to turn on in 3 sec.');
+      await Future.delayed(
+        const Duration(seconds: 3),
+        () {
+          print('Fire timedOn.');
+          machine.fire(E.turnOn);
+        },
+      );
+    },
+  ),
+),
+```
+
+When this internal transition is visualized by [visma](../visma/) it looks like:
+
+![](doc/resources/hisma_internal_transition.png)
+
+As seen, label shows the same information just like for external transitions we reviewed above with the slight differences of having a `=` sign after the transition id and that it is in one line versus the multiline rendering of the external transition label.
+
+The only difference compared to definition of an external transition that it does not include the `to` parameter as internal transition is only about executing an Action and not about changing states. All other attributes that we learned for external transitions - minInterval, Guard, priority, onAction, onError - has the same meaning for internal transitions as well.
+
+#### Extend lightMachine with internal transitions
+
+Let's extend our previous lightMachine example the following ways:
+
+- Add all optional attributes of the T.toStop external transition as we saw above.
+- Add internal transitions that when executed will set a timer to change the machine to the other state.
+
+See the complete example in [01_simple.dart](example/01_simple.dart). When the updated lightMachine is rendered by [visma](../visma/) it looks like:
+
+![hisma_transitions.png](doc/resources/hisma_transitions.png)
 
 ### Compound state machine - single region
 
