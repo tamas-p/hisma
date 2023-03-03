@@ -661,7 +661,7 @@ As the package version indicates this is an experimental package, not ready for 
 - Improve documentation.
 - More helper classes in hisma_extra.
 
-### Help needed
+### Help appreciated
 
 - Feedback, especially about things you would like to change.
 - Finding bugs either in code or in documentation are always welcomed.
