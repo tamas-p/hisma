@@ -1,3 +1,17 @@
+## 0.3.1
+
+ - **REFACTOR**: re-enable play.
+ - **REFACTOR**: Failing Guard throws exception if no onError defined.
+ - **REFACTOR**: OnErrorAction instead of Action.
+ - **FIX**: Changed onError type to Action.
+ - **FIX**: minInterval checks before Guard.
+ - **FIX**: Return null in case of onError triggered.
+ - **FIX**: Refactored example to be more realistic.
+ - **FEAT**: Added onError for transitions.
+ - **FEAT**: Introduced internal transitions.
+ - **DOCS**: rewording.
+ - **DOCS**: Added 'More on transitions' section.
+
 ## 0.3.0+1
 
  - **FIX**: StateMachine now does not await on monitor notifications.

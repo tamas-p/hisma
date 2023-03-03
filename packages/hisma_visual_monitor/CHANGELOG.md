@@ -1,3 +1,9 @@
+## 0.3.1
+
+ - **FIX**: Changed onError type to Action.
+ - **FIX**: minInterval checks before Guard.
+ - **FEAT**: Introduced internal transitions.
+
 ## 0.3.0+1
 
  - Update a dependency to the latest release.

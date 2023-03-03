@@ -1,3 +1,9 @@
+## 0.3.0+2
+
+ - **REFACTOR**: OnErrorAction instead of Action.
+ - **REFACTOR**: Self-transitions and aux states to InternalTransition.
+ - **FIX**: Changed onError type to Action.
+
 ## 0.3.0+1
 
  - Update a dependency to the latest release.
