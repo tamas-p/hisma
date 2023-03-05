@@ -57,19 +57,4 @@ class Region<S, E, T, SS> {
       await notifyState.call(notification);
     }
   }
-
-  // late final Future<void> Function() notifyStateChange;
-  // late String parentName;
-
-  Region<S, E, T, SS> copyWith({
-    Map<Trigger<S, E, T>, SS>? entryConnectors,
-    Map<SS, E>? exitConnectors,
-    StateMachine<SS, dynamic, dynamic>? machine,
-  }) {
-    return Region<S, E, T, SS>(
-      entryConnectors: entryConnectors ?? this.entryConnectors,
-      exitConnectors: exitConnectors ?? this.exitConnectors,
-      machine: machine ?? this.machine.copyWith(),
-    );
-  }
 }

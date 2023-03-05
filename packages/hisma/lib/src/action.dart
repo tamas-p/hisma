@@ -15,14 +15,4 @@ class Action {
 
   final String description;
   ActionFunction action;
-
-  Action copyWith({
-    String? description,
-    ActionFunction? action,
-  }) {
-    return Action(
-      description: description ?? this.description,
-      action: action ?? this.action,
-    );
-  }
 }

@@ -80,22 +80,6 @@ class Transition<S> extends Edge {
   int get hashCode {
     return to.hashCode ^ guard.hashCode ^ priority.hashCode ^ onAction.hashCode;
   }
-
-  Transition<S> copyWith({
-    S? to,
-    Guard? guard,
-    int? priority,
-    Action? onAction,
-    Duration? minInterval,
-  }) {
-    return Transition<S>(
-      to: to ?? this.to,
-      guard: guard ?? this.guard,
-      priority: priority ?? this.priority,
-      onAction: onAction ?? this.onAction,
-      minInterval: minInterval ?? this.minInterval,
-    );
-  }
 }
 
 enum OnErrorSource { guard, maxInterval }

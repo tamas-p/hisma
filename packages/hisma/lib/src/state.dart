@@ -80,35 +80,6 @@ class State<E, T, S> extends RegularState<E, T, S> {
 
     await notifyMachine?.call(notification);
   }
-
-  // TODO: This is only added as POC to test mutable StateMachine concept.
-  void addRegion<SS>(Region<S, E, T, SS> region) {
-    region.notifyState = _processRegionNotification;
-    regions.add(region);
-
-    // final nameMessage = GetName();
-    // notifyMachine?.call(nameMessage);
-    // region.machine.parentName = nameMessage.name;
-    region.machine.notifyMonitors();
-    notifyMachine?.call(StateChangeNotification());
-  }
-
-  State<E, T, S> copyWith({
-    EventTransitionMap<E, T>? etm,
-    RegionList<S, E, T>? regions,
-    Action? onEntry,
-    Action? doActivity,
-    Action? onExit,
-  }) {
-    return State<E, T, S>(
-      etm: etm ?? EventTransitionMap.from(this.etm),
-      regions:
-          regions ?? this.regions.map((region) => region.copyWith()).toList(),
-      onEntry: onEntry ?? this.onEntry,
-      // doActivity: doActivity ?? this.doActivity,
-      onExit: onExit ?? this.onExit,
-    );
-  }
 }
 
 //------------------------------------------------------------------------------

@@ -643,34 +643,6 @@ Changed: $changed
       notification.name = name;
     }
   }
-
-  /// WARNING: Work in progress. Do not use it.
-  /// TODO: Analyze and and create proper copyWith through all layers of the
-  /// StateMachine class.
-  StateMachine<S, E, T> copyWith({
-    String? name,
-    S? initialStateId,
-    StateMap<S, E, T>? states,
-    TransitionMap<T, S>? transitions,
-    List<E>? events,
-    HistoryLevel? history,
-  }) {
-    return StateMachine<S, E, T>(
-      name: name ?? this.name,
-      initialStateId: initialStateId ?? this.initialStateId,
-      states: states ??
-          this.states.map((stateId, state) {
-            if (state is State<E, T, S>) {
-              return MapEntry(stateId, state.copyWith());
-            } else {
-              return MapEntry(stateId, state);
-            }
-          }),
-      transitions: transitions ?? TransitionMap<T, S>.from(this.transitions),
-      events: events ?? [...this.events],
-      history: history ?? this.history,
-    );
-  }
 }
 
 /// Helper class to allow return both Transition and its ID from
