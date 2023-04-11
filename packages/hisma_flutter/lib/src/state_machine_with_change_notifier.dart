@@ -39,7 +39,11 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     bool historyFlowDown = false,
   }) async {
     final before = activeStateId;
-    await super.start(entryPointId: entryPointId, arg: arg);
+    await super.start(
+      entryPointId: entryPointId,
+      arg: arg,
+      historyFlowDown: historyFlowDown,
+    );
     final after = activeStateId;
     if (before != after) notifyListeners();
   }
