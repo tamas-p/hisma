@@ -198,7 +198,7 @@ class StateMachine<S, E, T> {
     _log.info('FIRE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     _log.info(
       () =>
-          'FIRE >>> machine: $name, state: $_activeStateId, : $eventId, arg: $arg, external: $external',
+          'FIRE >>> machine: $name, state: $_activeStateId, event: $eventId, arg: $arg, external: $external',
     );
     final changed = await _fire(eventId, arg: arg);
     _log.info(
@@ -226,7 +226,7 @@ Changed: $changed
   dynamic data;
 
   /// Manages potential state transition based on the eventId parameter.
-  /// It returns true if state change ocurred, false otherwise.
+  /// It returns true if state change occurred, false otherwise.
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
     assert(_activeStateId != null, 'Machine has not been started.');
