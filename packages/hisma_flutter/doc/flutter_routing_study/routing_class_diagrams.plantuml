@@ -38,22 +38,25 @@ Page <|-- CupertinoPage
 
 @startuml routing
 class MaterialApp <<StatefulWidget>>
-class RootNavigator <<StatefulWidget>>
+class Navigator <<StatefulWidget>>
 class RouterDelegate<T> <<Listenable>>
 class RouteInformationParser<T>
 class RouteInformation
 class RouteInformationProvider <<ValueListenable<RouteInformation>>>
 class Router<T>
 
-RootNavigator -> NavigatorState
+Navigator -> NavigatorState
 NavigatorState -> Overlay
 MaterialApp --> RouterDelegate
 MaterialApp --> RouteInformationParser
 
-RouterDelegate --> RootNavigator
-RootNavigator *-- "*" Page
+RouterDelegate --> Navigator
+Navigator *-- "*" Route
+Page *-- Router
 Page *- Screen
-Route "settings" -> Page
+Route "settings" --> Page
+Page  --->  Route : create
+
 @enduml
 
 @startuml
@@ -63,10 +66,15 @@ class Widget
 class DiagnosticableTree
 class Object
 
+class Listenable
+class RouterDelegate<T>
+
 Object <|-- DiagnosticableTree
 DiagnosticableTree <|-- Widget
 Widget <|-- StatefulWidget
 StatefulWidget <|-- Router
+
+Listenable <|-- RouterDelegate
 
 @enduml
 

@@ -9,13 +9,13 @@ import '../ui/signed_in_screen.dart';
 
 final mainRouter = HismaRouterGenerator<SMM, Widget, EMM>(
   machine: authMachine.find<SMM, EMM, TMM>(mainMachineName),
-  creators: {
+  mapping: {
     SMM.check: NoUIChange(),
     SMM.emailNotVerified:
         MaterialPageCreator<SMM>(widget: const EmailNotVerifiedScreen()),
-    SMM.error: PagelessCreator<EMM, void>(
-      show: failedEmailVerifiedDialog,
+    SMM.error: PagelessCreator<void, EMM>(
       event: EMM.back,
+      pagelessRouteManager: failedEmailVerifiedDialog(),
     ),
     SMM.app: MaterialPageCreator<SMM>(widget: const SignedInScreen()),
   },

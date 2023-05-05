@@ -7,12 +7,16 @@ import '../ui/registration_screen.dart';
 
 final registrationRouterGenerator = HismaRouterGenerator<SRM, Widget, ERM>(
   machine: authMachine.find<SRM, ERM, TRM>(registerMachineName),
-  creators: {
+  mapping: {
     SRM.registration:
         MaterialPageCreator<SRM>(widget: const RegistrationScreen()),
     SRM.failed: PagelessCreator<ERM, void>(
       event: ERM.ok,
-      show: (context) => showDialog(
+      show: (
+        context, {
+        void Function(BuildContext)? setContext,
+      }) =>
+          showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(

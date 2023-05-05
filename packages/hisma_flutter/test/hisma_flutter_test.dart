@@ -1,5 +1,1 @@
-import 'package:flutter_test/flutter_test.dart';
-
-void main() {
-  test('TODO', () {});
-}
+../../../examples/hisma_flutter_test/test/hisma_flutter_test.dart

@@ -9,7 +9,7 @@ import '../ui/sign_out_confirmation_dialog.dart';
 
 final signedInRouter = HismaRouterGenerator<SSiM, Widget, ESiM>(
   machine: authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName),
-  creators: {
+  mapping: {
     // S.main: MaterialPageCreator<S>(widget: const SignedInScreen()),
     SSiM.main: MaterialPageCreator<SSiM>(
       widget: Router(routerDelegate: mainRouter.routerDelegate),

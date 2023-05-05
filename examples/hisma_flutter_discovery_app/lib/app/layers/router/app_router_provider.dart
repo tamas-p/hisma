@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
+import '../../../utility/pageless_route_helper.dart';
 import '../../components/comp_a/layers/router/a_comp_router_provider.dart';
 import '../../components/comp_f/layers/router/f_comp_router_provider.dart';
 import '../machine/app_machine.dart';
@@ -43,7 +44,7 @@ class _StatefulScreenState extends State<StatefulScreen> {
 final appRouterProvider = Provider(
   (ref) => HismaRouterGenerator<S, Widget, E>(
     machine: ref.read(appMachineProvider),
-    creators: {
+    mapping: {
       // S.a: MaterialPageCreator<S>(widget: const AScreen()),
       S.a: MaterialPageCreator<S>(
         // widget: const StatelessScreen(),
@@ -51,33 +52,12 @@ final appRouterProvider = Provider(
         widget:
             Router(routerDelegate: ref.read(aRouterProvider).routerDelegate),
       ),
-      S.a1: PagelessCreator<E, bool?>(
-        show: (context) {
-          return showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Problem during login'),
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: const <Widget>[
-                      Text('Hello'),
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
+      S.a1: PagelessCreator<void, E>(
         event: E.backward,
+        pagelessRouteManager: DialogPagelessRouteManager(
+          title: 'Problem during login',
+          text: 'Hello.',
+        ),
       ),
       S.b: OverlayMaterialPageCreator<S, E>(
         widget: const BScreen(),
@@ -87,41 +67,16 @@ final appRouterProvider = Provider(
         widget: const B1Screen(),
         event: E.backward,
       ),
-      S.c: PagelessCreator<E, DateTime?>(
-        show: (context) => showDatePicker(
-          context: context,
-          firstDate: DateTime(2020),
-          initialDate: DateTime.now(),
-          currentDate: DateTime.now(),
-          lastDate: DateTime(2028),
-        ),
+      S.c: PagelessCreator<DateTime, E>(
         event: E.forward,
+        pagelessRouteManager: DatePickerPagelessRouteManager(),
       ),
-      S.d: PagelessCreator<E, bool?>(
-        show: (context) => showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Problem during login'),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: const <Widget>[
-                    Text('Hello'),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+      S.d: PagelessCreator<void, E>(
         event: E.backward,
+        pagelessRouteManager: DialogPagelessRouteManager(
+          title: 'Problem during login2',
+          text: 'Hello2.',
+        ),
       ),
       S.e: OverlayMaterialPageCreator<S, E>(
         // S.e: MaterialPageCreator<S>(

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
-enum S { a, b, c }
+enum S { fa, fb, fc }
 
 enum E { forward, backward }
 
@@ -13,29 +13,29 @@ final compFMachineProvider = Provider(
     events: E.values,
     name: 'fCompMachine',
     history: HistoryLevel.shallow,
-    initialStateId: S.a,
+    initialStateId: S.fa,
     states: {
-      S.a: State(
+      S.fa: State(
         etm: {
           E.forward: [T.toB],
         },
       ),
-      S.b: State(
+      S.fb: State(
         etm: {
           E.forward: [T.toC],
           E.backward: [T.toA],
         },
       ),
-      S.c: State(
+      S.fc: State(
         etm: {
           E.backward: [T.toB]
         },
       ),
     },
     transitions: {
-      T.toA: Transition(to: S.a),
-      T.toB: Transition(to: S.b),
-      T.toC: Transition(to: S.c),
+      T.toA: Transition(to: S.fa),
+      T.toB: Transition(to: S.fb),
+      T.toC: Transition(to: S.fc),
     },
   ),
 );

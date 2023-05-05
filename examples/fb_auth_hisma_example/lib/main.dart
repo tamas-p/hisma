@@ -32,6 +32,8 @@ void initLogging() {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -39,7 +41,7 @@ void main() async {
   initLogging();
 
   hisma.StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
+    (machine) => VisualMonitor(machine, host: '192.168.122.1'),
     // (machine) => ActiveStateMonitor(machine, printer: log.info),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -61,5 +63,14 @@ class MyApp extends StatelessWidget {
       ),
       routerDelegate: appRouter.routerDelegate,
     );
+  }
+}
+
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Hello');
   }
 }

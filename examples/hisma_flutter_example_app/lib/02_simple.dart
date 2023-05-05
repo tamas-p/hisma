@@ -84,7 +84,7 @@ class ScreenC extends StatelessWidget {
 
 final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
   machine: machine,
-  creators: {
+  mapping: {
     S.a: MaterialPageCreator<S>(widget: const ScreenA()),
     S.b: MaterialPageCreator<S>(widget: const ScreenB()),
     S.c: MaterialPageCreator<S>(widget: const ScreenC()),

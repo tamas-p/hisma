@@ -11,8 +11,8 @@ import 'app/layers/router/app_router_provider.dart';
 Future<void> main() async {
   initLogging();
   StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m),
-    (m) => ConsoleMonitor(m),
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    // (m) => ConsoleMonitor(m),
   ];
 
   runApp(const ProviderScope(child: MyApp()));
@@ -67,7 +67,8 @@ void initLogging() {
   hierarchicalLoggingEnabled = true;
 
   Logger.root.level = Level.OFF;
-  Logger(vismaMonitorName).level = Level.INFO;
+  // Logger(vismaMonitorName).level = Level.INFO;
+  Logger('hisma_flutter').level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     // ignore: avoid_print
     print(

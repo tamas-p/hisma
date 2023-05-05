@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
-Future<void> failedSignInDialog(BuildContext context) => authDialog(
+Future<void> failedSignInDialog(
+  BuildContext context, {
+  void Function(BuildContext)? setContext,
+}) =>
+    authDialog(
       context,
       'Problem during login',
       '${authMachine.find<SLiM, ELiM, TLiM>(loginMachineName).data}',

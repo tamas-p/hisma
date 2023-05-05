@@ -25,7 +25,9 @@ BaseEntryPoint <|-- HistoryEntryPoint
 // TODO: Why not S,E,T just like for StateMachine?
 /// Base class for all states.
 abstract class BaseState<E, T, S> {
-  // TODO: seems useful, but still not used in hisma examples. Do we need this?
+  // TODO: seems useful, but still not used in hisma examples.
+  // Do we need this?
+  // It is used in createButtonsFromStates()
   late final StateMachine<S, E, T> machine;
 }
 

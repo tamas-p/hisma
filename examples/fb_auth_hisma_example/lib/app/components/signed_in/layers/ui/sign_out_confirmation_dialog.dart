@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../../../../layers/machine/auth_machine.dart';
 
-Future<void> signOutConfirmationDialog(BuildContext context) {
+Future<void> signOutConfirmationDialog(
+  BuildContext context, {
+  void Function(BuildContext)? setContext,
+}) {
   final signedInMachine =
       authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);
   return showDialog(

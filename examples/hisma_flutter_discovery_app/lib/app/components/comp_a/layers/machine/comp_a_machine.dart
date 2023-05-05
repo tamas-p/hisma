@@ -2,13 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
+import '../../../../layers/machine/app_machine.dart' as am;
 import '../../components/comp_a_a/layers/machine/comp_a_a_machine.dart';
 
 enum S { cen1, cen2, cen3, ca, ca1, ca2, cb, cc, fs1, fs2, fs3 }
 
-enum E { jump, run, forward, backward, done1, done2, done3 }
+enum E { jump, run, forward, backward, done1, done2, done3, int1 }
 
-enum T { toCA, toCA1, toCA2, toCB, toCC, toFs1, toFs2, toFs3 }
+enum T { toCA, toCA1, toCA2, toCB, toCC, toFs1, toFs2, toFs3, int1 }
 
 final compAMachineProvider = Provider(
   (ref) => StateMachineWithChangeNotifier<S, E, T>(
@@ -33,6 +34,7 @@ final compAMachineProvider = Provider(
       S.ca1: State(
         etm: {
           E.backward: [T.toCA],
+          E.int1: [T.int1],
         },
       ),
       S.ca2: State(
@@ -67,6 +69,16 @@ final compAMachineProvider = Provider(
       T.toFs1: Transition(to: S.fs1),
       T.toFs2: Transition(to: S.fs2),
       T.toFs3: Transition(to: S.fs3),
+      T.int1: InternalTransition(
+        onAction: Action(
+          description: 'int1',
+          action: (machine, dynamic arg) async {
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1');
+            final m = ref.read(am.appMachineProvider);
+            await m.fire(am.E.bigJump);
+          },
+        ),
+      )
     },
   ),
 );

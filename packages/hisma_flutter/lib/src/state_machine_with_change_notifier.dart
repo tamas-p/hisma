@@ -29,7 +29,8 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     final before = activeStateId;
     await super.fire(eventId, arg: arg, external: external);
     final after = activeStateId;
-    if (before != after) notifyListeners();
+    // if (before != after) notifyListeners();
+    notifyListeners();
   }
 
   @override
@@ -45,7 +46,8 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       historyFlowDown: historyFlowDown,
     );
     final after = activeStateId;
-    if (before != after) notifyListeners();
+    // if (before != after) notifyListeners();
+    notifyListeners();
   }
 
   // We shall NOT send notification in case of stop as RouterDelegate would
@@ -54,10 +56,12 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   //
   @override
   Future<void> stop({required dynamic arg}) async {
+    // TODO: Why required arg?
     final before = activeStateId;
     await super.stop(arg: arg);
     final after = activeStateId;
-    if (before != after) notifyListeners();
+    // if (before != after) notifyListeners();
+    notifyListeners();
   }
 
   @override

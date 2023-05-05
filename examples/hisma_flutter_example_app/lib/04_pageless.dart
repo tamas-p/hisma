@@ -91,7 +91,11 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-Future<bool?> b1(BuildContext context) => showDialog<bool>(
+Future<bool?> b1(
+  BuildContext context, {
+  void Function(BuildContext)? setContext,
+}) =>
+    showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -121,7 +125,11 @@ class ScreenC extends StatelessWidget {
   }
 }
 
-Future<DateTime?> c1(BuildContext context) => showDatePicker(
+Future<DateTime?> c1(
+  BuildContext context, {
+  void Function(BuildContext)? setContext,
+}) =>
+    showDatePicker(
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
@@ -133,7 +141,7 @@ Future<DateTime?> c1(BuildContext context) => showDatePicker(
 
 final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
   machine: machine,
-  creators: {
+  mapping: {
     S.a: MaterialPageCreator<S>(widget: const ScreenA()),
     S.b: OverlayMaterialPageCreator<S, E>(
       widget: const ScreenB(),

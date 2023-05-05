@@ -14,10 +14,10 @@ class EScreen extends ConsumerWidget {
           TextButton(
             onPressed: () {
               print('pop!');
+              Navigator.of(context).pop();
               // Navigator.of(context).pop();
               // Navigator.of(context).pop();
-              // Navigator.of(context).pop();
-              Navigator.popUntil(context, ModalRoute.withName('S.b'));
+              // Navigator.popUntil(context, ModalRoute.withName('S.b'));
             },
             child: const Text('pop!'),
           ),
