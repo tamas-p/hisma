@@ -28,7 +28,7 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           to: S.a,
           onAction: Action(
             description: 'decrease',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data =
                   (machine.data as int) - (arg != null && arg is int ? arg : 1);
             },
@@ -38,7 +38,7 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           to: S.b,
           onAction: Action(
             description: 'increase',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data =
                   (machine.data as int) + (arg != null && arg is int ? arg : 1);
             },
