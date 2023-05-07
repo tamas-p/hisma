@@ -98,7 +98,7 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   Widget _getNavigator() {
     return Navigator(
-      key: GlobalKey<NavigatorState>(),
+      key: _navigatorKey,
       pages: _pageMap.values
           .where((page) => page is! PagelessPage<void, S>)
           .toList(),
