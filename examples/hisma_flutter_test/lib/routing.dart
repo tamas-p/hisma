@@ -18,31 +18,35 @@ HismaRouterGenerator<S, Widget, E> createHismaRouterGenerator(
           event: E.back,
           overlay: true,
         ),
-        S.d: DialogCreator(
-          machine: machine,
-          stateId: S.d,
-          event: E.self,
-        ),
-        S.e: DialogCreator(
-          machine: machine,
-          stateId: S.e,
-          event: E.self,
-        ),
-        S.f: DialogCreator(
-          machine: machine,
-          stateId: S.f,
-          event: E.self,
-        ),
+        // S.d: DialogCreator(
+        //   machine: machine,
+        //   stateId: S.d,
+        //   event: E.self,
+        // ),
+        S.d: MaterialPageCreator<S, E>(widget: Screen(machine, S.d)),
+        // S.e: DialogCreator(
+        //   machine: machine,
+        //   stateId: S.e,
+        //   event: E.self,
+        // ),
+        S.e: MaterialPageCreator<S, E>(widget: Screen(machine, S.e)),
+        // S.f: DialogCreator(
+        //   machine: machine,
+        //   stateId: S.f,
+        //   event: E.self,
+        // ),
+        S.f: MaterialPageCreator<S, E>(widget: Screen(machine, S.f)),
         S.g: MaterialPageCreator<S, E>(
           widget: Screen(machine, S.g),
           overlay: true,
           event: E.back,
         ),
-        S.h: DialogCreator(
-          machine: machine,
-          stateId: S.h,
-          event: E.self,
-        ),
+        // S.h: DialogCreator(
+        //   machine: machine,
+        //   stateId: S.h,
+        //   event: E.self,
+        // ),
+        S.h: MaterialPageCreator<S, E>(widget: Screen(machine, S.h)),
         S.i: MaterialPageCreator<S, E>(widget: Screen(machine, S.i)),
         S.j: MaterialPageCreator<S, E>(
           widget: Screen(machine, S.j),
@@ -74,16 +78,18 @@ HismaRouterGenerator<S, Widget, E> createHismaRouterGenerator(
             ),
           )
         else
-          S.l: DialogCreator(
-            machine: machine,
-            stateId: S.l,
-            event: E.self,
-          ),
-        S.m: DialogCreator(
-          machine: machine,
-          stateId: S.m,
-          event: E.self,
-        ),
+          // S.l: DialogCreator(
+          //   machine: machine,
+          //   stateId: S.l,
+          //   event: E.self,
+          // ),
+          S.l: MaterialPageCreator<S, E>(widget: Screen(machine, S.l)),
+        // S.m: DialogCreator(
+        //   machine: machine,
+        //   stateId: S.m,
+        //   event: E.self,
+        // ),
+        S.m: MaterialPageCreator<S, E>(widget: Screen(machine, S.m)),
         S.n: MaterialPageCreator<S, E>(
           widget: Screen(machine, S.n),
           overlay: true,
