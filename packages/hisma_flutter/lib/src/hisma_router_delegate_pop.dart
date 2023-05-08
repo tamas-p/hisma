@@ -98,6 +98,10 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   Widget _getNavigator() {
     return Navigator(
+      // Navigator key must belong to the router delegate object to allow
+      // transitions working properly as Flutter will be able to identify if
+      // the passed Navigator is for the same purpose as the previous one was
+      // passed by the router delegate.
       key: _navigatorKey,
       pages: _pageMap.values
           .where((page) => page is! PagelessPage<void, S>)
