@@ -216,7 +216,8 @@ Changed: $changed
       // Notify parent that active state of
       // this state machine was changed.
       _log.fine(
-          () => '$name sending notifyRegion?.call(StateChangeNotification())');
+        () => '$name sending notifyRegion?.call(StateChangeNotification())',
+      );
       await notifyRegion?.call(StateChangeNotification());
     }
   }
