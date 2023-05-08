@@ -34,7 +34,7 @@ class StateMachine<S, E, T> {
 
   void _setIt() {
     states.forEach((_, state) async {
-      _log.fine('myName=$name');
+      _log.fine(() => 'myName=$name');
       if (state is State<E, T, S>) {
         // TODO: Do we need ?? here?
         state.notifyMachine ??= _processNotification;
@@ -43,13 +43,13 @@ class StateMachine<S, E, T> {
     });
 
     _initMonitor();
-    _log.info('SM $name created.');
+    _log.info(() => 'SM $name created.');
   }
 
   void _initMonitor() {
     for (final monitorCreator in monitorCreators) {
       final monitor = monitorCreator.call(this);
-      _log.info('notifyCreation for $monitor');
+      _log.info(() => 'notifyCreation for $monitor');
       _monitors.add(
         MonitorAndStatus(monitor: monitor, completed: monitor.notifyCreation()),
       );
@@ -104,7 +104,7 @@ class StateMachine<S, E, T> {
   Future<void> Function(Message)? notifyRegion;
 
   void notifyMonitors() {
-    _log.fine('Notify from $name');
+    _log.fine(() => 'Notify from $name');
     for (final ms in _monitors) {
       // Before notifying a monitor we make sure that its initialization
       // (notifyCreation) has completed.
@@ -122,7 +122,8 @@ class StateMachine<S, E, T> {
     bool historyFlowDown = false,
   }) async {
     _log.fine(
-      'start: machine:$name, state:$activeStateId, entryPointId:$entryPointId, arg:$arg, historyFlowDown:$historyFlowDown',
+      () =>
+          'start: machine:$name, state:$activeStateId, entryPointId:$entryPointId, arg:$arg, historyFlowDown:$historyFlowDown',
     );
     assert(_activeStateId == null, 'Machine ($name) is already started.');
     if (_activeStateId != null) return;
@@ -196,15 +197,17 @@ class StateMachine<S, E, T> {
   Future<void> fire(E eventId, {dynamic arg, bool external = true}) async {
     _log.info('FIRE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     _log.info(
-      'FIRE >>> machine: $name, state: $_activeStateId, : $eventId, arg: $arg, external: $external',
+      () =>
+          'FIRE >>> machine: $name, state: $_activeStateId, event: $eventId, arg: $arg, external: $external',
     );
     final changed = await _fire(eventId, arg: arg);
     _log.info(
-      'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: $external',
+      () =>
+          'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: $external',
     );
     _log.info('FIRE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     _log.fine(
-      '''
+      () => '''
 Changed: $changed
   monitors: $_monitors
   external: $external''',
@@ -212,7 +215,8 @@ Changed: $changed
     if (changed && external) {
       // Notify parent that active state of
       // this state machine was changed.
-      _log.fine('$name sending notifyRegion?.call(StateChangeNotification())');
+      _log.fine(
+          () => '$name sending notifyRegion?.call(StateChangeNotification())');
       await notifyRegion?.call(StateChangeNotification());
     }
   }
@@ -222,7 +226,7 @@ Changed: $changed
   dynamic data;
 
   /// Manages potential state transition based on the eventId parameter.
-  /// It returns true if state change ocurred, false otherwise.
+  /// It returns true if state change occurred, false otherwise.
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
     assert(_activeStateId != null, 'Machine has not been started.');
@@ -451,7 +455,7 @@ Changed: $changed
   /// Stopping the state machine also exiting active state and
   /// recursively stopping all potential child machines.
   Future<void> stop({required dynamic arg}) async {
-    _log.fine('$name  stop, state:$activeStateId, arg:$arg');
+    _log.fine(() => '$name  stop, state:$activeStateId, arg:$arg');
     await _exitState(arg: arg);
     _activeStateId = null;
     notifyMonitors();
@@ -468,7 +472,8 @@ Changed: $changed
     required bool historyFlowDown,
   }) async {
     _log.fine(
-      '> $name  _enterState, activeStateId:$activeStateId, trigger:$trigger, stateId:$stateId, arg:$arg, historyFlowDown:$historyFlowDown',
+      () =>
+          '> $name  _enterState, activeStateId:$activeStateId, trigger:$trigger, stateId:$stateId, arg:$arg, historyFlowDown:$historyFlowDown',
     );
     final state = states[stateId];
     assert(
@@ -485,11 +490,11 @@ Changed: $changed
     _activeStateId = stateId;
     _historyStateId = _activeStateId;
 
-    _log.fine('fire arg: $arg');
+    _log.fine(() => 'fire arg: $arg');
     try {
       await state.onEntry?.action.call(this, arg);
     } catch (e) {
-      _log.severe('Exception during onEntry: $e');
+      _log.severe(() => 'Exception during onEntry: $e');
     }
     await _enterRegions(
       trigger: trigger,
@@ -498,7 +503,7 @@ Changed: $changed
       historyFlowDown: historyFlowDown,
     );
 
-    _log.fine('< $name  _enterState');
+    _log.fine(() => '< $name  _enterState');
     notifyMonitors();
   }
 
@@ -573,7 +578,8 @@ Changed: $changed
             '${now.difference(transition.lastTime!)}';
         if (onError != null) {
           _log.info(
-            'Calling onError action for $transitionId due to failed maxInterval check.',
+            () =>
+                'Calling onError action for $transitionId due to failed maxInterval check.',
           );
           await onError.action.call(
             this,
@@ -585,7 +591,7 @@ Changed: $changed
           );
           continue;
         } else {
-          _log.info('Throwing HismaIntervalException($message).');
+          _log.info(() => 'Throwing HismaIntervalException($message).');
           // TODO: Shall we drop or simply continue (selecting the transition)?
           throw HismaIntervalException(message);
         }
@@ -597,7 +603,8 @@ Changed: $changed
         const message = 'Guard failed.';
         if (onError != null) {
           _log.info(
-            'Calling onError action for $transitionId due to failed guard.',
+            () =>
+                'Calling onError action for $transitionId due to failed guard.',
           );
           await onError.action.call(
             this,
@@ -608,7 +615,7 @@ Changed: $changed
             ),
           );
         } else {
-          _log.info('Throwing HismaGuardException($message).');
+          _log.info(() => 'Throwing HismaGuardException($message).');
           // TODO: Shall we drop or simply continue (selecting the transition)?
           throw HismaGuardException(message);
         }
@@ -630,12 +637,13 @@ Changed: $changed
   Future<void> _processNotification(Message notification) async {
     if (notification is ExitNotificationFromRegion<E>) {
       _log.info(
-        '$name _processNotification: Notification event=${notification.event} '
-        'arg=${notification.arg}',
+        () =>
+            '$name _processNotification: Notification event=${notification.event} '
+            'arg=${notification.arg}',
       );
       await fire(notification.event, arg: notification.arg, external: false);
     } else if (notification is StateChangeNotification) {
-      _log.fine('$name  _processNotification: StateChangeNotification');
+      _log.fine(() => '$name  _processNotification: StateChangeNotification');
       notifyMonitors();
       // await notifyParentAboutMyStateChange?.call();
       await notifyRegion?.call(StateChangeNotification());
@@ -665,6 +673,7 @@ class MonitorAndStatus {
     required this.monitor,
     required this.completed,
   });
+
   Monitor monitor;
   Future<void> completed;
 }
