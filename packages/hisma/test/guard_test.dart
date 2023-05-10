@@ -34,7 +34,7 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
           to: S.b,
           guard: Guard(
             description: 'only if data > 10',
-            condition: (machine, data) async {
+            condition: (machine, data) {
               return data is int && data > 10;
             },
           ),
@@ -52,13 +52,14 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
           to: S.b,
           guard: Guard(
             description: 'only if data > 10',
-            condition: (machine, data) async {
+            condition: (machine, data) {
               return data is int && data > 10;
             },
           ),
           onError: OnErrorAction(
             description: 'Set data to true.',
             action: (machine, data) async {
+              await Future<void>.delayed(Duration.zero);
               expect(data.source, OnErrorSource.guard);
               machine.data = true;
             },
@@ -74,7 +75,7 @@ StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
           ),
           onError: OnErrorAction(
             description: 'Set data to true.',
-            action: (machine, data) async {
+            action: (machine, data) {
               expect(data.source, OnErrorSource.guard);
               machine.data = true;
             },

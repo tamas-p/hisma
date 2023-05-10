@@ -46,7 +46,7 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
           priority: 10,
           guard: Guard(
             description: cb,
-            condition: (machine, arg) async {
+            condition: (machine, arg) {
               return arg is! Map<String, bool> || (arg[cb] ?? false);
             },
           ),
@@ -57,7 +57,7 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
           priority: 30,
           guard: Guard(
             description: cc,
-            condition: (machine, arg) async {
+            condition: (machine, arg) {
               return arg is! Map<String, bool> || (arg[cc] ?? false);
             },
           ),
@@ -68,7 +68,7 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
           priority: 20,
           guard: Guard(
             description: cd,
-            condition: (machine, arg) async {
+            condition: (machine, arg) {
               return arg is! Map<String, bool> || (arg[cd] ?? false);
             },
           ),

@@ -66,7 +66,7 @@ StateMachine<S, E, T> createMachine1() => StateMachine<S, E, T>(
 
 Action addAction(String name) => Action(
       description: name,
-      action: (machine, arg) async {
+      action: (machine, arg) {
         print('> $name started.');
         final tmp = (machine.data as int) + 1;
 

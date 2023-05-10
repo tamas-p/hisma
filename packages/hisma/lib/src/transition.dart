@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'action.dart';
 import 'guard.dart';
 import 'state_machine.dart';
@@ -91,7 +93,7 @@ class OnErrorData {
   dynamic arg;
 }
 
-typedef OnErrorActionFunction = Future<void> Function(
+typedef OnErrorActionFunction = FutureOr<void> Function(
   StateMachine<dynamic, dynamic, dynamic> machine,
   OnErrorData data,
 );
@@ -101,7 +103,7 @@ class OnErrorAction {
 
   factory OnErrorAction.noAction() => OnErrorAction(
         description: 'nope',
-        action: (_, __) async {},
+        action: (_, __) {},
       );
 
   String description;
