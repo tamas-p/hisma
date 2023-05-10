@@ -20,13 +20,13 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           },
           onEntry: Action(
             description: 'double',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) * 2;
             },
           ),
           onExit: Action(
             description: 'half',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) ~/ 2;
             },
           ),
@@ -44,7 +44,7 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           to: S.a,
           onAction: Action(
             description: 'decrease',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) - 2;
             },
           ),
@@ -53,7 +53,7 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           to: S.b,
           onAction: Action(
             description: 'increase',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) + 2;
             },
           ),
@@ -61,7 +61,7 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
         T.triple: InternalTransition(
           onAction: Action(
             description: 'Triple it.',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) * 3;
             },
           ),
@@ -69,7 +69,7 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
         T.trisect: InternalTransition(
           onAction: Action(
             description: 'Trisect it.',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) ~/ 3;
             },
           ),

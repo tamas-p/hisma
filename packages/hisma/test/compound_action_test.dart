@@ -34,7 +34,7 @@ StateMachine<S, E, T> createMachine({
           },
           onEntry: Action(
             description: 'add',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               print(
                 '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg',
               );
@@ -45,7 +45,7 @@ StateMachine<S, E, T> createMachine({
           ),
           onExit: Action(
             description: 'subtract',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               print(
                 '${machine.name}/${machine.activeStateId} - onExit - data: ${machine.data}, arg: $arg',
               );
@@ -97,7 +97,7 @@ StateMachine<S, E, T> createMachine({
                 ],
           onEntry: Action(
             description: 'add',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               print(
                 '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg',
               );
@@ -108,7 +108,7 @@ StateMachine<S, E, T> createMachine({
           ),
           onExit: Action(
             description: 'subtract',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               print(
                 '${machine.name}/${machine.activeStateId} - data: ${machine.data}, arg: $arg',
               );
@@ -133,7 +133,7 @@ StateMachine<S, E, T> createMachine({
           to: S.b,
           onAction: Action(
             description: 'add',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               print(
                 '${machine.name}/${machine.activeStateId} - toB Transition action @ ${machine.name}, data: ${machine.data}, arg:$arg',
               );

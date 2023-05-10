@@ -37,7 +37,7 @@ StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
           minInterval: const Duration(milliseconds: 100),
           onAction: Action(
             description: 'double',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) * 2;
             },
           ),
@@ -47,13 +47,13 @@ StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
           minInterval: const Duration(milliseconds: 100),
           onAction: Action(
             description: 'double',
-            action: (machine, arg) async {
+            action: (machine, arg) {
               machine.data = (machine.data as int) * 2;
             },
           ),
           onError: OnErrorAction(
             description: 'divide',
-            action: (machine, onErrorData) async {
+            action: (machine, onErrorData) {
               expect(onErrorData.source, OnErrorSource.maxInterval);
               machine.data = (machine.data as int) ~/ 2;
             },
@@ -62,6 +62,7 @@ StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
         T.toEnd: Transition(to: S.end),
       },
     );
+
 void main() {
   group('Transition interval test', () {
     test('Interval test positive - throw', () async {
