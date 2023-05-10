@@ -2,6 +2,7 @@ import 'assistance.dart';
 import 'hisma_exception.dart';
 import 'monitor.dart';
 import 'notification.dart';
+import 'policy.dart';
 import 'state.dart';
 import 'transition.dart';
 import 'trigger.dart';
@@ -26,7 +27,8 @@ class StateMachine<S, E, T> {
     this.events = const [],
     this.history,
     this.data,
-  }) {
+    StateMachinePolicy? policy,
+  }) : _policy = policy ?? const StateMachinePolicy() {
     _setIt();
   }
 
@@ -77,6 +79,8 @@ class StateMachine<S, E, T> {
   static List<MonitorGenerator> monitorCreators = [];
   final List<E> events;
   final HistoryLevel? history;
+
+  final StateMachinePolicy _policy;
 
   //----------------------------------------------------------------------------
 
@@ -230,8 +234,18 @@ Changed: $changed
   /// It returns true if state change occurred, false otherwise.
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
-    assert(_activeStateId != null, 'Machine has not been started.');
-    if (_activeStateId == null) return false;
+    if (_activeStateId == null) {
+      if (_policy.mismatchEvents.contains(ErrorBehavior.notice)) {
+        _log.fine('Machine has not been started.');
+      }
+      if (_policy.mismatchEvents.contains(ErrorBehavior.exception)) {
+        throw HismaMachineNotFoundException('Machine has not been started.');
+      }
+      if (_policy.mismatchEvents.contains(ErrorBehavior.assertion)) {
+        assert(_activeStateId != null, 'Machine has not been started.');
+      }
+      return false;
+    }
 
     final transitionWithId = await _getTransitionByEvent(eventId, arg);
     return _executeTransition(
