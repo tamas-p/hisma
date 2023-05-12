@@ -27,8 +27,8 @@ class StateMachine<S, E, T> {
     this.events = const [],
     this.history,
     this.data,
-    StateMachinePolicy? policy,
-  }) : _policy = policy ?? const StateMachinePolicy() {
+    ReactionPolicy? policy,
+  }) : _policy = policy ?? StateMachine.policy {
     _setIt();
   }
 
@@ -80,7 +80,8 @@ class StateMachine<S, E, T> {
   final List<E> events;
   final HistoryLevel? history;
 
-  final StateMachinePolicy _policy;
+  final ReactionPolicy _policy;
+  static ReactionPolicy policy = const ReactionPolicy({Reaction.assertion});
 
   //----------------------------------------------------------------------------
 
@@ -235,15 +236,7 @@ Changed: $changed
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
     if (_activeStateId == null) {
-      if (_policy.mismatchEvents.contains(ErrorBehavior.notice)) {
-        _log.fine('Machine has not been started.');
-      }
-      if (_policy.mismatchEvents.contains(ErrorBehavior.exception)) {
-        throw HismaMachineNotFoundException('Machine has not been started.');
-      }
-      if (_policy.mismatchEvents.contains(ErrorBehavior.assertion)) {
-        assert(_activeStateId != null, 'Machine has not been started.');
-      }
+      _policy.act(log: _log, message: 'Machine has not been started.');
       return false;
     }
 
@@ -554,16 +547,22 @@ Changed: $changed
     if (state is! State<E, T, S>) return null;
 
     final transitionIds = state.etm[eventId];
-    assert(
-      transitionIds != null,
-      'Could not find transition ID list by "$eventId" for state "$activeStateId"',
-    );
-    if (transitionIds == null) return null;
-    assert(
-      transitionIds.isNotEmpty,
-      'Transition ID list selected by $eventId is empty.',
-    );
-    if (transitionIds.isEmpty) return null;
+    if (transitionIds == null) {
+      _policy.act(
+        log: _log,
+        message: 'Could not find transition ID list'
+            ' by "$eventId" for state "$activeStateId"',
+      );
+      return null;
+    }
+
+    if (transitionIds.isEmpty) {
+      _policy.act(
+        log: _log,
+        message: 'Transition ID list selected by $eventId is empty.',
+      );
+      return null;
+    }
 
     return _selectTransition(transitionIds, arg);
   }

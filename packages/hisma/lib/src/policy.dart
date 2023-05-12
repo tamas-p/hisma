@@ -1,25 +1,29 @@
-class StateMachinePolicy {
-  const StateMachinePolicy({
-    this.mismatchEvents = const {ErrorBehavior.assertion},
-  });
+import 'package:logging/logging.dart';
 
-  // const StateMachinePolicy.defaults()
-  //     : mismatchEvents = const {ErrorBehavior.assertion};
+import 'hisma_exception.dart';
 
-  final Set<ErrorBehavior> mismatchEvents;
-}
+/// Generic policy
+class ReactionPolicy {
+  const ReactionPolicy(this._reactions);
 
-extension StateMachinePolicyExt on StateMachinePolicy {
-  StateMachinePolicy overrideWith(StateMachinePolicy? other) {
-    return StateMachinePolicy(
-      mismatchEvents: other?.mismatchEvents ?? mismatchEvents,
-    );
+  final Set<Reaction> _reactions;
+
+  void act({required Logger log, required String message}) {
+    if (_reactions.contains(Reaction.log)) {
+      log.fine(message);
+    }
+    if (_reactions.contains(Reaction.exception)) {
+      throw HismaMachinePolicyException(message);
+    }
+    if (_reactions.contains(Reaction.assertion)) {
+      assert(false, message);
+    }
   }
 }
 
-enum ErrorBehavior {
-  /// Notice the error.
-  notice,
+enum Reaction {
+  /// Log the error.
+  log,
 
   /// Raise an assertion.
   assertion,

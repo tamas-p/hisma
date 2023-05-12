@@ -17,3 +17,7 @@ class HismaGuardException extends HismaException {
 class HismaMachineNotFoundException extends HismaException {
   HismaMachineNotFoundException(String message) : super(message);
 }
+
+class HismaMachinePolicyException extends HismaException {
+  HismaMachinePolicyException(String message) : super(message);
+}
