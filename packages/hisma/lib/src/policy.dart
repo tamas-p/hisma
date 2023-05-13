@@ -12,11 +12,11 @@ class ReactionPolicy {
     if (_reactions.contains(Reaction.log)) {
       log.fine(message);
     }
-    if (_reactions.contains(Reaction.exception)) {
-      throw HismaMachinePolicyException(message);
-    }
     if (_reactions.contains(Reaction.assertion)) {
       assert(false, message);
+    }
+    if (_reactions.contains(Reaction.exception)) {
+      throw HismaMachinePolicyException(message);
     }
   }
 }
