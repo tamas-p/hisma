@@ -8,16 +8,26 @@ class ReactionPolicy {
 
   final Set<Reaction> _reactions;
 
-  void act({required Logger log, required String message}) {
+  void act(Logger log, Object? message) {
     if (_reactions.contains(Reaction.log)) {
       log.fine(message);
     }
     if (_reactions.contains(Reaction.assertion)) {
-      assert(false, message);
+      assert(false, _objectToString(message));
     }
     if (_reactions.contains(Reaction.exception)) {
-      throw HismaMachinePolicyException(message);
+      throw HismaMachinePolicyException(_objectToString(message));
     }
+  }
+
+  String _objectToString(Object? message) {
+    final Object? tmp;
+    if (message is Function) {
+      tmp = (message as Object? Function()).call();
+    } else {
+      tmp = message;
+    }
+    return tmp is String ? tmp : tmp.toString();
   }
 }
 

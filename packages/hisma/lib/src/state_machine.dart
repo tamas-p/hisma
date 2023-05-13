@@ -236,7 +236,7 @@ Changed: $changed
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
     if (_activeStateId == null) {
-      _policy.act(log: _log, message: 'Machine has not been started.');
+      _policy.act(_log, 'Machine has not been started.');
       return false;
     }
 
@@ -549,8 +549,8 @@ Changed: $changed
     final transitionIds = state.etm[eventId];
     if (transitionIds == null) {
       _policy.act(
-        log: _log,
-        message: 'Could not find transition ID list'
+        _log,
+        () => 'Could not find transition ID list'
             ' by "$eventId" for state "$activeStateId"',
       );
       return null;
@@ -558,8 +558,8 @@ Changed: $changed
 
     if (transitionIds.isEmpty) {
       _policy.act(
-        log: _log,
-        message: 'Transition ID list selected by $eventId is empty.',
+        _log,
+        () => 'Transition ID list selected by $eventId is empty.',
       );
       return null;
     }
