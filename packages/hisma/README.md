@@ -158,6 +158,40 @@ Future<void> play() async {
 }
 ```
 
+> **Note**
+> If we fire an event on an inactive state machine or fire an event that is not defined for the
+> active state to trigger a transition by default the appropriate assertion will fail.
+> You can override this behavior by setting `ReactionPolicy` either at class level (impacting
+> all future state machine creations)
+>
+> ```dart
+> StateMachine.policy = const ReactionPolicy({Reaction.exception});
+> ```
+>
+> or at the StateMachine constructor to change the behavior of that specific machine only.
+>
+> ```dart
+> StateMachine<S, E, T>(
+>      policy: const ReactionPolicy({Reaction.log}),
+>      name: 'testMachine',
+>      initialStateId: S.a,
+>      ...
+> ```
+>
+> The possible reactions:
+> `Reaction.log` (to log the situation), `Reaction.assertion` (to fail an assertion -
+> set by default) and
+> `Reaction.exception` (to throw a HismaInvalidOperationException).
+> Multiple reactions or no reactions can also be set as the policy:
+>
+> ```dart
+> StateMachine.policy = const ReactionPolicy({Reaction.log, Reaction.exception});
+> ```
+>
+> ```dart
+> StateMachine.policy = const ReactionPolicy({});
+> ```
+
 and finally the main function where we start the machine and invoke our play function. Also we init here StateMachine.monitorCreators with a creator function of VisualMonitor (doing the communication with [visma](../visma/), our state machine visualizer server):
 
 ```dart

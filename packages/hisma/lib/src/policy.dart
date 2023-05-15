@@ -16,7 +16,7 @@ class ReactionPolicy {
       assert(false, _objectToString(message));
     }
     if (_reactions.contains(Reaction.exception)) {
-      throw HismaMachinePolicyException(_objectToString(message));
+      throw HismaInvalidOperationException(_objectToString(message));
     }
   }
 

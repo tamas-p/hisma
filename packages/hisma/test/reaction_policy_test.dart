@@ -90,7 +90,7 @@ void main() {
           () => policy.act(log, null),
           throwsA(
             predicate(
-              (e) => e is HismaMachinePolicyException && e.message == 'null',
+              (e) => e is HismaInvalidOperationException && e.message == 'null',
             ),
           ),
         );
@@ -105,7 +105,7 @@ void main() {
           () => policy.act(log, str),
           throwsA(
             predicate(
-              (e) => e is HismaMachinePolicyException && e.message == str,
+              (e) => e is HismaInvalidOperationException && e.message == str,
             ),
           ),
         );
@@ -119,7 +119,7 @@ void main() {
           () => policy.act(log, 12),
           throwsA(
             predicate(
-              (e) => e is HismaMachinePolicyException && e.message == '12',
+              (e) => e is HismaInvalidOperationException && e.message == '12',
             ),
           ),
         );
@@ -136,7 +136,7 @@ void main() {
           throwsA(
             predicate(
               (e) =>
-                  e is HismaMachinePolicyException &&
+                  e is HismaInvalidOperationException &&
                   e.message == 'TestA 100 End',
             ),
           ),
@@ -174,7 +174,7 @@ void main() {
 
       test('Exception policy.', () async {
         StateMachine.policy = const ReactionPolicy({Reaction.exception});
-        await testWorkflow(matcher: isA<HismaMachinePolicyException>());
+        await testWorkflow(matcher: isA<HismaInvalidOperationException>());
       });
     });
     group(
@@ -186,7 +186,7 @@ void main() {
 
       test('Exception policy.', () {
         testWorkflow(
-          matcher: isA<HismaMachinePolicyException>(),
+          matcher: isA<HismaInvalidOperationException>(),
           policy: const ReactionPolicy({Reaction.exception}),
         );
       });
