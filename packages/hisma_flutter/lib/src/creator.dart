@@ -28,9 +28,7 @@ import 'hisma_router_delegate.dart';
 /// OverlayPageCreator <|-- OverlayMaterialPageCreator
 /// PagelessRouteManager -* PagelessCreator
 /// @enduml
-///
-///
-///
+
 /// abstract class PagelessRouteManager<T> {
 ///   Future<T?> open(BuildContext context)
 ///   void close([T? value])
@@ -41,7 +39,7 @@ import 'hisma_router_delegate.dart';
 /// - Browser back button
 /// - PagelessRoute close
 /// - Overlay page back button
-///
+
 /// @startuml
 /// abstract class Presentation
 /// abstract class Creator<E> {
@@ -67,6 +65,7 @@ import 'hisma_router_delegate.dart';
 /// PageCreator <|-- MaterialPageCreator
 /// PageCreator <|-- CupertinoPageCreator
 /// @enduml
+
 /// PagelessRouteManager -* PagelessCreator
 /// abstract class OverlayPageCreator<T, S, E>
 /// class OverlayMaterialPageCreator<S, E>

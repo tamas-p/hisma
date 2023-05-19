@@ -50,10 +50,11 @@ HismaRouterGenerator<S, Widget, E> createHismaRouterGenerator(
         S.i: MaterialPageCreator<S, E>(widget: Screen(machine, S.i)),
         S.j: MaterialPageCreator<S, E>(
           widget: Screen(machine, S.j),
-          // overlay: true,
+          overlay: true,
           event: E.back,
         ),
         if (level == 0 || level == 1 || level == 2)
+          // if (false)
           S.k: MaterialPageCreator<S, E>(
             widget: Router(
               routerDelegate: createHismaRouterGenerator(
@@ -69,6 +70,7 @@ HismaRouterGenerator<S, Widget, E> createHismaRouterGenerator(
             event: E.back,
           ),
         if (level == 0 || level == 1 || level == 2)
+          // if (false)
           S.l: MaterialPageCreator<S, E>(
             widget: Router(
               routerDelegate: createHismaRouterGenerator(

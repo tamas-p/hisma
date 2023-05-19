@@ -7,30 +7,49 @@ import 'assistance.dart';
 import 'creator.dart';
 import 'state_machine_with_change_notifier.dart';
 
-typedef PageMap<S> = Map<S, Page<dynamic>>;
-
 class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
     with ChangeNotifier {
   HismaRouterDelegatePop(this._machine, this._mapping) {
+    // Machine changes will result notifying listeners of this router delegate.
     _machine.addListener(notifyListeners);
-    // _navigatorKey =
-    //     GlobalKey<NavigatorState>(debugLabel: 'Machine: ${_machine.name}');
   }
 
   final _log = getLogger('$HismaRouterDelegatePop');
 
+  /// Machine that this router delegate represents.
   final StateMachineWithChangeNotifier<S, E, dynamic> _machine;
+
+  /// Mapping machine states to a presentation.
   final Map<S, Presentation> _mapping;
-  final PageMap<S> _pageMap = {};
+
+  /// Page map that will be used as the input for Navigator.pages.
+  final Map<S, Page<dynamic>> _pageMap = {};
 
   @override
   Widget build(BuildContext context) {
     _log.info('machine: ${_machine.name}, state: ${_machine.activeStateId}');
 
-    final state = _machine.activeStateId;
-    if (state != null) {
-      if (!_removeCircleWithPageless(state)) {
-        _processState(state);
+    final activeStateId = _machine.activeStateId;
+    // We only process if machine is active. If inactive we simply build
+    // pages of the navigator from the current _pageMap (that was updated
+    // in previous builds). This is required to handle the case when a child
+    // machine gets inactivated but we need its previous presentation to allow
+    // the transition to the new page.
+    if (activeStateId != null) {
+      // We only process the state if it is not leading us back to a previous
+      // state in a circle that current _pageMap (hence current navigator pages)
+      // includes.
+
+      if (_pageMap.keys.contains(activeStateId)) {
+        // Since we arrived back to a state that (more precisely the page
+        // created by its Presentation) is already in the current
+        // Navigator.pages (through the circle in the state transition graph),
+        // we have to clean up the pages on the circle.
+        _cleanUpCircle(activeStateId);
+      } else {
+        // This state (more precisely the page created by its Presentation) is
+        // not represented in Navigator.pages hence we need to add it.
+        _addState(activeStateId);
       }
     }
     _log.fine('pages: $_pageMap');
@@ -38,25 +57,27 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
     return _getNavigator();
   }
 
+  /// Handles the back button request from the operating system.
+  /// Having and event defined for the corresponding Creator it will
+  /// be fired on the machine. It is always returns true avoiding the
+  /// popping of the entire application.
   @override
   Future<bool> popRoute() {
-    // TODO: We shall allow exit from the app here by returning false.
-    // TODO: Instead check for Creator<E> and doe one fire.
     _log.info('popRoute');
 
     final creator = _mapping[_machine.activeStateId];
-    if (creator is Creator<E> &&
-        // creator.overlay &&
-        creator.event != null) {
+    if (creator is Creator<E> && creator.event != null) {
       Future.delayed(
         Duration.zero,
         () async {
-          _log.info('firing1');
+          _log.info(
+            'popRoute: Firing ${creator.event} on machine ${_machine.name}.',
+          );
           await _machine.fire(creator.event as E);
         },
       );
     } else {
-      _log.info('nothing to do');
+      _log.info('popRoute: Nothing to do for $creator.');
     }
 
     return SynchronousFuture<bool>(true);
@@ -67,30 +88,30 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
     // TODO: implement setNewRoutePath
   }
 
-  void _processState(S state) {
-    final creator = _mapping[state];
-    if (creator == null) throw ArgumentError('$state : ${_machine.name}');
-
-    if (creator is PageCreator<W, S, E> && !creator.overlay) {
-      // _popPageless();
-      // _cleanPages();
-      _pageMap.clear();
-      _pageMap[state] = creator.create(
-        state: state,
-        widget: creator.widget,
+  void _addState(S stateId) {
+    final presentation = _mapping[stateId];
+    if (presentation == null) {
+      throw ArgumentError(
+        'No presentation is defined for $stateId : ${_machine.name}',
       );
+    }
+
+    if (presentation is PageCreator<W, S, E> && !presentation.overlay) {
+      _pageMap.clear();
+      _pageMap[stateId] =
+          presentation.create(state: stateId, widget: presentation.widget);
     } else {
-      if (creator is PageCreator<W, S, E> && creator.overlay) {
-        _pageMap[state] = creator.create(
-          state: state,
-          widget: creator.widget,
+      if (presentation is PageCreator<W, S, E> && presentation.overlay) {
+        _pageMap[stateId] = presentation.create(
+          state: stateId,
+          widget: presentation.widget,
         );
-      } else if (creator is PagelessCreator<dynamic, E>) {
-        _addPageless(state, creator);
-      } else if (creator is NoUIChange) {
+      } else if (presentation is PagelessCreator<dynamic, E>) {
+        _addPageless(stateId, presentation);
+      } else if (presentation is NoUIChange) {
         // No update
       } else {
-        throw ArgumentError('Missing $state : ${creator.runtimeType}');
+        throw ArgumentError('Missing $stateId : ${presentation.runtimeType}');
       }
     }
   }
@@ -107,6 +128,10 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
           .where((page) => page is! PagelessPage<void, S>)
           .toList(),
       onPopPage: (route, dynamic result) {
+        // When using hisma_flutter exclusively to manage routing this callback
+        // shall be only invoked when user presses the framework generated
+        // back button in an AppBar which is only happens when the page is an
+        // PageCreator where overlay attribute is true.
         _log.info('Navigator.onPopPage($route, $result)');
         _log.info('${route.settings.name}');
         _log.info('machine: ${_machine.name} - ${_machine.activeStateId}');
@@ -114,6 +139,7 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
         if (creator is PageCreator<W, S, E> && creator.overlay) {
           final event = creator.event;
           if (event != null) {
+            // We shall fire the event that was registered when the
             Future.delayed(Duration.zero, () {
               _machine.fire(event, arg: result);
             });
@@ -131,17 +157,7 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
     );
   }
 
-  bool _removeCircleWithPageless(S state) {
-    if (_pageMap.keys.contains(state)) {
-      // _popPageless(state);
-      // _removePages(state);
-      _rmPages2(state);
-      return true;
-    }
-    return false;
-  }
-
-  void _rmPages2([S? from]) {
+  void _cleanUpCircle([S? from]) {
     var found = false;
     var pageRemoved = false;
 
@@ -155,7 +171,6 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
           if (creator is! PagelessCreator<dynamic, E>) {
             throw AssertionError('creator is $creator');
           }
-
           // if (!creator.pagelessRouteManager.closed) {
           creator.close();
           // }
@@ -167,32 +182,6 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
       return true;
     });
   }
-
-  // void _rmPages([S? from]) {
-  //   var found = false;
-  //   var pageRemoved = false;
-  //   for (final entry in _pageMap.entries) {
-  //     if (!found && entry.key != from) continue;
-  //     found = true;
-  //     final page = entry.value;
-  //     if (!pageRemoved && page is PagelessPage<void, S>) {
-  //       Future.delayed(Duration.zero, () {
-  //         final creator = _mapping[entry.key];
-  //         if (creator is! PagelessCreator<dynamic, E>) {
-  //           throw AssertionError('creator is $creator');
-  //         }
-
-  //         // if (!creator.pagelessRouteManager.closed) {
-  //         creator.close();
-  //         // }
-  //       });
-  //     } else {
-  //       pageRemoved = true;
-  //     }
-
-  //     _pageMap.remove(entry.key);
-  //   }
-  // }
 
   void _cleanPages() {
     while (_pageMap.isNotEmpty) {
@@ -235,13 +224,6 @@ class HismaRouterDelegatePop<S, W, E> extends RouterDelegate<S>
       _pageMap.remove(entry.key);
     }
   }
-
-  // void _removePages([S? state]) {
-  //   while (_pageMap.isNotEmpty && _pageMap.entries.last.key != state) {
-  //     final entry = _pageMap.entries.last;
-  //     _pageMap.remove(entry.key);
-  //   }
-  // }
 
   Page<W> _createPageWithFunction(
     S lastPageState,

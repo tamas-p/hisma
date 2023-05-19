@@ -108,44 +108,56 @@ void main() {
   ///   - Simple
   ///   - Switch from one history state to another one
   ///
-  testWidgets('UI initiated state change.', (tester) async {
-    final machine = createMachine('sm');
-    await machine.start();
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(machine));
-    check(machine, S.a);
-    await testIt(machine: machine, tester: tester, fire: false);
-  });
+  testWidgets(
+    'UI initiated state change.',
+    (tester) async {
+      final machine = createMachine('sm');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+      check(machine, S.a);
+      await testIt(machine: machine, tester: tester, fire: false);
+    },
+    skip: false,
+  );
 
-  testWidgets('Machine event fired initiated state change.', (tester) async {
-    StateMachine.monitorCreators = [
-      (m) => VisualMonitor(m, host: '192.168.122.1'),
-    ];
+  testWidgets(
+    'Machine event fired initiated state change.',
+    (tester) async {
+      StateMachine.monitorCreators = [
+        (m) => VisualMonitor(m, host: '192.168.122.1'),
+      ];
 
-    final machine = createMachine('sm');
-    await machine.start();
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(machine));
-    check(machine, S.a);
-    await testIt(machine: machine, tester: tester, fire: true);
-  });
+      final machine = createMachine('sm');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+      check(machine, S.a);
+      await testIt(machine: machine, tester: tester, fire: true);
+    },
+    skip: false,
+  );
 
-  testWidgets('hisma_flutter test', (tester) async {
-    final sm = createMachine('sm');
-    await sm.start();
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(sm));
+  testWidgets(
+    'hisma_flutter test',
+    (tester) async {
+      final sm = createMachine('sm');
+      await sm.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(sm));
 
-    // Verify that the title of the home page is displayed.
-    expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
+      // Verify that the title of the home page is displayed.
+      expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
 
-    await sm.fire(E.forward);
-    await tester.pumpAndSettle();
+      await sm.fire(E.forward);
+      await tester.pumpAndSettle();
 
-    // Verify that the title of the home page is displayed.
-    expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
-    await tester.pumpAndSettle();
-  });
+      // Verify that the title of the home page is displayed.
+      expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
+      await tester.pumpAndSettle();
+    },
+    skip: false,
+  );
 
   group(
     'description',
@@ -232,7 +244,7 @@ Testing that pageless routes are managed well in case of a child machine.
         checkTitle(sm);
       });
     },
-    skip: true,
+    skip: false,
   );
   testWidgets(
     '''
@@ -294,10 +306,11 @@ hisma_flutter that we missed discovering with regular auto-tests.
 
         // checkTitle(machine);
 
-        // await Future<void>.delayed(const Duration(milliseconds: 1000));
+        // await Future<void>.delayed(const Duration(milliseconds: 10));
       }
       print('DONE ----------------------------');
     },
+    skip: false,
   );
 }
 
