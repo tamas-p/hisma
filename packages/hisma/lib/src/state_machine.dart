@@ -230,7 +230,7 @@ Changed: $changed
   /// It returns true if state change occurred, false otherwise.
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
-    assert(_activeStateId != null, 'Machine has not been started.');
+    assert(_activeStateId != null, 'Machine "$name" has not been started.');
     if (_activeStateId == null) return false;
 
     final transitionWithId = await _getTransitionByEvent(eventId, arg);
@@ -356,12 +356,14 @@ Changed: $changed
   ///   ]
   /// ];
   ///
-  /// TODO: Add StateMachine.name to the activeStateId.
-  List<dynamic> getActiveStateRecursive() {
+  /// TODO: Add StateMachine.name to the activeStateId. - added, but
+  /// TODO: add unit test to StateMachine.name and use withName=true for
+  /// prettyPrint.
+  List<dynamic> getActiveStateRecursive({bool withName = false}) {
     final result = <dynamic>[];
 
     if (_activeStateId != null) {
-      result.add(_activeStateId);
+      result.add(withName ? '$name-$_activeStateId' : _activeStateId);
       final state = states[_activeStateId];
       assert(
         state != null,

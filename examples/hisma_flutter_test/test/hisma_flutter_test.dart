@@ -8,13 +8,9 @@ import 'package:hisma_flutter_test/machine.dart';
 import 'package:hisma_flutter_test/main.dart';
 import 'package:hisma_flutter_test/ui.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
+import 'package:logging/logging.dart';
 
-void check(StateMachineWithChangeNotifier<S, E, T> machine, S stateId) {
-  expect(machine.activeStateId, stateId);
-  expect(find.text(getTitle(machine, stateId)), findsOneWidget);
-}
-
-Future<void> tap(
+Future<void> action(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
   E event, {
@@ -37,27 +33,19 @@ Future<void> checkAll(
   S previous,
   S current,
   S next, {
-  bool dialog = false,
   bool fire = false,
 }) async {
-  await tap(machine, tester, E.back, fire: fire);
-  check(machine, previous);
+  await action(machine, tester, E.back, fire: fire);
+  checkTitle(machine, previous);
 
-  // await Future<void>.delayed(const Duration(seconds: 1));
+  await action(machine, tester, E.forward, fire: fire);
+  checkTitle(machine, current);
 
-  await tap(machine, tester, E.forward, fire: fire);
-  check(machine, current);
+  await action(machine, tester, E.self, fire: fire);
+  checkTitle(machine, current);
 
-  // await Future<void>.delayed(const Duration(seconds: 1));
-
-  if (!dialog) {
-    await tap(machine, tester, E.self, fire: fire);
-    check(machine, current);
-    // await Future<void>.delayed(const Duration(seconds: 1));
-  }
-
-  await tap(machine, tester, E.forward, fire: fire);
-  check(machine, next);
+  await action(machine, tester, E.forward, fire: fire);
+  checkTitle(machine, next);
 }
 
 Future<void> testIt({
@@ -68,20 +56,23 @@ Future<void> testIt({
   await checkAll(machine, tester, S.n, S.a, S.b, fire: fire);
   await checkAll(machine, tester, S.a, S.b, S.c, fire: fire);
   await checkAll(machine, tester, S.b, S.c, S.d, fire: fire);
-  await checkAll(machine, tester, S.c, S.d, S.e, dialog: true, fire: fire);
-  await checkAll(machine, tester, S.d, S.e, S.f, dialog: true, fire: fire);
-  await checkAll(machine, tester, S.e, S.f, S.g, dialog: true, fire: fire);
+  await checkAll(machine, tester, S.c, S.d, S.e, fire: fire);
+  await checkAll(machine, tester, S.d, S.e, S.f, fire: fire);
+  await checkAll(machine, tester, S.e, S.f, S.g, fire: fire);
   await checkAll(machine, tester, S.f, S.g, S.h, fire: fire);
-  await checkAll(machine, tester, S.g, S.h, S.i, dialog: true, fire: fire);
+  await checkAll(machine, tester, S.g, S.h, S.i, fire: fire);
   await checkAll(machine, tester, S.h, S.i, S.j, fire: fire);
-  // await checkAll(machine, tester, S.i, S.j, S.k, fire: fire);
-  // await checkAll(machine, tester, S.j, S.k, S.l, fire: fire);
-  // await checkAll(machine, tester, S.k, S.l, S.m, dialog: true, fire: fire);
-  // await checkAll(machine, tester, S.l, S.m, S.n, dialog: true, fire: fire);
-  // await checkAll(machine, tester, S.m, S.n, S.a, fire: fire);
+
+  await checkAll(machine, tester, S.i, S.j, S.k, fire: fire);
+  await checkAll(machine, tester, S.j, S.k, S.l, fire: fire);
+  await checkAll(machine, tester, S.k, S.l, S.m, fire: fire);
+  await checkAll(machine, tester, S.l, S.m, S.n, fire: fire);
+  await checkAll(machine, tester, S.m, S.n, S.a, fire: fire);
 }
 
 void main() {
+  // initLogging();
+
   // testWidgets('hisma_flutter test2', (tester) async {});
   // return;
 
@@ -111,11 +102,12 @@ void main() {
   testWidgets(
     'UI initiated state change.',
     (tester) async {
-      final machine = createMachine('sm');
+      final machine = createMachine('root');
       await machine.start();
       // Build our app and trigger a frame.
       await tester.pumpWidget(MyApp(machine));
-      check(machine, S.a);
+
+      checkTitle(machine, S.a);
       await testIt(machine: machine, tester: tester, fire: false);
     },
     skip: false,
@@ -124,15 +116,12 @@ void main() {
   testWidgets(
     'Machine event fired initiated state change.',
     (tester) async {
-      StateMachine.monitorCreators = [
-        (m) => VisualMonitor(m, host: '192.168.122.1'),
-      ];
-
-      final machine = createMachine('sm');
+      final machine = createMachine('root');
       await machine.start();
       // Build our app and trigger a frame.
       await tester.pumpWidget(MyApp(machine));
-      check(machine, S.a);
+
+      checkTitle(machine, S.a);
       await testIt(machine: machine, tester: tester, fire: true);
     },
     skip: false,
@@ -259,7 +248,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
         // (m) => VisualMonitor(m, host: '192.168.122.1'),
       ];
 
-      final machine = createMachine('sm');
+      final machine = createMachine('root');
       await machine.start();
       // Build our app and trigger a frame.
       await tester.pumpWidget(MyApp(machine));
@@ -269,7 +258,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       // We have the same events everywhere. No need to update.
       final events = state?.etm.keys;
 
-      for (var i = 0; i < 150000; i++) {
+      for (var i = 0; i < 1000; i++) {
         print(' >>> $i <<<');
         final rnd = Random();
         final randomEvent = events?.toList()[rnd.nextInt(events.length)];
@@ -279,18 +268,19 @@ hisma_flutter that we missed discovering with regular auto-tests.
         if (randomEvent == null) throw AssertionError();
 
         print('-------------------------------------------------------');
+        print('BEFORE:');
+        print(pretty(machine.getActiveStateRecursive()));
+
         if (rnd.nextBool() == true) {
-          print(pretty(machine.getActiveStateRecursive()));
           print(
-            'tester.tap(find.text($randomEvent).last, warnIfMissed: false);',
+            'await mt.tap(find.text($randomEvent).last, warnIfMissed: false);',
           );
+
           await tester.pumpAndSettle();
           await tester.tap(find.text('$randomEvent').last, warnIfMissed: false);
           await tester.pumpAndSettle();
         } else {
           await tester.pumpAndSettle();
-          print(pretty(machine.getActiveStateRecursive()));
-
           print(getActiveMachines(machine).map((e) => e.name));
 
           final activeMachines = getActiveMachines(machine);
@@ -302,9 +292,12 @@ hisma_flutter that we missed discovering with regular auto-tests.
           await tester.pumpAndSettle();
         }
 
-        await tester.pumpAndSettle();
+        print('AFTER:');
+        print(pretty(machine.getActiveStateRecursive()));
 
-        // checkTitle(machine);
+        await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
+        checkTitle(machine);
 
         // await Future<void>.delayed(const Duration(milliseconds: 10));
       }
@@ -312,16 +305,194 @@ hisma_flutter that we missed discovering with regular auto-tests.
     },
     skip: false,
   );
+
+  testWidgets(
+    'Machine has not been started test - 0.',
+    (tester) async {
+      StateMachine.monitorCreators = [
+        (m) => VisualMonitor(m, host: '192.168.122.1'),
+      ];
+      final machine = createMachine('root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+
+      final mt = MachineTester(tester, machine);
+
+      await mt.tap(E.jumpBack);
+      await mt.tap(E.forward);
+      await mt.tap(E.forward);
+      await mt.tap(E.forward);
+      await mt.tap(E.forward);
+
+      await mt.fire(E.forward, 'root');
+      await mt.tap(E.jump);
+
+      await mt.tap(E.jumpBack);
+
+      await mt.tap(E.forward);
+      await mt.tap(E.self);
+    },
+    skip: false,
+  );
+
+  testWidgets(
+    'Machine has not been started test - 01.',
+    (tester) async {
+      final machine = createMachine('root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+
+      final mt = MachineTester(tester, machine);
+
+      await mt.tap(E.jumpBack);
+      await mt.tap(E.forward);
+      await mt.tap(E.forward);
+      await mt.tap(E.forward);
+
+      await mt.fire(E.jump, 'root');
+      await mt.tap(E.jumpBack);
+
+      await mt.tap(E.forward);
+      await mt.tap(E.self);
+    },
+    skip: false,
+  );
+
+  testWidgets(
+    'Machine has not been started test - 3.',
+    (tester) async {
+      final machine = createMachine('root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+
+      final mt = MachineTester(tester, machine);
+
+      await mt.tap(E.jumpBack);
+      await mt.tap(E.jumpBack);
+
+      await mt.fire(E.back, 'root/S.l');
+
+      await mt.fire(E.jumpBack, 'root/S.l');
+      await mt.tap(E.jumpBack);
+
+      await mt.fire(E.forward, 'root');
+      await mt.tap(E.jump);
+
+      await mt.tap(E.jumpBack);
+
+      await mt.tap(E.forward);
+    },
+    skip: false,
+  );
+
+  testWidgets(
+    'Machine has not been started test.',
+    (tester) async {
+      final machine = createMachine('root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+
+      final mt = MachineTester(tester, machine);
+
+      // await mt.fire(E.self, 'root');
+      await mt.tap(E.jumpBack);
+      // await mt.fire(E.self, 'root');
+      await mt.fire(E.forward, 'root/S.l');
+      // await mt.tap(E.self);
+      // await mt.tap(E.self);
+      await mt.fire(E.jumpBack, 'root/S.l');
+      await mt.tap(E.jumpBack);
+      // await mt.tap(E.self);
+      await mt.tap(E.forward);
+      await mt.tap(E.back);
+      await mt.tap(E.forward);
+      // await mt.fire(E.self, 'root');
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.jumpBack, 'root/S.l');
+      await mt.tap(E.jumpBack);
+      // await mt.fire(E.self, 'root/S.l');
+
+      await mt.fire(E.forward, 'root');
+      await mt.tap(E.jump);
+
+      // await mt.tap(E.self);
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.forward);
+      // await mt.fire(E.back, 'root');
+      // await mt.fire(E.back, 'root');
+      // await mt.fire(E.forward, 'root');
+      // await mt.fire(E.jump, 'root');
+      // await mt.fire(E.forward, 'root');
+      // await mt.fire(E.forward, 'root');
+      // await mt.fire(E.forward, 'root');
+      // await mt.fire(E.jumpBack, 'root');
+      // await mt.fire(E.forward, 'root');
+      // await mt.tap(E.back);
+      // await mt.tap(E.jump);
+
+      await mt.tap(E.jumpBack);
+
+      // await mt.fire(E.jumpBack, 'root');
+      await mt.tap(E.forward);
+
+      // await mt.tap(E.jumpBack);
+      // await mt.fire(E.back, 'root');
+      // await mt.fire(E.jump, 'root');
+      // await mt.tap(E.self);
+      // await mt.tap(E.self);
+      // await mt.tap(E.forward);
+
+      // await mt.tap(E.forward);
+      // await mt.tap(E.back);
+      // await mt.fire(E.back, 'root');
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.forward);
+    },
+    skip: false,
+  );
 }
 
-void checkTitle(StateMachine<S, E, T> machine) {
+class MachineTester {
+  MachineTester(this.tester, this.machine);
+
+  final WidgetTester tester;
+  final StateMachine<S, E, T> machine;
+
+  Future<void> fire(E eventId, String machineName) async {
+    print('${machine.getActiveStateRecursive()} <fire> $eventId');
+    await machine.find<S, E, T>(machineName).fire(eventId);
+    await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
+    checkTitle(machine);
+  }
+
+  Future<void> tap(E eventId) async {
+    print('${machine.getActiveStateRecursive()} <tap> $eventId');
+    await tester.tap(find.text(eventId.toString()).last, warnIfMissed: false);
+    await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
+    checkTitle(machine);
+  }
+}
+
+void checkTitle(StateMachine<S, E, T> machine, [S? stateId]) {
+  // TODO: Use [] representation of hierarchic states.
+  // expect(machine.activeStateId, stateId);
+
   final activeMachines = getActiveMachines(machine);
   print(activeMachines.map((e) => e.name));
   final lm = activeMachines.last;
-  final path = '${lm.name}/${lm.activeStateId}';
-  print('>>> Title $path.');
 
-  expect(find.text('Title $path.'), findsOneWidget);
+  final path = getTitle(lm, lm.activeStateId);
+  // final path = '${lm.name}-${lm.activeStateId}';
+  print('>>> Title $path');
+
+  expect(find.text(path), findsOneWidget);
 }
 
 List<StateMachine<S, E, T>> getActiveMachines(
@@ -341,4 +512,22 @@ List<StateMachine<S, E, T>> getActiveMachines(
     }
   }
   return list;
+}
+
+void initLogging() {
+  // This shall be done 1st to allow Logger configuration for a hierarchy.
+  hierarchicalLoggingEnabled = true;
+
+  Logger.root.level = Level.ALL;
+  // Logger(vismaMonitorName).level = Level.INFO;
+  // Logger('hisma_flutter').level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    // ignore: avoid_print
+    print(
+      '${record.level.name}: '
+      '${record.time}: '
+      '${record.loggerName}: '
+      '${record.message}',
+    );
+  });
 }

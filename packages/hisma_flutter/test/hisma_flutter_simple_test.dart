@@ -65,14 +65,14 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-HismaRouterGenerator<S, Widget, E> createHismaRouterGenerator(
+HismaRouterGenerator<S, E> createHismaRouterGenerator(
   StateMachineWithChangeNotifier<S, E, T> machine,
 ) =>
     HismaRouterGenerator(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<S, E>(widget: const ScreenA()),
-        S.b: MaterialPageCreator<S, E>(widget: const ScreenB()),
+        S.a: MaterialPageCreator<void, S, E>(widget: const ScreenA()),
+        S.b: MaterialPageCreator<void, S, E>(widget: const ScreenB()),
       },
     );
 
@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
   MyApp(StateMachineWithChangeNotifier<S, E, T> machine, {super.key})
       : _routerGenerator = createHismaRouterGenerator(machine);
 
-  final HismaRouterGenerator<S, Widget, E> _routerGenerator;
+  final HismaRouterGenerator<S, E> _routerGenerator;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,6 @@ class MyApp extends StatelessWidget {
 
 Future<void> main() async {
   testWidgets('hisma_flutter test1', (tester) async {});
-  return;
   StateMachine.monitorCreators = [
     // (m) => VisualMonitor(m),
     // (m) => ConsoleMonitor(m),

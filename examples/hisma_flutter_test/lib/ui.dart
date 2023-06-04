@@ -6,7 +6,10 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import 'machine.dart';
 
 String getTitle(hisma.StateMachine<S, E, T> machine, S? stateId) =>
-    'Title ${getName(machine.name, stateId)}.';
+    '${machine.name} - $stateId';
+
+String getButtonTitle(hisma.StateMachine<S, E, T> machine, dynamic event) =>
+    '$event';
 
 class Screen extends StatelessWidget {
   const Screen(this.machine, this.stateId, {super.key});
@@ -30,13 +33,14 @@ class Screen extends StatelessWidget {
     final buttons = <Widget>[];
     if (state is! hisma.State) throw ArgumentError();
     for (final eventId in state.etm.keys) {
+      assert(machine == state.machine);
       buttons.add(
         TextButton(
           onPressed: () async {
             print('Screen: state.machine.fire($eventId) - ${machine.name}');
             await state.machine.fire(eventId);
           },
-          child: Text('$eventId'),
+          child: Text(getButtonTitle(machine, eventId)),
         ),
       );
     }
@@ -54,13 +58,14 @@ class DialogCreator extends PagelessCreator<E, E> {
 
   final hisma.StateMachine<S, E, T> machine;
   final S stateId;
+  final useRootNavigator = false;
 
   BuildContext? _context;
 
   @override
   Future<E?> open(BuildContext context) {
     return showDialog<E>(
-      // useRootNavigator: false,
+      useRootNavigator: useRootNavigator,
       context: context,
       builder: (context) {
         _context = context;
@@ -81,7 +86,17 @@ class DialogCreator extends PagelessCreator<E, E> {
   void close([E? value]) {
     final context = _context;
     // if (context != null && context.mounted) {
-    if (context != null) Navigator.of(context, rootNavigator: true).pop(value);
+    if (context != null) {
+      // TODO: Replace with context.mounted if move to Flutter version > 3.7.
+      try {
+        (context as Element).widget;
+        print('--- <context is OK> ---');
+        Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
+      } catch (e) {
+        print('** NO RENDEROBJECT FOUND **');
+        print('Exception: $e');
+      }
+    }
     // }
   }
 
@@ -101,12 +116,28 @@ class DialogCreator extends PagelessCreator<E, E> {
           //         close(eventId);
           //       }
           //     : null,
-          child: Text('$eventId'),
+          child: Text(getButtonTitle(machine, eventId)),
         ),
       );
     }
 
     return buttons;
+  }
+
+  @override
+  bool get mounted {
+    final context = _context;
+    if (context != null) {
+      // TODO: Replace with context.mounted if move to Flutter version > 3.7.
+      try {
+        (context as Element).widget;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    return false;
   }
 }
 
@@ -125,6 +156,23 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
   final DateTime lastDate;
 
   BuildContext? _context;
+
+  @override
+  bool get mounted {
+    final context = _context;
+    if (context != null) {
+      // TODO: Replace with context.mounted if move to Flutter version > 3.7.
+      try {
+        (context as Element).widget;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    return false;
+  }
+
   @override
   Future<DateTime?> open(BuildContext context) {
     _context = context;
@@ -169,6 +217,10 @@ class SnackbarPagelessRouteManager
     ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
     return ret!.closed;
   }
+
+  @override
+  // TODO: remove
+  bool get mounted => true;
 
   @override
   void close([void value]) {

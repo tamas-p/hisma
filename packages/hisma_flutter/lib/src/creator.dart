@@ -44,15 +44,15 @@ import 'hisma_router_delegate.dart';
 /// abstract class Presentation
 /// abstract class Creator<E> {
 ///   E? event
+///   bool overlay
 /// }
 /// class NoUIChange
 /// abstract class PageCreator<T, S, E> {
 ///   Widget widget
-///   bool overlay
 ///   Page<T> Function({required Widget widget, required S state,}) create
 /// }
-/// class MaterialPageCreator<S, E>
-/// class CupertinoPageCreator<S, E>
+/// class MaterialPageCreator<T, S, E>
+/// class CupertinoPageCreator<T, S, E>
 /// abstract class PagelessCreator<T, E> {
 ///   Future<T?> open(BuildContext context)
 ///   void close([T? value])
@@ -107,7 +107,7 @@ abstract class PageCreator<T, S, E> extends Creator<E> {
   final Widget widget;
   final Page<T> Function({
     required Widget widget,
-    required S state,
+    required String name,
   }) create;
   final bool overlay;
 }
@@ -162,6 +162,8 @@ abstract class PagelessCreator<T, E> extends Creator<E> {
 
   Future<T?> open(BuildContext context);
   void close([T? value]);
+
+  bool get mounted;
 }
 
 // class PagelessCreatorOld<E, T> extends Creator {
@@ -185,21 +187,21 @@ abstract class PagelessCreator<T, E> extends Creator<E> {
 // final E event;
 // }
 
-Page<Widget> _createPage<S>({
+Page<T> _createPage<T, S>({
   required Widget widget,
-  required S state,
+  required String name,
 }) {
-  print('__createPage: $state');
-  return MaterialPage<Widget>(
+  print('__createPage: $name');
+  return MaterialPage<T>(
     child: widget,
 
     // TODO: consider using path as defined in state machine hierarchy.
-    key: ValueKey(state),
-    name: state.toString(),
+    key: ValueKey(name),
+    name: name,
   );
 }
 
-class MaterialPageCreator<S, E> extends PageCreator<Widget, S, E> {
+class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
   MaterialPageCreator({
     required super.widget,
     super.overlay,

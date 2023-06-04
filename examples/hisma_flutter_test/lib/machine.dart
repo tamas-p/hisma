@@ -1,6 +1,8 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
+const int hierarchyDepth = 4;
+
 enum S { a, b, c, d, e, f, g, h, i, j, k, l, m, n }
 
 enum E { forward, back, jump, jumpBack, self }
@@ -48,7 +50,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine(
         S.h: createState(T.toG, T.toI, T.toH, T.toE),
         S.i: createState(T.toH, T.toJ, T.toI, T.toF),
         S.j: createState(T.toI, T.toK, T.toJ, T.toG),
-        if (level == 0 || level == 1 || level == 2)
+        if (level < hierarchyDepth)
           S.k: createState(
             T.toJ,
             T.toL,
@@ -61,7 +63,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine(
           )
         else
           S.k: createState(T.toJ, T.toL, T.toK, T.toH),
-        if (level == 0 || level == 1 || level == 2)
+        if (level < hierarchyDepth)
           S.l: createState(
             T.toK,
             T.toM,

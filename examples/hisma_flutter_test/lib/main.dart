@@ -13,7 +13,7 @@ Future<void> main() async {
     // (m) => ConsoleMonitor(m),
   ];
   initLogging();
-  final simpleMachine = createMachine('sm');
+  final simpleMachine = createMachine('root');
   await simpleMachine.start();
 
   runApp(MyApp(simpleMachine));
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   MyApp(StateMachineWithChangeNotifier<S, E, T> machine, {super.key})
       : _routerGenerator = createHismaRouterGenerator(machine);
 
-  final HismaRouterGenerator<S, Widget, E> _routerGenerator;
+  final HismaRouterGenerator<S, E> _routerGenerator;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ void initLogging() {
   // This shall be done 1st to allow Logger configuration for a hierarchy.
   hierarchicalLoggingEnabled = true;
 
-  Logger.root.level = Level.OFF;
+  Logger.root.level = Level.ALL;
   // Logger(vismaMonitorName).level = Level.INFO;
   Logger('hisma_flutter').level = Level.ALL;
   Logger.root.onRecord.listen((record) {
