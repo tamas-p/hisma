@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../hisma_flutter.dart';
 import 'assistance.dart';
-import 'hisma_router_delegate.dart';
 
 /// @startuml
 /// class Creator
@@ -191,7 +190,7 @@ Page<T> _createPage<T, S>({
   required Widget widget,
   required String name,
 }) {
-  print('__createPage: $name');
+  // print('__createPage: $name');
   return MaterialPage<T>(
     child: widget,
 

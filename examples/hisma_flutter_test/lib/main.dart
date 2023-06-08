@@ -13,7 +13,7 @@ Future<void> main() async {
     // (m) => ConsoleMonitor(m),
   ];
   initLogging();
-  final simpleMachine = createMachine('root');
+  final simpleMachine = createMachine(name: 'root');
   await simpleMachine.start();
 
   runApp(MyApp(simpleMachine));

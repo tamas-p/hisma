@@ -1,5 +1,6 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
+import 'package:logging/logging.dart';
 
 const int hierarchyDepth = 4;
 
@@ -8,6 +9,8 @@ enum S { a, b, c, d, e, f, g, h, i, j, k, l, m, n }
 enum E { forward, back, jump, jumpBack, self }
 
 enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL, toM, toN }
+
+Logger _log = Logger('machine');
 
 State<E, T, S> createState(
   T back,
@@ -30,15 +33,16 @@ State<E, T, S> createState(
       ],
     );
 
-StateMachineWithChangeNotifier<S, E, T> createMachine(
-  String name, [
+StateMachineWithChangeNotifier<S, E, T> createMachine({
+  required String name,
+  HistoryLevel? historyLevel,
   int level = 0,
-]) =>
+}) =>
     StateMachineWithChangeNotifier(
       events: E.values,
       name: name,
       initialStateId: S.a,
-      history: HistoryLevel.deep,
+      history: historyLevel,
       states: {
         S.a: createState(T.toN, T.toB, T.toA, T.toL),
         S.b: createState(T.toA, T.toC, T.toB, T.toM),
@@ -57,8 +61,8 @@ StateMachineWithChangeNotifier<S, E, T> createMachine(
             T.toK,
             T.toH,
             createMachine(
-              getName(name, S.k),
-              level + 1,
+              name: getName(name, S.k),
+              level: level + 1,
             ),
           )
         else
@@ -70,8 +74,8 @@ StateMachineWithChangeNotifier<S, E, T> createMachine(
             T.toL,
             T.toI,
             createMachine(
-              getName(name, S.l),
-              level + 1,
+              name: getName(name, S.l),
+              level: level + 1,
             ),
           )
         else
@@ -102,7 +106,9 @@ Action getEntryAction() => Action(
       action: (machine, dynamic arg) async {
         if (arg is E) {
           // if (arg == E.back) return;
-          print('OnEntry: state.machine.fire($arg) - ${machine.name}');
+          _log.info(
+            () => 'OnEntry: state.machine.fire($arg) - ${machine.name}',
+          );
           await machine.fire(arg);
         }
       },

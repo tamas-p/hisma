@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hisma/hisma.dart' as hisma;
 import 'package:hisma_flutter/hisma_flutter.dart';
+import 'package:logging/logging.dart';
 
 import 'machine.dart';
 
@@ -12,7 +13,8 @@ String getButtonTitle(hisma.StateMachine<S, E, T> machine, dynamic event) =>
     '$event';
 
 class Screen extends StatelessWidget {
-  const Screen(this.machine, this.stateId, {super.key});
+  Screen(this.machine, this.stateId, {super.key});
+  final Logger _log = Logger('$Screen');
 
   final hisma.StateMachine<S, E, T> machine;
   final S stateId;
@@ -37,7 +39,9 @@ class Screen extends StatelessWidget {
       buttons.add(
         TextButton(
           onPressed: () async {
-            print('Screen: state.machine.fire($eventId) - ${machine.name}');
+            _log.info(
+              () => 'Screen: state.machine.fire($eventId) - ${machine.name}',
+            );
             await state.machine.fire(eventId);
           },
           child: Text(getButtonTitle(machine, eventId)),
@@ -90,7 +94,7 @@ class DialogCreator extends PagelessCreator<E, E> {
       // TODO: Replace with context.mounted if move to Flutter version > 3.7.
       try {
         (context as Element).widget;
-        print('--- <context is OK> ---');
+        // print('--- <context is OK> ---');
         Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
       } catch (e) {
         print('** NO RENDEROBJECT FOUND **');

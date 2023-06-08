@@ -22,7 +22,7 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
         S.a: createState(),
         S.b: State(
           regions: [
-            Region<S, E, T, child.S>(machine: child.createMachine('t1'))
+            Region<S, E, T, child.S>(machine: child.createMachine(name: 't1'))
           ],
         ),
         S.c: createState(),
