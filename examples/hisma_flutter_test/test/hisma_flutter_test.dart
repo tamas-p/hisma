@@ -75,7 +75,7 @@ Future<void> testIt({
 }
 
 void main() {
-  // initLogging();
+  initLogging();
 
   /// We are testing
   /// - State change initiated from
@@ -444,6 +444,83 @@ hisma_flutter that we missed discovering with regular auto-tests.
     },
     skip: false,
   );
+
+  testWidgets(
+    "Looking up a deactivated widget's ancestor is unsafe",
+    (tester) async {
+      final machine = createMachine(name: 'root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine));
+      final mt = MachineTester(tester, machine);
+
+      // await mt.fire(E.jump, 'root');
+      // await mt.tap(E.back);
+      // await mt.fire(E.jumpBack, 'root');
+      // await mt.tap(E.forward);
+      // await mt.tap(E.self);
+      // await mt.tap(E.self);
+      // await mt.fire(E.jump, 'root');
+      // await mt.fire(E.self, 'root');
+      // await mt.tap(E.self);
+      // await mt.tap(E.self);
+
+      // await mt.fire(E.forward, 'root');
+      // await mt.fire(E.self, 'root');
+      // await mt.tap(E.forward);
+      // await mt.tap(E.forward);
+      // await mt.tap(E.jump);
+      // await mt.tap(E.back);
+      // await mt.fire(E.jumpBack, 'root');
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.back);
+      // await mt.fire(E.self, 'root/S.k/S.l');
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.forward);
+      // await mt.tap(E.forward);
+      // await mt.tap(E.self);
+      // await mt.fire(E.jumpBack, 'root');
+      // await mt.tap(E.back);
+      // await mt.fire(E.jumpBack, 'root');
+      // await mt.fire(E.self, 'root');
+      // await mt.fire(E.back, 'root');
+      // await mt.fire(E.self, 'root');
+      // await mt.tap(E.forward);
+      // await mt.fire(E.back, 'root');
+      // await mt.fire(E.self, 'root');
+      // await mt.tap(E.jumpBack);
+
+      await mt.tap(E.back);
+
+      await mt.tap(E.jumpBack);
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.forward, 'root/S.k');
+      await mt.fire(E.back, 'root');
+    },
+  );
+
+  testWidgets('Expected: exactly one matching node in the widget tree',
+      (tester) async {
+    final machine = createMachine(name: 'root');
+    await machine.start();
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp(machine));
+    final mt = MachineTester(tester, machine);
+
+    await mt.fire(E.self, 'root');
+    await mt.fire(E.jumpBack, 'root');
+    await mt.fire(E.jumpBack, 'root/S.l');
+    await mt.tap(E.self);
+    await mt.tap(E.forward);
+    await mt.fire(E.self, 'root');
+    await mt.tap(E.forward);
+    await mt.tap(E.jumpBack);
+    await mt.fire(E.forward, 'root');
+    await mt.fire(E.jumpBack, 'root');
+    await mt.tap(E.back);
+    await mt.backButton();
+  });
 }
 
 class MachineTester {
@@ -455,14 +532,22 @@ class MachineTester {
   Future<void> fire(E eventId, String machineName) async {
     _log.info('${machine.getActiveStateRecursive()} <fire> $eventId');
     await machine.find<S, E, T>(machineName).fire(eventId);
-    await tester.pumpAndSettle();
-    await tester.pumpAndSettle();
-    checkTitle(machine);
+    await _check();
   }
 
   Future<void> tap(E eventId) async {
     _log.info('${machine.getActiveStateRecursive()} <tap> $eventId');
     await tester.tap(find.text(eventId.toString()).last, warnIfMissed: false);
+    await _check();
+  }
+
+  Future<void> backButton() async {
+    _log.info('${machine.getActiveStateRecursive()} <backButton>');
+    await pageBack(tester);
+    await _check();
+  }
+
+  Future<void> _check() async {
     await tester.pumpAndSettle();
     await tester.pumpAndSettle();
     checkTitle(machine);
@@ -532,6 +617,14 @@ Future<void> monkey({
   final events = state?.etm.keys;
 
   for (var i = 0; i < 1000; i++) {
+    // if (i != 0 && i % 100 == 0) {
+    //   print('Have some rest...');
+    //   await tester.runAsync(() async {
+    //     await Future<void>.delayed(const Duration(milliseconds: 500));
+    //   });
+    //   print('Continue.');
+    // }
+
     _log.info(' >>> $i <<<');
     final rnd = Random();
     final randomEvent = events?.toList()[rnd.nextInt(events.length)];
@@ -545,17 +638,16 @@ Future<void> monkey({
     _log.info(() => pretty(machine.getActiveStateRecursive()));
 
     if (rnd.nextBool() == true) {
-      _log.info(
-        () =>
-            'await mt.tap(find.text($randomEvent).last, warnIfMissed: false);',
-      );
-
       await tester.pumpAndSettle();
 
       if (isThereBackButton() && rnd.nextInt(100) < 25) {
         _log.info('Tap PageBack');
         await pageBack(tester);
       } else {
+        _log.info(
+          () =>
+              'await mt.tap(find.text($randomEvent).last, warnIfMissed: false);',
+        );
         _log.info('Tap $randomEvent');
         await tester.tap(find.text('$randomEvent').last, warnIfMissed: false);
       }

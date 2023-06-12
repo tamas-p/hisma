@@ -157,6 +157,7 @@ class LoggingMaterialPage<W> extends MaterialPage<W> {
 
 abstract class PagelessCreator<T, E> extends Creator<E> {
   // TODO: should the event be required here?
+  // YES, it should be mandatory.
   PagelessCreator({super.event});
 
   Future<T?> open(BuildContext context);
@@ -201,6 +202,10 @@ Page<T> _createPage<T, S>({
 }
 
 class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
+  // TODO: should the event be required here if overlay = true?
+  // YES, it should be mandatory, otherwise when Flutter pops when
+  // user clicks on AppBar BackButton the ui changes, but state remain
+  // resulting inconsistent UI.
   MaterialPageCreator({
     required super.widget,
     super.overlay,

@@ -63,6 +63,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine({
             createMachine(
               name: getName(name, S.k),
               level: level + 1,
+              historyLevel: historyLevel,
             ),
           )
         else
@@ -76,6 +77,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine({
             createMachine(
               name: getName(name, S.l),
               level: level + 1,
+              historyLevel: historyLevel,
             ),
           )
         else

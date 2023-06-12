@@ -94,11 +94,12 @@ class DialogCreator extends PagelessCreator<E, E> {
       // TODO: Replace with context.mounted if move to Flutter version > 3.7.
       try {
         (context as Element).widget;
-        // print('--- <context is OK> ---');
+        print('--- <context is OK> ---');
         Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
       } catch (e) {
         print('** NO RENDEROBJECT FOUND **');
         print('Exception: $e');
+        // exit(1);
       }
     }
     // }

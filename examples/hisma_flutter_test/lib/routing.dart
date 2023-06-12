@@ -16,6 +16,10 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
         S.c: MaterialPageCreator<void, S, E>(
           widget: Screen(machine, S.c),
           event: E.back,
+          // TODO: When E.self, we shall have get back to Screen S.c here.
+          // Right now Flutter pops the Screen S.c and we see Screen S.b and
+          // we are NOT taken back/shown Screen S.c.
+          // event: E.self,
           overlay: true,
         ),
         S.d: DialogCreator(
@@ -47,7 +51,11 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
           event: E.self,
         ),
         // S.h: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.h)),
-        S.i: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.i)),
+        S.i: MaterialPageCreator<void, S, E>(
+          widget: Screen(machine, S.i),
+          overlay: true,
+          event: E.back,
+        ),
         S.j: MaterialPageCreator<void, S, E>(
           widget: Screen(machine, S.j),
           overlay: true,
