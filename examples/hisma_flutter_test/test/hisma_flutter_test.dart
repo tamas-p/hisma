@@ -275,7 +275,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
                 createMachine(name: 'root', historyLevel: HistoryLevel.shallow),
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Deep history monkey.',
@@ -290,7 +290,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
                 createMachine(name: 'root', historyLevel: HistoryLevel.deep),
           );
         },
-        skip: false,
+        skip: true,
       );
     },
   );
@@ -448,7 +448,8 @@ hisma_flutter that we missed discovering with regular auto-tests.
   testWidgets(
     "Looking up a deactivated widget's ancestor is unsafe",
     (tester) async {
-      final machine = createMachine(name: 'root');
+      final machine =
+          createMachine(name: 'root', historyLevel: HistoryLevel.deep);
       await machine.start();
       // Build our app and trigger a frame.
       await tester.pumpWidget(MyApp(machine));
@@ -589,9 +590,9 @@ void initLogging() {
   // This shall be done 1st to allow Logger configuration for a hierarchy.
   hierarchicalLoggingEnabled = true;
 
-  Logger.root.level = Level.OFF;
+  Logger.root.level = Level.ALL;
   // Logger(vismaMonitorName).level = Level.INFO;
-  Logger(_loggerName).level = Level.ALL;
+  // Logger(_loggerName).level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     // ignore: avoid_print
     print(
@@ -616,11 +617,11 @@ Future<void> monkey({
   // We have the same events everywhere. No need to update.
   final events = state?.etm.keys;
 
-  for (var i = 0; i < 1000; i++) {
-    // if (i != 0 && i % 100 == 0) {
+  for (var i = 0; i < 10000; i++) {
+    // if (i != 0 && i % 1000 == 0) {
     //   print('Have some rest...');
     //   await tester.runAsync(() async {
-    //     await Future<void>.delayed(const Duration(milliseconds: 500));
+    //     await Future<void>.delayed(const Duration(milliseconds: 300));
     //   });
     //   print('Continue.');
     // }

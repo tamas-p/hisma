@@ -185,8 +185,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
           if (!sameAsBefore || !creator.mounted) {
             toOpen.add(PagelessCreatorWithId<S, E>(stateId, creator));
           }
-        } else {
-          //if (_machine.activeStateId != null) {
+        } else if (_machine.activeStateId != null) {
           toClose.add(PagelessCreatorWithId<S, E>(stateId, creator));
         }
       } else {
