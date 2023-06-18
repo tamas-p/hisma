@@ -11,6 +11,8 @@ import 'package:hisma_flutter_test/ui.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 
+import '../../../examples/hisma_flutter_test/test/aux/aux.dart';
+
 const _loggerName = 'FlutterTest';
 final Logger _log = Logger(_loggerName);
 
@@ -75,7 +77,7 @@ Future<void> testIt({
 }
 
 void main() {
-  initLogging();
+  auxInitLogging();
 
   const useRootNavigator = false;
   HistoryLevel? historyLevel;
@@ -116,7 +118,7 @@ void main() {
       checkTitle(machine, S.a);
       await testIt(machine: machine, tester: tester, fire: false);
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -133,7 +135,7 @@ void main() {
       checkTitle(machine, S.a);
       await testIt(machine: machine, tester: tester, fire: true);
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -155,7 +157,7 @@ void main() {
       expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
       await tester.pumpAndSettle();
     },
-    skip: true,
+    skip: false,
   );
 
   group(
@@ -250,66 +252,7 @@ Testing that pageless routes are managed well in case of a child machine.
         checkTitle(sm);
       });
     },
-    skip: true,
-  );
-
-  group(
-    '''
-Monkey test.
-The purpose of this test to randomly generate events either by tapping on
-UI or directly firing events on a randomly selected active machine of the
-hierarchical state machine. This allows us finding problems mainly in
-hisma_flutter that we missed discovering with regular auto-tests.
-    ''',
-    () {
-      testWidgets(
-        'No history monkey.',
-        (tester) async {
-          StateMachine.monitorCreators = [
-            // (m) => VisualMonitor(m, host: '192.168.122.1'),
-          ];
-
-          await monkey(
-            tester: tester,
-            machine: createMachine(name: 'root'),
-            useRootNavigator: useRootNavigator,
-          );
-        },
-        skip: false,
-      );
-      testWidgets(
-        'Shallow history monkey.',
-        (tester) async {
-          StateMachine.monitorCreators = [
-            // (m) => VisualMonitor(m, host: '192.168.122.1'),
-          ];
-
-          await monkey(
-            tester: tester,
-            machine:
-                createMachine(name: 'root', historyLevel: HistoryLevel.shallow),
-            useRootNavigator: useRootNavigator,
-          );
-        },
-        skip: true,
-      );
-      testWidgets(
-        'Deep history monkey.',
-        (tester) async {
-          StateMachine.monitorCreators = [
-            // (m) => VisualMonitor(m, host: '192.168.122.1'),
-          ];
-
-          await monkey(
-            tester: tester,
-            machine:
-                createMachine(name: 'root', historyLevel: HistoryLevel.deep),
-            useRootNavigator: useRootNavigator,
-          );
-        },
-        skip: true,
-      );
-    },
+    skip: false,
   );
 
   testWidgets(
@@ -341,7 +284,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.tap(E.forward);
       await mt.tap(E.self);
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -367,7 +310,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.tap(E.forward);
       await mt.tap(E.self);
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -397,7 +340,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
 
       await mt.tap(E.forward);
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -467,7 +410,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       // await mt.tap(E.jumpBack);
       // await mt.tap(E.forward);
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -524,7 +467,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.fire(E.forward, 'root/S.k');
       await mt.fire(E.back, 'root');
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -549,7 +492,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.tap(E.back);
       await mt.backButton();
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -605,7 +548,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.tap(E.forward);
       await mt.fire(E.jumpBack, 'root/S.l');
     },
-    skip: true,
+    skip: false,
   );
   testWidgets(
     'shortened debug.',
@@ -641,7 +584,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       // await mt.fire(E.jumpBack, 'root/S.l');
       // await mt.tap(E.self);
     },
-    skip: true,
+    skip: false,
   );
 }
 
@@ -674,151 +617,4 @@ class MachineTester {
     await tester.pumpAndSettle();
     checkTitle(machine);
   }
-}
-
-void checkTitle(StateMachine<S, E, T> machine, [S? stateId]) {
-  // TODO: Use [] representation of hierarchic states.
-  // expect(machine.activeStateId, stateId);
-
-  final activeMachines = getActiveMachines(machine);
-  _log.fine(activeMachines.map((e) => e.name));
-  final lm = activeMachines.last;
-
-  final path = getTitle(lm, lm.activeStateId);
-  expect(find.text(path), findsOneWidget);
-}
-
-List<StateMachine<S, E, T>> getActiveMachines(
-  StateMachine<S, E, T> machine,
-) {
-  final list = <StateMachine<S, E, T>>[];
-  if (machine.activeStateId != null) {
-    list.add(machine);
-    final st = machine.states[machine.activeStateId];
-    if (st != null && st is State<E, T, S>) {
-      if (st.regions.isNotEmpty) {
-        assert(st.regions.length == 1);
-        list.addAll(
-          getActiveMachines(st.regions.first.machine as StateMachine<S, E, T>),
-        );
-      }
-    }
-  }
-  return list;
-}
-
-void initLogging() {
-  // This shall be done 1st to allow Logger configuration for a hierarchy.
-  hierarchicalLoggingEnabled = true;
-
-  Logger.root.level = Level.ALL;
-  // Logger(vismaMonitorName).level = Level.INFO;
-  // Logger(_loggerName).level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    // ignore: avoid_print
-    print(
-      '${record.level.name}: '
-      '${record.time}: '
-      '${record.loggerName}: '
-      '${record.message}',
-    );
-  });
-}
-
-Future<void> monkey({
-  required WidgetTester tester,
-  required StateMachineWithChangeNotifier<S, E, T> machine,
-  required bool useRootNavigator,
-}) async {
-  await machine.start();
-  // Build our app and trigger a frame.
-  await tester.pumpWidget(
-    MyApp(machine: machine, useRootNavigator: useRootNavigator),
-  );
-  final stateId = machine.activeStateId;
-  if (stateId == null) throw AssertionError();
-  final state = machine.stateAt(stateId);
-  // We have the same events everywhere. No need to update.
-  final events = state?.etm.keys;
-
-  for (var i = 0; i < 100000; i++) {
-    // if (i != 0 && i % 1000 == 0) {
-    //   print('Have some rest...');
-    //   await tester.runAsync(() async {
-    //     await Future<void>.delayed(const Duration(milliseconds: 300));
-    //   });
-    //   print('Continue.');
-    // }
-
-    _log.info(' >>> $i <<<');
-    final rnd = Random();
-    final randomEvent = events?.toList()[rnd.nextInt(events.length)];
-    if (randomEvent == E.jump) {
-      if (rnd.nextInt(100) < 70) continue;
-    }
-    if (randomEvent == null) throw AssertionError();
-
-    _log.info('-------------------------------------------------------');
-    _log.info('BEFORE:');
-    _log.info(() => machine.getActiveStateRecursive());
-
-    if (rnd.nextBool() == true) {
-      await tester.pumpAndSettle();
-
-      if (isThereBackButton() && rnd.nextInt(100) < 25) {
-        _log.info('Tap PageBack');
-        await pageBack(tester);
-      } else {
-        _log.info(
-          () =>
-              'await mt.tap(find.text($randomEvent).last, warnIfMissed: false);',
-        );
-        _log.info('Tap $randomEvent');
-        await tester.tap(find.text('$randomEvent').last, warnIfMissed: false);
-      }
-      await tester.pumpAndSettle();
-    } else {
-      await tester.pumpAndSettle();
-      _log.info(() => getActiveMachines(machine).map((e) => e.name));
-
-      final activeMachines = getActiveMachines(machine);
-      final rndMachine = activeMachines[rnd.nextInt(activeMachines.length)];
-
-      // await machine.fire(randomEvent);
-      _log.info(() => 'rndMachine.fire($randomEvent) - ${rndMachine.name}');
-      await rndMachine.fire(randomEvent);
-      await tester.pumpAndSettle();
-    }
-
-    _log.info('AFTER:');
-    _log.info(() => machine.getActiveStateRecursive());
-
-    await tester.pumpAndSettle();
-    await tester.pumpAndSettle();
-    checkTitle(machine);
-  }
-}
-
-bool isThereBackButton() =>
-    find.byTooltip('Back').evaluate().isNotEmpty ||
-    find
-        .byType(cupertino.CupertinoNavigationBarBackButton)
-        .evaluate()
-        .isNotEmpty;
-
-Future<void> pageBack(WidgetTester tester) async {
-  return TestAsyncUtils.guard<void>(() async {
-    var backButton = find.byTooltip('Back').last;
-    if (backButton.evaluate().isEmpty) {
-      backButton = find.byType(cupertino.CupertinoNavigationBarBackButton);
-    }
-
-    expectSync(
-      backButton,
-      findsOneWidget,
-      reason: 'One back button expected on screen',
-    );
-
-    await tester.tap(backButton, warnIfMissed: false);
-  });
 }
