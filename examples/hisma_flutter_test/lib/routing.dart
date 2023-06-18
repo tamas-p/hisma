@@ -4,10 +4,11 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import 'machine.dart';
 import 'ui.dart';
 
-HismaRouterGenerator<S, E> createHismaRouterGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine, [
+HismaRouterGenerator<S, E> createHismaRouterGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool useRootNavigator,
   int level = 0,
-]) =>
+}) =>
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
@@ -26,18 +27,21 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
           machine: machine,
           stateId: S.d,
           event: E.self,
+          useRootNavigator: useRootNavigator,
         ),
         // S.d: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.d)),
         S.e: DialogCreator(
           machine: machine,
           stateId: S.e,
           event: E.self,
+          useRootNavigator: useRootNavigator,
         ),
         // S.e: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.e)),
         S.f: DialogCreator(
           machine: machine,
           stateId: S.f,
           event: E.self,
+          useRootNavigator: useRootNavigator,
         ),
         // S.f: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.f)),
         S.g: MaterialPageCreator<void, S, E>(
@@ -49,6 +53,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
           machine: machine,
           stateId: S.h,
           event: E.self,
+          useRootNavigator: useRootNavigator,
         ),
         // S.h: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.h)),
         S.i: MaterialPageCreator<void, S, E>(
@@ -65,8 +70,9 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
           S.k: MaterialPageCreator<void, S, E>(
             widget: Router(
               routerDelegate: createHismaRouterGenerator(
-                machine.find(getName(machine.name, S.k)),
-                level + 1,
+                machine: machine.find(getName(machine.name, S.k)),
+                level: level + 1,
+                useRootNavigator: useRootNavigator,
               ).routerDelegate,
             ),
           )
@@ -80,8 +86,9 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
           S.l: MaterialPageCreator<void, S, E>(
             widget: Router(
               routerDelegate: createHismaRouterGenerator(
-                machine.find(getName(machine.name, S.l)),
-                level + 1,
+                machine: machine.find(getName(machine.name, S.l)),
+                level: level + 1,
+                useRootNavigator: useRootNavigator,
               ).routerDelegate,
             ),
           )
@@ -90,12 +97,14 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
             machine: machine,
             stateId: S.l,
             event: E.self,
+            useRootNavigator: useRootNavigator,
           ),
         // S.l: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.l)),
         S.m: DialogCreator(
           machine: machine,
           stateId: S.m,
           event: E.self,
+          useRootNavigator: useRootNavigator,
         ),
         // S.m: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.m)),
         S.n: MaterialPageCreator<void, S, E>(

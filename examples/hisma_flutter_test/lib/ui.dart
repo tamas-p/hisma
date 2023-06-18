@@ -57,12 +57,13 @@ class DialogCreator extends PagelessCreator<E, E> {
   DialogCreator({
     required this.machine,
     required this.stateId,
+    required this.useRootNavigator,
     super.event,
   });
 
   final hisma.StateMachine<S, E, T> machine;
   final S stateId;
-  final useRootNavigator = false;
+  final bool useRootNavigator;
 
   BuildContext? _context;
 
@@ -95,12 +96,13 @@ class DialogCreator extends PagelessCreator<E, E> {
       try {
         (context as Element).widget;
         print('--- <context is OK> ---');
-        Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
       } catch (e) {
         print('** NO RENDEROBJECT FOUND **');
         print('Exception: $e');
         // exit(1);
+        return;
       }
+      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
     }
     // }
   }
@@ -144,6 +146,10 @@ class DialogCreator extends PagelessCreator<E, E> {
 
     return false;
   }
+
+  @override
+  // TODO: implement shown
+  bool get shown => throw UnimplementedError();
 }
 
 class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {

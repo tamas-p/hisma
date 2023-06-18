@@ -38,6 +38,8 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     final activeStateId = _machine.activeStateId;
     final sameAsBefore =
         _pageMap.keys.isNotEmpty && activeStateId == _pageMap.keys.last;
+
+    // if (!sameAsBefore) _popPageless();
     // There are two prerequisites to process based on activeStateId:
     // (1) We only process if machine is active. If inactive we simply build
     //     pages of the navigator from the current _pageMap (that was updated
@@ -49,10 +51,12 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     //     we updated the page map means that no update on the page map is
     //     needed.
     if (activeStateId != null && !sameAsBefore) {
+      // _popPageless();
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
       if (_pageMap.keys.contains(activeStateId)) {
+        // _popPageless();
         // Since we arrived back to a state that (more precisely the page
         // created by its Presentation) is already in the current
         // Navigator.pages (through the circle in the state transition graph),
@@ -109,9 +113,12 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
   void _addState(S stateId) {
     final presentation = _mapping[stateId];
     if (presentation is PageCreator<dynamic, S, E>) {
+      // _popPageless();
       if (presentation.overlay == false) _pageMap.clear();
       _pageMap[stateId] = presentation.create(
-          name: '${_machine.name}-$stateId', widget: presentation.widget);
+        name: '${_machine.name}-$stateId',
+        widget: presentation.widget,
+      );
     } else if (presentation is PagelessCreator<dynamic, E>) {
       _pageMap[stateId] = PagelessPage<S>(
         name: '${_machine.name}-$stateId',
@@ -166,6 +173,32 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
         return false;
       },
     );
+  }
+
+  void _popPageless() {
+    for (final pageEntry in _pageMap.entries) {
+      if (pageEntry.value is PagelessPage &&
+          pageEntry.key != _pageMap.entries.last.key) {
+        print(_pageMap);
+        assert(false);
+      }
+    }
+
+    final toClose = <PagelessCreatorWithId<S, E>>[];
+    _pageMap.forEach((stateId, page) {
+      if (page is PagelessPage<S>) {
+        final creator = page.creator as PagelessCreator<dynamic, E>;
+
+        toClose.add(PagelessCreatorWithId<S, E>(stateId, creator));
+      }
+    });
+    for (final creatorWithId in toClose) {
+      // We need to close in this build cycle, not using Future
+      // to avoid closing the next page that was added in this
+      // build cycle.
+      creatorWithId.creator.close();
+      _pageMap.remove(creatorWithId.stateId);
+    }
   }
 
   List<Page<dynamic>> _processPageless(bool sameAsBefore) {
@@ -255,7 +288,8 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
                 _log.finest(
                   () =>
                       '_addPageless: COMPLETED ${_machine.name},$machineName -'
-                      ' $pagelessStateId',
+                      ' $pagelessStateId'
+                      ' context: ${pagelessCreator.mounted}',
                 );
                 _log.info(() => 'pagelessCreator.open result is $result.');
                 _pageMap.remove(pagelessStateId);

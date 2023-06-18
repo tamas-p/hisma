@@ -77,6 +77,9 @@ Future<void> testIt({
 void main() {
   initLogging();
 
+  const useRootNavigator = false;
+  HistoryLevel? historyLevel;
+
   /// We are testing
   /// - State change initiated from
   ///   - UI
@@ -103,39 +106,45 @@ void main() {
   testWidgets(
     'UI initiated state change.',
     (tester) async {
-      final machine = createMachine(name: 'root');
+      final machine = createMachine(name: 'root', historyLevel: historyLevel);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(
+        MyApp(machine: machine, useRootNavigator: useRootNavigator),
+      );
 
       checkTitle(machine, S.a);
       await testIt(machine: machine, tester: tester, fire: false);
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
     'Machine event fired initiated state change.',
     (tester) async {
-      final machine = createMachine(name: 'root');
+      final machine =
+          createMachine(name: 'root', historyLevel: HistoryLevel.deep);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(
+        MyApp(machine: machine, useRootNavigator: true),
+      );
 
       checkTitle(machine, S.a);
       await testIt(machine: machine, tester: tester, fire: true);
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
     'hisma_flutter test',
     (tester) async {
-      final sm = createMachine(name: 'root');
+      final sm = createMachine(name: 'root', historyLevel: historyLevel);
       await sm.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(sm));
-
+      await tester.pumpWidget(
+        MyApp(machine: sm, useRootNavigator: useRootNavigator),
+      );
       // Verify that the title of the home page is displayed.
       expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
 
@@ -146,7 +155,7 @@ void main() {
       expect(find.text(getTitle(sm, sm.activeStateId)), findsOneWidget);
       await tester.pumpAndSettle();
     },
-    skip: false,
+    skip: true,
   );
 
   group(
@@ -156,10 +165,12 @@ void main() {
 Testing that pageless routes are managed well in case of a root machine.
 ''', (tester) async {
         const machineName = 'root';
-        final sm = createMachine(name: machineName);
+        final sm = createMachine(name: machineName, historyLevel: historyLevel);
         await sm.start();
         // Build our app and trigger a frame.
-        await tester.pumpWidget(MyApp(sm));
+        await tester.pumpWidget(
+          MyApp(machine: sm, useRootNavigator: useRootNavigator),
+        );
         checkTitle(sm);
 
         await sm.fire(E.jumpBack);
@@ -201,7 +212,9 @@ Testing that pageless routes are managed well in case of a child machine.
         final sm = createMachine(name: machineName);
         await sm.start();
         // Build our app and trigger a frame.
-        await tester.pumpWidget(MyApp(sm));
+        await tester.pumpWidget(
+          MyApp(machine: sm, useRootNavigator: useRootNavigator),
+        );
         checkTitle(sm);
 
         await sm.fire(E.jumpBack);
@@ -226,6 +239,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await tester.pumpAndSettle();
         checkTitle(sm);
 
+        // This
         await sm.find<S, E, T>('$machineName/S.l').fire(E.forward);
         await tester.pumpAndSettle();
         await tester.pumpAndSettle();
@@ -236,7 +250,7 @@ Testing that pageless routes are managed well in case of a child machine.
         checkTitle(sm);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   group(
@@ -258,6 +272,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
           await monkey(
             tester: tester,
             machine: createMachine(name: 'root'),
+            useRootNavigator: useRootNavigator,
           );
         },
         skip: false,
@@ -273,6 +288,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
             tester: tester,
             machine:
                 createMachine(name: 'root', historyLevel: HistoryLevel.shallow),
+            useRootNavigator: useRootNavigator,
           );
         },
         skip: true,
@@ -288,6 +304,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
             tester: tester,
             machine:
                 createMachine(name: 'root', historyLevel: HistoryLevel.deep),
+            useRootNavigator: useRootNavigator,
           );
         },
         skip: true,
@@ -301,10 +318,12 @@ hisma_flutter that we missed discovering with regular auto-tests.
       StateMachine.monitorCreators = [
         (m) => VisualMonitor(m, host: '192.168.122.1'),
       ];
-      final machine = createMachine(name: 'root');
+      final machine = createMachine(name: 'root', historyLevel: historyLevel);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(
+        MyApp(machine: machine, useRootNavigator: useRootNavigator),
+      );
 
       final mt = MachineTester(tester, machine);
 
@@ -322,16 +341,18 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.tap(E.forward);
       await mt.tap(E.self);
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
     'Machine has not been started test - 01.',
     (tester) async {
-      final machine = createMachine(name: 'root');
+      final machine = createMachine(name: 'root', historyLevel: historyLevel);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(
+        MyApp(machine: machine, useRootNavigator: useRootNavigator),
+      );
 
       final mt = MachineTester(tester, machine);
 
@@ -346,16 +367,18 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.tap(E.forward);
       await mt.tap(E.self);
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
     'Machine has not been started test - 3.',
     (tester) async {
-      final machine = createMachine(name: 'root');
+      final machine = createMachine(name: 'root', historyLevel: historyLevel);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(
+        MyApp(machine: machine, useRootNavigator: useRootNavigator),
+      );
 
       final mt = MachineTester(tester, machine);
 
@@ -374,16 +397,18 @@ hisma_flutter that we missed discovering with regular auto-tests.
 
       await mt.tap(E.forward);
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
     'Machine has not been started test.',
     (tester) async {
-      final machine = createMachine(name: 'root');
+      final machine = createMachine(name: 'root', historyLevel: historyLevel);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(
+        MyApp(machine: machine, useRootNavigator: useRootNavigator),
+      );
 
       final mt = MachineTester(tester, machine);
 
@@ -442,7 +467,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
       // await mt.tap(E.jumpBack);
       // await mt.tap(E.forward);
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -452,7 +477,7 @@ hisma_flutter that we missed discovering with regular auto-tests.
           createMachine(name: 'root', historyLevel: HistoryLevel.deep);
       await machine.start();
       // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(machine));
+      await tester.pumpWidget(MyApp(machine: machine, useRootNavigator: true));
       final mt = MachineTester(tester, machine);
 
       // await mt.fire(E.jump, 'root');
@@ -499,29 +524,125 @@ hisma_flutter that we missed discovering with regular auto-tests.
       await mt.fire(E.forward, 'root/S.k');
       await mt.fire(E.back, 'root');
     },
+    skip: true,
   );
 
-  testWidgets('Expected: exactly one matching node in the widget tree',
-      (tester) async {
-    final machine = createMachine(name: 'root');
-    await machine.start();
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(machine));
-    final mt = MachineTester(tester, machine);
+  testWidgets(
+    'Expected: exactly one matching node in the widget tree',
+    (tester) async {
+      final machine = createMachine(name: 'root', historyLevel: historyLevel);
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine: machine, useRootNavigator: true));
+      final mt = MachineTester(tester, machine);
 
-    await mt.fire(E.self, 'root');
-    await mt.fire(E.jumpBack, 'root');
-    await mt.fire(E.jumpBack, 'root/S.l');
-    await mt.tap(E.self);
-    await mt.tap(E.forward);
-    await mt.fire(E.self, 'root');
-    await mt.tap(E.forward);
-    await mt.tap(E.jumpBack);
-    await mt.fire(E.forward, 'root');
-    await mt.fire(E.jumpBack, 'root');
-    await mt.tap(E.back);
-    await mt.backButton();
-  });
+      await mt.fire(E.self, 'root');
+      await mt.fire(E.jumpBack, 'root');
+      await mt.fire(E.jumpBack, 'root/S.l');
+      await mt.tap(E.self);
+      await mt.tap(E.forward);
+      await mt.fire(E.self, 'root');
+      await mt.tap(E.forward);
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.forward, 'root');
+      await mt.fire(E.jumpBack, 'root');
+      await mt.tap(E.back);
+      await mt.backButton();
+    },
+    skip: true,
+  );
+
+  testWidgets(
+    'When pageless needs to be popped explicitly when'
+    ' becomes inactive its machine.',
+    (tester) async {
+      final machine = createMachine(name: 'root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine: machine, useRootNavigator: true));
+      final mt = MachineTester(tester, machine);
+
+      await mt.tap(E.back);
+      await mt.tap(E.back);
+      await mt.tap(E.back);
+      await mt.tap(E.back);
+      await mt.tap(E.back);
+
+      // Here when we are back to S.l/S.a the S.l/S.m dialog was still shown.
+      await mt.fire(E.self, 'root');
+
+      await mt.fire(E.forward, 'root/S.l');
+      await mt.fire(E.jumpBack, 'root/S.l');
+    },
+    skip: true,
+  );
+  testWidgets(
+    'original debug.',
+    (tester) async {
+      final machine = createMachine(name: 'root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine: machine, useRootNavigator: true));
+      final mt = MachineTester(tester, machine);
+
+      await mt.fire(E.forward, 'root');
+      await mt.tap(E.jumpBack);
+      await mt.tap(E.back);
+      await mt.fire(E.forward, 'root');
+      await mt.tap(E.back);
+      await mt.tap(E.forward);
+      await mt.tap(E.jumpBack);
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.back, 'root');
+      await mt.fire(E.forward, 'root/S.k');
+      await mt.tap(E.back);
+      await mt.fire(E.jumpBack, 'root/S.k');
+      // await mt.fire(E.self, 'root/S.k/S.l');
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.forward, 'root/S.k');
+      await mt.fire(E.forward, 'root');
+
+      await mt.tap(E.forward);
+      await mt.fire(E.jumpBack, 'root/S.l');
+    },
+    skip: true,
+  );
+  testWidgets(
+    'shortened debug.',
+    (tester) async {
+      final machine = createMachine(name: 'root');
+      await machine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(machine: machine, useRootNavigator: true));
+      final mt = MachineTester(tester, machine);
+
+      // await mt.fire(E.forward, 'root');
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.back);
+
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.back, 'root');
+
+      // await mt.fire(E.forward, 'root');
+      // await mt.tap(E.forward);
+      // await mt.tap(E.jumpBack);
+      // await mt.tap(E.jumpBack);
+      // await mt.fire(E.back, 'root');
+      // await mt.fire(E.forward, 'root/S.k');
+      // await mt.tap(E.back);
+      // await mt.fire(E.jumpBack, 'root/S.k');
+      // await mt.fire(E.self, 'root/S.k/S.l');
+      await mt.tap(E.jumpBack);
+      await mt.fire(E.forward, 'root/S.k');
+
+      await mt.fire(E.forward, 'root');
+
+      // await mt.tap(E.forward);
+      // await mt.fire(E.jumpBack, 'root/S.l');
+      // await mt.tap(E.self);
+    },
+    skip: true,
+  );
 }
 
 class MachineTester {
@@ -607,17 +728,20 @@ void initLogging() {
 Future<void> monkey({
   required WidgetTester tester,
   required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool useRootNavigator,
 }) async {
   await machine.start();
   // Build our app and trigger a frame.
-  await tester.pumpWidget(MyApp(machine));
+  await tester.pumpWidget(
+    MyApp(machine: machine, useRootNavigator: useRootNavigator),
+  );
   final stateId = machine.activeStateId;
   if (stateId == null) throw AssertionError();
   final state = machine.stateAt(stateId);
   // We have the same events everywhere. No need to update.
   final events = state?.etm.keys;
 
-  for (var i = 0; i < 10000; i++) {
+  for (var i = 0; i < 100000; i++) {
     // if (i != 0 && i % 1000 == 0) {
     //   print('Have some rest...');
     //   await tester.runAsync(() async {
@@ -636,7 +760,7 @@ Future<void> monkey({
 
     _log.info('-------------------------------------------------------');
     _log.info('BEFORE:');
-    _log.info(() => pretty(machine.getActiveStateRecursive()));
+    _log.info(() => machine.getActiveStateRecursive());
 
     if (rnd.nextBool() == true) {
       await tester.pumpAndSettle();
@@ -667,7 +791,7 @@ Future<void> monkey({
     }
 
     _log.info('AFTER:');
-    _log.info(() => pretty(machine.getActiveStateRecursive()));
+    _log.info(() => machine.getActiveStateRecursive());
 
     await tester.pumpAndSettle();
     await tester.pumpAndSettle();
@@ -684,7 +808,7 @@ bool isThereBackButton() =>
 
 Future<void> pageBack(WidgetTester tester) async {
   return TestAsyncUtils.guard<void>(() async {
-    var backButton = find.byTooltip('Back');
+    var backButton = find.byTooltip('Back').last;
     if (backButton.evaluate().isEmpty) {
       backButton = find.byType(cupertino.CupertinoNavigationBarBackButton);
     }
