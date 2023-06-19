@@ -6,6 +6,9 @@ import 'package:logging/logging.dart';
 
 import 'machine.dart';
 
+const _loggerName = 'ui';
+final Logger _log = Logger(_loggerName);
+
 String getTitle(hisma.StateMachine<S, E, T> machine, S? stateId) =>
     '${machine.name} - $stateId';
 
@@ -95,10 +98,10 @@ class DialogCreator extends PagelessCreator<E, E> {
       // TODO: Replace with context.mounted if move to Flutter version > 3.7.
       try {
         (context as Element).widget;
-        print('--- <context is OK> ---');
+        _log.info('--- <context is OK> ---');
       } catch (e) {
-        print('** NO RENDEROBJECT FOUND **');
-        print('Exception: $e');
+        _log.info('** NO RENDEROBJECT FOUND **');
+        _log.info('Exception: $e');
         // exit(1);
         return;
       }
