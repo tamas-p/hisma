@@ -221,6 +221,10 @@ Testing that pageless routes are managed well in case of a root machine.
       skip: false,
     );
 
+    // TODO: FAILS at
+    // await tc(historyLevel: null, useRootNavigator: true);
+    // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: true);
+    // await tc(historyLevel: HistoryLevel.deep, useRootNavigator: true);
     testWidgets(
       '''
 Testing that pageless routes are managed well in case of a child machine.
@@ -537,6 +541,8 @@ Testing that pageless routes are managed well in case of a child machine.
     skip: false,
   );
 
+  // TODO: FAILS at
+  // await tc(historyLevel: null, useRootNavigator: true);
   testWidgets(
     'When pageless needs to be popped explicitly when'
     ' becomes inactive its machine.',
@@ -618,30 +624,33 @@ Testing that pageless routes are managed well in case of a child machine.
         );
         final mt = MachineTester(tester, machine);
 
-        // await mt.fire(E.forward, 'root');
-        // await mt.tap(E.jumpBack);
-        // await mt.tap(E.back);
-
         await mt.tap(E.jumpBack);
         await mt.fire(E.back, 'root');
-
-        // await mt.fire(E.forward, 'root');
-        // await mt.tap(E.forward);
-        // await mt.tap(E.jumpBack);
-        // await mt.tap(E.jumpBack);
-        // await mt.fire(E.back, 'root');
-        // await mt.fire(E.forward, 'root/S.k');
-        // await mt.tap(E.back);
-        // await mt.fire(E.jumpBack, 'root/S.k');
-        // await mt.fire(E.self, 'root/S.k/S.l');
         await mt.tap(E.jumpBack);
         await mt.fire(E.forward, 'root/S.k');
-
         await mt.fire(E.forward, 'root');
-
-        // await mt.tap(E.forward);
-        // await mt.fire(E.jumpBack, 'root/S.l');
-        // await mt.tap(E.self);
+      });
+    },
+    skip: false,
+  );
+  testWidgets(
+    'building Builder(dirty).',
+    (tester) async {
+      await multiplier(({
+        required HistoryLevel? historyLevel,
+        required bool useRootNavigator,
+      }) async {
+        final machine = await getMachine(
+          historyLevel: historyLevel,
+          useRootNavigator: useRootNavigator,
+          tester: tester,
+        );
+        final mt = MachineTester(tester, machine);
+        await mt.tap(E.jumpBack);
+        await mt.tap(E.back);
+        await mt.tap(E.back);
+        await mt.fire(E.forward, 'root');
+        await mt.fire(E.back, 'root');
       });
     },
     skip: false,
@@ -701,8 +710,8 @@ Future<StateMachineWithChangeNotifier<S, E, T>> getMachine({
   required bool useRootNavigator,
   required WidgetTester tester,
 }) async {
-  _log.info('----------------------------------------------------------------');
-  _log.info('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
+  print('----------------------------------------------------------------');
+  print('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
   final machine = createMachine(name: 'root', historyLevel: historyLevel);
   await machine.start();
   // Build our app and trigger a frame.

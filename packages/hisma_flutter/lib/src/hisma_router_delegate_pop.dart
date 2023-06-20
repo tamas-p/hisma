@@ -39,6 +39,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     final sameAsBefore =
         _pageMap.keys.isNotEmpty && activeStateId == _pageMap.keys.last;
 
+    // if (activeStateId == null) _closeLastPageless();
     // if (!sameAsBefore) _popPageless();
     // There are two prerequisites to process based on activeStateId:
     // (1) We only process if machine is active. If inactive we simply build
@@ -110,7 +111,18 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     // TODO: implement setNewRoutePath
   }
 
+  void _closeLastPageless() {
+    if (_pageMap.isEmpty) return;
+    final lastPage = _pageMap.keys.last;
+    final creator = _mapping[lastPage];
+    if (creator is PagelessCreator) {
+      creator.close();
+      _pageMap.remove(lastPage);
+    }
+  }
+
   void _addState(S stateId) {
+    _closeLastPageless();
     final presentation = _mapping[stateId];
     if (presentation is PageCreator<dynamic, S, E>) {
       // _popPageless();
@@ -237,8 +249,28 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     return pm.values.where((page) => page is! PagelessPage).toList();
   }
 
-  // TODO: refactor
   void _cleanUpCircle([S? from]) {
+    final pageList = _pageMap.entries.toList();
+    final toClose = <S>[];
+    for (var i = pageList.length - 1; i >= 0; i--) {
+      final page = pageList[i];
+      if (page.key == from) break;
+      toClose.add(page.key);
+    }
+
+    for (final stateId in toClose) {
+      final creator = _mapping[stateId];
+      if (creator is PagelessCreator) {
+        // Future.delayed(Duration.zero, () {
+        creator.close();
+        // });
+      } else {}
+      _pageMap.remove(stateId);
+    }
+  }
+
+  // TODO: refactor
+  void _cleanUpCircle_original([S? from]) {
     var found = false;
     var pageRemoved = false;
 
