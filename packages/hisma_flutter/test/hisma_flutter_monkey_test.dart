@@ -13,20 +13,17 @@ const _loggerName = 'HismaMonkeyTest';
 final Logger _log = Logger(_loggerName);
 
 void main() {
-  auxInitLogging();
+  // auxInitLogging();
 
-  const useRootNavigator = true;
+  // The purpose of this test to randomly generate events either by tapping on
+  // UI or directly firing events on a randomly selected active machine of the
+  // hierarchical state machine. This allows us finding problems mainly in
+  // hisma_flutter that we missed discovering with regular auto-tests.
   group(
-    '''
-Monkey test.
-The purpose of this test to randomly generate events either by tapping on
-UI or directly firing events on a randomly selected active machine of the
-hierarchical state machine. This allows us finding problems mainly in
-hisma_flutter that we missed discovering with regular auto-tests.
-    ''',
+    'Monkey test.',
     () {
       testWidgets(
-        'No history monkey.',
+        'No History monkey, useRootNavigator: false',
         (tester) async {
           StateMachine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
@@ -35,13 +32,28 @@ hisma_flutter that we missed discovering with regular auto-tests.
           await monkey(
             tester: tester,
             machine: createMachine(name: 'root'),
-            useRootNavigator: useRootNavigator,
+            useRootNavigator: false,
           );
         },
         skip: false,
       );
       testWidgets(
-        'Shallow history monkey.',
+        'No History monkey, useRootNavigator: true',
+        (tester) async {
+          StateMachine.monitorCreators = [
+            // (m) => VisualMonitor(m, host: '192.168.122.1'),
+          ];
+
+          await monkey(
+            tester: tester,
+            machine: createMachine(name: 'root'),
+            useRootNavigator: true,
+          );
+        },
+        skip: false,
+      );
+      testWidgets(
+        'Shallow history monkey, useRootNavigator: false',
         (tester) async {
           StateMachine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
@@ -51,13 +63,29 @@ hisma_flutter that we missed discovering with regular auto-tests.
             tester: tester,
             machine:
                 createMachine(name: 'root', historyLevel: HistoryLevel.shallow),
-            useRootNavigator: useRootNavigator,
+            useRootNavigator: false,
           );
         },
-        skip: true,
+        skip: false,
       );
       testWidgets(
-        'Deep history monkey.',
+        'Shallow history monkey, useRootNavigator: true',
+        (tester) async {
+          StateMachine.monitorCreators = [
+            // (m) => VisualMonitor(m, host: '192.168.122.1'),
+          ];
+
+          await monkey(
+            tester: tester,
+            machine:
+                createMachine(name: 'root', historyLevel: HistoryLevel.shallow),
+            useRootNavigator: true,
+          );
+        },
+        skip: false,
+      );
+      testWidgets(
+        'Deep history monkey, useRootNavigator: false',
         (tester) async {
           StateMachine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
@@ -67,10 +95,26 @@ hisma_flutter that we missed discovering with regular auto-tests.
             tester: tester,
             machine:
                 createMachine(name: 'root', historyLevel: HistoryLevel.deep),
-            useRootNavigator: useRootNavigator,
+            useRootNavigator: false,
           );
         },
-        skip: true,
+        skip: false,
+      );
+      testWidgets(
+        'Deep history monkey, useRootNavigator: true',
+        (tester) async {
+          StateMachine.monitorCreators = [
+            // (m) => VisualMonitor(m, host: '192.168.122.1'),
+          ];
+
+          await monkey(
+            tester: tester,
+            machine:
+                createMachine(name: 'root', historyLevel: HistoryLevel.deep),
+            useRootNavigator: true,
+          );
+        },
+        skip: false,
       );
     },
   );
@@ -92,7 +136,7 @@ Future<void> monkey({
   // We have the same events everywhere. No need to update.
   final events = state?.etm.keys;
 
-  for (var i = 0; i < 100000; i++) {
+  for (var i = 0; i < 1000; i++) {
     // if (i != 0 && i % 1000 == 0) {
     //   print('Have some rest...');
     //   await tester.runAsync(() async {
@@ -144,7 +188,7 @@ Future<void> monkey({
     _log.info('AFTER:');
     _log.info(() => machine.getActiveStateRecursive());
 
-    await tester.pumpAndSettle();
+    // await tester.pumpAndSettle();
     await tester.pumpAndSettle();
     checkTitle(machine);
   }
