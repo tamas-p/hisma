@@ -107,7 +107,7 @@ Action getEntryAction() => Action(
       description: 'Fire received event.',
       action: (machine, dynamic arg) async {
         if (arg is E) {
-          // if (arg == E.back) return;
+          if (arg == E.self) return;
           _log.info(
             () => 'OnEntry: state.machine.fire($arg) - ${machine.name}',
           );

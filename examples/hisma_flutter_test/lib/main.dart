@@ -14,7 +14,7 @@ Future<void> main() async {
   ];
   initLogging();
   final simpleMachine =
-      createMachine(name: 'root'); //, historyLevel: HistoryLevel.deep);
+      createMachine(name: 'root', historyLevel: HistoryLevel.shallow);
   await simpleMachine.start();
 
   runApp(MyApp(machine: simpleMachine, useRootNavigator: true));

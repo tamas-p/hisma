@@ -28,6 +28,11 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
   /// Page map that will be used as the input for Navigator.pages.
   final PageMap<S> _pageMap = {};
 
+  /// There can be only one pageless route shown at a time in the application.
+  static PagelessCreator<dynamic, dynamic>? _pageless;
+
+  S? _previousStateId;
+
   @override
   Widget build(BuildContext context) {
     _log.fine('>>>>>>>>>>>>>> BUILD START >>>>>>>>>>>>>>>>>');
@@ -36,11 +41,14 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     );
 
     final activeStateId = _machine.activeStateId;
-    final sameAsBefore =
-        _pageMap.keys.isNotEmpty && activeStateId == _pageMap.keys.last;
+    final sameAsBefore = activeStateId == _previousStateId;
+    _previousStateId = activeStateId;
 
-    // if (activeStateId == null) _closeLastPageless();
-    // if (!sameAsBefore) _popPageless();
+    if (_pageless != null) {
+      _pageless?.close();
+      _pageless = null;
+    }
+
     // There are two prerequisites to process based on activeStateId:
     // (1) We only process if machine is active. If inactive we simply build
     //     pages of the navigator from the current _pageMap (that was updated
@@ -51,13 +59,13 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     //     notified when activeStateId is not different compared to last time
     //     we updated the page map means that no update on the page map is
     //     needed.
-    if (activeStateId != null && !sameAsBefore) {
-      // _popPageless();
+    if (activeStateId != null) {
+      // && !sameAsBefore) {
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
       if (_pageMap.keys.contains(activeStateId)) {
-        // _popPageless();
+        // _closeLastPageless();
         // Since we arrived back to a state that (more precisely the page
         // created by its Presentation) is already in the current
         // Navigator.pages (through the circle in the state transition graph),
@@ -111,31 +119,16 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     // TODO: implement setNewRoutePath
   }
 
-  void _closeLastPageless() {
-    if (_pageMap.isEmpty) return;
-    final lastPage = _pageMap.keys.last;
-    final creator = _mapping[lastPage];
-    if (creator is PagelessCreator) {
-      creator.close();
-      _pageMap.remove(lastPage);
-    }
-  }
-
   void _addState(S stateId) {
-    _closeLastPageless();
     final presentation = _mapping[stateId];
     if (presentation is PageCreator<dynamic, S, E>) {
-      // _popPageless();
       if (presentation.overlay == false) _pageMap.clear();
       _pageMap[stateId] = presentation.create(
         name: '${_machine.name}-$stateId',
         widget: presentation.widget,
       );
     } else if (presentation is PagelessCreator<dynamic, E>) {
-      _pageMap[stateId] = PagelessPage<S>(
-        name: '${_machine.name}-$stateId',
-        creator: presentation,
-      );
+      _addPageless(stateId: stateId, creator: presentation, pageMap: _pageMap);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
     } else {
@@ -187,114 +180,28 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     );
   }
 
-  void _popPageless() {
-    for (final pageEntry in _pageMap.entries) {
-      if (pageEntry.value is PagelessPage &&
-          pageEntry.key != _pageMap.entries.last.key) {
-        print(_pageMap);
-        assert(false);
-      }
-    }
-
-    final toClose = <PagelessCreatorWithId<S, E>>[];
-    _pageMap.forEach((stateId, page) {
-      if (page is PagelessPage<S>) {
-        final creator = page.creator as PagelessCreator<dynamic, E>;
-
-        toClose.add(PagelessCreatorWithId<S, E>(stateId, creator));
-      }
-    });
-    for (final creatorWithId in toClose) {
-      // We need to close in this build cycle, not using Future
-      // to avoid closing the next page that was added in this
-      // build cycle.
-      creatorWithId.creator.close();
-      _pageMap.remove(creatorWithId.stateId);
-    }
-  }
-
-  List<Page<dynamic>> _processPageless(bool sameAsBefore) {
-    // ignore: prefer_collection_literals
-    final pm = PageMap<S>();
-
-    final toClose = <PagelessCreatorWithId<S, E>>[];
-    final toOpen = <PagelessCreatorWithId<S, E>>[];
-
-    _pageMap.forEach((stateId, page) {
-      if (page is PagelessPage<S>) {
-        final creator = page.creator as PagelessCreator<dynamic, E>;
-        _log.fine(
-          () => 'Mounted: ${_machine.name}-$stateId = ${page.creator.mounted}',
-        );
-        if (stateId == _machine.activeStateId) {
-          if (!sameAsBefore || !creator.mounted) {
-            toOpen.add(PagelessCreatorWithId<S, E>(stateId, creator));
-          }
-        } else if (_machine.activeStateId != null) {
-          toClose.add(PagelessCreatorWithId<S, E>(stateId, creator));
-        }
-      } else {
-        pm[stateId] = page;
-      }
-    });
-
-    for (final creatorWithId in toClose) {
-      // We need to close in this build cycle, not using Future
-      // to avoid closing the next page that was added in this
-      // build cycle.
-      creatorWithId.creator.close();
-    }
-
-    _addPageless(toOpen, pm);
-    return pm.values.where((page) => page is! PagelessPage).toList();
-  }
-
-  void _cleanUpCircle([S? from]) {
-    final pageList = _pageMap.entries.toList();
-    final toClose = <S>[];
-    for (var i = pageList.length - 1; i >= 0; i--) {
-      final page = pageList[i];
-      if (page.key == from) break;
-      toClose.add(page.key);
-    }
-
-    for (final stateId in toClose) {
-      final creator = _mapping[stateId];
-      if (creator is PagelessCreator) {
-        // Future.delayed(Duration.zero, () {
-        creator.close();
-        // });
-      } else {}
-      _pageMap.remove(stateId);
-    }
-  }
+  List<Page<dynamic>> _processPageless(bool sameAsBefore) =>
+      _pageMap.values.toList();
 
   // TODO: refactor
-  void _cleanUpCircle_original([S? from]) {
-    var found = false;
-    var pageRemoved = false;
+  void _cleanUpCircle(S from) {
+    final toRemove = <S>[];
+    for (var i = _pageMap.keys.length - 1; i >= 0; i--) {
+      final id = _pageMap.keys.toList()[i];
+      if (id == from) break;
+      toRemove.add(id);
+    }
 
-    _pageMap.removeWhere((stateId, page) {
-      if (!found && stateId != from) return false;
-      found = true;
-      if (stateId == from) return false;
-      if (!pageRemoved && page is PagelessPage<S>) {
-        final creator = _mapping[stateId];
-        if (creator is! PagelessCreator<dynamic, E>) {
-          throw AssertionError('creator is $creator');
-        }
-        creator.close();
-      } else {
-        pageRemoved = true;
-      }
-      return true;
-    });
+    for (final id in toRemove) {
+      _pageMap.remove(id);
+    }
   }
 
-  void _addPageless(
-    List<PagelessCreatorWithId<S, E>> toOpen,
-    PageMap<S> pageMap,
-  ) {
+  void _addPageless({
+    required S stateId,
+    required PagelessCreator<dynamic, E> creator,
+    required PageMap<S> pageMap,
+  }) {
     final machineName = _machine.name;
     final lastPageCreatorWithId = _getLastPageCreator();
     final lastPageWithPageless = lastPageCreatorWithId.creator.create(
@@ -303,36 +210,30 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
         builder: (context) {
           /// We schedule execution of pagelessCreator.open for next cycle.
           Future.delayed(Duration.zero, () async {
-            for (final creatorWithId in toOpen) {
-              final pagelessStateId = creatorWithId.stateId;
-              final pagelessCreator = creatorWithId.creator;
-
+            _log.finest(
+              () => '_addPageless: ${_machine.activeStateId}, $stateId',
+            );
+            if (_machine.activeStateId == stateId) {
               _log.finest(
-                () =>
-                    '_addPageless: ${_machine.activeStateId}, $pagelessStateId',
+                () => '_addPageless: adding page for ${_machine.name},'
+                    '$machineName - ${_machine.activeStateId}',
               );
-              if (_machine.activeStateId == pagelessStateId) {
-                _log.finest(
-                  () => '_addPageless: adding page for ${_machine.name},'
-                      '$machineName - ${_machine.activeStateId}',
-                );
-                final dynamic result = await pagelessCreator.open(context);
-                _log.finest(
-                  () =>
-                      '_addPageless: COMPLETED ${_machine.name},$machineName -'
-                      ' $pagelessStateId'
-                      ' context: ${pagelessCreator.mounted}',
-                );
-                _log.info(() => 'pagelessCreator.open result is $result.');
-                _pageMap.remove(pagelessStateId);
-                // Only fire if we are still in the state we were created.
-                // It avoids unwanted fire() in case we got here by a fire().
-                final event = pagelessCreator.event;
-                if (event != null &&
-                    _machine.activeStateId == pagelessStateId) {
-                  await _machine.fire(event, arg: result);
-                }
+              _pageless = creator;
+              final dynamic result = await creator.open(context);
+              _log.finest(
+                () => '_addPageless: COMPLETED ${_machine.name},$machineName -'
+                    ' $stateId'
+                    ' context: ${creator.mounted}',
+              );
+              _log.info(() => 'pagelessCreator.open result is $result.');
+              // Only fire if we are still in the state we were created.
+              // It avoids unwanted fire() in case we got here by a fire().
+              final event = creator.event;
+              if (event != null && _pageless != null) {
+                await _machine.fire(event, arg: result);
               }
+
+              _pageless = null;
             }
           });
 
@@ -344,23 +245,13 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     pageMap[lastPageCreatorWithId.stateId] = lastPageWithPageless;
   }
 
-  LastPageCreatorWithId<S, E> _getLastPageCreator([S? pagelessStateId]) {
+  LastPageCreatorWithId<S, E> _getLastPageCreator() {
     if (_pageMap.isEmpty) {
       throw ArgumentError('Empty _pageMap.'
           ' Pageless routes can only be added on top of a paged route.');
     }
 
-    S? lastPageStateId;
-    for (final e in _pageMap.entries) {
-      final stateId = e.key;
-      final page = e.value;
-
-      if (page is PagelessPage) {
-        if (stateId == pagelessStateId) break;
-      } else {
-        lastPageStateId = stateId;
-      }
-    }
+    final lastPageStateId = _pageMap.keys.last;
 
     if (lastPageStateId == null) {
       throw ArgumentError('lastP is null.');
@@ -393,6 +284,7 @@ class PagelessCreatorWithId<S, E> {
   final PagelessCreator<dynamic, E> creator;
 }
 
+/*
 class PagelessPage<S> extends Page<S> {
   PagelessPage({
     required String name,
@@ -407,3 +299,4 @@ class PagelessPage<S> extends Page<S> {
     throw UnimplementedError();
   }
 }
+*/
