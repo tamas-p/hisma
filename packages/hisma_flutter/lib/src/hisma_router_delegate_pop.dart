@@ -119,6 +119,8 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     // TODO: implement setNewRoutePath
   }
 
+  // NEED to add back PagelessPage to detect circles.
+
   void _addState(S stateId) {
     final presentation = _mapping[stateId];
     if (presentation is PageCreator<dynamic, S, E>) {
@@ -208,15 +210,21 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
       name: '${_machine.name}-${lastPageCreatorWithId.stateId}',
       widget: Builder(
         builder: (context) {
-          /// We schedule execution of pagelessCreator.open for next cycle.
+          _log.finest(
+            () => '_addPageless: builder for pageless '
+                '$machineName - ${_machine.activeStateId}'
+                ' into page ${lastPageCreatorWithId.stateId}',
+          );
+          // We schedule execution of pagelessCreator.open for next cycle.
           Future.delayed(Duration.zero, () async {
             _log.finest(
               () => '_addPageless: ${_machine.activeStateId}, $stateId',
             );
             if (_machine.activeStateId == stateId) {
               _log.finest(
-                () => '_addPageless: adding page for ${_machine.name},'
-                    '$machineName - ${_machine.activeStateId}',
+                () => '_addPageless: Opening pageless '
+                    '$machineName - ${_machine.activeStateId}'
+                    ' into page ${lastPageCreatorWithId.stateId}',
               );
               _pageless = creator;
               final dynamic result = await creator.open(context);
@@ -226,13 +234,13 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
                     ' context: ${creator.mounted}',
               );
               _log.info(() => 'pagelessCreator.open result is $result.');
-              // Only fire if we are still in the state we were created.
+              // Only fire if _pageless is not cleared already when pageless
+              // was closed.
               // It avoids unwanted fire() in case we got here by a fire().
               final event = creator.event;
               if (event != null && _pageless != null) {
                 await _machine.fire(event, arg: result);
               }
-
               _pageless = null;
             }
           });

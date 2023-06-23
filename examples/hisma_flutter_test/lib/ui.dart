@@ -96,6 +96,8 @@ class DialogCreator extends PagelessCreator<E, E> {
     // if (context != null && context.mounted) {
     if (context != null) {
       // TODO: Replace with context.mounted if move to Flutter version > 3.7.
+      // TODO: Even better, this mounted check can be eliminated if monkey shows
+      // that it never reaches NO RENDER...
       try {
         (context as Element).widget;
         _log.info('--- <context is OK> ---');

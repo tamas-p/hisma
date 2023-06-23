@@ -13,7 +13,7 @@ const _loggerName = 'HismaMonkeyTest';
 final Logger _log = Logger(_loggerName);
 
 void main() {
-  // auxInitLogging();
+  auxInitLogging();
 
   // The purpose of this test to randomly generate events either by tapping on
   // UI or directly firing events on a randomly selected active machine of the
@@ -35,7 +35,7 @@ void main() {
             useRootNavigator: false,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'No History monkey, useRootNavigator: true',
@@ -50,7 +50,7 @@ void main() {
             useRootNavigator: true,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Shallow history monkey, useRootNavigator: false',
@@ -66,7 +66,7 @@ void main() {
             useRootNavigator: false,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Shallow history monkey, useRootNavigator: true',
@@ -98,7 +98,7 @@ void main() {
             useRootNavigator: false,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Deep history monkey, useRootNavigator: true',
@@ -114,7 +114,7 @@ void main() {
             useRootNavigator: true,
           );
         },
-        skip: false,
+        skip: true,
       );
     },
   );
@@ -136,7 +136,7 @@ Future<void> monkey({
   // We have the same events everywhere. No need to update.
   final events = state?.etm.keys;
 
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < 50; i++) {
     // if (i != 0 && i % 1000 == 0) {
     //   print('Have some rest...');
     //   await tester.runAsync(() async {

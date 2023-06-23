@@ -3,6 +3,7 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine.dart';
 import 'package:hisma_flutter_test/main.dart';
+import 'package:hisma_flutter_test/chain_machine.dart';
 import 'package:hisma_flutter_test/ui.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
@@ -655,6 +656,69 @@ Testing that pageless routes are managed well in case of a child machine.
     },
     skip: false,
   );
+
+  group(
+    'Multiple pageless builder in _pageMap',
+    () {
+      testWidgets(
+        'AppBar BackButton resulted doubled dialogs.',
+        (tester) async {
+          await multiplier(({
+            required HistoryLevel? historyLevel,
+            required bool useRootNavigator,
+          }) async {
+            final machine = await getMachine(
+              historyLevel: historyLevel,
+              useRootNavigator: useRootNavigator,
+              tester: tester,
+            );
+            final mt = MachineTester(tester, machine);
+
+            await mt.tap(E.jumpBack);
+
+            await mt.tap(E.forward);
+            await mt.tap(E.forward);
+            await mt.tap(E.forward);
+            await mt.tap(E.forward);
+            await mt.tap(E.forward);
+            await mt.tap(E.forward);
+
+            await mt.backButton();
+
+            await mt.fire(E.jump, 'root');
+            await mt.fire(E.jumpBack, 'root');
+          });
+        },
+        skip: false,
+      );
+
+      testWidgets(
+        'Chain of paged and pageless.',
+        (tester) async {
+          await multiplier(({
+            required HistoryLevel? historyLevel,
+            required bool useRootNavigator,
+          }) async {
+            final machine = await getChainMachine(
+              historyLevel: historyLevel,
+              useRootNavigator: useRootNavigator,
+              tester: tester,
+            );
+            final mt = MachineTester(tester, machine);
+
+            await mt.fire(E.forward, 'root');
+            await mt.fire(E.forward, 'child');
+            await mt.fire(E.forward, 'child');
+            await mt.fire(E.back, 'child');
+
+            await mt.fire(E.back, 'root');
+            await mt.fire(E.forward, 'root');
+          });
+        },
+        skip: false,
+      );
+    },
+  );
 }
 
 class MachineTester {
@@ -717,6 +781,25 @@ Future<StateMachineWithChangeNotifier<S, E, T>> getMachine({
   // Build our app and trigger a frame.
   await tester.pumpWidget(
     MyApp(machine: machine, useRootNavigator: useRootNavigator),
+  );
+
+  checkTitle(machine, S.a);
+  return machine;
+}
+
+Future<StateMachineWithChangeNotifier<S, E, T>> getChainMachine({
+  required HistoryLevel? historyLevel,
+  required bool useRootNavigator,
+  required WidgetTester tester,
+}) async {
+  print('----------------------------------------------------------------');
+  print('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
+  final machine =
+      createParentChainMachine(name: 'root', historyLevel: historyLevel);
+  await machine.start();
+  // Build our app and trigger a frame.
+  await tester.pumpWidget(
+    ChainApp(machine: machine, useRootNavigator: useRootNavigator),
   );
 
   checkTitle(machine, S.a);
