@@ -47,7 +47,7 @@ StateMachineWithChangeNotifier<S, E, T> createChildMachine({
       name: name,
       initialStateId: S.a,
       events: E.values,
-      history: h.HistoryLevel.deep,
+      history: historyLevel,
       states: {
         S.a: h.State(
           etm: {
