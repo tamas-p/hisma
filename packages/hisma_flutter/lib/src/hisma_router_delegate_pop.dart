@@ -25,8 +25,16 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
   /// HismaRouterGenerator constructor.
   final Map<S, Presentation> _mapping;
 
-  /// Page map that will be used as the input for Navigator.pages.
-  final PageMap<S> _pageMap = {};
+  /// List of state identifiers. It stores all state ids that are rendered to
+  /// screen including pageless routes as well. It will be translated to a
+  /// list of Pages using the creator (from _mapping) of the corresponding
+  /// PageCreator for pages and might a pageless Route (from _pageless) by
+  /// giving a Builder with a Future ti create the pageless route (see
+  /// _addPageless). This approach - creating the pages during build and not
+  /// storing the pages themselves - is required making sure that only the last
+  /// page will include the Builder with Future for pageless routes as mentioned
+  /// before.
+  final List<S> _stateIds = [];
 
   /// There can be only one pageless route shown at a time in the application.
   static PagelessCreator<dynamic, dynamic>? _pageless;
@@ -50,6 +58,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     }
 
     // There are two prerequisites to process based on activeStateId:
+    // TODO: Review this text.
     // (1) We only process if machine is active. If inactive we simply build
     //     pages of the navigator from the current _pageMap (that was updated
     //     in previous builds). This is required to handle the case when a child
@@ -64,7 +73,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
-      if (_pageMap.keys.contains(activeStateId)) {
+      if (_stateIds.contains(activeStateId)) {
         // _closeLastPageless();
         // Since we arrived back to a state that (more precisely the page
         // created by its Presentation) is already in the current
@@ -78,12 +87,12 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
       }
     }
 
-    _log.fine(() => 'pages: $_pageMap');
+    final pages = _buildNavigator();
     _log.fine(
       () => '@@@ machine: ${_machine.name} '
-          'state: ${_machine.activeStateId} _pageMap: $_pageMap',
+          'state: ${_machine.activeStateId} _stateIds: $_stateIds '
+          'page: $pages',
     );
-    final pages = _buildNavigator(sameAsBefore);
     _log.fine('<<<<<<<<<<<<<<<<<<< BUILD DONE <<<<<<<<<<<<<<<<<<<<<<<<<<');
     return pages;
   }
@@ -124,13 +133,10 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
   void _addState(S stateId) {
     final presentation = _mapping[stateId];
     if (presentation is PageCreator<dynamic, S, E>) {
-      if (presentation.overlay == false) _pageMap.clear();
-      _pageMap[stateId] = presentation.create(
-        name: '${_machine.name}-$stateId',
-        widget: presentation.widget,
-      );
+      if (presentation.overlay == false) _stateIds.clear();
+      _stateIds.add(stateId);
     } else if (presentation is PagelessCreator<dynamic, E>) {
-      _addPageless(stateId: stateId, creator: presentation, pageMap: _pageMap);
+      _stateIds.add(stateId);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
     } else {
@@ -144,7 +150,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   /// Builds Navigator from _pageMap.
-  Widget _buildNavigator(bool sameAsBefore) {
+  Widget _buildNavigator() {
     return Navigator(
       // Navigator key must belong to the router delegate object to allow
       // transitions working properly as Flutter will be able to identify if
@@ -152,7 +158,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
       // passed by the router delegate.
       key: _navigatorKey,
       // Processing and filtering out all pages that represent pageless routes.
-      pages: _processPageless(sameAsBefore),
+      pages: _processPageless(),
       onPopPage: (route, dynamic result) {
         // When using hisma_flutter exclusively to manage routing this callback
         // shall be only invoked when user presses the framework generated
@@ -182,27 +188,71 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     );
   }
 
-  List<Page<dynamic>> _processPageless(bool sameAsBefore) =>
-      _pageMap.values.toList();
+// pages.add(
+//           presentation.create(
+//             name: '${_machine.name}-$stateId',
+//             widget: presentation.widget,
+//           ),
+//         );
 
-  // TODO: refactor
+  List<Page<dynamic>> _processPageless() {
+    final pages = <Page<dynamic>>[];
+
+    // OK to throw if empty - as it shall never be empty at this point.
+    final lastId = _stateIds.last;
+
+    // We only care about whether the last stateId in the stack is pageless or
+    // not since our current implementation does not support overlay of pageless
+    // routes, hence we only show a pageless route if it is the current (last).
+    final lastPresentation = _mapping[lastId];
+    Page<dynamic>? lastPage;
+    if (lastPresentation is PagelessCreator<dynamic, E>) {
+      lastPage = _addPageless(stateId: lastId, creator: lastPresentation);
+    }
+
+    final pageCreators = <PageCreatorWithId<S, E>>[];
+    for (final stateId in _stateIds) {
+      final presentation = _mapping[stateId];
+      if (presentation is PageCreator<dynamic, S, E>) {
+        pageCreators.add(PageCreatorWithId(stateId, presentation));
+      }
+    }
+
+    for (var i = 0;
+        i < (lastPage == null ? pageCreators.length : pageCreators.length - 1);
+        i++) {
+      final creatorWithId = pageCreators[i];
+      pages.add(
+        creatorWithId.creator.create(
+          name: '${_machine.name}-${creatorWithId.stateId}',
+          widget: creatorWithId.creator.widget,
+        ),
+      );
+    }
+
+    if (lastPage != null) {
+      pages.add(lastPage);
+    }
+
+    return pages;
+  }
+
   void _cleanUpCircle(S from) {
     final toRemove = <S>[];
-    for (var i = _pageMap.keys.length - 1; i >= 0; i--) {
-      final id = _pageMap.keys.toList()[i];
-      if (id == from) break;
-      toRemove.add(id);
+    for (var i = _stateIds.length - 1; i >= 0; i--) {
+      final stateId = _stateIds[i];
+      if (stateId == from) break;
+      toRemove.add(stateId);
     }
 
     for (final id in toRemove) {
-      _pageMap.remove(id);
+      _stateIds.remove(id);
     }
   }
 
-  void _addPageless({
+  Page<dynamic> _addPageless({
     required S stateId,
     required PagelessCreator<dynamic, E> creator,
-    required PageMap<S> pageMap,
   }) {
     final machineName = _machine.name;
     final lastPageCreatorWithId = _getLastPageCreator();
@@ -250,36 +300,25 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
       ),
     );
 
-    pageMap[lastPageCreatorWithId.stateId] = lastPageWithPageless;
+    return lastPageWithPageless;
   }
 
-  LastPageCreatorWithId<S, E> _getLastPageCreator() {
-    if (_pageMap.isEmpty) {
-      throw ArgumentError('Empty _pageMap.'
-          ' Pageless routes can only be added on top of a paged route.');
+  PageCreatorWithId<S, E> _getLastPageCreator() {
+    for (var i = _stateIds.length - 1; i >= 0; i--) {
+      final stateId = _stateIds[i];
+      final presentation = _mapping[stateId];
+      if (presentation is PageCreator<dynamic, S, E>) {
+        return PageCreatorWithId(stateId, presentation);
+      }
     }
 
-    final lastPageStateId = _pageMap.keys.last;
-
-    if (lastPageStateId == null) {
-      throw ArgumentError('lastP is null.');
-    }
-    final lastPageCreator = _mapping[lastPageStateId];
-    if (lastPageCreator == null) {
-      throw ArgumentError('lastPageCreator is null.');
-    }
-    if (lastPageCreator is! PageCreator<dynamic, S, E>) {
-      throw ArgumentError(
-        'lastPageCreator is not PageCreator but $lastPageCreator',
-      );
-    }
-
-    return LastPageCreatorWithId(lastPageStateId, lastPageCreator);
+    throw ArgumentError('No PageCreator in _stateIds.'
+        ' Pageless routes can only be added on top of a paged route.');
   }
 }
 
-class LastPageCreatorWithId<S, E> {
-  LastPageCreatorWithId(this.stateId, this.creator);
+class PageCreatorWithId<S, E> {
+  PageCreatorWithId(this.stateId, this.creator);
 
   final S stateId;
   final PageCreator<dynamic, S, E> creator;

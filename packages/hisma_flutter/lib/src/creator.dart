@@ -43,11 +43,11 @@ import 'assistance.dart';
 /// abstract class Presentation
 /// abstract class Creator<E> {
 ///   E? event
-///   bool overlay
 /// }
 /// class NoUIChange
 /// abstract class PageCreator<T, S, E> {
 ///   Widget widget
+///   bool overlay
 ///   Page<T> Function({required Widget widget, required S state,}) create
 /// }
 /// class MaterialPageCreator<T, S, E>
