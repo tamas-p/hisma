@@ -2,13 +2,9 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:logging/logging.dart';
 
+import 'states_events_transitions.dart';
+
 const int hierarchyDepth = 4;
-
-enum S { a, b, c, d, e, f, g, h, i, j, k, l, m, n }
-
-enum E { forward, back, jump, jumpBack, self }
-
-enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL, toM, toN }
 
 Logger _log = Logger('machine');
 

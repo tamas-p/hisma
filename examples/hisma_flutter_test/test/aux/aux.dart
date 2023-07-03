@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
-import 'package:hisma_flutter_test/machine.dart';
+import 'package:hisma_flutter_test/states_events_transitions.dart';
 import 'package:hisma_flutter_test/ui.dart';
 import 'package:logging/logging.dart';
 

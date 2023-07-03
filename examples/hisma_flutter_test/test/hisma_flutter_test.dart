@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
+import 'package:hisma_flutter_test/chain_machine.dart';
 import 'package:hisma_flutter_test/machine.dart';
 import 'package:hisma_flutter_test/main.dart';
-import 'package:hisma_flutter_test/chain_machine.dart';
+import 'package:hisma_flutter_test/states_events_transitions.dart';
 import 'package:hisma_flutter_test/ui.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';

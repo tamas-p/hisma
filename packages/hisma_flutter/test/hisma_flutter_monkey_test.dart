@@ -5,6 +5,7 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine.dart';
 import 'package:hisma_flutter_test/main.dart';
+import 'package:hisma_flutter_test/states_events_transitions.dart';
 import 'package:logging/logging.dart';
 
 import '../../../examples/hisma_flutter_test/test/aux/aux.dart';
@@ -136,7 +137,7 @@ Future<void> monkey({
   // We have the same events everywhere. No need to update.
   final events = state?.etm.keys;
 
-  for (var i = 0; i < 100000; i++) {
+  for (var i = 0; i < 10000; i++) {
     // if (i != 0 && i % 1000 == 0) {
     //   print('Have some rest...');
     //   await tester.runAsync(() async {

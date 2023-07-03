@@ -280,18 +280,22 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
               final dynamic result = await creator.open(context);
               _log.finest(
                 () => '_addPageless: COMPLETED ${_machine.name},$machineName -'
-                    ' $stateId'
-                    ' context: ${creator.mounted}',
+                    ' $stateId',
               );
               _log.info(() => 'pagelessCreator.open result is $result.');
-              // Only fire if _pageless is not cleared already when pageless
-              // was closed.
-              // It avoids unwanted fire() in case we got here by a fire().
-              final event = creator.event;
-              if (event != null && _pageless != null) {
-                await _machine.fire(event, arg: result);
+              // Only clear _pageless (and optionally fire its event) if it was
+              // still our _pageless. If it was already closed (and nulled) and
+              // optionally already set to a new PagelessCreator (happens when
+              // next state was also mapped to a PagelessCreator) we shall not
+              // act here.
+              // TODO: Create test for this.
+              if (_pageless == creator) {
+                _pageless = null;
+                final event = creator.event;
+                if (event != null) {
+                  await _machine.fire(event, arg: result);
+                }
               }
-              _pageless = null;
             }
           });
 

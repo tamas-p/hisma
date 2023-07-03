@@ -162,8 +162,6 @@ abstract class PagelessCreator<T, E> extends Creator<E> {
 
   Future<T?> open(BuildContext context);
   void close([T? value]);
-
-  bool get mounted;
 }
 
 // class PagelessCreatorOld<E, T> extends Creator {
@@ -220,3 +218,4 @@ class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
 //     required super.event,
 //   }) : super(create: _createPage);
 // }
+

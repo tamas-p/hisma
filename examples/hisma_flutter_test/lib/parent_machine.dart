@@ -1,13 +1,8 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
-import 'machine.dart' as child;
-
-enum S { a, b, c, d }
-
-enum E { forward, back, self, jump }
-
-enum T { toA, toB, toC, toD }
+import 'machine.dart';
+import 'states_events_transitions.dart';
 
 const String parentMachineName = 'parentMachineName';
 
@@ -21,9 +16,7 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
       states: {
         S.a: createState(),
         S.b: State(
-          regions: [
-            Region<S, E, T, child.S>(machine: child.createMachine(name: 't1'))
-          ],
+          regions: [Region<S, E, T, S>(machine: createMachine(name: 't1'))],
         ),
         S.c: createState(),
         S.d: createState(),

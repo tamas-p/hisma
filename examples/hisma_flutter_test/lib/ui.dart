@@ -4,7 +4,7 @@ import 'package:hisma/hisma.dart' as hisma;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:logging/logging.dart';
 
-import 'machine.dart';
+import 'states_events_transitions.dart';
 
 const _loggerName = 'ui';
 final Logger _log = Logger(_loggerName);
@@ -163,6 +163,7 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
     required this.initialDate,
     required this.currentDate,
     required this.lastDate,
+    required this.useRootNavigator,
     super.event,
   });
 
@@ -170,6 +171,7 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
   final DateTime initialDate;
   final DateTime currentDate;
   final DateTime lastDate;
+  final bool useRootNavigator;
 
   BuildContext? _context;
 
@@ -198,13 +200,16 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
       initialDate: initialDate,
       currentDate: currentDate,
       lastDate: lastDate,
+      useRootNavigator: useRootNavigator,
     );
   }
 
   @override
   void close([DateTime? value]) {
     final context = _context;
-    if (context != null) Navigator.of(context, rootNavigator: true).pop(value);
+    if (context != null) {
+      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
+    }
   }
 }
 

@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 
 import 'machine.dart';
 import 'routing.dart';
+import 'states_events_transitions.dart';
 
 Future<void> main() async {
   StateMachine.monitorCreators = [
