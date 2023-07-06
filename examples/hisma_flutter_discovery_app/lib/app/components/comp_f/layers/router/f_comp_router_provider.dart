@@ -10,24 +10,28 @@ import '../ui/comp_f_screen_a.dart';
 import '../ui/comp_f_screen_c.dart';
 
 final fRouterProvider = Provider(
-  (ref) => HismaRouterGenerator<S, Widget, E>(
+  (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(compFMachineProvider),
     mapping: {
-      S.fa: MaterialPageCreator<S>(widget: const CompFScreenA()),
+      S.fa: MaterialPageCreator<void, S, E>(widget: const CompFScreenA()),
       // S.fb: getPagelessCreator2(),
-      S.fb: PagelessCreator<void, E>(
+      S.fb: DialogCreator<void, E>(
+        useRootNavigator: true,
         event: E.backward,
-        pagelessRouteManager: DialogPagelessRouteManager<void>(
+        show: (dc, context) => generateDialog(
+          dc: dc,
+          context: context,
           title: 'Test1',
           text: 'Demo test1.',
         ),
       ),
       // S.b: MaterialPageCreator<S>(widget: const CompFScreenB()),
-      S.fc: MaterialPageCreator<S>(widget: const CompFScreenC()),
+      S.fc: MaterialPageCreator<void, S, E>(widget: const CompFScreenC()),
     },
   ),
 );
 
+/*
 PagelessCreatorOld<E, void> getPagelessCreator2() =>
     PagelessCreatorOld<E, void>(
       rootNavigator: false,
@@ -98,3 +102,4 @@ PagelessCreatorOld<E, bool?> getPagelessCreator() =>
       },
       event: E.backward,
     );
+*/

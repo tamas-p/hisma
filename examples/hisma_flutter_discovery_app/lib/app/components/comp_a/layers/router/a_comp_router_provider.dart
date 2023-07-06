@@ -9,27 +9,30 @@ import '../ui/comp_a_screen_b.dart';
 import '../ui/comp_a_screen_c.dart';
 
 final aRouterProvider = Provider(
-  (ref) => HismaRouterGenerator<S, Widget, E>(
+  (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(compAMachineProvider),
     mapping: {
       // S.ca: MaterialPageCreator<S>(widget: const CompAScreenA()),
-      S.ca: MaterialPageCreator<S>(
+      S.ca: MaterialPageCreator<void, S, E>(
         // widget: const StatelessScreen(),
         // widget: const StatefulScreen(),
         widget:
             Router(routerDelegate: ref.read(l2aRouterProvider).routerDelegate),
       ),
-      S.ca1: PagelessCreator<bool, E>(
+      S.ca1: DialogCreator(
         event: E.int1,
+        useRootNavigator: true,
         // event: E.backward,
-        pagelessRouteManager: DialogPagelessRouteManager(
+        show: (dc, context) => generateDialog(
+          dc: dc,
+          context: context,
           title: 'Problem during login ca1',
           text: 'Hello ca1.',
         ),
       ),
       S.ca2: NoUIChange(),
-      S.cb: MaterialPageCreator<S>(widget: const CompAScreenB()),
-      S.cc: MaterialPageCreator<S>(widget: const CompAScreenC()),
+      S.cb: MaterialPageCreator<void, S, E>(widget: const CompAScreenB()),
+      S.cc: MaterialPageCreator<void, S, E>(widget: const CompAScreenC()),
     },
   ),
 );

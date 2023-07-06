@@ -42,48 +42,60 @@ class _StatefulScreenState extends State<StatefulScreen> {
 }
 
 final appRouterProvider = Provider(
-  (ref) => HismaRouterGenerator<S, Widget, E>(
+  (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(appMachineProvider),
     mapping: {
       // S.a: MaterialPageCreator<S>(widget: const AScreen()),
-      S.a: MaterialPageCreator<S>(
+      S.a: MaterialPageCreator<void, S, E>(
         // widget: const StatelessScreen(),
         // widget: const StatefulScreen(),
         widget:
             Router(routerDelegate: ref.read(aRouterProvider).routerDelegate),
       ),
-      S.a1: PagelessCreator<void, E>(
+      S.a1: DialogCreator<void, E>(
+        useRootNavigator: true,
         event: E.backward,
-        pagelessRouteManager: DialogPagelessRouteManager(
+        show: (dc, context) => generateDialog<void, E>(
+          dc: dc,
+          context: context,
           title: 'Problem during login',
           text: 'Hello.',
         ),
       ),
-      S.b: OverlayMaterialPageCreator<S, E>(
+      S.b: MaterialPageCreator<void, S, E>(
         widget: const BScreen(),
         event: E.backward,
+        overlay: true,
       ),
-      S.b1: OverlayMaterialPageCreator<S, E>(
+      S.b1: MaterialPageCreator<void, S, E>(
         widget: const B1Screen(),
         event: E.backward,
+        overlay: true,
       ),
-      S.c: PagelessCreator<DateTime, E>(
+      S.c: DialogCreator<DateTime, E>(
+        useRootNavigator: true,
         event: E.forward,
-        pagelessRouteManager: DatePickerPagelessRouteManager(),
+        show: (dc, context) => generateDatePicker<E>(
+          dc,
+          context,
+        ),
       ),
-      S.d: PagelessCreator<void, E>(
+      S.d: DialogCreator<void, E>(
+        useRootNavigator: true,
         event: E.backward,
-        pagelessRouteManager: DialogPagelessRouteManager(
+        show: (dc, context) => generateDialog<void, E>(
+          dc: dc,
+          context: context,
           title: 'Problem during login2',
           text: 'Hello2.',
         ),
       ),
-      S.e: OverlayMaterialPageCreator<S, E>(
+      S.e: MaterialPageCreator<void, S, E>(
         // S.e: MaterialPageCreator<S>(
         widget: const EScreen(),
         event: E.jump,
       ),
-      S.f: MaterialPageCreator<S>(
+      S.f: MaterialPageCreator<void, S, E>(
         widget:
             Router(routerDelegate: ref.read(fRouterProvider).routerDelegate),
       ),

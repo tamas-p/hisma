@@ -10,23 +10,27 @@ import '../ui/comp_a_a_screen_c.dart';
 import '../ui/comp_a_a_screen_o.dart';
 
 final l2aRouterProvider = Provider(
-  (ref) => HismaRouterGenerator<S, Widget, E>(
+  (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(compL2AMachineProvider),
     mapping: {
-      S.l2a: MaterialPageCreator<S>(widget: const CompL2AScreenA()),
-      S.l2o: OverlayMaterialPageCreator<S, E>(
+      S.l2a: MaterialPageCreator<void, S, E>(widget: const CompL2AScreenA()),
+      S.l2o: MaterialPageCreator<void, S, E>(
         widget: const CompL2AScreenO(),
         event: E.jump,
+        overlay: true,
       ),
-      S.l2a1: PagelessCreator<void, E>(
-        event: E.backward,
-        pagelessRouteManager: DialogPagelessRouteManager(
+      S.l2a1: DialogCreator<void, E>(
+        useRootNavigator: true,
+        show: (dc, context) => generateDialog<void, E>(
+          context: context,
+          dc: dc,
           title: 'Problem during login',
           text: 'Hello.',
         ),
+        event: E.backward,
       ),
-      S.l2b: MaterialPageCreator<S>(widget: const CompL2AScreenB()),
-      S.l2c: MaterialPageCreator<S>(widget: const CompL2AScreenC()),
+      S.l2b: MaterialPageCreator<void, S, E>(widget: const CompL2AScreenB()),
+      S.l2c: MaterialPageCreator<void, S, E>(widget: const CompL2AScreenC()),
     },
   ),
 );

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
-class DialogPagelessRouteManager<T> implements PagelessRouteManager<T> {
-  DialogPagelessRouteManager({required this.title, required this.text});
-
-  final String title;
-  final String text;
-  BuildContext? _context;
-
-  @override
-  Future<T?> open(BuildContext context) {
-    return showDialog<T>(
+Future<T?> generateDialog<T, E>({
+  required DialogCreator<T, E> dc,
+  required BuildContext context,
+  required String title,
+  required String text,
+}) =>
+    showDialog<T>(
+      useRootNavigator: dc.useRootNavigator,
       context: context,
       builder: (context) {
-        _context = context;
         return AlertDialog(
           title: Text(title),
           content: SingleChildScrollView(
@@ -25,43 +22,26 @@ class DialogPagelessRouteManager<T> implements PagelessRouteManager<T> {
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                close();
+                dc.close();
               },
             ),
           ],
         );
       },
     );
-  }
 
-  @override
-  void close([T? value]) {
-    final context = _context;
-    if (context != null) Navigator.of(context).pop();
-  }
-}
-
-class DatePickerPagelessRouteManager implements PagelessRouteManager<DateTime> {
-  BuildContext? _context;
-  @override
-  Future<DateTime?> open(BuildContext context) {
-    _context = context;
-    return showDatePicker(
+Future<DateTime?> generateDatePicker<E>(
+        DialogCreator<DateTime, E> dc, BuildContext context) =>
+    showDatePicker(
+      useRootNavigator: dc.useRootNavigator,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
       currentDate: DateTime.now(),
       lastDate: DateTime(2028),
     );
-  }
 
-  @override
-  void close([DateTime? value]) {
-    final context = _context;
-    if (context != null) Navigator.of(context, rootNavigator: true).pop();
-  }
-}
-
+/*
 class SnackbarPagelessRouteManager
     implements PagelessRouteManager<SnackBarClosedReason> {
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? ret;
@@ -87,3 +67,4 @@ class SnackbarPagelessRouteManager
     ret?.close();
   }
 }
+*/
