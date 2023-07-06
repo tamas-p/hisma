@@ -2,10 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:hisma/hisma.dart' as hisma;
-import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
-import 'package:logging/logging.dart';
 
 import 'utils.dart';
 
@@ -56,12 +54,13 @@ class LoginScreen extends StatelessWidget {
 
 //------------------------------------------------------------------------------
 
-final authRouterGenerator = HismaRouterGenerator<AS, Widget, AE>(
+final authRouterGenerator = HismaRouterGenerator<AS, AE>(
   machine: authMachine,
   mapping: {
-    AS.signedOut: MaterialPageCreator<AS>(widget: const LoginScreen()),
-    AS.signedIn: MaterialPageCreator<AS>(
-      widget: Router(routerDelegate: hismaRouterGenerator.routerDelegate),
+    AS.signedOut:
+        MaterialPageCreator<void, AS, AE>(widget: const LoginScreen()),
+    AS.signedIn: MaterialPageCreator<void, AS, AE>(
+      widget: Router<S>(routerDelegate: hismaRouterGenerator.routerDelegate),
     ),
   },
 );
@@ -70,7 +69,7 @@ final authRouterGenerator = HismaRouterGenerator<AS, Widget, AE>(
 
 enum S { a, b, b1, b2, c, c1 }
 
-enum E { forward, show, fetch, backward, jump }
+enum E { forward, show, fetch, backward }
 
 enum T { toA, toB, toB1, toB2, toBFromB2, toC, toC1 }
 
@@ -78,7 +77,6 @@ final machine = StateMachineWithChangeNotifier<S, E, T>(
   events: E.values,
   initialStateId: S.a,
   name: 'machine',
-  history: HistoryLevel.deep,
   states: {
     S.a: hisma.State(
       etm: {
@@ -123,7 +121,6 @@ final machine = StateMachineWithChangeNotifier<S, E, T>(
     S.c1: hisma.State(
       etm: {
         E.backward: [T.toC],
-        E.jump: [T.toA],
       },
     ),
   },
@@ -183,45 +180,31 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-class DialogPagelessRouteManager<T> implements PagelessRouteManager<T> {
-  DialogPagelessRouteManager({required this.title, required this.text});
-
-  final String title;
-  final String text;
-  BuildContext? _context;
-
-  @override
-  Future<T?> open(BuildContext context) {
-    return showDialog<T>(
+Future<bool?> b1(DialogCreator<bool, E> dc, BuildContext context) =>
+    showDialog<bool>(
+      useRootNavigator: dc.useRootNavigator,
       context: context,
-      builder: (context) {
-        _context = context;
+      builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          title: const Text('Simple AlertDialog'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[Text(text)],
+              children: const <Widget>[
+                Text('Hello'),
+              ],
             ),
           ),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                close();
+                dc.close(true);
               },
             ),
           ],
         );
       },
     );
-  }
-
-  @override
-  void close([T? value]) {
-    final context = _context;
-    if (context != null) Navigator.of(context).pop();
-  }
-}
 
 class ScreenC extends StatelessWidget {
   const ScreenC({super.key});
@@ -230,105 +213,43 @@ class ScreenC extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('ScreenC')),
-      body: Column(
-        children: [
-          createButtonsFromStates(
-            [
-              authMachine.states[AS.signedIn],
-              machine.states[S.c],
-            ],
-          ),
-          TextButton(
-            onPressed: () {
-              print('OPEN');
-              showDatePicker(
-                context: context,
-                firstDate: DateTime(2021),
-                initialDate: DateTime.now(),
-                currentDate: DateTime.now(),
-                lastDate: DateTime(2028),
-              );
-            },
-            child: const Text('OPEN'),
-          ),
-        ],
-      ),
+      body: createButtonsFromStates([
+        authMachine.states[AS.signedIn],
+        machine.states[S.c],
+      ]),
     );
   }
 }
 
-class DatePickerPagelessRouteManager implements PagelessRouteManager<DateTime> {
-  BuildContext? _context;
-  @override
-  Future<DateTime?> open(BuildContext context) {
-    _context = context;
-    return showDatePicker(
+Future<DateTime?> c1(DialogCreator<DateTime, E> dc, BuildContext context) =>
+    showDatePicker(
+      useRootNavigator: dc.useRootNavigator,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
       currentDate: DateTime.now(),
       lastDate: DateTime(2028),
     );
-  }
-
-  @override
-  void close([DateTime? value]) {
-    final context = _context;
-    if (context != null) Navigator.of(context, rootNavigator: true).pop();
-  }
-}
-
-class SnackbarPagelessRouteManager
-    implements PagelessRouteManager<SnackBarClosedReason> {
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? ret;
-
-  @override
-  Future<SnackBarClosedReason> open(BuildContext context) {
-    final snackBar = SnackBar(
-      content: const Text('Hi, I am a SnackBar!'),
-      backgroundColor: Colors.black12,
-      duration: const Duration(seconds: 10),
-      action: SnackBarAction(
-        label: 'dismiss',
-        onPressed: () {},
-      ),
-    );
-
-    ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    return ret!.closed;
-  }
-
-  @override
-  void close([void value]) {
-    ret?.close();
-  }
-}
 
 //------------------------------------------------------------------------------
 
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
   mapping: {
-    S.a: MaterialPageCreator<S>(widget: const ScreenA()),
-    S.b: OverlayMaterialPageCreator<S, E>(
+    S.a: MaterialPageCreator<void, S, E>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<void, S, E>(
       widget: const ScreenB(),
       event: E.backward,
+      overlay: true,
     ),
-    S.b1: PagelessCreator<void, E>(
-      event: E.backward,
-      pagelessRouteManager:
-          DialogPagelessRouteManager(title: 'title b1', text: 'text b1'),
-    ),
+    S.b1: DialogCreator(show: b1, event: E.backward, useRootNavigator: true),
     S.b2: NoUIChange(),
-    S.c: OverlayMaterialPageCreator<S, E>(
+    S.c: MaterialPageCreator<void, S, E>(
       widget: const ScreenC(),
       event: E.backward,
+      overlay: true,
     ),
-    S.c1: PagelessCreator<void, E>(
-      event: E.backward,
-      // pagelessRouteManager: DatePickerPagelessRouteManager(),
-      pagelessRouteManager: SnackbarPagelessRouteManager(),
-    ),
+    S.c1: DialogCreator(show: c1, event: E.backward, useRootNavigator: true),
   },
 );
 
@@ -349,30 +270,10 @@ class MyApp extends StatelessWidget {
 //------------------------------------------------------------------------------
 
 Future<void> main() async {
-  initLogging();
-
   hisma.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    (m) => VisualMonitor(m),
   ];
 
   await authMachine.start();
   runApp(const MyApp());
-}
-
-void initLogging() {
-  // This shall be done 1st to allow Logger configuration for a hierarchy.
-  hierarchicalLoggingEnabled = true;
-
-  Logger.root.level = Level.OFF;
-  // Logger(vismaMonitorName).level = Level.INFO;
-  Logger('hisma_flutter').level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    // ignore: avoid_print
-    print(
-      '${record.level.name}: '
-      '${record.time}: '
-      '${record.loggerName}: '
-      '${record.message}',
-    );
-  });
 }

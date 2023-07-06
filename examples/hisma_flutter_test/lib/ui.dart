@@ -56,8 +56,103 @@ class Screen extends StatelessWidget {
   }
 }
 
-class DialogCreator extends PagelessCreator<E, E> {
-  DialogCreator({
+class TestDialogCreator extends DialogCreator<E, E> {
+  TestDialogCreator({
+    required super.event,
+    required super.useRootNavigator,
+    required this.machine,
+    required this.stateId,
+  }) : super(
+          show: (dc, context) => showDialog<E>(
+            useRootNavigator: useRootNavigator,
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(getTitle(machine, stateId)),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: const <Widget>[Text('text')],
+                  ),
+                ),
+                actions: (dc as TestDialogCreator).createButtonsFromState(),
+              );
+            },
+          ),
+        );
+
+  final hisma.StateMachine<S, E, T> machine;
+  final S stateId;
+
+  List<Widget> createButtonsFromState() {
+    final buttons = <Widget>[];
+    final state = machine.states[stateId];
+    if (state is! hisma.State<E, T, S>) throw ArgumentError();
+
+    for (final eventId in state.etm.keys) {
+      buttons.add(
+        TextButton(
+          onPressed: () {
+            close(eventId);
+          },
+          child: Text(getButtonTitle(machine, eventId)),
+        ),
+      );
+    }
+
+    return buttons;
+  }
+}
+
+class TestDialogCreator4 extends DialogCreator3<E, E> {
+  TestDialogCreator4({
+    required this.machine,
+    required this.stateId,
+    required super.useRootNavigator,
+    required super.event,
+  });
+
+  final hisma.StateMachine<S, E, T> machine;
+  final S stateId;
+
+  @override
+  Future<E?> show(BuildContext context) => showDialog<E>(
+        useRootNavigator: useRootNavigator,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(getTitle(machine, stateId)),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: const <Widget>[Text('text')],
+              ),
+            ),
+            actions: _createButtonsFromState(),
+          );
+        },
+      );
+
+  List<Widget> _createButtonsFromState() {
+    final buttons = <Widget>[];
+    final state = machine.states[stateId];
+    if (state is! hisma.State<E, T, S>) throw ArgumentError();
+
+    for (final eventId in state.etm.keys) {
+      buttons.add(
+        TextButton(
+          onPressed: () {
+            close(eventId);
+          },
+          child: Text(getButtonTitle(machine, eventId)),
+        ),
+      );
+    }
+
+    return buttons;
+  }
+}
+
+class TestDialogCreator2 extends PagelessCreator<E, E> {
+  TestDialogCreator2({
     required this.machine,
     required this.stateId,
     required this.useRootNavigator,

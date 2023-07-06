@@ -76,7 +76,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.a)),
-        S.b: DialogCreator(
+        S.b: TestDialogCreator(
           machine: machine,
           useRootNavigator: false,
           event: E.self,

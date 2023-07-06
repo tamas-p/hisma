@@ -28,21 +28,21 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         // event: E.self,
         overlay: true,
       ),
-      S.d: DialogCreator(
+      S.d: TestDialogCreator(
         machine: machine,
         stateId: S.d,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
       // S.d: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.d)),
-      S.e: DialogCreator(
+      S.e: TestDialogCreator(
         machine: machine,
         stateId: S.e,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
       // S.e: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.e)),
-      S.f: DialogCreator(
+      S.f: TestDialogCreator(
         machine: machine,
         stateId: S.f,
         event: E.self,
@@ -54,7 +54,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         overlay: true,
         event: E.back,
       ),
-      S.h: DialogCreator(
+      S.h: TestDialogCreator(
         machine: machine,
         stateId: S.h,
         event: E.self,
@@ -118,14 +118,14 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
           ),
         )
       else
-        S.l: DialogCreator(
+        S.l: TestDialogCreator(
           machine: machine,
           stateId: S.l,
           event: E.self,
           useRootNavigator: useRootNavigator,
         ),
       // S.l: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.l)),
-      S.m: DialogCreator(
+      S.m: TestDialogCreator(
         machine: machine,
         stateId: S.m,
         event: E.self,

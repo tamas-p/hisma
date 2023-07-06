@@ -156,12 +156,76 @@ class LoggingMaterialPage<W> extends MaterialPage<W> {
 // }
 
 abstract class PagelessCreator<T, E> extends Creator<E> {
-  // TODO: should the event be required here?
-  // YES, it should be mandatory.
-  PagelessCreator({super.event});
+  PagelessCreator({required super.event});
 
   Future<T?> open(BuildContext context);
   void close([T? value]);
+}
+
+abstract class DialogCreator3<T, E> extends PagelessCreator<T, E> {
+  DialogCreator3({
+    required super.event,
+    required this.useRootNavigator,
+  });
+
+  final bool useRootNavigator;
+  // final Future<T?> Function(BuildContext context) show;
+
+  Future<T?> show(BuildContext context);
+
+  BuildContext? _context;
+
+  @override
+  Future<T?> open(BuildContext context) {
+    _context = context;
+    return show(context);
+  }
+
+  @override
+  void close([T? value]) {
+    final context = _context;
+    if (context != null) {
+      try {
+        (context as Element).widget;
+      } catch (e) {
+        print('*** NO RENDEROBJECT FOUND ***');
+        return;
+      }
+      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
+    }
+  }
+}
+
+class DialogCreator<T, E> extends PagelessCreator<T, E> {
+  DialogCreator({
+    required this.show,
+    required super.event,
+    required this.useRootNavigator,
+  });
+
+  final bool useRootNavigator;
+  final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
+  BuildContext? _context;
+
+  @override
+  Future<T?> open(BuildContext context) {
+    _context = context;
+    return show(this, context);
+  }
+
+  @override
+  void close([T? value]) {
+    final context = _context;
+    if (context != null) {
+      try {
+        (context as Element).widget;
+      } catch (e) {
+        print('*** NO RENDEROBJECT FOUND ***');
+        return;
+      }
+      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
+    }
+  }
 }
 
 // class PagelessCreatorOld<E, T> extends Creator {

@@ -77,9 +77,6 @@ Future<void> testIt({
 void main() {
   // auxInitLogging();
 
-  const useRootNavigator = false;
-  HistoryLevel? historyLevel;
-
   /// We are testing
   /// - State change initiated from
   ///   - UI

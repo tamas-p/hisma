@@ -114,12 +114,10 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-Future<bool?> b1(
-  BuildContext context, {
-  void Function(BuildContext)? setContext,
-}) =>
+Future<bool?> b1(DialogCreator<bool, E> dc, BuildContext context) =>
     showDialog<bool>(
       context: context,
+      useRootNavigator: dc.useRootNavigator,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Simple AlertDialog'),
@@ -134,7 +132,7 @@ Future<bool?> b1(
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop(true);
+                dc.close(true);
               },
             ),
           ],
@@ -155,10 +153,11 @@ class ScreenC extends StatelessWidget {
 }
 
 Future<DateTime?> c1(
-  BuildContext context, {
-  void Function(BuildContext)? setContext,
-}) =>
+  DialogCreator<DateTime, E> dc,
+  BuildContext context,
+) =>
     showDatePicker(
+      useRootNavigator: dc.useRootNavigator,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
@@ -168,21 +167,22 @@ Future<DateTime?> c1(
 
 //------------------------------------------------------------------------------
 
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
   mapping: {
-    S.a: MaterialPageCreator<S>(widget: const ScreenA()),
-    S.b: OverlayMaterialPageCreator<S, E>(
+    S.a: MaterialPageCreator<void, S, E>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<void, S, E>(
       widget: const ScreenB(),
       event: E.backward,
+      overlay: true,
     ),
-    S.b1: PagelessCreator(show: b1, event: E.backward),
+    S.b1: DialogCreator(show: b1, event: E.backward, useRootNavigator: true),
     S.b2: NoUIChange(),
-    S.c: OverlayMaterialPageCreator<S, E>(
+    S.c: MaterialPageCreator<void, S, E>(
       widget: const ScreenC(),
       event: E.backward,
     ),
-    S.c1: PagelessCreator(show: c1, event: E.backward),
+    S.c1: DialogCreator(show: c1, event: E.backward, useRootNavigator: true),
   },
 );
 

@@ -121,7 +121,7 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.a)),
-        S.b: DialogCreator(
+        S.b: TestDialogCreator(
           machine: machine,
           stateId: S.b,
           event: E.back,
@@ -132,7 +132,7 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
           overlay: true,
           event: E.back,
         ),
-        S.d: DialogCreator(
+        S.d: TestDialogCreator(
           machine: machine,
           stateId: S.d,
           event: E.back,
@@ -143,7 +143,7 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
           overlay: true,
           event: E.back,
         ),
-        S.f: DialogCreator(
+        S.f: TestDialogCreator(
           machine: machine,
           stateId: S.f,
           event: E.back,
