@@ -31,7 +31,9 @@ Future<T?> generateDialog<T, E>({
     );
 
 Future<DateTime?> generateDatePicker<E>(
-        DialogCreator<DateTime, E> dc, BuildContext context) =>
+  DialogCreator<DateTime, E> dc,
+  BuildContext context,
+) =>
     showDatePicker(
       useRootNavigator: dc.useRootNavigator,
       context: context,

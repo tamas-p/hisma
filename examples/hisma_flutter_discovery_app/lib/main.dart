@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hisma/hisma.dart';
-import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 

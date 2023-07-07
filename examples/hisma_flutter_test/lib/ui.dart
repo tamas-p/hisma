@@ -6,9 +6,6 @@ import 'package:logging/logging.dart';
 
 import 'states_events_transitions.dart';
 
-const _loggerName = 'ui';
-final Logger _log = Logger(_loggerName);
-
 String getTitle(hisma.StateMachine<S, E, T> machine, S? stateId) =>
     '${machine.name} - $stateId';
 
@@ -103,155 +100,6 @@ class TestDialogCreator extends DialogCreator<E, E> {
   }
 }
 
-class TestDialogCreator4 extends DialogCreator3<E, E> {
-  TestDialogCreator4({
-    required this.machine,
-    required this.stateId,
-    required super.useRootNavigator,
-    required super.event,
-  });
-
-  final hisma.StateMachine<S, E, T> machine;
-  final S stateId;
-
-  @override
-  Future<E?> show(BuildContext context) => showDialog<E>(
-        useRootNavigator: useRootNavigator,
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(getTitle(machine, stateId)),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: const <Widget>[Text('text')],
-              ),
-            ),
-            actions: _createButtonsFromState(),
-          );
-        },
-      );
-
-  List<Widget> _createButtonsFromState() {
-    final buttons = <Widget>[];
-    final state = machine.states[stateId];
-    if (state is! hisma.State<E, T, S>) throw ArgumentError();
-
-    for (final eventId in state.etm.keys) {
-      buttons.add(
-        TextButton(
-          onPressed: () {
-            close(eventId);
-          },
-          child: Text(getButtonTitle(machine, eventId)),
-        ),
-      );
-    }
-
-    return buttons;
-  }
-}
-
-class TestDialogCreator2 extends PagelessCreator<E, E> {
-  TestDialogCreator2({
-    required this.machine,
-    required this.stateId,
-    required this.useRootNavigator,
-    super.event,
-  });
-
-  final hisma.StateMachine<S, E, T> machine;
-  final S stateId;
-  final bool useRootNavigator;
-
-  BuildContext? _context;
-
-  @override
-  Future<E?> open(BuildContext context) {
-    return showDialog<E>(
-      useRootNavigator: useRootNavigator,
-      context: context,
-      builder: (context) {
-        _context = context;
-        return AlertDialog(
-          title: Text(getTitle(machine, stateId)),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[Text('text')],
-            ),
-          ),
-          actions: _createButtonsFromState(),
-        );
-      },
-    );
-  }
-
-  @override
-  void close([E? value]) {
-    final context = _context;
-    // if (context != null && context.mounted) {
-    if (context != null) {
-      // TODO: Replace with context.mounted if move to Flutter version > 3.7.
-      // TODO: Even better, this mounted check can be eliminated if monkey shows
-      // that it never reaches NO RENDER...
-      try {
-        (context as Element).widget;
-        _log.info('--- <context is OK> ---');
-      } catch (e) {
-        _log.info('** NO RENDEROBJECT FOUND **');
-        _log.info('Exception: $e');
-        // exit(1);
-        return;
-      }
-      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
-    }
-    // }
-  }
-
-  List<Widget> _createButtonsFromState() {
-    final buttons = <Widget>[];
-    final state = machine.states[stateId];
-    if (state is! hisma.State<E, T, S>) throw ArgumentError();
-
-    for (final eventId in state.etm.keys) {
-      buttons.add(
-        TextButton(
-          onPressed: () {
-            close(eventId);
-          },
-          // onPressed: eventId != E.self
-          //     ? () {
-          //         close(eventId);
-          //       }
-          //     : null,
-          child: Text(getButtonTitle(machine, eventId)),
-        ),
-      );
-    }
-
-    return buttons;
-  }
-
-  @override
-  bool get mounted {
-    final context = _context;
-    if (context != null) {
-      // TODO: Replace with context.mounted if move to Flutter version > 3.7.
-      try {
-        (context as Element).widget;
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    return false;
-  }
-
-  @override
-  // TODO: implement shown
-  bool get shown => throw UnimplementedError();
-}
-
 class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
   DatePickerPagelessRouteManager({
     required this.firstDate,
@@ -269,22 +117,6 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
   final bool useRootNavigator;
 
   BuildContext? _context;
-
-  @override
-  bool get mounted {
-    final context = _context;
-    if (context != null) {
-      // TODO: Replace with context.mounted if move to Flutter version > 3.7.
-      try {
-        (context as Element).widget;
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    return false;
-  }
 
   @override
   Future<DateTime?> open(BuildContext context) {
@@ -333,10 +165,6 @@ class SnackbarPagelessRouteManager
     ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
     return ret!.closed;
   }
-
-  @override
-  // TODO: remove
-  bool get mounted => true;
 
   @override
   void close([void value]) {

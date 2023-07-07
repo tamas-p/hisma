@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart' as hisma;
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 
 enum S { a, b }
@@ -42,7 +41,6 @@ class ScreenA extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('--- A ---');
     return Scaffold(
       appBar: AppBar(
         title: Text('$ScreenA'),
@@ -56,7 +54,6 @@ class ScreenB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('--- B ---');
     return Scaffold(
       appBar: AppBar(
         title: Text('$ScreenB'),

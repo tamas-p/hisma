@@ -5,18 +5,16 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../ui/registration_screen.dart';
 
-final registrationRouterGenerator = HismaRouterGenerator<SRM, Widget, ERM>(
+final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
   machine: authMachine.find<SRM, ERM, TRM>(registerMachineName),
   mapping: {
     SRM.registration:
-        MaterialPageCreator<SRM>(widget: const RegistrationScreen()),
-    SRM.failed: PagelessCreator<ERM, void>(
+        MaterialPageCreator<void, SRM, ERM>(widget: const RegistrationScreen()),
+    SRM.failed: DialogCreator<void, ERM>(
+      useRootNavigator: true,
       event: ERM.ok,
-      show: (
-        context, {
-        void Function(BuildContext)? setContext,
-      }) =>
-          showDialog(
+      show: (dc, context) => showDialog(
+        useRootNavigator: dc.useRootNavigator,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -34,7 +32,7 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, Widget, ERM>(
               TextButton(
                 child: const Text('OK'),
                 onPressed: () {
-                  Navigator.of(context).pop(true);
+                  dc.close();
                 },
               ),
             ],

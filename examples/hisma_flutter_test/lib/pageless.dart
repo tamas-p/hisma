@@ -5,7 +5,6 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import 'states_events_transitions.dart';
 import 'ui.dart';
-import 'utility.dart';
 
 StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
   required String name,
@@ -58,7 +57,7 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
           onAction: h.Action(
             description: 'Evaluate result.',
             action: (machine, dynamic arg) async {
-              print('Received: $arg');
+              // print('Received: $arg');
               if (arg != null && arg != E.self) {
                 await machine.fire(arg);
               }

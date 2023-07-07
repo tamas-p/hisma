@@ -1,15 +1,17 @@
 import 'package:fb_auth_hisma/fb_auth_hisma.dart';
 import 'package:flutter/material.dart';
+import 'package:hisma_flutter/hisma_flutter.dart';
 
 import '../../../../layers/machine/auth_machine.dart';
 
 Future<void> signOutConfirmationDialog(
-  BuildContext context, {
-  void Function(BuildContext)? setContext,
-}) {
+  DialogCreator<void, ESiM> dc,
+  BuildContext context,
+) {
   final signedInMachine =
       authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);
   return showDialog(
+    useRootNavigator: dc.useRootNavigator,
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
@@ -25,7 +27,6 @@ Future<void> signOutConfirmationDialog(
           TextButton(
             child: const Text('Cancel'),
             onPressed: () {
-              // Navigator.of(context).pop();
               signedInMachine.fire(ESiM.cancel);
             },
           ),

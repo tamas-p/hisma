@@ -39,7 +39,7 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
   /// There can be only one pageless route shown at a time in the application.
   static PagelessCreator<dynamic, dynamic>? _pageless;
 
-  S? _previousStateId;
+  // S? _previousStateId;
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +49,8 @@ class HismaRouterDelegatePop<S, E> extends RouterDelegate<S>
     );
 
     final activeStateId = _machine.activeStateId;
-    final sameAsBefore = activeStateId == _previousStateId;
-    _previousStateId = activeStateId;
+    // final sameAsBefore = activeStateId == _previousStateId;
+    // _previousStateId = activeStateId;
 
     if (_pageless != null) {
       _pageless?.close();

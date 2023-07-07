@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hisma_flutter/hisma_flutter.dart';
 
-Future<void> authDialog(
-  BuildContext context,
-  String title,
-  String message,
-) =>
+Future<void> createDialog({
+  required DialogCreator<dynamic, dynamic> dc,
+  required BuildContext context,
+  required bool useRootNavigator,
+  required String title,
+  required String message,
+}) =>
     showDialog<void>(
+      useRootNavigator: useRootNavigator,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -21,7 +25,7 @@ Future<void> authDialog(
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop();
+                dc.close();
               },
             ),
           ],

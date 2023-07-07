@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import '../hisma_flutter.dart';
 import 'assistance.dart';
@@ -72,6 +73,8 @@ import 'assistance.dart';
 /// PageCreator <|-- OverlayPageCreator
 /// OverlayPageCreator <|-- OverlayMaterialPageCreator
 /// OverlayPageCreator <|-- OverlayCupertinoPageCreator
+
+final Logger _log = Logger('creator');
 
 abstract class Presentation {}
 
@@ -162,40 +165,6 @@ abstract class PagelessCreator<T, E> extends Creator<E> {
   void close([T? value]);
 }
 
-abstract class DialogCreator3<T, E> extends PagelessCreator<T, E> {
-  DialogCreator3({
-    required super.event,
-    required this.useRootNavigator,
-  });
-
-  final bool useRootNavigator;
-  // final Future<T?> Function(BuildContext context) show;
-
-  Future<T?> show(BuildContext context);
-
-  BuildContext? _context;
-
-  @override
-  Future<T?> open(BuildContext context) {
-    _context = context;
-    return show(context);
-  }
-
-  @override
-  void close([T? value]) {
-    final context = _context;
-    if (context != null) {
-      try {
-        (context as Element).widget;
-      } catch (e) {
-        print('*** NO RENDEROBJECT FOUND ***');
-        return;
-      }
-      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
-    }
-  }
-}
-
 class DialogCreator<T, E> extends PagelessCreator<T, E> {
   DialogCreator({
     required this.show,
@@ -217,37 +186,19 @@ class DialogCreator<T, E> extends PagelessCreator<T, E> {
   void close([T? value]) {
     final context = _context;
     if (context != null) {
+      // TODO: When Flutter version > 3.7 use the context.mounted instead.
       try {
         (context as Element).widget;
       } catch (e) {
-        print('*** NO RENDEROBJECT FOUND ***');
+        // TODO: We shall never get there. It only happens during during
+        // consecutive execution of widget tests. To be investigated.
+        _log.info('No render-object found. Widget is not mounted.');
         return;
       }
       Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
     }
   }
 }
-
-// class PagelessCreatorOld<E, T> extends Creator {
-//   PagelessCreatorOld({
-//     required this.show,
-//     required this.event,
-//     this.rootNavigator = true,
-//   });
-//   final Future<T> Function(
-//     BuildContext context, {
-//     void Function(BuildContext)? setContext,
-//   }) show;
-
-// /// If the [show] function instructs using or not using the root navigator
-// /// we shall have this information for the given to the creator as well to
-// /// let know the [HismaRouterDelegate] that needs this in some cases.
-// /// This seems redundant, but I have not yet found a way to eliminate this
-// /// redundancy and it does the job.
-// final bool rootNavigator;
-
-// final E event;
-// }
 
 Page<T> _createPage<T, S>({
   required Widget widget,
@@ -272,14 +223,5 @@ class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
     required super.widget,
     super.overlay,
     super.event,
-  }) : super(create: _createPage);
+  }) : super(create: _createPage<T, S>);
 }
-
-// class OverlayMaterialPageCreator<S, E>
-//     extends OverlayPageCreator<Widget, S, E> {
-//   OverlayMaterialPageCreator({
-//     required super.widget,
-//     required super.event,
-//   }) : super(create: _createPage);
-// }
-

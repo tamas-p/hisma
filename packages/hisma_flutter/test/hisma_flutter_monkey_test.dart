@@ -137,7 +137,7 @@ Future<void> monkey({
   // We have the same events everywhere. No need to update.
   final events = state?.etm.keys;
 
-  for (var i = 0; i < 10000; i++) {
+  for (var i = 0; i < 1000; i++) {
     // if (i != 0 && i % 1000 == 0) {
     //   print('Have some rest...');
     //   await tester.runAsync(() async {

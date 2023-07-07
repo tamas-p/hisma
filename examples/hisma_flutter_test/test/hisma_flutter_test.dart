@@ -6,7 +6,6 @@ import 'package:hisma_flutter_test/machine.dart';
 import 'package:hisma_flutter_test/main.dart';
 import 'package:hisma_flutter_test/states_events_transitions.dart';
 import 'package:hisma_flutter_test/ui.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 
 import 'aux/aux.dart';
@@ -245,8 +244,10 @@ Testing that pageless routes are managed well in case of a child machine.
           await tester.pumpAndSettle();
           checkTitle(machine);
 
-          await tester.tap(find.text('${E.jumpBack}').last,
-              warnIfMissed: false);
+          await tester.tap(
+            find.text('${E.jumpBack}').last,
+            warnIfMissed: false,
+          );
           await tester.pumpAndSettle();
           checkTitle(machine);
 
@@ -772,8 +773,8 @@ Future<StateMachineWithChangeNotifier<S, E, T>> getMachine({
   required bool useRootNavigator,
   required WidgetTester tester,
 }) async {
-  print('----------------------------------------------------------------');
-  print('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
+  // print('----------------------------------------------------------------');
+  // print('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
   final machine = createMachine(name: 'root', historyLevel: historyLevel);
   await machine.start();
   // Build our app and trigger a frame.
@@ -790,8 +791,8 @@ Future<StateMachineWithChangeNotifier<S, E, T>> getChainMachine({
   required bool useRootNavigator,
   required WidgetTester tester,
 }) async {
-  print('----------------------------------------------------------------');
-  print('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
+  // print('----------------------------------------------------------------');
+  // print('historyLevel: $historyLevel, useRootNavigator: $useRootNavigator');
   final machine =
       createParentChainMachine(name: 'root', historyLevel: historyLevel);
   await machine.start();

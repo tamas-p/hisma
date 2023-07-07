@@ -1,17 +1,20 @@
 import 'package:fb_auth_hisma/fb_auth_hisma.dart';
 import 'package:flutter/material.dart';
+import 'package:hisma_flutter/hisma_flutter.dart';
 
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
 Future<void> failedSignInDialog(
-  BuildContext context, {
-  void Function(BuildContext)? setContext,
-}) =>
-    authDialog(
-      context,
-      'Problem during login',
-      '${authMachine.find<SLiM, ELiM, TLiM>(loginMachineName).data}',
+  DialogCreator<void, ELiM> dc,
+  BuildContext context,
+) =>
+    createDialog(
+      dc: dc,
+      context: context,
+      useRootNavigator: dc.useRootNavigator,
+      message: 'Problem during login',
+      title: '${authMachine.find<SLiM, ELiM, TLiM>(loginMachineName).data}',
     );
 
 Future<void> failedSignInDialog2(BuildContext context) => showDialog<void>(

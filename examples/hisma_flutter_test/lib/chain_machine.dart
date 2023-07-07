@@ -184,7 +184,9 @@ Future<void> main() async {
     // (m) => ConsoleMonitor(m),
   ];
   final machine = createParentChainMachine(
-      name: 'root', historyLevel: h.HistoryLevel.shallow);
+    name: 'root',
+    historyLevel: h.HistoryLevel.shallow,
+  );
   await machine.start();
 
   runApp(ChainApp(machine: machine, useRootNavigator: true));
