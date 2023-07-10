@@ -1,333 +1,335 @@
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/widgets.dart';
+import 'dart:async';
 
-// import 'assistance.dart';
-// import 'creator.dart';
-// import 'hisma_navigator.dart';
-// import 'hisma_router_generator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
-// /*
-// class StatePresentationPair<W, S> {
-//   StatePresentationPair({
-//     required this.state,
-//     required this.creator,
-//   });
-//   final S state;
-//   final PageCreator<W, S> creator;
-// }
-// */
+import 'assistance.dart';
+import 'creator.dart';
+import 'state_machine_with_change_notifier.dart';
 
-// class StateCreatorPair<P, S> {
-//   StateCreatorPair({
-//     required this.state,
-//     required this.creator,
-//   });
-//   final S state;
-//   final P creator;
-// }
+typedef PageMap<S> = Map<S, Page<dynamic>>;
 
-// class HismaRouterDelegate<S, W, E> extends RouterDelegate<S>
-//     with ChangeNotifier {
-//   HismaRouterDelegate(this._routerGenerator) {
-//     _routerGenerator.machine.addListener(notifyListeners);
-//   }
+class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
+  HismaRouterDelegate(this._machine, this._mapping) {
+    // Machine changes will result notifying listeners of this router delegate.
+    _machine.addListener(notifyListeners);
+  }
 
-//   static final _log = getLogger('$HismaRouterDelegate');
+  final _log = getLogger('$HismaRouterDelegate');
 
-//   @override
-//   void notifyListeners() {
-//     final state = _routerGenerator.machine.activeStateId;
-//     final creator = _routerGenerator.mapping[state];
-//     assert(
-//       creator != null || state == null,
-//       '$state state is not defined in HismaRouterGenerator.creators.',
-//     );
+  /// Machine that this router delegate represents.
+  final StateMachineWithChangeNotifier<S, E, dynamic> _machine;
 
-//     if (state != _lastState && (state == null || creator is! NoUIChange)) {
-//       // if (state != _lastState && state != null && creator is! NoUIChange) {
-//       // && (state == null || creator is! NoUIChange)) {
-//       // We only need to rebuild if
-//       // - state actually changed
-//       // - machine is stopped (active state is null) OR we have creator for the active state.
-//       _log.severe(
-//         '>>>>>>>>>>>>>>>> notify from ${_routerGenerator.machine.name} <<<<<<<<<<<<<<<<<<<<<<<<',
-//       );
-//       super.notifyListeners();
-//     }
-//   }
+  /// Mapping machine states to a presentation. It is defined in
+  /// HismaRouterGenerator constructor.
+  final Map<S, Presentation> _mapping;
 
-//   final HismaRouterGenerator<S, W, E> _routerGenerator;
-//   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  /// List of state identifiers. It stores all state ids that are rendered to
+  /// screen including pageless routes as well. It will be translated to a
+  /// list of Pages using the creator (from _mapping) of the corresponding
+  /// PageCreator for pages and might a pageless Route (from _pageless) by
+  /// giving a Builder with a Future ti create the pageless route (see
+  /// _addPageless). This approach - creating the pages during build and not
+  /// storing the pages themselves - is required making sure that only the last
+  /// page will include the Builder with Future for pageless routes as mentioned
+  /// before.
+  final List<S> _stateIds = [];
 
-//   /// Stores ids of pages that are shown. It is from Strings as we need
-//   /// to check this in [HismaNavigator]'s popPage (route.settings.name).
-//   final _shown = <String>{};
+  /// There can be only one pageless route shown at a time in the application.
+  static PagelessCreator<dynamic, dynamic>? _pageless;
 
-//   /// Stores states that build up the stack as overlays.
-//   final _stack = <S>[];
+  // S? _previousStateId;
 
-//   /// Saving last used context to be able show/pop pageless routes.
-//   late BuildContext? _lastContext;
+  @override
+  Widget build(BuildContext context) {
+    _log.fine('>>>>>>>>>>>>>> BUILD START >>>>>>>>>>>>>>>>>');
+    _log.info(
+      () => 'machine: ${_machine.name}, state: ${_machine.activeStateId}',
+    );
 
-//   /// This saves last state for those cases when state machine is already
-//   /// stopped but we have to render. It happens when pageless route is created
-//   /// and a lower layer page must be created that includes a sub-router.
-//   /// TODO: It is a hack. We shall not rebuild the page, but with this approach
-//   /// it will be rebuild as the page changes due to the included Future to show
-//   /// pageless routes.
-//   /// TODO: Can not we simply use the top of the _stack?
-//   S? _lastState;
+    final activeStateId = _machine.activeStateId;
+    // final sameAsBefore = activeStateId == _previousStateId;
+    // _previousStateId = activeStateId;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     _log.info('build machine ${_routerGenerator.machine.name}');
-//     final tmp = _routerGenerator.machine.activeStateId;
-//     late final S? state;
-//     late final bool cleanup;
-//     if (tmp == null) {
-//       // Machine was stopped, so we clean up right before build returns.
-//       cleanup = true;
-//       state = _lastState;
-//     } else {
-//       cleanup = false;
-//       _lastState = state = tmp;
-//     }
-//     // Allow type propagation -> non need for state! after this.
-//     if (state == null) throw Exception(_errorMachineNotRunning());
+    if (_pageless != null) {
+      _pageless?.close();
+      _pageless = null;
+    }
 
-//     final pages = <Page<W>>[];
+    // There are two prerequisites to process based on activeStateId:
+    // TODO: Review this text.
+    // (1) We only process if machine is active. If inactive we simply build
+    //     pages of the navigator from the current _pageMap (that was updated
+    //     in previous builds). This is required to handle the case when a child
+    //     machine gets inactivated but we need its previous presentation to
+    //     allow the transition to the new page.
+    // (2) activeStateId shall not be the last key in the page map. Being
+    //     notified when activeStateId is not different compared to last time
+    //     we updated the page map means that no update on the page map is
+    //     needed.
+    if (activeStateId != null) {
+      // && !sameAsBefore) {
+      // We only process the state if it is not leading us back to a previous
+      // state in a circle that current _pageMap (hence current navigator pages)
+      // includes.
+      if (_stateIds.contains(activeStateId)) {
+        // _closeLastPageless();
+        // Since we arrived back to a state that (more precisely the page
+        // created by its Presentation) is already in the current
+        // Navigator.pages (through the circle in the state transition graph),
+        // we have to clean up the pages on the circle.
+        _cleanUpCircle(activeStateId);
+      } else {
+        // This state (more precisely the page created by its Presentation) is
+        // not represented in Navigator.pages hence we need to add it.
+        _addState(activeStateId);
+      }
+    }
 
-//     if (_stack.contains(state)) {
-//       // A circle is closing -> we have to clear it backwards.
-//       _clear(state);
-//       // _buildUp(pages, state);
+    final pages = _buildNavigator();
+    _log.fine(
+      () => '@@@ machine: ${_machine.name} '
+          'state: ${_machine.activeStateId} _stateIds: $_stateIds '
+          'page: $pages',
+    );
+    _log.fine('<<<<<<<<<<<<<<<<<<< BUILD DONE <<<<<<<<<<<<<<<<<<<<<<<<<<');
+    return pages;
+  }
 
-//       // final first = _stack.indexOf(state);
-//       // _stack.removeRange(first + 1, _stack.length);
-//     }
+  /// Handles the back button request from the operating system.
+  /// Having and event defined for the corresponding Creator it will
+  /// be fired on the machine. It is always returns true avoiding the
+  /// popping of the entire application.
+  @override
+  Future<bool> popRoute() {
+    _log.info('popRoute');
 
-//     // No circle -> processing new creator.
-//     final creator = _routerGenerator.mapping[state];
-//     if (creator is PageCreator<W, S> &&
-//         creator is! OverlayPageCreator<W, S, E>) {
-//       // New page is a simple page -> replacing all stack.
-//       _clearStackAndAddSimplePage(state, creator, pages);
-//     } else {
-//       // New page is an overlay -> adding to stack.
-//       if (creator is OverlayPageCreator<W, S, E>) {
-//         _addOverlayPage(state, creator, pages);
-//       } else if (creator is PagelessCreatorOld<E, dynamic>) {
-//         _addPagelessRoute(state, creator, pages);
-//       } else if (creator is NoUIChange) {
-//         print('--- Processing NoUIChange.');
-//         _buildFromStack(pages);
-//       } else {
-//         assert(false, 'At $state $creator is not handled.');
-//       }
-//     }
+    final creator = _mapping[_machine.activeStateId];
+    if (creator is Creator<E> && creator.event != null) {
+      Future.delayed(
+        Duration.zero,
+        () async {
+          _log.info(
+            'popRoute: Firing ${creator.event} on machine ${_machine.name}.',
+          );
+          await _machine.fire(creator.event as E);
+        },
+      );
+    } else {
+      _log.info('popRoute: Nothing to do for $creator.');
+    }
 
-//     _log.fine('machine=${_routerGenerator.machine.name}');
-//     _log.fine('_stack=$_stack');
-//     _log.fine('_shown=$_shown');
+    return SynchronousFuture<bool>(true);
+  }
 
-//     if (cleanup) {
-//       // _shown.clear();
-//       // _stack.clear();
-//       // _lastState = null;
-//       // TODO shall we _clean() e.g. AlertDialog(s) here?
-//       // S.l2a1 --> S.ca1 --> S.ca Why AlertDialog of S.l2a1 is still shown?
-//       // This only happens when the other state is a PagelessRoute.
-//     }
+  @override
+  Future<void> setNewRoutePath(S configuration) async {
+    // TODO: implement setNewRoutePath
+  }
 
-//     assert(
-//         pages.isNotEmpty,
-//         'pages is empty.'
-//         ' There must be at least one page in the list.'
-//         ' Your initial state might be a PagelessCreator.'
-//         ' Please make sure that your initial state is a PageCreator.');
+  // NEED to add back PagelessPage to detect circles.
 
-//     print('&&& _navigatorKey:$_navigatorKey');
-//     return HismaNavigator<S, W, E>(
-//       pages: pages,
-//       myRouter: _routerGenerator,
-//       key: _navigatorKey,
-//       shown: _shown,
-//     );
-//   }
+  void _addState(S stateId) {
+    final presentation = _mapping[stateId];
+    if (presentation is PageCreator<dynamic, S, E>) {
+      if (presentation.overlay == false) _stateIds.clear();
+      _stateIds.add(stateId);
+    } else if (presentation is PagelessCreator<dynamic, E>) {
+      _stateIds.add(stateId);
+    } else if (presentation is NoUIChange) {
+      // Explicit no update was requested, so we do nothing.
+    } else {
+      throw ArgumentError(
+        'Presentation ${presentation.runtimeType} is not handled for $stateId.'
+        ' Check mapping in your HismaRouterGenerator for machine ${_machine.name}',
+      );
+    }
+  }
 
-//   void _clear(S state) {
-//     print('------------------- _clear ----------------------------------');
-//     final current = _stack.indexOf(state);
-//     for (var i = _stack.length - 1; i > current; i--) {
-//       final s = _stack[i];
-//       if (_shown.contains(s.toString())) {
-//         final creator = _routerGenerator.mapping[s];
-//         var useRoot = false;
-//         if (creator is PagelessCreator) {
-//           // useRoot = creator.rootNavigator;
-//         }
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-//         assert(_lastContext != null);
-//         print('pop() fromm _clear($state)');
-//         // Navigator.of(_lastContext!, rootNavigator: useRoot).pop();
-//       }
-//       _stack.removeLast();
-//     }
-//   }
+  /// Builds Navigator from _pageMap.
+  Widget _buildNavigator() {
+    return Navigator(
+      // Navigator key must belong to the router delegate object to allow
+      // transitions working properly as Flutter will be able to identify if
+      // the passed Navigator is for the same purpose as the previous one was
+      // passed by the router delegate.
+      key: _navigatorKey,
+      // Processing and filtering out all pages that represent pageless routes.
+      pages: _processPageless(),
+      onPopPage: (route, dynamic result) {
+        // When using hisma_flutter exclusively to manage routing this callback
+        // shall be only invoked when user presses the framework generated
+        // back button in an AppBar which is only happens when the page is an
+        // PageCreator where overlay attribute is true.
+        _log.info('Navigator.onPopPage($route, $result)');
+        _log.info('${route.settings.name}');
+        _log.info('machine: ${_machine.name} - ${_machine.activeStateId}');
+        final creator = _mapping[_machine.activeStateId];
+        if (creator is PageCreator<dynamic, S, E> && creator.overlay) {
+          final event = creator.event;
+          if (event != null) {
+            Future.delayed(Duration.zero, () {
+              _machine.fire(event, arg: result);
+            });
+          }
+        } else {
+          throw AssertionError(
+            'It must be here an PageCreator with overlay=true,'
+            ' but it was $creator',
+          );
+        }
 
-//   bool inOverlayPageGroup() {
-//     return true;
-//   }
+        if (route.didPop(result)) return true;
+        return false;
+      },
+    );
+  }
 
-//   Page<W> _createPage(
-//     S state,
-//     PageCreator<W, S> creator, {
-//     void Function(BuildContext)? f,
-//   }) {
-//     return creator.create(
-//       state: state,
-//       widget: Builder(
-//         builder: (context) {
-//           _lastContext = context;
-//           if (f != null) {
-//             /// We schedule execution of function 'f' during next build cycle.
-//             Future.delayed(Duration.zero, () {
-//               f(context);
-//             });
-//           }
-//           return creator.widget;
-//         },
-//       ),
-//     );
-//   }
+// pages.add(
+//           presentation.create(
+//             name: '${_machine.name}-$stateId',
+//             widget: presentation.widget,
+//           ),
+//         );
 
-//   void _buildFromStack(
-//     List<Page<W>> pages,
-//   ) {
-//     for (final s in _stack) {
-//       final c = _routerGenerator.mapping[s];
-//       assert(c != null);
-//       if (c is PageCreator<W, S>) {
-//         pages.add(_createPage(s, c));
-//       }
-//     }
-//   }
+  List<Page<dynamic>> _processPageless() {
+    final pages = <Page<dynamic>>[];
 
-//   void _addOverlayPage(
-//     S state,
-//     PageCreator<W, S> creator,
-//     List<Page<W>> pages,
-//   ) {
-//     // 1st build up from existing stack.
-//     // for (final s in _stack) {
-//     //   final c = _routerGenerator.creators[s];
-//     //   assert(c != null);
-//     //   if (c is PageCreator<W, S>) {
-//     //     pages.add(_createPage(s, c));
-//     //   }
-//     // }
+    // OK to throw if empty - as it shall never be empty at this point.
+    final lastId = _stateIds.last;
 
-//     _buildFromStack(pages);
+    // We only care about whether the last stateId in the stack is pageless or
+    // not since our current implementation does not support overlay of pageless
+    // routes, hence we only show a pageless route if it is the current (last).
+    final lastPresentation = _mapping[lastId];
+    Page<dynamic>? lastPage;
+    if (lastPresentation is PagelessCreator<dynamic, E>) {
+      lastPage = _addPageless(stateId: lastId, creator: lastPresentation);
+    }
 
-//     if (!_stack.contains(state)) {
-//       // Then add new page.
-//       final page = creator.create(
-//         state: state,
-//         widget: creator.widget,
-//       );
-//       pages.add(page);
+    final pageCreators = <PageCreatorWithId<S, E>>[];
+    for (final stateId in _stateIds) {
+      final presentation = _mapping[stateId];
+      if (presentation is PageCreator<dynamic, S, E>) {
+        pageCreators.add(PageCreatorWithId(stateId, presentation));
+      }
+    }
 
-//       _stack.add(state);
-//     }
-//     _shown.add(state.toString());
-//   }
+    for (var i = 0;
+        i < (lastPage == null ? pageCreators.length : pageCreators.length - 1);
+        i++) {
+      final creatorWithId = pageCreators[i];
+      pages.add(
+        creatorWithId.creator.create(
+          name: '${_machine.name}-${creatorWithId.stateId}',
+          widget: creatorWithId.creator.widget,
+        ),
+      );
+    }
 
-//   void _clearStackAndAddSimplePage(
-//     S state,
-//     PageCreator<W, S> creator,
-//     List<Page<W>> pages,
-//   ) {
-//     // _clear2();
-//     _stack.clear();
-//     _shown.clear(); // TODO: do we need this as _shown.remove is auto.
-//     if (!_stack.contains(state)) _stack.add(state);
+    if (lastPage != null) {
+      pages.add(lastPage);
+    }
 
-//     pages.add(_createPage(state, creator));
-//   }
+    return pages;
+  }
 
-//   void _addPagelessRoute(
-//     S state,
-//     PagelessCreatorOld<E, dynamic> creator,
-//     List<Page<W>> pages,
-//   ) {
-//     final stateCreatorPairs = _getPageCreators();
-//     for (var i = 0; i < stateCreatorPairs.length; i++) {
-//       final pageCreator = stateCreatorPairs[i].creator;
-//       pages.add(
-//         _createPage(
-//           stateCreatorPairs[i].state,
-//           pageCreator,
-//           f: i == (stateCreatorPairs.length - 1) &&
-//                   !_shown.contains(state.toString())
-//               ? (BuildContext context) async {
-//                   _lastContext = context;
-//                   _shown.add(state.toString());
-//                   print('>>>>>>>>>> ADDED $state');
-//                   final dynamic result = await creator.show.call(context);
-//                   _shown.remove(state.toString());
-//                   print('>>>>>>>>>> REMOVED $state');
+  void _cleanUpCircle(S from) {
+    final toRemove = <S>[];
+    for (var i = _stateIds.length - 1; i >= 0; i--) {
+      final stateId = _stateIds[i];
+      if (stateId == from) break;
+      toRemove.add(stateId);
+    }
 
-//                   // Only fire if we are still in the state we were created.
-//                   // It avoids unwanted fire() in case we got here by a fire().
-//                   if (_routerGenerator.machine.activeStateId == state) {
-//                     await _routerGenerator.machine
-//                         .fire(creator.event, arg: result);
-//                   }
-//                 }
-//               : null,
-//         ),
-//       );
-//     }
+    for (final id in toRemove) {
+      _stateIds.remove(id);
+    }
+  }
 
-//     if (!_stack.contains(state)) _stack.add(state);
-//   }
+  Page<dynamic> _addPageless({
+    required S stateId,
+    required PagelessCreator<dynamic, E> creator,
+  }) {
+    final machineName = _machine.name;
+    final lastPageCreatorWithId = _getLastPageCreator();
+    final lastPageWithPageless = lastPageCreatorWithId.creator.create(
+      name: '${_machine.name}-${lastPageCreatorWithId.stateId}',
+      widget: Builder(
+        builder: (context) {
+          _log.finest(
+            () => '_addPageless: builder for pageless '
+                '$machineName - ${_machine.activeStateId}'
+                ' into page ${lastPageCreatorWithId.stateId}',
+          );
+          // We schedule execution of pagelessCreator.open for next cycle.
+          Future.delayed(Duration.zero, () async {
+            _log.finest(
+              () => '_addPageless: ${_machine.activeStateId}, $stateId',
+            );
+            if (_machine.activeStateId == stateId) {
+              _log.finest(
+                () => '_addPageless: Opening pageless '
+                    '$machineName - ${_machine.activeStateId}'
+                    ' into page ${lastPageCreatorWithId.stateId}',
+              );
+              _pageless = creator;
+              final dynamic result = await creator.open(context);
+              _log.finest(
+                () => '_addPageless: COMPLETED ${_machine.name},$machineName -'
+                    ' $stateId',
+              );
+              _log.info(() => 'pagelessCreator.open result is $result.');
+              // Only clear _pageless (and optionally fire its event) if it was
+              // still our _pageless. If it was already closed (and nulled) and
+              // optionally already set to a new PagelessCreator (happens when
+              // next state was also mapped to a PagelessCreator) we shall not
+              // act here.
+              // TODO: Create test for this.
+              if (_pageless == creator) {
+                _pageless = null;
+                final event = creator.event;
+                if (event != null) {
+                  await _machine.fire(event, arg: result);
+                }
+              }
+            }
+          });
 
-//   /// Gets back list of StateCreatorPairs of all states in the _stack
-//   /// that are of type PageCreator.
-//   List<StateCreatorPair<PageCreator<W, S>, S>> _getPageCreators() =>
-//       _getCreators<PageCreator<W, S>>();
+          return lastPageCreatorWithId.creator.widget;
+        },
+      ),
+    );
 
-//   // List<StateCreatorPair<PagelessCreator<E, S>, S>> _getPagelessCreators() =>
-//   //     _getCreators<PagelessCreator<E, S>>();
+    return lastPageWithPageless;
+  }
 
-//   /// Gets back list of StateCreatorPairs of all states in the _stack
-//   /// that are of type T.
-//   List<StateCreatorPair<T, S>> _getCreators<T>() => _stack
-//       .where(
-//         (state) => _routerGenerator.mapping[state] is T,
-//       )
-//       .map(
-//         (state) => StateCreatorPair(
-//           state: state,
-//           creator: _routerGenerator.mapping[state] as T,
-//         ),
-//       )
-//       .toList();
+  PageCreatorWithId<S, E> _getLastPageCreator() {
+    for (var i = _stateIds.length - 1; i >= 0; i--) {
+      final stateId = _stateIds[i];
+      final presentation = _mapping[stateId];
+      if (presentation is PageCreator<dynamic, S, E>) {
+        return PageCreatorWithId(stateId, presentation);
+      }
+    }
 
-//   @override
-//   Future<bool> popRoute() {
-//     // TODO: We shall allow exit from the app here by returning false.
-//     _log.info('popRoute');
-//     return SynchronousFuture<bool>(true);
-//   }
+    throw ArgumentError('No PageCreator in _stateIds.'
+        ' Pageless routes can only be added on top of a paged route.');
+  }
+}
 
-//   @override
-//   Future<void> setNewRoutePath(S configuration) async {
-//     // TODO: implement it.
-//   }
+class PageCreatorWithId<S, E> {
+  PageCreatorWithId(this.stateId, this.creator);
 
-//   String _errorMachineNotRunning() =>
-//       'Error: machine "${_routerGenerator.machine.name}" is not running. '
-//       'State machine must be running when presentation is to be rendered '
-//       'based on its state.';
-// }
+  final S stateId;
+  final PageCreator<dynamic, S, E> creator;
+}
+
+class PagelessCreatorWithId<S, E> {
+  PagelessCreatorWithId(this.stateId, this.creator);
+
+  final S stateId;
+  final PagelessCreator<dynamic, E> creator;
+}
