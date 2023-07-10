@@ -5,42 +5,6 @@ import '../hisma_flutter.dart';
 import 'assistance.dart';
 
 /// @startuml
-/// class Creator
-/// class NoUIChange
-/// class PageCreator<T, S>
-/// class OverlayPageCreator<T, S, E> {
-///  E event
-/// }
-/// class PagelessCreator<T, E> {
-///  E event
-/// }
-/// class MaterialPageCreator<S>
-/// class OverlayMaterialPageCreator<S, E> {
-///  E event
-/// }
-/// class PagelessRouteManager<T>
-///
-/// Creator <|-- NoUIChange
-/// Creator <|-- PageCreator
-/// PageCreator <|-- OverlayPageCreator
-/// Creator <|-- PagelessCreator
-/// PageCreator <|-- MaterialPageCreator
-/// OverlayPageCreator <|-- OverlayMaterialPageCreator
-/// PagelessRouteManager -* PagelessCreator
-/// @enduml
-
-/// abstract class PagelessRouteManager<T> {
-///   Future<T?> open(BuildContext context)
-///   void close([T? value])
-/// }
-///
-/// That triggers event:
-/// - Android back button
-/// - Browser back button
-/// - PagelessRoute close
-/// - Overlay page back button
-
-/// @startuml
 /// abstract class Presentation
 /// abstract class Creator<E> {
 ///   E? event
@@ -57,6 +21,10 @@ import 'assistance.dart';
 ///   Future<T?> open(BuildContext context)
 ///   void close([T? value])
 /// }
+/// class DialogCreator<T, E> {
+///   final bool useRootNavigator;
+///   final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
+/// }
 ///
 /// Presentation <|-- NoUIChange
 /// Presentation <|-- Creator
@@ -64,20 +32,15 @@ import 'assistance.dart';
 /// Creator <|-- PagelessCreator
 /// PageCreator <|-- MaterialPageCreator
 /// PageCreator <|-- CupertinoPageCreator
+/// PagelessCreator <|-- DialogCreator
 /// @enduml
-
-/// PagelessRouteManager -* PagelessCreator
-/// abstract class OverlayPageCreator<T, S, E>
-/// class OverlayMaterialPageCreator<S, E>
-/// class OverlayCupertinoPageCreator<S, E>
-/// PageCreator <|-- OverlayPageCreator
-/// OverlayPageCreator <|-- OverlayMaterialPageCreator
-/// OverlayPageCreator <|-- OverlayCupertinoPageCreator
 
 final Logger _log = Logger('creator');
 
+/// Abstract class for representing the state of the state machine.
 abstract class Presentation {}
 
+/// User interface representation of the state of the state machine.
 abstract class Creator<E> extends Presentation {
   Creator({this.event});
   E? event;
@@ -89,16 +52,15 @@ abstract class Creator<E> extends Presentation {
 /// It is a better approach than silent no-update on UI if a state is not
 /// defined in the creator map of [HismaRouterDelegate]. This way we get
 /// assertion failed in case the machine gets to a state that is not defined in
-/// the creator list.
+/// the creator list. Alternative is using an [InternalTransition].
+///
 class NoUIChange extends Presentation {}
 
 //-----------------------------------------------------------------------------
 
-/// Eliminates redundancy of giving stateId twice when defining `creators` maps
-/// of [HismaRouterGenerator]. With the help of this class [HismaRouterDelegate]
-/// will call the [create] function with a given state.
-/// Explicit [create] function allows changing create behavior allowing wrapping
-/// it with code e.g. doing the pageless routes creation.
+/// Eliminates redundancy of giving stateId twice when defining creator maps
+/// (mapping) of [HismaRouterGenerator]. With the help of this class
+/// [HismaRouterDelegate] will call the [create] function with a given state.
 abstract class PageCreator<T, S, E> extends Creator<E> {
   PageCreator({
     required this.widget,
@@ -113,50 +75,6 @@ abstract class PageCreator<T, S, E> extends Creator<E> {
   }) create;
   final bool overlay;
 }
-
-/*
-abstract class OverlayPageCreator<T, S, E> extends PageCreator<T, S> {
-  OverlayPageCreator({
-    required super.widget,
-    required super.create,
-    required this.event,
-  });
-
-  final E event;
-}
-*/
-//-----------------------------------------------------------------------------
-
-class LoggingMaterialPage<W> extends MaterialPage<W> {
-  const LoggingMaterialPage({
-    required super.child,
-    super.key,
-    super.name,
-  });
-
-  static final _log = getLogger('$LoggingMaterialPage');
-
-  @override
-  bool canUpdate(Page<dynamic> other) {
-    // ignore: no_runtimetype_tostring
-    _log.fine('canUpdate: runtimeType=$runtimeType');
-    _log.fine('canUpdate: other.runtimeType=${other.runtimeType}');
-    _log.fine('canUpdate: key=$key');
-    _log.fine('canUpdate: other.key=${other.key}');
-    return other.runtimeType == runtimeType && other.key == key;
-  }
-
-  @override
-  Route<W> createRoute(BuildContext context) {
-    _log.fine('createRoute($context)');
-    return super.createRoute(context);
-  }
-}
-
-// abstract class PagelessRouteManager<T> {
-//   Future<T?> open(BuildContext context);
-//   void close([T? value]);
-// }
 
 abstract class PagelessCreator<T, E> extends Creator<E> {
   PagelessCreator({required super.event});
@@ -224,4 +142,31 @@ class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
     super.overlay,
     super.event,
   }) : super(create: _createPage<T, S>);
+}
+
+/// Only for debugging purposes.
+class LoggingMaterialPage<W> extends MaterialPage<W> {
+  const LoggingMaterialPage({
+    required super.child,
+    super.key,
+    super.name,
+  });
+
+  static final _log = getLogger('$LoggingMaterialPage');
+
+  @override
+  bool canUpdate(Page<dynamic> other) {
+    // ignore: no_runtimetype_tostring
+    _log.fine('canUpdate: runtimeType=$runtimeType');
+    _log.fine('canUpdate: other.runtimeType=${other.runtimeType}');
+    _log.fine('canUpdate: key=$key');
+    _log.fine('canUpdate: other.key=${other.key}');
+    return other.runtimeType == runtimeType && other.key == key;
+  }
+
+  @override
+  Route<W> createRoute(BuildContext context) {
+    _log.fine('createRoute($context)');
+    return super.createRoute(context);
+  }
 }
