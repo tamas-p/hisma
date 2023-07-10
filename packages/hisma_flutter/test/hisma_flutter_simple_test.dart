@@ -98,7 +98,7 @@ Future<void> main() async {
     // (m) => VisualMonitor(m),
     // (m) => ConsoleMonitor(m),
   ];
-  initLogging();
+  // initLogging();
   final simpleMachine = createSimpleMachine();
 
   testWidgets(
