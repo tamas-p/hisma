@@ -1,5 +1,9 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
+import 'package:flutter/widgets.dart';
 import 'package:hisma/hisma.dart';
+
+import 'hisma_router_delegate.dart';
 
 class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     with ChangeNotifier {
@@ -24,10 +28,40 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         transitions: sm.transitions,
       );
 
+  HismaRouterDelegate<S, E>? _delegate;
+  // ignore: avoid_setters_without_getters
+  set delegate(HismaRouterDelegate<S, E> delegate) {
+    _delegate = delegate;
+  }
+
+  BuildContext? currentContext;
+
   @override
-  Future<void> fire(E eventId, {dynamic arg, bool external = true}) async {
+  Future<void> fire(
+    E eventId, {
+    dynamic arg,
+    BuildContext? context,
+    bool external = true,
+  }) async {
+    currentContext = context ?? currentContext;
     await super.fire(eventId, arg: arg, external: external);
-    notifyListeners();
+
+    final ctx = currentContext;
+    if (_delegate != null && activeStateId != null && ctx != null) {
+      if (_delegate?.isPageless(activeStateId as S) ?? false) {
+        unawaited(
+          _delegate?.openPageless(
+            stateId: activeStateId as S,
+            context: ctx,
+          ),
+        );
+      } else {
+        notifyListeners();
+      }
+    } else {
+      notifyListeners();
+    }
+    currentContext = null;
   }
 
   @override

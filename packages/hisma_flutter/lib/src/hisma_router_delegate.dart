@@ -13,6 +13,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   HismaRouterDelegate(this._machine, this._mapping) {
     // Machine changes will result notifying listeners of this router delegate.
     _machine.addListener(notifyListeners);
+    _machine.delegate = this;
   }
 
   final _log = getLogger('$HismaRouterDelegate');
@@ -36,7 +37,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   final List<S> _stateIds = [];
 
   /// There can be only one pageless route shown at a time in the application.
-  static PagelessCreator<dynamic, dynamic>? _pageless;
+  static PagelessCreator<dynamic, dynamic>? pageless;
 
   // S? _previousStateId;
 
@@ -51,9 +52,9 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     // final sameAsBefore = activeStateId == _previousStateId;
     // _previousStateId = activeStateId;
 
-    if (_pageless != null) {
-      _pageless?.close();
-      _pageless = null;
+    if (pageless != null) {
+      pageless?.close();
+      pageless = null;
     }
 
     // There are two prerequisites to process based on activeStateId:
@@ -159,6 +160,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
       // Processing and filtering out all pages that represent pageless routes.
       pages: _processPageless(),
       onPopPage: (route, dynamic result) {
+        // TODO: revise, since in case of BottomSheet we got here too.
         // When using hisma_flutter exclusively to manage routing this callback
         // shall be only invoked when user presses the framework generated
         // back button in an AppBar which is only happens when the page is an
@@ -175,10 +177,10 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
             });
           }
         } else {
-          throw AssertionError(
-            'It must be here an PageCreator with overlay=true,'
-            ' but it was $creator',
-          );
+          // throw AssertionError(
+          //   'It must be here an PageCreator with overlay=true,'
+          //   ' but it was $creator',
+          // );
         }
 
         if (route.didPop(result)) return true;
@@ -272,29 +274,14 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
             if (_machine.activeStateId == stateId) {
               _log.finest(
                 () => '_addPageless: Opening pageless '
-                    '$machineName - ${_machine.activeStateId}'
+                    '${_machine.name} - ${_machine.activeStateId}'
                     ' into page ${lastPageCreatorWithId.stateId}',
               );
-              _pageless = creator;
-              final dynamic result = await creator.open(context);
-              _log.finest(
-                () => '_addPageless: COMPLETED ${_machine.name},$machineName -'
-                    ' $stateId',
+
+              await openPageless(
+                stateId: stateId,
+                context: context,
               );
-              _log.info(() => 'pagelessCreator.open result is $result.');
-              // Only clear _pageless (and optionally fire its event) if it was
-              // still our _pageless. If it was already closed (and nulled) and
-              // optionally already set to a new PagelessCreator (happens when
-              // next state was also mapped to a PagelessCreator) we shall not
-              // act here.
-              // TODO: Create test for this.
-              if (_pageless == creator) {
-                _pageless = null;
-                final event = creator.event;
-                if (event != null) {
-                  await _machine.fire(event, arg: result);
-                }
-              }
             }
           });
 
@@ -304,6 +291,53 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     );
 
     return lastPageWithPageless;
+  }
+
+  bool isPageless(S stateId) {
+    final creator = _mapping[stateId];
+    return creator is PagelessCreator<dynamic, E>;
+  }
+
+  // TODO: This code is only here as the delegate is able to do
+  // open pageless routes when no context is provided in the fire.
+  // It can be considered to lifted out from here if that is not needed.
+  Future<void> openPageless({
+    required S stateId,
+    required BuildContext context,
+  }) async {
+    final creator = _mapping[stateId];
+    if (creator is! PagelessCreator<dynamic, E>) {
+      throw ArgumentError('Not pageless but $creator');
+    }
+
+    _log.finest(
+      () => '_addPageless: Opening pageless '
+          '${_machine.name} - ${_machine.activeStateId}',
+    );
+    pageless = creator;
+    final dynamic result = await creator.open(context);
+    _log.finest(
+      () => '_addPageless: COMPLETED ${_machine.name}, - $stateId',
+    );
+    _log.info(() => 'pagelessCreator.open result is $result.');
+    // Only clear _pageless (and optionally fire its event) if it was
+    // still our _pageless. If it was already closed (and nulled) and
+    // optionally already set to a new PagelessCreator (happens when
+    // next state was also mapped to a PagelessCreator) we shall not
+    // act here.
+    // TODO: Create test for this.
+    if (pageless == creator) {
+      pageless = null;
+      final event = creator.event;
+      if (event != null) {
+        await _machine.fire(
+          event,
+          arg: result,
+          // context: context,
+        );
+        _log.fine('Fire completed: $event arg: $result');
+      }
+    }
   }
 
   PageCreatorWithId<S, E> _getLastPageCreator() {

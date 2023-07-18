@@ -5,6 +5,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import 'states_events_transitions.dart';
 import 'ui.dart';
+import 'utility.dart';
 
 StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
   required String name,
@@ -34,13 +35,20 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
         ),
         S.d: h.State(
           etm: {
-            E.jumpBack: [T.toC],
-            E.jump: [T.toE],
+            E.back: [T.toC],
+            E.forward: [T.toE],
           },
         ),
         S.e: h.State(
           etm: {
             E.back: [T.toD],
+            E.forward: [T.toF],
+          },
+        ),
+        S.f: h.State(
+          etm: {
+            E.back: [T.toE],
+            E.forward: [T.toA],
           },
         ),
       },
@@ -58,8 +66,10 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
             description: 'Evaluate result.',
             action: (machine, dynamic arg) async {
               // print('Received: $arg');
-              if (arg != null && arg != E.self) {
-                await machine.fire(arg);
+              if (arg is E) {
+                if (arg != E.self) {
+                  await machine.fire(arg);
+                }
               }
             },
           ),
@@ -81,20 +91,60 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
           event: E.self,
           stateId: S.b,
         ),
-        S.c: DatePickerPagelessRouteManager(
-          firstDate: DateTime(1990),
-          initialDate: DateTime(2000),
-          currentDate: DateTime.now(),
-          lastDate: DateTime(2030),
-          useRootNavigator: useRootNavigator,
+        S.c: DialogCreator(
+          show: (dc, context) => showDatePicker(
+            context: context,
+            initialDate: DateTime(2000),
+            firstDate: DateTime(1990),
+            lastDate: DateTime(2030),
+          ),
           event: E.forward,
+          useRootNavigator: useRootNavigator,
         ),
-        S.d: SnackbarPagelessRouteManager(
-          text: 'Hello, this is a snackbar.',
-          event: E.jumpBack,
+        S.d: SnackBarCreator(
+          snackBar: SnackBar(
+            content: const Text('This is a SnackBar.'),
+            // backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+            action: SnackBarAction(
+              label: 'dismiss',
+              onPressed: () {},
+            ),
+          ),
+          event: E.back,
         ),
         S.e: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.e)),
-        S.f: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.f)),
+        S.f: DialogCreator(
+          show: (dc, context) async {
+            final ret = Scaffold.of(context).showBottomSheet<void>(
+              (BuildContext context) {
+                return Container(
+                  height: 200,
+                  color: Colors.amber,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text('BottomSheet'),
+                        ElevatedButton(
+                          child: const Text('Close BottomSheet'),
+                          onPressed: () {
+                            // Navigator.pop(context);
+                            dc.close();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+            return ret.closed;
+          },
+          event: E.back,
+          useRootNavigator: useRootNavigator,
+        ),
       },
     );
 
@@ -124,7 +174,7 @@ class PagelessApp extends StatelessWidget {
 }
 
 Future<void> main() async {
-  // initLogging();
+  initLogging();
   h.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),

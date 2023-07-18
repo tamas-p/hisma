@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 
 import '../hisma_flutter.dart';
 import 'assistance.dart';
+import 'hisma_router_delegate.dart';
 
 /// @startuml
 /// abstract class Presentation
@@ -118,6 +119,66 @@ class DialogCreator<T, E> extends PagelessCreator<T, E> {
   }
 }
 
+class SnackBarCreator<E> extends PagelessCreator<SnackBarClosedReason, E> {
+  SnackBarCreator({
+    required this.snackBar,
+    required super.event,
+  });
+
+  SnackBar snackBar;
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? ret;
+
+  @override
+  Future<SnackBarClosedReason?> open(BuildContext context) {
+    ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    final res =
+        ret != null ? ret!.closed : Future<SnackBarClosedReason?>.value();
+    return res;
+  }
+
+  @override
+  void close([SnackBarClosedReason? value]) {
+    ret?.close();
+  }
+}
+
+// class BottomSheetCreator<T, E> extends PagelessCreator<T, E> {
+//   BottomSheetCreator({
+//     required this.useRootNavigator,
+//     required this.show,
+//     required super.event,
+//   });
+
+//   final bool useRootNavigator;
+//   final PersistentBottomSheetController<T> Function(
+//     BottomSheetCreator<T, E> dc,
+//     BuildContext context,
+//   ) show;
+
+//   @override
+//   Future<T?> open(BuildContext context) {
+//     final ret = show.call(this, context);
+//   }
+
+//   @override
+//   void close([SnackBarClosedReason? value]) {
+//     // TODO: implement close
+//   }
+// }
+
+class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
+  // TODO: should the event be required here if overlay = true?
+  // YES, it should be mandatory, otherwise when Flutter pops when
+  // user clicks on AppBar BackButton the ui changes, but state remain
+  // resulting inconsistent UI.
+  MaterialPageCreator({
+    required super.widget,
+    super.overlay,
+    super.event,
+  }) : super(create: _createPage<T, S>);
+}
+
 Page<T> _createPage<T, S>({
   required Widget widget,
   required String name,
@@ -130,18 +191,6 @@ Page<T> _createPage<T, S>({
     key: ValueKey(name),
     name: name,
   );
-}
-
-class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
-  // TODO: should the event be required here if overlay = true?
-  // YES, it should be mandatory, otherwise when Flutter pops when
-  // user clicks on AppBar BackButton the ui changes, but state remain
-  // resulting inconsistent UI.
-  MaterialPageCreator({
-    required super.widget,
-    super.overlay,
-    super.event,
-  }) : super(create: _createPage<T, S>);
 }
 
 /// Only for debugging purposes.

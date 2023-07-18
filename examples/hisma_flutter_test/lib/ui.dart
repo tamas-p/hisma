@@ -16,35 +16,48 @@ class Screen extends StatelessWidget {
   Screen(this.machine, this.stateId, {super.key});
   final Logger _log = Logger('$Screen');
 
-  final hisma.StateMachine<S, E, T> machine;
+  final StateMachineWithChangeNotifier<S, E, T> machine;
   final S stateId;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(getTitle(machine, stateId)),
-      ),
-      body: _createButtonsFromState(machine.states[stateId]),
+    return Builder(
+      builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(getTitle(machine, stateId)),
+          ),
+          body: _createButtonsFromState(machine.states[stateId], context),
+        );
+      },
     );
   }
 
   Widget _createButtonsFromState(
     hisma.BaseState<dynamic, dynamic, dynamic>? state,
+    BuildContext context,
   ) {
     final buttons = <Widget>[];
     if (state is! hisma.State) throw ArgumentError();
     for (final eventId in state.etm.keys) {
       assert(machine == state.machine);
       buttons.add(
-        TextButton(
-          onPressed: () async {
-            _log.info(
-              () => 'Screen: state.machine.fire($eventId) - ${machine.name}',
+        Builder(
+          builder: (context) {
+            return TextButton(
+              onPressed: () async {
+                _log.info(
+                  () =>
+                      'Screen: state.machine.fire($eventId) - ${machine.name}',
+                );
+                await machine.fire(
+                  eventId as E,
+                  context: context,
+                );
+              },
+              child: Text(getButtonTitle(machine, eventId)),
             );
-            await state.machine.fire(eventId);
           },
-          child: Text(getButtonTitle(machine, eventId)),
         ),
       );
     }
@@ -100,6 +113,7 @@ class TestDialogCreator extends DialogCreator<E, E> {
   }
 }
 
+/*
 class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
   DatePickerPagelessRouteManager({
     required this.firstDate,
@@ -139,7 +153,7 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
     }
   }
 }
-
+*/
 class SnackbarPagelessRouteManager
     extends PagelessCreator<SnackBarClosedReason, E> {
   SnackbarPagelessRouteManager({
@@ -163,6 +177,12 @@ class SnackbarPagelessRouteManager
     );
 
     ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    // final ScaffoldFeatureController<dynamic, void> ret2 =
+    //     Scaffold.of(context).showBottomSheet<void>((context) {
+    //   return Container();
+    // });
+
     return ret!.closed;
   }
 
