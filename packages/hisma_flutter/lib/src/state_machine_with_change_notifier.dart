@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:hisma/hisma.dart';
 
-import 'hisma_router_delegate.dart';
+import 'hisma_pageless_handler.dart';
 
 class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     with ChangeNotifier {
@@ -28,13 +28,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         transitions: sm.transitions,
       );
 
-  HismaRouterDelegate<S, E>? _delegate;
-  // ignore: avoid_setters_without_getters
-  set delegate(HismaRouterDelegate<S, E> delegate) {
-    _delegate = delegate;
-  }
+  HismaPagelessHandler<S, E>? pagelessHandler;
 
-  BuildContext? currentContext;
+  BuildContext? _context;
 
   @override
   Future<void> fire(
@@ -43,25 +39,33 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     BuildContext? context,
     bool external = true,
   }) async {
-    currentContext = context ?? currentContext;
+    // If fire comes from UI it will include the context and we will set
+    // save the context until the completion of this operation when we set it
+    // to null.
+    // TODO: What if there is a independent fire in-between? What if it comes
+    // from the UI with context?
+    _context = context ?? _context;
     await super.fire(eventId, arg: arg, external: external);
 
-    final ctx = currentContext;
-    if (_delegate != null && activeStateId != null && ctx != null) {
-      if (_delegate?.isPageless(activeStateId as S) ?? false) {
-        unawaited(
-          _delegate?.openPageless(
-            stateId: activeStateId as S,
-            context: ctx,
-          ),
-        );
-      } else {
-        notifyListeners();
-      }
+    // These are only to ally type propagation.
+    final ctx = _context;
+    final id = activeStateId;
+    final handler = pagelessHandler;
+
+    if (handler != null &&
+        id != null &&
+        handler.isPageless(id) &&
+        ctx != null) {
+      unawaited(
+        handler.openPageless(
+          stateId: id,
+          context: ctx,
+        ),
+      );
     } else {
       notifyListeners();
     }
-    currentContext = null;
+    _context = null;
   }
 
   @override
@@ -82,12 +86,12 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   // try building Navigator.pages and that is not needed as pages shall remain
   // to allow transition from old to new state.
   //
-  @override
-  Future<void> stop({required dynamic arg}) async {
-    // TODO: Why required arg?
-    await super.stop(arg: arg);
-    notifyListeners();
-  }
+  // @override
+  // Future<void> stop({required dynamic arg}) async {
+  //   // TODO: Why required arg?
+  //   await super.stop(arg: arg);
+  //   // notifyListeners();
+  // }
 
   @override
   StateMachineWithChangeNotifier<S1, E1, T1> find<S1, E1, T1>(String name) {
