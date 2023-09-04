@@ -93,17 +93,17 @@ class DialogCreator<T, E> extends PagelessCreator<T, E> {
 
   final bool useRootNavigator;
   final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
-  BuildContext? _context;
+  BuildContext? context;
 
   @override
   Future<T?> open(BuildContext context) {
-    _context = context;
+    this.context = context;
     return show(this, context);
   }
 
   @override
   void close([T? value]) {
-    final context = _context;
+    final context = this.context;
     if (context != null) {
       // TODO: When Flutter version > 3.7 use the context.mounted instead.
       try {
@@ -119,7 +119,7 @@ class DialogCreator<T, E> extends PagelessCreator<T, E> {
   }
 }
 
-class SnackBarCreator<E> extends PagelessCreator<SnackBarClosedReason, E> {
+class SnackBarCreator<E> extends PagelessCreator<CtxArg, E> {
   SnackBarCreator({
     required this.snackBar,
     required super.event,
@@ -130,15 +130,16 @@ class SnackBarCreator<E> extends PagelessCreator<SnackBarClosedReason, E> {
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? ret;
 
   @override
-  Future<SnackBarClosedReason?> open(BuildContext context) {
+  Future<CtxArg?> open(BuildContext context) async {
     ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
     final res =
         ret != null ? ret!.closed : Future<SnackBarClosedReason?>.value();
-    return res;
+    final r = await res;
+    return CtxArg(context, r);
   }
 
   @override
-  void close([SnackBarClosedReason? value]) {
+  void close([CtxArg? value]) {
     ret?.close();
   }
 }

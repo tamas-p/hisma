@@ -17,7 +17,11 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     required this.pagelessHandler,
   }) {
     // Machine changes will result notifying listeners of this router delegate.
-    machine.addListener(notifyListeners);
+    machine.addListener(debugNotifyListeners);
+  }
+
+  void debugNotifyListeners() {
+    notifyListeners();
   }
 
   final _log = getLogger('$HismaRouterDelegate');
@@ -36,7 +40,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   /// screen including pageless routes as well. It will be translated to a
   /// list of Pages using the creator (from _mapping) of the corresponding
   /// PageCreator for pages and might a pageless Route (from _pageless) by
-  /// giving a Builder with a Future ti create the pageless route (see
+  /// giving a Builder with a Future to create the pageless route (see
   /// _addPageless). This approach - creating the pages during build and not
   /// storing the pages themselves - is required making sure that only the last
   /// page will include the Builder with Future for pageless routes as mentioned
@@ -211,7 +215,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     final lastPresentation = mapping[lastId];
     Page<dynamic>? lastPage;
     if (lastPresentation is PagelessCreator<dynamic, E>) {
-      lastPage = _addPageless(stateId: lastId, creator: lastPresentation);
+      // lastPage = _addPageless(stateId: lastId, creator: lastPresentation);
     }
 
     final pageCreators = <PageCreatorWithId<S, E>>[];

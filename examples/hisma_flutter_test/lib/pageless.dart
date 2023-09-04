@@ -66,9 +66,13 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
             description: 'Evaluate result.',
             action: (machine, dynamic arg) async {
               // print('Received: $arg');
-              if (arg is E) {
-                if (arg != E.self) {
-                  await machine.fire(arg);
+              if (arg is CtxArg && arg.arg is E) {
+                if (arg.arg != E.self) {
+                  await machine.fire(
+                    arg.arg,
+                    arg: arg.context,
+                    external: false,
+                  );
                 }
               }
             },
@@ -91,13 +95,17 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
           event: E.self,
           stateId: S.b,
         ),
-        S.c: DialogCreator(
-          show: (dc, context) => showDatePicker(
-            context: context,
-            initialDate: DateTime(2000),
-            firstDate: DateTime(1990),
-            lastDate: DateTime(2030),
-          ),
+        S.c: DialogCreator<CtxArg, E>(
+          show: (dc, context) async {
+            final dp = await showDatePicker(
+              context: context,
+              initialDate: DateTime(2000),
+              firstDate: DateTime(1990),
+              lastDate: DateTime(2030),
+            );
+
+            return CtxArg(dc.context!, dp);
+          },
           event: E.forward,
           useRootNavigator: useRootNavigator,
         ),
@@ -107,11 +115,13 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
             // backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
             action: SnackBarAction(
-              label: 'dismiss',
-              onPressed: () {},
+              label: 'Undo',
+              onPressed: () {
+                print('UNDO');
+              },
             ),
           ),
-          event: E.back,
+          event: E.forward,
         ),
         S.e: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.e)),
         S.f: DialogCreator(
@@ -168,13 +178,13 @@ class PagelessApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routerDelegate: _routerGenerator.routerDelegate,
-      routeInformationParser: _routerGenerator.routeInformationParser,
+      // routeInformationParser: _routerGenerator.routeInformationParser,
     );
   }
 }
 
 Future<void> main() async {
-  initLogging();
+  // initLogging();
   h.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),

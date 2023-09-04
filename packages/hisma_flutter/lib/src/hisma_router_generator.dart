@@ -20,7 +20,7 @@ class HismaRouterGenerator<S, E> {
   late final RouterDelegate<S> _routerDelegate = HismaRouterDelegate<S, E>(
     machine: machine,
     mapping: mapping,
-    pagelessHandler: pagelessHandler,
+    pagelessHandler: _pagelessHandler,
   );
 
   late final HismaPagelessHandler<S, E> _pagelessHandler =
@@ -30,5 +30,5 @@ class HismaRouterGenerator<S, E> {
       _routeInformationParser;
   RouterDelegate<S> get routerDelegate => _routerDelegate;
 
-  HismaPagelessHandler<S, E> get pagelessHandler => _pagelessHandler;
+  // HismaPagelessHandler<S, E> get pagelessHandler => _pagelessHandler;
 }

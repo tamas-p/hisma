@@ -52,7 +52,7 @@ class Screen extends StatelessWidget {
                 );
                 await machine.fire(
                   eventId as E,
-                  context: context,
+                  arg: context,
                 );
               },
               child: Text(getButtonTitle(machine, eventId)),
@@ -66,17 +66,17 @@ class Screen extends StatelessWidget {
   }
 }
 
-class TestDialogCreator extends DialogCreator<E, E> {
+class TestDialogCreator extends DialogCreator<CtxArg, E> {
   TestDialogCreator({
     required super.event,
     required super.useRootNavigator,
     required this.machine,
     required this.stateId,
   }) : super(
-          show: (dc, context) => showDialog<E>(
+          show: (dc, context) => showDialog(
             useRootNavigator: useRootNavigator,
             context: context,
-            builder: (context) {
+            builder: (_) {
               return AlertDialog(
                 title: Text(getTitle(machine, stateId)),
                 content: SingleChildScrollView(
@@ -84,7 +84,8 @@ class TestDialogCreator extends DialogCreator<E, E> {
                     children: const <Widget>[Text('text')],
                   ),
                 ),
-                actions: (dc as TestDialogCreator).createButtonsFromState(),
+                actions:
+                    (dc as TestDialogCreator).createButtonsFromState(context),
               );
             },
           ),
@@ -93,7 +94,7 @@ class TestDialogCreator extends DialogCreator<E, E> {
   final hisma.StateMachine<S, E, T> machine;
   final S stateId;
 
-  List<Widget> createButtonsFromState() {
+  List<Widget> createButtonsFromState(BuildContext context) {
     final buttons = <Widget>[];
     final state = machine.states[stateId];
     if (state is! hisma.State<E, T, S>) throw ArgumentError();
@@ -102,7 +103,7 @@ class TestDialogCreator extends DialogCreator<E, E> {
       buttons.add(
         TextButton(
           onPressed: () {
-            close(eventId);
+            close(CtxArg(context, eventId));
           },
           child: Text(getButtonTitle(machine, eventId)),
         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
 import 'assistance.dart';
@@ -23,8 +24,8 @@ class HismaPagelessHandler<S, E> {
 
   static void close() {
     if (shown != null) {
-      shown?.close();
-      shown = null;
+      // shown?.close();
+      // shown = null;
     }
   }
 
@@ -52,6 +53,15 @@ class HismaPagelessHandler<S, E> {
       () => '_addPageless: COMPLETED ${_machine.name}, - $stateId',
     );
     _log.info(() => 'pagelessCreator.open result is $result.');
+
+    // print('openPageless: Starting waiting...');
+    // await Future.delayed(const Duration(seconds: 6), () {
+    //   print('openPageless: DONE waiting.');
+    // });
+    // print('openPageless: DONE.');
+
+    // SchedulerBinding.instance.addPostFrameCallback((_) {});
+
     // Only clear _pageless (and optionally fire its event) if it was
     // still our _pageless. If it was already closed (and nulled) and
     // optionally already set to a new PagelessCreator (happens when
@@ -64,7 +74,7 @@ class HismaPagelessHandler<S, E> {
       if (event != null) {
         await _machine.fire(
           event,
-          arg: result,
+          arg: result ?? context,
           // context: context,
         );
         _log.fine('Fire completed: $event arg: $result');

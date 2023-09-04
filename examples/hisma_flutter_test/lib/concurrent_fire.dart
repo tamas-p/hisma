@@ -88,7 +88,7 @@ class DoubleScreen extends StatelessWidget {
                 builder: (context) {
                   return FloatingActionButton(
                     onPressed: () {
-                      machine.fire(E.forward, context: context);
+                      machine.fire(E.forward, arg: context);
                     },
                     child: const Text('Sub1'),
                   );
@@ -105,7 +105,7 @@ class DoubleScreen extends StatelessWidget {
                 builder: (context) {
                   return FloatingActionButton(
                     onPressed: () {
-                      machine.fire(E.jump, context: context);
+                      machine.fire(E.jump, arg: context);
                     },
                     child: const Text('Sub2'),
                   );

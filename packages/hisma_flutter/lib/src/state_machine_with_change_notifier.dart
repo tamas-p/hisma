@@ -30,42 +30,49 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
 
   HismaPagelessHandler<S, E>? pagelessHandler;
 
-  BuildContext? _context;
-
   @override
   Future<void> fire(
     E eventId, {
     dynamic arg,
-    BuildContext? context,
     bool external = true,
   }) async {
-    // If fire comes from UI it will include the context and we will set
-    // save the context until the completion of this operation when we set it
-    // to null.
-    // TODO: What if there is a independent fire in-between? What if it comes
-    // from the UI with context?
-    _context = context ?? _context;
     await super.fire(eventId, arg: arg, external: external);
+    if (!external) return;
 
-    // These are only to ally type propagation.
-    final ctx = _context;
-    final id = activeStateId;
+    final context = arg is BuildContext
+        ? arg
+        : arg is CtxArg
+            ? arg.context
+            : null;
+
+    print('CONTEXT: $context, ${context.hashCode}');
+
+    // These are only to allow type propagation.
     final handler = pagelessHandler;
+    final id = activeStateId;
+
+    if (handler != null && id != null && handler.isPageless(id)) {
+      assert(context != null, 'BuildContext was not parsed in arg: arg=$arg');
+    }
 
     if (handler != null &&
         id != null &&
         handler.isPageless(id) &&
-        ctx != null) {
+        context != null) {
       unawaited(
         handler.openPageless(
           stateId: id,
-          context: ctx,
+          context: context,
         ),
       );
+      // print('fire: Starting waiting...');
+      // await Future.delayed(const Duration(seconds: 6), () {
+      //   print('fire: DONE waiting.');
+      // });
+      // print('fire: Done.');
     } else {
       notifyListeners();
     }
-    _context = null;
   }
 
   @override
@@ -101,4 +108,10 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     }
     return machine;
   }
+}
+
+class CtxArg {
+  CtxArg(this.context, [this.arg]);
+  BuildContext context;
+  dynamic arg;
 }
