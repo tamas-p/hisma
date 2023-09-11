@@ -26,7 +26,9 @@ class StateMachine<S, E, T> {
     this.events = const [],
     this.history,
     this.data,
+    bool? strict,
   }) {
+    _strict = strict ?? StateMachine.strict;
     _setIt();
   }
 
@@ -125,7 +127,7 @@ class StateMachine<S, E, T> {
       () =>
           'start: machine:$name, state:$activeStateId, entryPointId:$entryPointId, arg:$arg, historyFlowDown:$historyFlowDown',
     );
-    assert(_activeStateId == null, 'Machine ($name) is already started.');
+    cAssert(_activeStateId == null, 'Machine ($name) is already started.');
     if (_activeStateId != null) return;
 
     if (historyFlowDown) {
@@ -230,7 +232,7 @@ Changed: $changed
   /// It returns true if state change occurred, false otherwise.
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
-    assert(_activeStateId != null, 'Machine has not been started.');
+    cAssert(_activeStateId != null, 'Machine has not been started.');
     if (_activeStateId == null) return false;
 
     final transitionWithId = await _getTransitionByEvent(eventId, arg);
@@ -540,7 +542,7 @@ Changed: $changed
     if (state is! State<E, T, S>) return null;
 
     final transitionIds = state.etm[eventId];
-    assert(
+    cAssert(
       transitionIds != null,
       'Could not find transition ID list by "$eventId" for state "$activeStateId"',
     );
@@ -650,6 +652,16 @@ Changed: $changed
       await notifyRegion?.call(StateChangeNotification());
     } else if (notification is GetName) {
       notification.name = name;
+    }
+  }
+
+  static bool strict = true;
+  late bool _strict;
+  // ignore: avoid_positional_boolean_parameters
+  void cAssert(bool assertResult, String message) {
+    if (!assertResult) {
+      _log.fine(message);
+      if (_strict) assert(assertResult, message);
     }
   }
 }
