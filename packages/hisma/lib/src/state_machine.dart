@@ -16,6 +16,8 @@ typedef MonitorGenerator = Monitor Function(
 /// [S] State identifier type for the machine.
 /// [E] State transition identifier type.
 /// [T] Transition identifier type.
+/// [strict] enables or disables strict mode. See [StateMachine.strict] for more
+/// details.
 class StateMachine<S, E, T> {
   // Map storing all state objects indexed by their state ids.
   StateMachine({
@@ -655,6 +657,17 @@ Changed: $changed
     }
   }
 
+  /// StateMachine operations can throw [AssertionError] exceptions as a result
+  /// of failed assertions if we either
+  /// * try starting an already started machine,
+  /// * fire an event on an inactive machine or
+  /// * firing an event that is not handled in the active state.
+  ///
+  /// We can enable or disable this behavior both at class level
+  /// ([strict] class variable), impacting all subsequent
+  /// StateMachine object creations or at object level in the
+  /// constructor ([StateMachine.new]), impacting only the StateMachine object
+  /// being created.
   static bool strict = true;
   late bool _strict;
   // ignore: avoid_positional_boolean_parameters
