@@ -1,3 +1,7 @@
+## 0.1.2
+
+ - **FEAT**: Introduced assert configuration per [#17](https://github.com/tamas-p/hisma/issues/17).
+
 ## 0.1.1+9
 
  - Update a dependency to the latest release.
