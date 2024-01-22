@@ -617,9 +617,17 @@ class MachineConverter {
         final transition = machine.transitions[transitionId];
         assert(
           transition != null,
-          'There must be a transition defined for transition id $transitionId.',
+          "In machine named '${machine.name}' at state '$stateId' for "
+          "event '$eventId' the transition referenced by '$transitionId' is "
+          'not defined.',
         );
         if (transition == null) continue;
+        assert(
+          transition is Transition || transition is InternalTransition,
+          "In machine named '${machine.name}' at state '$stateId' for "
+          "event '$eventId' the transition referenced by '$transitionId' "
+          'is neither Transition nor InternalTransition: $transition',
+        );
 
         if (transition is Transition<dynamic>) {
           _writeExternalTransitions(
@@ -629,9 +637,6 @@ class MachineConverter {
             transitionId: transitionId,
             transition: transition,
           );
-        } else if (transition is InternalTransition) {
-        } else {
-          assert(false, '$transition is neither Transition not TransitionInt.');
         }
       }
     });

@@ -53,7 +53,8 @@ class VisualMonitor implements Monitor {
     while (true) {
       try {
         await _tryConnectCord();
-      } catch (_) {
+      } on Exception catch (e) {
+        _log.severe('Could not connect to visma: $e');
         await Future<void>.delayed(const Duration(seconds: retryDelay));
         continue;
       }

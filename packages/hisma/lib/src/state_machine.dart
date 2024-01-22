@@ -498,7 +498,7 @@ Changed: $changed
     _log.fine(() => 'fire arg: $arg');
     try {
       await state.onEntry?.action.call(this, arg);
-    } catch (e) {
+    } on Exception catch (e) {
       _log.severe(() => 'Exception during onEntry: $e');
     }
     await _enterRegions(
