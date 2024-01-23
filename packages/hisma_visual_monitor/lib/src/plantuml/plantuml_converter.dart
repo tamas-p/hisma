@@ -74,6 +74,7 @@ skinparam {
   StateEndColor ${_theme.lineColor}
 }    
 
+set separator none
 hide empty description
 ''',
     );
