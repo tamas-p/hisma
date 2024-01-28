@@ -186,7 +186,7 @@ class VisualMonitor implements Monitor {
           'You must add "events" argument to StateMachine '
           '"${stateMachine.name}" constructor.',
         );
-        final em = {for (var i in stateMachine.events) i.toString(): i};
+        final em = {for (final i in stateMachine.events) i.toString(): i};
         _log.fine('em=$em');
         final event = em[fireMessageDTO.event];
         assert(

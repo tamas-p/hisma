@@ -81,7 +81,7 @@ final sm = StateMachine<S, E, T>(
                                   T.toOff: Transition(to: S.off),
                                 },
                               ),
-                            )
+                            ),
                           ],
                         ),
                       },
@@ -90,7 +90,7 @@ final sm = StateMachine<S, E, T>(
                         T.toOff: Transition(to: S.off),
                       },
                     ),
-                  )
+                  ),
                 ],
               ),
             },
@@ -99,7 +99,7 @@ final sm = StateMachine<S, E, T>(
               T.toOff: Transition(to: S.off),
             },
           ),
-        )
+        ),
       ],
     ),
   },

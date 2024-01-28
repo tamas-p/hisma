@@ -43,5 +43,5 @@ class ToggleStateMachine
         );
 
   Future<void> toggle() => fire(ToggleEvent.toggle);
-  bool get on => activeStateId == ToggleTransition.on;
+  bool get on => activeStateId! == ToggleState.on;
 }

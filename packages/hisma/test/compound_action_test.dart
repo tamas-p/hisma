@@ -219,7 +219,7 @@ Future<void> main() async {
         l0d += 20 - 20 - 20,
         l1d += -20 - 20,
         l2d += -20 - 20,
-        l3d += -20 - 20
+        l3d += -20 - 20,
       ]);
 
       await m.find<S, E, T>(l3).fire(E.next, arg: 100);

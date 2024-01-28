@@ -43,7 +43,7 @@ StateMachineWithChangeNotifier<SAM, EAM, TAM> createAuthMachine() =>
             EAM.signOut: [TAM.toSignedOut],
           },
           regions: [
-            Region<SAM, EAM, TAM, SSiM>(machine: createSignedInMachine())
+            Region<SAM, EAM, TAM, SSiM>(machine: createSignedInMachine()),
           ],
         ),
       },

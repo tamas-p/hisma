@@ -39,7 +39,7 @@ StateMachineWithChangeNotifier<SSiM, ESiM, TSiM> createSignedInMachine() =>
             ESiM.back: [TSiM.toMain],
           },
           regions: [
-            Region<SSiM, ESiM, TSiM, SPM>(machine: createProfileMachine())
+            Region<SSiM, ESiM, TSiM, SPM>(machine: createProfileMachine()),
           ],
         ),
       },
