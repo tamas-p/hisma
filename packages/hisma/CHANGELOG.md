@@ -1,3 +1,7 @@
+## 0.3.2+1
+
+ - **FIX**: Catch only Exceptions.
+
 ## 0.3.2
 
  - **REFACTOR**: Removed half baked copyWith methods.

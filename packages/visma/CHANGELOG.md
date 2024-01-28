@@ -1,3 +1,8 @@
+## 0.1.2+1
+
+ - **FIX**: Broken rendering since PlantUML 1.2023.2.
+ - **FIX**: Catch only Exceptions.
+
 ## 0.1.2
 
  - **FEAT**: Introduced assert configuration per [#17](https://github.com/tamas-p/hisma/issues/17).

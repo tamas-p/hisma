@@ -2,15 +2,15 @@ name: hisma_extra
 description: Extra classes on top of the Hisma hierarchical state machine implementation to simplify its usage.
 homepage: https://github.com/tamas-p/hisma
 repository: https://github.com/tamas-p/hisma/tree/master/packages/hisma_extra
-version: 0.1.1+8
+version: 0.1.1+9
 
 environment:
   sdk: '>=2.18.5 <3.0.0'
 
 dependencies:
-  hisma: ^0.3.2
+  hisma: ^0.3.2+1
 dev_dependencies:  
-  hisma_console_monitor: ^0.2.0+3
-  hisma_visual_monitor: ^0.3.1+1
+  hisma_console_monitor: ^0.2.0+4
+  hisma_visual_monitor: ^0.3.1+2
   lint: ^2.0.1
   test: ^1.16.0
