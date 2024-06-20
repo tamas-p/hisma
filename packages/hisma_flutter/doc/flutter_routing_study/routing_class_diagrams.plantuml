@@ -59,6 +59,62 @@ Page  --->  Route : create
 
 @enduml
 
+@startuml routing_object_diagram
+object "Widget\nStatefulWidget\n**MaterialApp** : myApp" as myApp
+object "State<MaterialApp>\n**_MaterialAppState** : myApp" as myAppState
+
+object "Widget\nStatefulWidget\n**WidgetApp** :" as wapp
+object "State<WidgetsApp>\n**_WidgetsAppState** :" as wast
+
+object "State<Router<T>>\n**_RouterState**<Object> :" as topRState {
+    RestorationMixin
+}
+
+object "Widget\nStatefulWidget\n**Router**<Object> :" as topr
+object "Listenable\nValueListenable<RouteInformation>\n**RouterDelegate<T>** :" as rootRd
+object "Listenable\nValueListenable<RouteInformation>\nRouteInformationProvider\n**DefaultRouteInformationProvider** :" as rootRipr
+object "RouteInformationParser<T>\n**RootInformationParser**<RootAppState> :" as rootRipa
+
+object "Widget\nStatefulWidget\n**Navigator** :" as rootN
+object "State<Navigator>\n**NavigatorState** :" as rootNState
+object "Iterable<_RouteEntry>\n**_History** :" as rootHistory {
+    ChangeNotifier
+}
+
+object "Widget\nStatefulWidget\n**Overlay** :" as rootOverlay
+object "State<Overlay>\n**OverlayState** :" as rootOverlayState
+
+object "Widget\nRenderObjectWidget\nMultiChildRenderObjectWidget\n**_Theatre** :" as rootTheatre
+object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : ignore" as overlayToIgnore
+object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : screenA" as screenA
+
+myApp - "widget" myAppState : "\t\t\t"
+myAppState .. wapp : build ...
+
+wapp - "widget" wast : "\t\t\t"
+
+
+topr - "widget" topRState : "\t\t\t"
+wast .. topr : build ...
+' topr . wast : build
+' topr *-- rootRd
+' topr *-- rootRipr
+' topr *-- rootRipa
+
+rootRd -* topr
+rootRipr -* topr
+rootRipa -* topr
+
+topRState .. rootN : build ...
+rootN - "widget" rootNState : "\t\t\t"
+rootNState .. rootOverlay : build ...
+rootNState *- rootHistory : _history
+
+rootOverlay - "widget" rootOverlayState : "\t\t\t"
+rootOverlayState .. rootTheatre : build
+
+@enduml
+
 @startuml
 class Router<T>
 class StatefulWidget
@@ -75,6 +131,46 @@ Widget <|-- StatefulWidget
 StatefulWidget <|-- Router
 
 Listenable <|-- RouterDelegate
+@enduml
+
+@startuml
+
+!$userDefined=LightYellow
+
+class "Navigator" as n #$userDefined
+class "NavigatorState" as ns
+class "_History" as h
+class "List<Page<T>>" as l #$userDefined
+class "MaterialPage" as mp #$userDefined {
+    +Route<T> createRoute(BuildContext context)
+}
+class "Widget" as w #$userDefined
+class "List<_RootEntry>" as lre
+class "_RouteEntry" as re {
+    +bool pageBased
+}
+class "_PageBasedMaterialPageRoute<dynamic>" as r
+class "List<OverlayEntry>" as loe
+class "OverlayEntry" as oe
+
+n "pages" *- l : "\t"
+l *- "*" mp : "\t"
+mp "child" *- w : "\t"
+
+n "_state" -- "widget" ns
+
+' iterable <|-- h
+' cn <.. h : <<width>>
+ns "_history" *-- h
+h "_value" *-- lre
+lre *- "*" re
+re *-- r
+
+mp <-- "_settings" r
+r "_overlayEntries" *-- loe
+loe *- "*" oe
+
+oe -- r
 
 @enduml
 

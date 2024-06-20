@@ -23,7 +23,7 @@ end note
 
 @startuml Rebuild
 title Rebuild
-!includesub %filename()!Common
+!includesub sequence_diagrams.plantuml!Common
 
 Framework -> RouterDelegate ++ : build
 RouterDelegate -> Navigator ++ : construct
@@ -39,7 +39,7 @@ RouterDelegate --> Framework --
 
 @startuml Update URL in browser
 title Update URL in browser
-!includesub %filename()!Common
+!includesub sequence_diagrams.plantuml!Common
 
 activate Router
 Router -> RouterDelegate ++ : currentConfiguration()
@@ -58,7 +58,7 @@ Framework --> Router --
 
 @startuml User click triggered state change
 title User click triggered state change
-!includesub %filename()!Common
+!includesub sequence_diagrams.plantuml!Common
 
 User ->> Framework ++ : click
 Framework -> Screen ++ : onPressed()
@@ -79,7 +79,7 @@ ref over Framework, State : rebuild
 
 @startuml User enters app URL
 title User enters app URL
-!includesub %filename()!Common
+!includesub sequence_diagrams.plantuml!Common
 
 User ->> Framework ++ : enter URL
 Framework -> Router ++ : didPushRouteInformation
@@ -105,7 +105,7 @@ ref over Framework, State : rebuild
 
 @startuml User clicks Android back button
 title User clicks Android back button
-!includesub %filename()!Common
+!includesub sequence_diagrams.plantuml!Common
 
 User ->> Framework ++ : click back button
 Framework --> BackButtonDispatcher ++ : didPopRoute
@@ -134,7 +134,7 @@ ref over Framework, State : rebuild
 
 @startuml User clicks AppBar back button
 title User clicks AppBar back button
-!includesub %filename()!Common
+!includesub sequence_diagrams.plantuml!Common
 
 User ->> Framework ++ : click back button
 Framework --> BackButton ++ : onPressed

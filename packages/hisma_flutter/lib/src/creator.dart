@@ -5,36 +5,38 @@ import '../hisma_flutter.dart';
 import 'assistance.dart';
 import 'hisma_router_delegate.dart';
 
-/// @startuml
-/// abstract class Presentation
-/// abstract class Creator<E> {
-///   E? event
-/// }
-/// class NoUIChange
-/// abstract class PageCreator<T, S, E> {
-///   Widget widget
-///   bool overlay
-///   Page<T> Function({required Widget widget, required S state,}) create
-/// }
-/// class MaterialPageCreator<T, S, E>
-/// class CupertinoPageCreator<T, S, E>
-/// abstract class PagelessCreator<T, E> {
-///   Future<T?> open(BuildContext context)
-///   void close([T? value])
-/// }
-/// class DialogCreator<T, E> {
-///   final bool useRootNavigator;
-///   final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
-/// }
-///
-/// Presentation <|-- NoUIChange
-/// Presentation <|-- Creator
-/// Creator <|-- PageCreator
-/// Creator <|-- PagelessCreator
-/// PageCreator <|-- MaterialPageCreator
-/// PageCreator <|-- CupertinoPageCreator
-/// PagelessCreator <|-- DialogCreator
-/// @enduml
+/*
+@startuml
+abstract class Presentation
+abstract class Creator<E> {
+  E? event
+}
+class NoUIChange
+abstract class PageCreator<T, S, E> {
+  Widget widget
+  bool overlay
+  Page<T> Function({required Widget widget, required S state,}) create
+}
+class MaterialPageCreator<T, S, E>
+class CupertinoPageCreator<T, S, E>
+abstract class PagelessCreator<T, E> {
+  Future<T?> open(BuildContext context)
+  void close([T? value])
+}
+class DialogCreator<T, E> {
+  final bool useRootNavigator;
+  final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
+}
+
+Presentation <|-- NoUIChange
+Presentation <|-- Creator
+Creator <|-- PageCreator
+Creator <|-- PagelessCreator
+PageCreator <|-- MaterialPageCreator
+PageCreator <|-- CupertinoPageCreator
+PagelessCreator <|-- DialogCreator
+@enduml
+*/
 
 final Logger _log = Logger('creator');
 
