@@ -60,58 +60,126 @@ Page  --->  Route : create
 @enduml
 
 @startuml routing_object_diagram
-object "Widget\nStatefulWidget\n**MaterialApp** : myApp" as myApp
-object "State<MaterialApp>\n**_MaterialAppState** : myApp" as myAppState
+!$widget = Pink
+!$widgetLink = Red
 
-object "Widget\nStatefulWidget\n**WidgetApp** :" as wapp
-object "State<WidgetsApp>\n**_WidgetsAppState** :" as wast
+!$router = LightBlue
+!$delegate = LightSeaGreen
+!$navigator = LightSkyBlue
 
-object "State<Router<T>>\n**_RouterState**<Object> :" as topRState {
+!$element = LightBlue
+
+!$state = LightYellow
+
+!$stateLink = Orange
+
+!$renderObject = LightGreen
+
+!$renderLink = Green
+
+object "Widget\nStatefulWidget\n**MaterialApp** : myApp" as myApp #$widget
+object "State<MaterialApp>\n**_MaterialAppState** : myApp" as myAppState #$state
+
+object "Widget\nStatefulWidget\n**WidgetApp** :" as wapp #$widget
+object "State<WidgetsApp>\n**_WidgetsAppState** :" as wast #$state
+
+object "State<Router<T>>\n**_RouterState**<Object> :" as topRState #$state {
     RestorationMixin
 }
 
-object "Widget\nStatefulWidget\n**Router**<Object> :" as topr
-object "Listenable\nValueListenable<RouteInformation>\n**RouterDelegate<T>** :" as rootRd
-object "Listenable\nValueListenable<RouteInformation>\nRouteInformationProvider\n**DefaultRouteInformationProvider** :" as rootRipr
-object "RouteInformationParser<T>\n**RootInformationParser**<RootAppState> :" as rootRipa
+object "Widget\nStatefulWidget\n**Router**<Object> :" as topr #$router
+object "Listenable\nValueListenable<RouteInformation>\n**RouterDelegate<T>** :" as rootRd #$delegate
+object "Listenable\nValueListenable<RouteInformation>\nRouteInformationProvider\n**DefaultRouteInformationProvider** :" as rootRipr #$delegate
+object "RouteInformationParser<T>\n**RootInformationParser**<RootAppState> :" as rootRipa #$delegate
 
-object "Widget\nStatefulWidget\n**Navigator** :" as rootN
-object "State<Navigator>\n**NavigatorState** :" as rootNState
+object "Widget\nStatefulWidget\n**Navigator** :" as rootN #$navigator
+object "**List**<**Page**<dynamic>> :" as rootPages
+object "RouteSettings\nPage<T>\nMaterialPage<T> : " as screenAPage
+object "_RoutePlaceholder\nRoute<T>\nOverlayRoute<T>\nTransitionRoute<T>\nModalRoute<T>\nPageRoute<T>\n_PageBasedMaterialPageRoute<T> : " as screenARoute {
+    MaterialRouteTransitionMixin<T>
+}
+object "RouteSettings\nPage<T>\nMaterialPage<T> : " as childRouterPage
+object "_RoutePlaceholder\nRoute<T>\nOverlayRoute<T>\nTransitionRoute<T>\nModalRoute<T>\nPageRoute<T>\n_PageBasedMaterialPageRoute<T> : " as childRouterRoute {
+    MaterialRouteTransitionMixin<T>
+}
+
 object "Iterable<_RouteEntry>\n**_History** :" as rootHistory {
     ChangeNotifier
 }
 
-object "Widget\nStatefulWidget\n**Overlay** :" as rootOverlay
-object "State<Overlay>\n**OverlayState** :" as rootOverlayState
+object "RouteTransitionRecord\n_RouteEntry :" as screenARouteEntry
+object "RouteTransitionRecord\n_RouteEntry :" as childRouterRouteEntry
 
-object "Widget\nRenderObjectWidget\nMultiChildRenderObjectWidget\n**_Theatre** :" as rootTheatre
-object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : ignore" as overlayToIgnore
-object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : screenA" as screenA
+object "State<Navigator>\n**NavigatorState** :" as rootNState #$state
+
+object "Widget\nStatefulWidget\n**Overlay** :" as rootOverlay #$widget
+object "State<Overlay>\n**OverlayState** :" as rootOverlayState #$state
+
+object "Widget\nRenderObjectWidget\nMultiChildRenderObjectWidget\n**_Theatre** :" as rootTheatre #$widget
+
+object "**List**<_OverlayEntryWidget> :" as rootChildren
+object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : screenA" as OEScreenA #$widget
+object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : ignore" as OEToIgnore #$widget
+object "Widget\nStatefulWidget\n**_OverlayEntryWidget** : router" as OEChildRouter #$widget
+
+object "Widget\nStatelessWidget\n**ScreenA** :" as screenA #$widget
+object "Widget\nRenderObjectWidget\nSingleChildRenderObjectWidget\n**IgnorePointer** :" as ignore #$widget
+object "Widget\nStatefulWidget\n**Router**<Object> :" as childRouter #$router
+
+object "Listenable\nValueListenable<RouteInformation>\n**RouterDelegate<T>** :" as childRd #$delegate
+
+object "State<Router<T>>\n**_RouterState**<Object> :" as childRState #$state {
+    RestorationMixin
+}
+
+object "Widget\nStatefulWidget\n**Navigator** :" as childN #$navigator
 
 myApp - "widget" myAppState : "\t\t\t"
-myAppState .. wapp : build ...
+myAppState ..> wapp : build ...
 
 wapp - "widget" wast : "\t\t\t"
 
 
 topr - "widget" topRState : "\t\t\t"
-wast .. topr : build ...
-' topr . wast : build
-' topr *-- rootRd
-' topr *-- rootRipr
-' topr *-- rootRipa
+wast ..> topr : build ...
 
-rootRd -* topr
-rootRipr -* topr
-rootRipa -* topr
+topr *--- rootRd
+topr *-- rootRipr
+topr *--- rootRipa
 
-topRState .. rootN : build ...
+topRState ..> rootN : build ...
+rootN "pages" *-- rootPages 
+rootPages *-- screenAPage
+screenAPage "createRoute" ..> screenARoute
+rootPages *-- childRouterPage
+childRouterPage "createRoute" ..> childRouterRoute
+
 rootN - "widget" rootNState : "\t\t\t"
-rootNState .. rootOverlay : build ...
-rootNState *- rootHistory : _history
+rootNState "_history" *-- rootHistory : "\t\t"
+rootNState .> rootOverlay : build ...
+rootHistory *-- screenARouteEntry : "\t\t"
+rootHistory *-- childRouterRouteEntry : "\t\t"
+
+screenARouteEntry *-- screenARoute
+childRouterRouteEntry *-- childRouterRoute
 
 rootOverlay - "widget" rootOverlayState : "\t\t\t"
-rootOverlayState .. rootTheatre : build
+rootOverlayState ..> rootTheatre : build
+
+rootTheatre "children" *- rootChildren : "\t\t"
+
+rootChildren *-- OEScreenA
+rootChildren *-- OEToIgnore
+rootChildren *-- OEChildRouter
+
+OEScreenA ..> screenA
+OEToIgnore ..> ignore
+OEChildRouter ..> childRouter
+
+childRouter *-- childRd
+childRouter - "widget" childRState : "\t\t"
+
+childRState ..> childN : "build ..."
 
 @enduml
 
