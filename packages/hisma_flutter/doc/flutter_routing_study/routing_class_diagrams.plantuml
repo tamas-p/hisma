@@ -267,8 +267,8 @@ childOverlayElement "_state" -- childOverlayState #$stateLink
 }
 package RenderObjects {
     !$RB="RenderObject\nRenderBox"
-    object "$RB\nRenderFlex :" as renderFlex #$renderObject
-    object "$RB\nRenderFlex :" as childRenderFlex #$renderObject
+    object "$RB\n_RenderTheatre :" as renderFlex #$renderObject
+    object "$RB\n_RenderTheatre :" as childRenderFlex #$renderObject
 
     renderFlex ------- "_parent" childRenderFlex
 }
