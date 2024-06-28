@@ -60,7 +60,8 @@ Page  --->  Route : create
 @enduml
 
 @startuml routing_object_diagram
-
+' We hide all incl. <<highlighted>> stereotype
+hide stereotype
 skinparam object<<highlighted>> {
     borderThickness 4
     ' borderColor Fuchsia
