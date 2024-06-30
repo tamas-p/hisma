@@ -297,8 +297,8 @@ childTheatreRenderObjectElement "_renderObject" -> childRenderFlex #$renderLink
 ' states to widgets (build)
 '-------------------------------------------------------------------------------
 
-myAppState "build >>>\t" ..> wapp
-wast "build >>>\t" ..> topr
+myAppState "build >>>\nScrollConfiguration\nHeroControllerScope\nFocus\n_FocusInheritedScope\nSemantics\n" ..> wapp
+wast "build >>>\nRootRestorationScope\nUnmanagedRestorationScope\nRestorationScope\nUnmanagedRestorationScope\nSharedAppData\n_SharedAppModel\nNotificationListener<NavigationNotification>\nShortcuts\nFocus\n_FocusInheritedScope\nSemantics\nDefaultTextEditingShortcuts\nShortcuts\nFocus\n_FocusInheritedScope\nSemantics\nActions\n_ActionsScope\nFocus\n_FocusInheritedScope\nTapRegionSurface\nShortcutRegistrar\n_ShortcutRegistrarScope\nShortcuts\nFocus\n_FocusInheritedScope\nSemantics\nLocalizations\nSemantics\n_LocalizationsScope-[GlobalKey#52ad4]\nDirectionality\nTitle\nCheckedModeBanner\nBanner\nCustomPaint\nValueListenableBuilder<bool>\nDefaultTextStyle\nBuilder\nScaffoldMessenger\n_ScaffoldMessengerScope\nDefaultSelectionStyle\nAnimatedTheme\nTheme\n_InheritedTheme\nCupertinoTheme\n_InheritedCupertinoTheme\nIconTheme\nIconTheme\nDefaultSelectionStyle\n" ..> topr
 topRState "build >>>\t" ..> rootN
 rootNState "build >>>\t" ..> rootOverlay
 rootOverlayState "build >>>\t" ..> rootTheatre
