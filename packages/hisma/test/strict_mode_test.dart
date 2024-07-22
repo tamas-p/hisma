@@ -51,7 +51,10 @@ Future<void> testFireOnInactive({
       // assertion or exception to happen.
       await m.fire(E.forward);
     }
-    expect(logOutput.toString(), contains('Machine has not been started.'));
+    expect(
+      logOutput.toString(),
+      contains('Machine "${m.name}" has not been started.'),
+    );
   });
 }
 
