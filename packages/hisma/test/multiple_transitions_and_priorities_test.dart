@@ -25,17 +25,17 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
         ),
         S.b: State(
           etm: {
-            E.back: [T.toA]
+            E.back: [T.toA],
           },
         ),
         S.c: State(
           etm: {
-            E.back: [T.toA]
+            E.back: [T.toA],
           },
         ),
         S.d: State(
           etm: {
-            E.back: [T.toA]
+            E.back: [T.toA],
           },
         ),
       },

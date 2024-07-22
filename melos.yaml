@@ -60,3 +60,19 @@ scripts:
     description: Generate code coverage report.
     select-package:
       dir-exists: coverage
+
+  upgrade:
+    run: melos run upgrade:dart && melos run upgrade:flutter
+    description: Run all Dart & Flutter package upgrades.
+
+  upgrade:dart:
+    run: melos exec -c 1 "dart pub upgrade"
+    description: Run Dart pub upgrade a specific package in this monorepo.
+    select-package:
+      flutter: false
+
+  upgrade:flutter:
+    run: melos exec -c 1 "flutter pub upgrade"
+    description: Run Flutter pub upgrade for a specific package in this monorepo.
+    select-package:
+      flutter: true

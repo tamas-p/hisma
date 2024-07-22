@@ -60,14 +60,14 @@ final appMachineProvider = Provider((ref) {
         etm: {
           E.backward: [T.toC],
           E.forward: [T.toE],
-          E.jump: [T.toB1]
+          E.jump: [T.toB1],
         },
       ),
       S.e: State(
         etm: {
           E.backward: [T.toD],
           E.jump: [T.toB],
-          E.forward: [T.toF]
+          E.forward: [T.toF],
         },
       ),
       S.f: State(

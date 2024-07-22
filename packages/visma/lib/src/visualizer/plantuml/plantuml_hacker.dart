@@ -40,7 +40,7 @@ class Converter {
       _log.fine('<<<<<<<<<<<<<<<<<<<<<<<');
       result = _hack(svg);
       _log.fine(result);
-    } catch (e) {
+    } on Exception catch (e) {
       _log.severe(e);
       result = getSvgText(
         'Model conversion error:',

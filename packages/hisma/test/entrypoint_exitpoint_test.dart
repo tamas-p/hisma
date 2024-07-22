@@ -82,14 +82,14 @@ void main() {
 
     await mt.check(l0, E.next, [
       S.b,
-      [S.a]
+      [S.a],
     ]);
 
     await mt.check(l1, E.next, [
       S.b,
       [
         S.b,
-        [S.a]
+        [S.a],
       ]
     ]);
 
@@ -99,7 +99,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.a]
+          [S.a],
         ]
       ]
     ]);
@@ -110,7 +110,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.b]
+          [S.b],
         ]
       ]
     ]);
@@ -121,7 +121,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.c]
+          [S.c],
         ]
       ]
     ]);
@@ -132,7 +132,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.a]
+          [S.a],
         ]
       ]
     ]);
@@ -143,7 +143,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.b]
+          [S.b],
         ]
       ]
     ]);
@@ -154,7 +154,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.c]
+          [S.c],
         ]
       ]
     ]);
@@ -163,7 +163,7 @@ void main() {
       S.b,
       [
         S.b,
-        [S.b]
+        [S.b],
       ]
     ]);
 
@@ -171,18 +171,18 @@ void main() {
       S.b,
       [
         S.b,
-        [S.c]
+        [S.c],
       ]
     ]);
 
     await mt.check(l2, E.done, [
       S.b,
-      [S.b]
+      [S.b],
     ]);
 
     await mt.check(l1, E.next, [
       S.b,
-      [S.c]
+      [S.c],
     ]);
 
     await mt.check(l1, E.done, [S.b]);
@@ -195,7 +195,7 @@ void main() {
       S.b,
       [
         S.b,
-        [S.a]
+        [S.a],
       ]
     ]);
 
@@ -205,7 +205,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.b]
+          [S.b],
         ]
       ]
     ]);
@@ -221,7 +221,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.b]
+          [S.b],
         ]
       ]
     ]);
@@ -243,7 +243,7 @@ void main() {
     await mt.check(l0, E.next, [S.a]);
     await mt.check(l0, E.next, [
       S.b,
-      [S.a]
+      [S.a],
     ]);
 
     // Let's use ep2 at l1 level
@@ -253,7 +253,7 @@ void main() {
         S.b,
         [
           S.b,
-          [S.b]
+          [S.b],
         ]
       ]
     ]);

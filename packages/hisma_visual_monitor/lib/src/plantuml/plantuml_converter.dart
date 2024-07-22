@@ -74,6 +74,7 @@ skinparam {
   StateEndColor ${_theme.lineColor}
 }    
 
+set separator none
 hide empty description
 ''',
     );
@@ -617,9 +618,17 @@ class MachineConverter {
         final transition = machine.transitions[transitionId];
         assert(
           transition != null,
-          'There must be a transition defined for transition id $transitionId.',
+          "In machine named '${machine.name}' at state '$stateId' for "
+          "event '$eventId' the transition referenced by '$transitionId' is "
+          'not defined.',
         );
         if (transition == null) continue;
+        assert(
+          transition is Transition || transition is InternalTransition,
+          "In machine named '${machine.name}' at state '$stateId' for "
+          "event '$eventId' the transition referenced by '$transitionId' "
+          'is neither Transition nor InternalTransition: $transition',
+        );
 
         if (transition is Transition<dynamic>) {
           _writeExternalTransitions(
@@ -629,9 +638,6 @@ class MachineConverter {
             transitionId: transitionId,
             transition: transition,
           );
-        } else if (transition is InternalTransition) {
-        } else {
-          assert(false, '$transition is neither Transition not TransitionInt.');
         }
       }
     });
@@ -944,7 +950,7 @@ final sm = StateMachine<St, Ev, Tr>(
         Region<St, Ev, Tr, SS1>(
           machine: ssm1,
           entryConnectors: {
-            Trigger(source: St.s1, event: Ev.e1, transition: Tr.t1): SS1.en1
+            Trigger(source: St.s1, event: Ev.e1, transition: Tr.t1): SS1.en1,
           },
           exitConnectors: {
             SS1.ex1: Ev.e2,
@@ -983,7 +989,7 @@ final ssm1 = StateMachine<SS1, SE1, ST1>(
     SS1.en1: EntryPoint([ST1.t2]),
     SS1.s1: State(
       etm: {
-        SE1.e1: [ST1.t1]
+        SE1.e1: [ST1.t1],
       },
     ),
     SS1.s2: State(
@@ -1017,7 +1023,7 @@ final ssm2 = StateMachine<SS2, SE2, ST2>(
     SS2.en1: EntryPoint([ST2.t2]),
     SS2.s1: State(
       etm: {
-        SE2.e1: [ST2.t1]
+        SE2.e1: [ST2.t1],
       },
     ),
     SS2.s2: State(
@@ -1048,16 +1054,6 @@ class TransitionWithId {
   Transition<dynamic> transition;
 }
 
-Future<void> main() async {
-  // await sm.start();
-  // ignore: avoid_print
-  print(PlantUMLConverter(stateMachine: sm, expandedItems: {}).diagram);
-  // ignore: avoid_print
-  print(SS1.en1);
-  await Future<void>.delayed(const Duration(seconds: 1));
-  await sm.start();
-}
-
 String _getMachineName(String name) => 'MACHINE:$name';
 String _getStateName(String name) => 'STATE:$name';
 
@@ -1066,3 +1062,14 @@ String _getPrefixed({
   required String id,
 }) =>
     '$prefix.$id';
+
+// Commented main out to avoid unreachable_from_main lint.
+// Future<void> main() async {
+//   // await sm.start();
+//   // ignore: avoid_print
+//   print(PlantUMLConverter(stateMachine: sm, expandedItems: {}).diagram);
+//   // ignore: avoid_print
+//   print(SS1.en1);
+//   await Future<void>.delayed(const Duration(seconds: 1));
+//   await sm.start();
+// }

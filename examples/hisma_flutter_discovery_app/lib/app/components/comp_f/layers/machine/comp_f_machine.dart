@@ -28,7 +28,7 @@ final compFMachineProvider = Provider(
       ),
       S.fc: State(
         etm: {
-          E.backward: [T.toB]
+          E.backward: [T.toB],
         },
       ),
     },

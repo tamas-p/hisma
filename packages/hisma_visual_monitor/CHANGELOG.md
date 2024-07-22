@@ -1,3 +1,13 @@
+## 0.3.1+2
+
+ - **FIX**: Broken rendering since PlantUML 1.2023.2.
+ - **FIX**: Catch only Exceptions.
+ - **DOCS**: Note for MacOS app builders.
+
+## 0.3.1+1
+
+ - Update a dependency to the latest release.
+
 ## 0.3.1
 
  - **FIX**: Changed onError type to Action.

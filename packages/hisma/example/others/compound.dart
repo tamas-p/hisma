@@ -30,7 +30,7 @@ final sm = StateMachine<S, E, T>(
         Region<S, E, T, SS>(
           machine: ssm,
           entryConnectors: {
-            Trigger(source: S.s1, event: E.e1, transition: T.t1): SS.en1
+            Trigger(source: S.s1, event: E.e1, transition: T.t1): SS.en1,
           },
           exitConnectors: {
             SS.ex1: E.e2,
@@ -70,7 +70,7 @@ final ssm = StateMachine<SS, SE, ST>(
     ),
     SS.s2: State(
       etm: {
-        SE.e2: [ST.t2]
+        SE.e2: [ST.t2],
       },
     ),
     SS.ex1: ExitPoint(),

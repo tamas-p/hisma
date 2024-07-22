@@ -52,7 +52,9 @@ Manual installation of visma itself is simple, but getting its prerequisites ins
 #### Prerequisites
 
 As stated in the first paragraph, visma is using PlantUML, hence PlantUML is a prerequisite for visma. See https://plantuml.com/starting for PlantUML installation details.
-Prefer using PlantUML [V1.2022.1](https://sourceforge.net/projects/plantuml/files/1.2022.1/) as described in [pumli](https://github.com/tamas-p/pumli) (visma internally uses the pumli package to render state machine diagrams).
+
+> **Important**
+> As PlantUML can change their API anytime prefer using the well tested PlantUML [V1.2022.1](https://sourceforge.net/projects/plantuml/files/1.2022.1/) as described in [pumli](https://github.com/tamas-p/pumli) (visma internally uses the pumli package to render state machine diagrams).
 
 #### Installing visma
 

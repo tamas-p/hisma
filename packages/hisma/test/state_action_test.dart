@@ -21,13 +21,15 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           onEntry: Action(
             description: 'double',
             action: (machine, arg) {
-              machine.data = (machine.data as int) * 2;
+              final data = machine.data;
+              if (data is int) machine.data = data * 2;
             },
           ),
           onExit: Action(
             description: 'half',
             action: (machine, arg) {
-              machine.data = (machine.data as int) ~/ 2;
+              final data = machine.data;
+              if (data is int) machine.data = data ~/ 2;
             },
           ),
         ),
@@ -45,7 +47,8 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           onAction: Action(
             description: 'decrease',
             action: (machine, arg) {
-              machine.data = (machine.data as int) - 2;
+              final data = machine.data;
+              if (data is int) machine.data = data - 2;
             },
           ),
         ),
@@ -54,7 +57,8 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           onAction: Action(
             description: 'increase',
             action: (machine, arg) {
-              machine.data = (machine.data as int) + 2;
+              final data = machine.data;
+              if (data is int) machine.data = data + 2;
             },
           ),
         ),
@@ -62,7 +66,8 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           onAction: Action(
             description: 'Triple it.',
             action: (machine, arg) {
-              machine.data = (machine.data as int) * 3;
+              final data = machine.data;
+              if (data is int) machine.data = data * 3;
             },
           ),
         ),
@@ -70,7 +75,8 @@ StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
           onAction: Action(
             description: 'Trisect it.',
             action: (machine, arg) {
-              machine.data = (machine.data as int) ~/ 3;
+              final data = machine.data;
+              if (data is int) machine.data = data ~/ 3;
             },
           ),
         ),

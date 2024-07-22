@@ -31,10 +31,10 @@ class VisualizationServer {
     );
     await for (final request in server) {
       try {
-        // We are not await here as we want request to be
-        // served asynchronously.
+        // TODO: Do we really need to await serving a request or we could
+        // process them parallel.
         await _serve(request);
-      } catch (err) {
+      } on Exception catch (err) {
         _log.warning('Caught error: $err');
         _setBadRequest(request);
       }
@@ -100,7 +100,7 @@ class VisualizationServer {
       ws = await WebSocketTransformer.upgrade(request);
       _log.fine('Cord upgrade completed');
       await _stateMachineManager.addClient(ws);
-    } catch (err) {
+    } on Exception catch (err) {
       _log.warning('Could not upgrade to WebSocket: $err');
       _setBadRequest(request);
     }
@@ -137,7 +137,7 @@ class VisualizationServer {
         uniqueSmIdPath: argument,
         websocket: websocket,
       );
-    } catch (err) {
+    } on Exception catch (err) {
       _log.warning('Caught error: $err');
       _setBadRequest(request);
     }
@@ -150,7 +150,7 @@ class VisualizationServer {
     try {
       final websocket = await WebSocketTransformer.upgrade(request);
       _stateMachineManager.addOverviewListener(websocket: websocket);
-    } catch (err) {
+    } on Exception catch (err) {
       _log.warning('Caught error: $err');
       _setBadRequest(request);
     }
