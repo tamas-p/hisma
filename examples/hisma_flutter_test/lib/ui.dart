@@ -4,15 +4,16 @@ import 'package:hisma/hisma.dart' as hisma;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:logging/logging.dart';
 
-import 'states_events_transitions.dart';
+// import 'states_events_transitions.dart';
 
-String getTitle(hisma.StateMachine<S, E, T> machine, S? stateId) =>
+String getTitle<S, E, T>(hisma.StateMachine<S, E, T> machine, S? stateId) =>
     '${machine.name} - $stateId';
 
-String getButtonTitle(hisma.StateMachine<S, E, T> machine, dynamic event) =>
+String getButtonTitle<S, E, T>(
+        hisma.StateMachine<S, E, T> machine, dynamic event) =>
     '$event';
 
-class Screen extends StatelessWidget {
+class Screen<S, E, T> extends StatelessWidget {
   Screen(this.machine, this.stateId, {super.key});
   final Logger _log = Logger('$Screen');
 
@@ -52,7 +53,7 @@ class Screen extends StatelessWidget {
                 );
                 await machine.fire(
                   eventId as E,
-                  arg: context,
+                  // arg: context,
                 );
               },
               child: Text(getButtonTitle(machine, eventId)),
@@ -66,7 +67,7 @@ class Screen extends StatelessWidget {
   }
 }
 
-class TestDialogCreator extends DialogCreator<CtxArg, E> {
+class TestDialogCreator<S, E, T> extends DialogCreator<CtxArg, E> {
   TestDialogCreator({
     required super.event,
     required super.useRootNavigator,
@@ -155,7 +156,7 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
   }
 }
 */
-class SnackbarPagelessRouteManager
+class SnackbarPagelessRouteManager<S, E, T>
     extends PagelessCreator<SnackBarClosedReason, E> {
   SnackbarPagelessRouteManager({
     required this.text,

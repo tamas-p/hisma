@@ -13,23 +13,6 @@ import 'aux/aux.dart';
 const _loggerName = 'FlutterTest';
 final Logger _log = Logger(_loggerName);
 
-Future<void> action(
-  StateMachineWithChangeNotifier<S, E, T> machine,
-  WidgetTester tester,
-  E event, {
-  bool fire = false,
-}) async {
-  if (fire) {
-    await machine.fire(event);
-    // We need this extra pumpAndSettle as pageless routes are created in a
-    // subsequent frame by Future.delayed.
-    await tester.pumpAndSettle();
-  } else {
-    await tester.tap(find.text('$event').last);
-  }
-  await tester.pumpAndSettle();
-}
-
 Future<void> checkAll(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
