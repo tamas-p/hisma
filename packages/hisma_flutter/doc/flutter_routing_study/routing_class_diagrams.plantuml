@@ -298,10 +298,10 @@ childTheatreRenderObjectElement "_renderObject" -> childRenderFlex #$renderLink
 '-------------------------------------------------------------------------------
 
 myAppState "build >>>\nScrollConfiguration\nHeroControllerScope\nFocus\n_FocusInheritedScope\nSemantics\n" ..> wapp
-wast "build >>>\nRootRestorationScope\nUnmanagedRestorationScope\nRestorationScope\nUnmanagedRestorationScope\nSharedAppData\n_SharedAppModel\nNotificationListener<NavigationNotification>\nShortcuts\nFocus\n_FocusInheritedScope\nSemantics\nDefaultTextEditingShortcuts\nShortcuts\nFocus\n_FocusInheritedScope\nSemantics\nActions\n_ActionsScope\nFocus\n_FocusInheritedScope\nTapRegionSurface\nShortcutRegistrar\n_ShortcutRegistrarScope\nShortcuts\nFocus\n_FocusInheritedScope\nSemantics\nLocalizations\nSemantics\n_LocalizationsScope-[GlobalKey#52ad4]\nDirectionality\nTitle\nCheckedModeBanner\nBanner\nCustomPaint\nValueListenableBuilder<bool>\nDefaultTextStyle\nBuilder\nScaffoldMessenger\n_ScaffoldMessengerScope\nDefaultSelectionStyle\nAnimatedTheme\nTheme\n_InheritedTheme\nCupertinoTheme\n_InheritedCupertinoTheme\nIconTheme\nIconTheme\nDefaultSelectionStyle\n" ..> topr
-topRState "build >>>\t" ..> rootN
-rootNState "build >>>\t" ..> rootOverlay
-rootOverlayState "build >>>\t" ..> rootTheatre
+wast "build >>>\nRootRestorationScope; UnmanagedRestorationScope\nRestorationScope; UnmanagedRestorationScope; nSharedAppData\n_SharedAppModel\nNotificationListener<NavigationNotification>; Shortcuts\nFocus\n_FocusInheritedScope; Semantics; DefaultTextEditingShortcuts\nShortcuts\nFocus\n_FocusInheritedScope; Semantics; Actions\n_ActionsScope; Focus\n_FocusInheritedScope\nTapRegionSurface; ShortcutRegistrar; _ShortcutRegistrarScope\nShortcuts\nFocus; _FocusInheritedScope; Semantics\nLocalizations; Semantics\n_LocalizationsScope-[GlobalKey#52ad4]\nDirectionality; Title; CheckedModeBanner\nBanner\nCustomPaint; ValueListenableBuilder<bool>\nDefaultTextStyle; Builder; ScaffoldMessenger\n_ScaffoldMessengerScope\nDefaultSelectionStyle\nAnimatedTheme; Theme; _InheritedTheme\nCupertinoTheme\n_InheritedCupertinoTheme\nIconTheme; IconTheme\nDefaultSelectionStyle" ..> topr
+topRState "build >>>\nUnmanagedRestorationScope\n_RouterScope\nBuilder" ..> rootN
+rootNState "build >>>\nHeroControllerScope\nNotificationListener<NavigationNotification>\nListener\nAbsorbPointer\nFocusTraversalGroup\nFocus\n_FocusInheritedScope\nFocus\n_FocusInheritedScope\nUnmanagedRestorationScope\n" ..> rootOverlay
+rootOverlayState "build\t" ..> rootTheatre
 ignoreOEState "build" ..> ignore 
 childRouterOEState "build" ..> childRouter
 childRState "build" ..> childN
