@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart' as cupertino;
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
-import 'package:hisma_flutter_test/states_events_transitions.dart';
+import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/ui.dart';
 import 'package:logging/logging.dart';
 
@@ -47,7 +48,7 @@ Future<void> pageBack(WidgetTester tester) async {
   });
 }
 
-List<StateMachine<S, E, T>> getActiveMachines(
+List<StateMachine<S, E, T>> getActiveMachines<S, E, T>(
   StateMachine<S, E, T> machine,
 ) {
   final list = <StateMachine<S, E, T>>[];
@@ -66,7 +67,7 @@ List<StateMachine<S, E, T>> getActiveMachines(
   return list;
 }
 
-void checkTitle(StateMachine<S, E, T> machine, [S? stateId]) {
+void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
   // TODO: Use [] representation of hierarchic states.
   // expect(machine.activeStateId, stateId);
 
@@ -75,4 +76,32 @@ void checkTitle(StateMachine<S, E, T> machine, [S? stateId]) {
 
   final path = getTitle(lm, lm.activeStateId);
   expect(find.text(path), findsOneWidget);
+}
+
+Future<void> action<S, E, T>(
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  WidgetTester tester,
+  E event, {
+  bool fire = false,
+}) async {
+  if (fire) {
+    await machine.fire(event);
+    // We need this extra pumpAndSettle as pageless routes are created in a
+    // subsequent frame by Future.delayed.
+    // TODO: Remove this as new design will not use Future.delayed.
+    await tester.pumpAndSettle();
+  } else {
+    await tester.tap(find.text('$event').last);
+  }
+  await tester.pumpAndSettle();
+}
+
+Future<void> check<S, E, T>(
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  WidgetTester tester,
+  E event, {
+  bool fire = false,
+}) async {
+  await action(machine, tester, event, fire: fire);
+  checkTitle(machine);
 }

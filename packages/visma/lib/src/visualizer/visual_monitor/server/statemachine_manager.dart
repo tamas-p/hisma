@@ -67,7 +67,7 @@ class Registrar {
         Message? m;
         try {
           m = messageFromJson(data as String);
-        } catch (e) {
+        } on Exception catch (e) {
           _log.severe('Exception for: $data, ws=${ws.hashCode}');
           _log.severe(e);
           return;

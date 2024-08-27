@@ -5,7 +5,6 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import 'states_events_transitions.dart';
 import 'ui.dart';
-import 'utility.dart';
 
 StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
   required String name,

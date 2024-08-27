@@ -10,7 +10,7 @@ import '../app/layers/routing/auth_routing.dart';
 import '../assistance.dart';
 import '../firebase_options.dart';
 
-final log = getLogger('main');
+// final log = getLogger('main');
 
 void initLogging() {
   // This shall be done 1st to allow Logger configuration for a hierarchy.

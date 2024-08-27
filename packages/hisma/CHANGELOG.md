@@ -1,3 +1,15 @@
+## 0.3.2+1
+
+ - **FIX**: Catch only Exceptions.
+
+## 0.3.2
+
+ - **REFACTOR**: Removed half baked copyWith methods.
+ - **FIX**: typo.
+ - **FEAT**: Introduced assert configuration per [#17](https://github.com/tamas-p/hisma/issues/17).
+ - **FEAT**: handlers can now define sync/async functions.
+ - **DOCS**: Added dart docs to StateMachine.strict variable.
+
 ## 0.3.1
 
  - **REFACTOR**: re-enable play.

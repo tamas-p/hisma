@@ -11,6 +11,8 @@ class MaterialPageRoute<T>
 class CupertinoPageRoute<T>
 class PageRouteBuilder<T>
 class DialogRoute<T>
+class ModalBottomSheetRoute<T>
+class CupertinoDialogRoute<T>
 
 Route <|-- OverlayRoute
 OverlayRoute <|-- TransitionRoute
@@ -19,7 +21,9 @@ ModalRoute <|-- PageRoute
 ModalRoute <|-- PopupRoute
 PopupRoute <|-- CupertinoModalPopupRoute
 PopupRoute <|-- RawDialogRoute
+PopupRoute <|-- ModalBottomSheetRoute
 RawDialogRoute <|-- DialogRoute
+RawDialogRoute <|-- CupertinoDialogRoute
 PageRoute <|-- MaterialPageRoute
 PageRoute <|-- CupertinoPageRoute
 PageRoute <|-- PageRouteBuilder

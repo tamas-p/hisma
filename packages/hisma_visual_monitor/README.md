@@ -39,6 +39,17 @@ StateMachine.monitorCreators = [
 
 This [VisualMonitor] will connect to [visma](../visma/) listening at the localhost on its default port (4020).
 
+> [!IMPORTANT]
+> When using VisualMonitor in a MacOS desktop application you need to add `com.apple.security.network.client` to your _macos/Runner/DebugProfile.entitlements_ and _macos/Runner/Release.entitlements_ files of your project to allow connectivity to [visma](https://github.com/tamas-p/hisma/tree/master/packages/visma):
+>
+> ```xml
+> <dict>
+>   ...
+> 	<key>com.apple.security.network.client</key>
+> 	<true/>
+> </dict>
+> ```
+
 You can also connect to a [visma](../visma/) instance listening on a different port or even at a remote host:
 
 ```dart

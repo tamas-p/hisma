@@ -1,3 +1,4 @@
+/// Flutter navigation with Hisma hierarchical state machines.
 library hisma_flutter;
 
 export 'src/creator.dart';

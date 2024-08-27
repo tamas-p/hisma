@@ -53,7 +53,8 @@ class VisualMonitor implements Monitor {
     while (true) {
       try {
         await _tryConnectCord();
-      } catch (_) {
+      } on Exception catch (e) {
+        _log.severe('Could not connect to visma: $e');
         await Future<void>.delayed(const Duration(seconds: retryDelay));
         continue;
       }
@@ -185,7 +186,7 @@ class VisualMonitor implements Monitor {
           'You must add "events" argument to StateMachine '
           '"${stateMachine.name}" constructor.',
         );
-        final em = {for (var i in stateMachine.events) i.toString(): i};
+        final em = {for (final i in stateMachine.events) i.toString(): i};
         _log.fine('em=$em');
         final event = em[fireMessageDTO.event];
         assert(

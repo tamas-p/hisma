@@ -210,7 +210,7 @@ final m1s2 = StateMachine<SS2, SE2, ST2>(
         Region<SS2, SE2, ST2, SSS3>(
           machine: m1s2s3,
           entryConnectors: {
-            Trigger(source: SS2.s3, event: SE2.e3, transition: ST2.t1): SSS3.en1
+            Trigger(source: SS2.s3, event: SE2.e3, transition: ST2.t1): SSS3.en1,
           },
           exitConnectors: {
             SSS3.ex1: SE2.e2,

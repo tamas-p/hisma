@@ -10,14 +10,14 @@ environment:
 
 dependencies:
   cupertino_icons: ^1.0.2
-  fb_auth_hisma: ^0.3.0+2
+  fb_auth_hisma: ^0.3.0+4
   firebase_core: ^2.1.1
   flutter:
     sdk: flutter
-  hisma: ^0.3.1
-  hisma_console_monitor: ^0.2.0+2
-  hisma_flutter: ^0.2.0+2
-  hisma_visual_monitor: ^0.3.1
+  hisma: ^0.3.2+1
+  hisma_console_monitor: ^0.2.0+4
+  hisma_flutter: ^0.2.0+4
+  hisma_visual_monitor: ^0.3.1+2
   logging: ^1.1.0
 
 dev_dependencies:

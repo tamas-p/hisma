@@ -1,4 +1,4 @@
-@Timeout(Duration(seconds: 645))
+// @Timeout(Duration(seconds: 645))
 
 import 'package:hisma/hisma.dart';
 import 'package:hisma/src/assistance.dart';
@@ -101,9 +101,9 @@ void main() {
 
     test('Check active state after multiple events.', () async {
       _log.info('Started.');
-      _log.info(() =>pretty(sm.getActiveStateRecursive()));
+      _log.info(() => pretty(sm.getActiveStateRecursive()));
       await sm.start();
-      _log.info(() =>pretty(sm.getActiveStateRecursive()));
+      _log.info(() => pretty(sm.getActiveStateRecursive()));
       expect(
         sm.getActiveStateRecursive(),
         equals([L1S.s1]),

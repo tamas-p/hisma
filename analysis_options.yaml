@@ -30,6 +30,10 @@ linter:
     # Async code
     unawaited_futures: true
 
+    # New rule since dart 2.19.0 by default. 
+    # TODO: Postponed investigation of its findings.
+    unreachable_from_main: false
+
 analyzer:    
   language:
     strict-raw-types: true

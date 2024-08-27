@@ -1,0 +1,46 @@
+@startuml back_button_dispatcher_class
+class _CallbackHookProvider<T> 
+abstract class BackButtonDispatcher
+class RootBackButtonDispatcher
+abstract class WidgetsBindingObserver
+class ChildBackButtonDispatcher
+
+_CallbackHookProvider <|-- BackButtonDispatcher
+BackButtonDispatcher <|-- RootBackButtonDispatcher
+WidgetsBindingObserver <|.. RootBackButtonDispatcher : <<mixin>>
+BackButtonDispatcher <|-- ChildBackButtonDispatcher
+
+BackButtonDispatcher -- "parent" ChildBackButtonDispatcher
+
+BackButtonDispatcher "1" *--> "*" ChildBackButtonDispatcher
+
+@enduml
+
+@startuml back_button_dispatcher_object
+object "Widget\nStatefulWidget\nRouter<T>\n: rootRouter" as rootRouter
+object "State<Router<T>>\n_RouterState<T>\n: rootRouterState" as rootRouterState
+
+rootRouterState "widget" - rootRouter : "\t\t\t"
+
+object "State<WidgetsApp>\n_WidgetsAppState :" as appState
+
+!$BBD="_CallbackHookProvider\nBackButtonDispatcher"
+!$CBBD="_CallbackHookProvider\nBackButtonDispatcher\nChildBackButtonDispatcher\n"
+
+object "WidgetsBindingObserver\n\n$BBD\nRootBackButtonDispatcher\n: rootBBD" as rootBBD
+
+appState o-- rootBBD
+note on link : root back button dispatcher\ncreated when _WidgetsAppState\nis created.
+rootRouter "backButtonDispatcher" - rootBBD : "\t\t\t\t\t\t"
+
+object "$CBBD: childBBD_L1" as childBBD1
+object "$CBBD: childBBD_L2" as childBBD2
+object "$CBBD: childBBD_L3" as childBBD3
+
+rootBBD *-- "parent" childBBD1
+childBBD1 *-- "parent" childBBD2
+childBBD2 *-- "parent" childBBD3
+
+
+
+@enduml
