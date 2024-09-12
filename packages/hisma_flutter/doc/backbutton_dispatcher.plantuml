@@ -1,3 +1,4 @@
+
 @startuml back_button_dispatcher_class
 class _CallbackHookProvider<T> 
 abstract class BackButtonDispatcher
@@ -33,14 +34,114 @@ appState o-- rootBBD
 note on link : root back button dispatcher\ncreated when _WidgetsAppState\nis created.
 rootRouter "backButtonDispatcher" - rootBBD : "\t\t\t\t\t\t"
 
-object "$CBBD: childBBD_L1" as childBBD1
-object "$CBBD: childBBD_L2" as childBBD2
-object "$CBBD: childBBD_L3" as childBBD3
+object "$CBBD: childBBD_L1_A" as childBBD_L1_A
+object "$CBBD: childBBD_L1_B" as childBBD_L1_B
 
-rootBBD *-- "parent" childBBD1
-childBBD1 *-- "parent" childBBD2
-childBBD2 *-- "parent" childBBD3
+object "$CBBD: childBBD_L2_A" as childBBD_L2_A
+object "$CBBD: childBBD_L2_B" as childBBD_L2_B
 
+rootBBD "_children[0]" *-- "parent" childBBD_L1_A
+rootBBD "_children[1]" *-- "parent" childBBD_L1_B
+
+childBBD_L1_A "_children[0]" *-- "parent" childBBD_L2_A
+childBBD_L1_A "_children[1]" *-- "parent" childBBD_L2_B
+
+object "$CBBD: childBBD_L3_A" as childBBD_L3_A
+object "$CBBD: childBBD_L3_B" as childBBD_L3_B
+
+childBBD_L2_A "_children[0]" *-- "parent" childBBD_L3_A
+childBBD_L2_A "_children[1]" *-- "parent" childBBD_L3_B
+
+@enduml
+
+@startuml back_button_dispatcher_app_screens
+left to right direction
+
+object "Router : root" as r #pink
+object "Screen : /a" as a
+object "Screen : /b" as b
+object "Screen : /c" as c
+object "Router : /d" as rd #pink
+object "Router : /e" as re #pink
+
+r *-- a
+r *-- b
+r *-- c
+r *-- rd
+r *-- re
+
+object "Screen : /d/a" as da
+object "Screen : /d/b" as db
+object "Screen : /d/c" as dc
+object "Router : /d/d" as rdd #pink
+object "Router : /d/e" as rde #pink
+
+
+rd *-- da
+rd *-- db
+rd *-- dc
+rd *-- rdd
+rd *-- rde
+
+object "Screen : /e/a" as ea
+object "Screen : /e/b" as eb
+object "Screen : /e/c" as ec
+object "Router : /e/d" as red #pink
+object "Router : /e/e" as ree #pink
+
+re *-- ea
+re *-- eb
+re *-- ec
+re *-- red
+re *-- ree
+
+object "Screen : /d/d/a" as dda
+object "Screen : /d/d/b" as ddb
+object "Screen : /d/d/c" as ddc
+object "Screen : /d/d/d" as ddd
+object "Screen : /d/d/e" as dde
+
+rdd *-- dda
+rdd *-- ddb
+rdd *-- ddc
+rdd *-- ddd
+rdd *-- dde
+
+object "Screen : /d/e/a" as dea
+object "Screen : /d/e/b" as deb
+object "Screen : /d/e/c" as dec
+object "Screen : /d/e/d" as ded
+object "Screen : /d/e/e" as dee
+
+rde *-- dea
+rde *-- deb
+rde *-- dec
+rde *-- ded
+rde *-- dee
+
+object "Screen : /d/d/a" as eda
+object "Screen : /d/d/b" as edb
+object "Screen : /d/d/c" as edc
+object "Screen : /d/d/d" as edd
+object "Screen : /d/d/e" as ede
+
+red *-- eda
+red *-- edb
+red *-- edc
+red *-- edd
+red *-- ede
+
+object "Screen : /e/e/a" as eea
+object "Screen : /e/e/b" as eeb
+object "Screen : /e/e/c" as eec
+object "Screen : /e/e/d" as eed
+object "Screen : /e/e/e" as eee
+
+ree *-- eea
+ree *-- eeb
+ree *-- eec
+ree *-- eed
+ree *-- eee
 
 
 @enduml
