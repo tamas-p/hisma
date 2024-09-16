@@ -3,14 +3,14 @@ import 'package:hisma/hisma.dart' as hm;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
-import 't01_page_no_overlay.dart';
+import 'simple_machine.dart';
 import 'ui.dart';
 
 void main(List<String> args) {
   hm.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
-  runApp(OverlayApp(createNoOverlayMachine()));
+  runApp(OverlayApp(createSimpleMachine()));
 }
 
 class OverlayApp extends StatelessWidget {
