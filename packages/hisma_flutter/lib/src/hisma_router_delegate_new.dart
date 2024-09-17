@@ -32,24 +32,13 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   @override
   Future<bool> popRoute() async {
     _log.info('popRoute');
-
-    final creator = mapping[machine.activeStateId];
-    if (creator is Creator<E> && creator.event != null) {
-      _log.info(
-        'popRoute: Firing ${creator.event} on machine ${machine.name}.',
-      );
-      await machine.fire(creator.event as E);
-    } else {
-      _log.info('popRoute: Nothing to do for $creator.');
-    }
-
-    return true;
+    // TODO implement popRoute
+    return SynchronousFuture<bool>(true);
   }
 
   @override
   Future<void> setNewRoutePath(S configuration) {
     _log.info('setNewRoutePath($configuration)');
-
     // TODO: implement setNewRoutePath
     return SynchronousFuture(null);
   }
@@ -81,7 +70,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
       pages: _createPages(),
       onPopPage: (route, dynamic result) {
         _log.info('onPopPage');
-        if (route.didPop(result)) return true;
+        // TODO implement onPopPage
         return false;
       },
     );
