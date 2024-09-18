@@ -12,20 +12,20 @@ abstract class Creator<E> {
   E? event
 }
 class NoUIChange
-abstract class PageCreator<T, S, E> {
+abstract class PageCreator<E, R> {
   Widget widget
   bool overlay
-  Page<T> Function({required Widget widget, required S state,}) create
+  Page<R> Function({required Widget widget, required String name}) create
 }
-class MaterialPageCreator<T, S, E>
-class CupertinoPageCreator<T, S, E>
-abstract class PagelessCreator<T, E> {
-  Future<T?> open(BuildContext context)
-  void close([T? value])
+class MaterialPageCreator<E, R>
+class CupertinoPageCreator<E, R>
+abstract class PagelessCreator<E, R> {
+  Future<R?> open(BuildContext context)
+  void close([R? value])
 }
-class DialogCreator<T, E> {
+class DialogCreator<E, R> {
   final bool useRootNavigator;
-  final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
+  final Future<R?> Function(DialogCreator<E, R> dc, BuildContext context) show;
 }
 
 Presentation <|-- NoUIChange
@@ -40,10 +40,10 @@ PagelessCreator <|-- DialogCreator
 
 final Logger _log = Logger('creator');
 
-/// Abstract class for representing the state of the state machine.
+/// Presentation of state machine states.
 abstract class Presentation {}
 
-/// User interface representation of the state of the state machine.
+/// User interface representation of state machine states.
 abstract class Creator<E> extends Presentation {
   Creator({this.event});
   E? event;
@@ -56,7 +56,6 @@ abstract class Creator<E> extends Presentation {
 /// defined in the creator map of [HismaRouterDelegate]. This way we get
 /// assertion failed in case the machine gets to a state that is not defined in
 /// the creator list. Alternative is using an [InternalTransition].
-///
 class NoUIChange extends Presentation {}
 
 //-----------------------------------------------------------------------------
@@ -64,7 +63,7 @@ class NoUIChange extends Presentation {}
 /// Eliminates redundancy of giving stateId twice when defining creator maps
 /// (mapping) of [HismaRouterGenerator]. With the help of this class
 /// [HismaRouterDelegate] will call the [create] function with a given state.
-abstract class PageCreator<T, S, E> extends Creator<E> {
+abstract class PageCreator<E, R> extends Creator<E> {
   PageCreator({
     required this.widget,
     required this.create,
@@ -72,21 +71,21 @@ abstract class PageCreator<T, S, E> extends Creator<E> {
     super.event,
   });
   final Widget widget;
-  final Page<T> Function({
+  final Page<R> Function({
     required Widget widget,
     required String name,
   }) create;
   final bool overlay;
 }
 
-abstract class PagelessCreator<T, E> extends Creator<E> {
+abstract class PagelessCreator<E, R> extends Creator<E> {
   PagelessCreator({required super.event});
 
-  Future<T?> open(BuildContext context);
-  void close([T? value]);
+  Future<R?> open(BuildContext context);
+  void close([R? value]);
 }
 
-class DialogCreator<T, E> extends PagelessCreator<T, E> {
+class DialogCreator<E, R> extends PagelessCreator<E, R> {
   DialogCreator({
     required this.show,
     required super.event,
@@ -94,17 +93,17 @@ class DialogCreator<T, E> extends PagelessCreator<T, E> {
   });
 
   final bool useRootNavigator;
-  final Future<T?> Function(DialogCreator<T, E> dc, BuildContext context) show;
+  final Future<R?> Function(DialogCreator<E, R> dc, BuildContext context) show;
   BuildContext? context;
 
   @override
-  Future<T?> open(BuildContext context) {
+  Future<R?> open(BuildContext context) {
     this.context = context;
     return show(this, context);
   }
 
   @override
-  void close([T? value]) {
+  void close([R? value]) {
     final context = this.context;
     if (context != null) {
       // TODO: When Flutter version > 3.7 use the context.mounted instead.
@@ -121,7 +120,7 @@ class DialogCreator<T, E> extends PagelessCreator<T, E> {
   }
 }
 
-class SnackBarCreator<E> extends PagelessCreator<CtxArg, E> {
+class SnackBarCreator<E> extends PagelessCreator<E, CtxArg> {
   SnackBarCreator({
     required this.snackBar,
     required super.event,
@@ -170,7 +169,7 @@ class SnackBarCreator<E> extends PagelessCreator<CtxArg, E> {
 //   }
 // }
 
-class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
+class MaterialPageCreator<E, R> extends PageCreator<E, R> {
   // TODO: should the event be required here if overlay = true?
   // YES, it should be mandatory, otherwise when Flutter pops when
   // user clicks on AppBar BackButton the ui changes, but state remain
@@ -179,15 +178,15 @@ class MaterialPageCreator<T, S, E> extends PageCreator<T, S, E> {
     required super.widget,
     super.overlay,
     super.event,
-  }) : super(create: _createPage<T, S>);
+  }) : super(create: _createPage<R>);
 }
 
-Page<T> _createPage<T, S>({
+Page<R> _createPage<R>({
   required Widget widget,
   required String name,
 }) {
   // print('__createPage: $name');
-  return MaterialPage<T>(
+  return MaterialPage<R>(
     child: widget,
 
     // TODO: consider using path as defined in state machine hierarchy.

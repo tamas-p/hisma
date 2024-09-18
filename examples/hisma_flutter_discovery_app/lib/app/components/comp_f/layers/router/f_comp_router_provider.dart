@@ -10,9 +10,9 @@ final fRouterProvider = Provider(
   (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(compFMachineProvider),
     mapping: {
-      S.fa: MaterialPageCreator<void, S, E>(widget: const CompFScreenA()),
+      S.fa: MaterialPageCreator<E, void>(widget: const CompFScreenA()),
       // S.fb: getPagelessCreator2(),
-      S.fb: DialogCreator<void, E>(
+      S.fb: DialogCreator<E, void>(
         useRootNavigator: true,
         event: E.backward,
         show: (dc, context) => generateDialog(
@@ -23,7 +23,7 @@ final fRouterProvider = Provider(
         ),
       ),
       // S.b: MaterialPageCreator<S>(widget: const CompFScreenB()),
-      S.fc: MaterialPageCreator<void, S, E>(widget: const CompFScreenC()),
+      S.fc: MaterialPageCreator<E, void>(widget: const CompFScreenC()),
     },
   ),
 );

@@ -8,9 +8,8 @@ import '../ui/login_screen.dart';
 final loginRouter = HismaRouterGenerator<SLiM, ELiM>(
   machine: authMachine.find<SLiM, ELiM, TLiM>(loginMachineName),
   mapping: {
-    SLiM.login:
-        MaterialPageCreator<void, SLiM, ELiM>(widget: const LoginScreen()),
-    SLiM.failedSignIn: DialogCreator<void, ELiM>(
+    SLiM.login: MaterialPageCreator<ELiM, void>(widget: const LoginScreen()),
+    SLiM.failedSignIn: DialogCreator<ELiM, void>(
       event: ELiM.ok,
       show: failedSignInDialog,
       useRootNavigator: true,

@@ -14,12 +14,12 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
   return HismaRouterGenerator<S, E>(
     machine: machine,
     mapping: {
-      S.a: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.a)),
-      S.b: MaterialPageCreator<void, S, E>(
+      S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
+      S.b: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.b),
         event: E.back,
       ),
-      S.c: MaterialPageCreator<void, S, E>(
+      S.c: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.c),
         event: E.back,
         // TODO: When E.self, we shall have get back to Screen S.c here.
@@ -34,22 +34,22 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.d: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.d)),
+      // S.d: MaterialPageCreator<void, void>(widget: Screen(machine, S.d)),
       S.e: TestDialogCreator(
         machine: machine,
         stateId: S.e,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.e: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.e)),
+      // S.e: MaterialPageCreator<void, void>(widget: Screen(machine, S.e)),
       S.f: TestDialogCreator(
         machine: machine,
         stateId: S.f,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.f: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.f)),
-      S.g: MaterialPageCreator<void, S, E>(
+      // S.f: MaterialPageCreator<void, void>(widget: Screen(machine, S.f)),
+      S.g: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.g),
         overlay: true,
         event: E.back,
@@ -60,19 +60,19 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.h: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.h)),
-      S.i: MaterialPageCreator<void, S, E>(
+      // S.h: MaterialPageCreator<void, void>(widget: Screen(machine, S.h)),
+      S.i: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.i),
         overlay: true,
         event: E.back,
       ),
-      S.j: MaterialPageCreator<void, S, E>(
+      S.j: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.j),
         overlay: true,
         event: E.back,
       ),
       if (level < hierarchyDepth)
-        S.k: MaterialPageCreator<void, S, E>(
+        S.k: MaterialPageCreator<E, void>(
           widget: Builder(
             builder: (context) {
               return Router(
@@ -92,13 +92,13 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
           ),
         )
       else
-        S.k: MaterialPageCreator<void, S, E>(
+        S.k: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.k),
           overlay: true,
           event: E.back,
         ),
       if (level < hierarchyDepth)
-        S.l: MaterialPageCreator<void, S, E>(
+        S.l: MaterialPageCreator<void, void>(
           widget: Builder(
             builder: (context) {
               return Router(
@@ -124,15 +124,15 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
           event: E.self,
           useRootNavigator: useRootNavigator,
         ),
-      // S.l: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.l)),
+      // S.l: MaterialPageCreator<void, void>(widget: Screen(machine, S.l)),
       S.m: TestDialogCreator(
         machine: machine,
         stateId: S.m,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.m: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.m)),
-      S.n: MaterialPageCreator<void, S, E>(
+      // S.m: MaterialPageCreator<void, void>(widget: Screen(machine, S.m)),
+      S.n: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.n),
         overlay: true,
         event: E.back,

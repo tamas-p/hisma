@@ -38,7 +38,7 @@ class HismaPagelessHandler<S, E> {
     required BuildContext context,
   }) async {
     final creator = _mapping[stateId];
-    if (creator is! PagelessCreator<dynamic, E>) {
+    if (creator is! PagelessCreator<E, dynamic>) {
       throw ArgumentError('Not pageless but $creator');
     }
 

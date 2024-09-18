@@ -10,15 +10,14 @@ final mainRouter = HismaRouterGenerator<SMM, EMM>(
   machine: authMachine.find<SMM, EMM, TMM>(mainMachineName),
   mapping: {
     SMM.check: NoUIChange(),
-    SMM.emailNotVerified: MaterialPageCreator<void, SMM, EMM>(
+    SMM.emailNotVerified: MaterialPageCreator<EMM, void>(
       widget: const EmailNotVerifiedScreen(),
     ),
-    SMM.error: DialogCreator<void, EMM>(
+    SMM.error: DialogCreator<EMM, void>(
       event: EMM.back,
       show: failedEmailVerifiedDialog,
       useRootNavigator: true,
     ),
-    SMM.app:
-        MaterialPageCreator<void, SMM, EMM>(widget: const SignedInScreen()),
+    SMM.app: MaterialPageCreator<EMM, void>(widget: const SignedInScreen()),
   },
 );

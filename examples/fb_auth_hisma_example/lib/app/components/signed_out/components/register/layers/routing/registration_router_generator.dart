@@ -9,8 +9,8 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
   machine: authMachine.find<SRM, ERM, TRM>(registerMachineName),
   mapping: {
     SRM.registration:
-        MaterialPageCreator<void, SRM, ERM>(widget: const RegistrationScreen()),
-    SRM.failed: DialogCreator<void, ERM>(
+        MaterialPageCreator<ERM, void>(widget: const RegistrationScreen()),
+    SRM.failed: DialogCreator<ERM, void>(
       useRootNavigator: true,
       event: ERM.ok,
       show: (dc, context) => showDialog(

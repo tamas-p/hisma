@@ -10,7 +10,9 @@ String getTitle<S, E, T>(hisma.StateMachine<S, E, T> machine, S? stateId) =>
     '${machine.name} - $stateId';
 
 String getButtonTitle<S, E, T>(
-        hisma.StateMachine<S, E, T> machine, dynamic event) =>
+  hisma.StateMachine<S, E, T> machine,
+  dynamic event,
+) =>
     '$event';
 
 class Screen<S, E, T> extends StatelessWidget {
@@ -67,7 +69,7 @@ class Screen<S, E, T> extends StatelessWidget {
   }
 }
 
-class TestDialogCreator<S, E, T> extends DialogCreator<CtxArg, E> {
+class TestDialogCreator<S, E, T> extends DialogCreator<E, CtxArg> {
   TestDialogCreator({
     required super.event,
     required super.useRootNavigator,
@@ -157,7 +159,7 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
 }
 */
 class SnackbarPagelessRouteManager<S, E, T>
-    extends PagelessCreator<SnackBarClosedReason, E> {
+    extends PagelessCreator<E, SnackBarClosedReason> {
   SnackbarPagelessRouteManager({
     required this.text,
     super.event,

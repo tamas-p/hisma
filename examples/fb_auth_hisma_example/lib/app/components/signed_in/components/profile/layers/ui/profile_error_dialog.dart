@@ -6,7 +6,7 @@ import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
 Future<void> profileLoadFailed(
-  DialogCreator<void, EPM> dc,
+  DialogCreator<EPM, void> dc,
   BuildContext context,
 ) =>
     createDialog(

@@ -31,12 +31,12 @@ HismaRouterGenerator<S, E> createOverlayGenerator(
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<T, S, E>(widget: Screen(machine, S.a)),
-        S.b: MaterialPageCreator<T, S, E>(
+        S.a: MaterialPageCreator<void, void>(widget: Screen(machine, S.a)),
+        S.b: MaterialPageCreator<void, void>(
           widget: Screen(machine, S.b),
           overlay: true,
         ),
-        S.c: MaterialPageCreator<T, S, E>(
+        S.c: MaterialPageCreator<void, void>(
           widget: Screen(machine, S.c),
           overlay: true,
         ),

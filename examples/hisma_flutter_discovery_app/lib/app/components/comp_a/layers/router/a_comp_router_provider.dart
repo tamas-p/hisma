@@ -13,7 +13,7 @@ final aRouterProvider = Provider(
     machine: ref.read(compAMachineProvider),
     mapping: {
       // S.ca: MaterialPageCreator<S>(widget: const CompAScreenA()),
-      S.ca: MaterialPageCreator<void, S, E>(
+      S.ca: MaterialPageCreator<E, void>(
         // widget: const StatelessScreen(),
         // widget: const StatefulScreen(),
         widget:
@@ -31,8 +31,8 @@ final aRouterProvider = Provider(
         ),
       ),
       S.ca2: NoUIChange(),
-      S.cb: MaterialPageCreator<void, S, E>(widget: const CompAScreenB()),
-      S.cc: MaterialPageCreator<void, S, E>(widget: const CompAScreenC()),
+      S.cb: MaterialPageCreator<E, void>(widget: const CompAScreenB()),
+      S.cc: MaterialPageCreator<E, void>(widget: const CompAScreenC()),
     },
   ),
 );

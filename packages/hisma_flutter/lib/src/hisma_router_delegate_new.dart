@@ -79,7 +79,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   List<Page<dynamic>> _createPages() {
     final pages = <Page<dynamic>>[];
     final presentation = mapping[machine.activeStateId];
-    if (presentation is PageCreator<dynamic, S, E>) {
+    if (presentation is PageCreator<E, dynamic>) {
       final page = presentation.create(
         name: '${machine.name}-${machine.activeStateId}',
         widget: presentation.widget,

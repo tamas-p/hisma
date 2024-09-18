@@ -33,15 +33,15 @@ HismaRouterGenerator<S, E> createNoOverlayGenerator(
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<T, S, E>(
+        S.a: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.a),
           event: E.back,
         ),
-        S.b: MaterialPageCreator<T, S, E>(
+        S.b: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.b),
           event: E.back,
         ),
-        S.c: MaterialPageCreator<T, S, E>(
+        S.c: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.c),
           event: E.back,
         ),

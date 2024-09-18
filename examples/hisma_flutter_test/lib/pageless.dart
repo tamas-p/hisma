@@ -87,14 +87,14 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.a)),
+        S.a: MaterialPageCreator<void, void>(widget: Screen(machine, S.a)),
         S.b: TestDialogCreator(
           machine: machine,
           useRootNavigator: false,
           event: E.self,
           stateId: S.b,
         ),
-        S.c: DialogCreator<CtxArg, E>(
+        S.c: DialogCreator<E, CtxArg>(
           show: (dc, context) async {
             final dp = await showDatePicker(
               context: context,
@@ -122,7 +122,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
           ),
           event: E.forward,
         ),
-        S.e: MaterialPageCreator<void, S, E>(widget: Screen(machine, S.e)),
+        S.e: MaterialPageCreator<void, void>(widget: Screen(machine, S.e)),
         S.f: DialogCreator(
           show: (dc, context) async {
             final ret = Scaffold.of(context).showBottomSheet<void>(
