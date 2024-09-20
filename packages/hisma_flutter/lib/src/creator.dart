@@ -136,6 +136,7 @@ class SnackBarCreator<E> extends PagelessCreator<E, CtxArg> {
     final res =
         ret != null ? ret!.closed : Future<SnackBarClosedReason?>.value();
     final r = await res;
+    // ignore: use_build_context_synchronously
     return CtxArg(context, r);
   }
 
@@ -190,6 +191,9 @@ Page<R> _createPage<R>({
     child: widget,
 
     // TODO: consider using path as defined in state machine hierarchy.
+    // OR simply use S stateId as the ValueKey only has to be unique for
+    // one machine as there is a 1-1 relation between machines and navigator
+    // states.
     key: ValueKey(name),
     name: name,
   );

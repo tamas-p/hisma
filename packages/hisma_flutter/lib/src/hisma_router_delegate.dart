@@ -258,6 +258,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     }
   }
 
+  // ignore: unused_element
   Page<dynamic> _addPageless({
     required S stateId,
     required PagelessCreator<dynamic, E> creator,

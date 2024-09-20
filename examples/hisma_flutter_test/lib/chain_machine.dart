@@ -101,8 +101,8 @@ HismaRouterGenerator<S, E> createParentHismaRouterGenerator({
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<void, void>(widget: Screen(machine, S.a)),
-        S.b: MaterialPageCreator<void, void>(
+        S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
+        S.b: MaterialPageCreator<E, void>(
           widget: Router(
             routerDelegate: createChildHismaRouterGenerator(
               machine: machine.find('child'),

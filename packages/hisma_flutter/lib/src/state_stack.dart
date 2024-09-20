@@ -11,6 +11,7 @@ class StateStack<S> with ChangeNotifier {
     _stateIds.add(initialState);
   }
 
+  // ignore: unused_field
   final _log = getLogger('$StateStack');
 
   /// Mapping machine states to a presentation. It is defined in
@@ -50,6 +51,7 @@ class StateStack<S> with ChangeNotifier {
     required S stateId,
     required BuildContext context,
   }) async {
+    // ignore: unused_local_variable
     final creator = mapping[stateId];
     // TODO: Fix this:
     // if (creator is! PagelessCreator<dynamic, E>) {

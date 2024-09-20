@@ -5,8 +5,10 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import 'simple_machine.dart';
 import 'ui.dart';
+import 'utility.dart';
 
 void main(List<String> args) {
+  initLogging();
   hm.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
@@ -31,13 +33,18 @@ HismaRouterGenerator<S, E> createOverlayGenerator(
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<void, void>(widget: Screen(machine, S.a)),
-        S.b: MaterialPageCreator<void, void>(
+        S.a: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.a),
+          event: E.back,
+        ),
+        S.b: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.b),
+          event: E.back,
           overlay: true,
         ),
-        S.c: MaterialPageCreator<void, void>(
+        S.c: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.c),
+          event: E.back,
           overlay: true,
         ),
       },

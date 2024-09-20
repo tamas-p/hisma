@@ -34,21 +34,21 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.d: MaterialPageCreator<void, void>(widget: Screen(machine, S.d)),
+      // S.d: MaterialPageCreator<E, void>(widget: Screen(machine, S.d)),
       S.e: TestDialogCreator(
         machine: machine,
         stateId: S.e,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.e: MaterialPageCreator<void, void>(widget: Screen(machine, S.e)),
+      // S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
       S.f: TestDialogCreator(
         machine: machine,
         stateId: S.f,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.f: MaterialPageCreator<void, void>(widget: Screen(machine, S.f)),
+      // S.f: MaterialPageCreator<E, void>(widget: Screen(machine, S.f)),
       S.g: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.g),
         overlay: true,
@@ -60,7 +60,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.h: MaterialPageCreator<void, void>(widget: Screen(machine, S.h)),
+      // S.h: MaterialPageCreator<E, void>(widget: Screen(machine, S.h)),
       S.i: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.i),
         overlay: true,
@@ -98,7 +98,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
           event: E.back,
         ),
       if (level < hierarchyDepth)
-        S.l: MaterialPageCreator<void, void>(
+        S.l: MaterialPageCreator<E, void>(
           widget: Builder(
             builder: (context) {
               return Router(
@@ -124,14 +124,14 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
           event: E.self,
           useRootNavigator: useRootNavigator,
         ),
-      // S.l: MaterialPageCreator<void, void>(widget: Screen(machine, S.l)),
+      // S.l: MaterialPageCreator<E, void>(widget: Screen(machine, S.l)),
       S.m: TestDialogCreator(
         machine: machine,
         stateId: S.m,
         event: E.self,
         useRootNavigator: useRootNavigator,
       ),
-      // S.m: MaterialPageCreator<void, void>(widget: Screen(machine, S.m)),
+      // S.m: MaterialPageCreator<E, void>(widget: Screen(machine, S.m)),
       S.n: MaterialPageCreator<E, void>(
         widget: Screen(machine, S.n),
         overlay: true,

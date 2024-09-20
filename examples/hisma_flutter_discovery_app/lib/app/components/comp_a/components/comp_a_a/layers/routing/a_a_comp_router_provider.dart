@@ -12,7 +12,7 @@ final l2aRouterProvider = Provider(
   (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(compL2AMachineProvider),
     mapping: {
-      S.l2a: MaterialPageCreator<void, void>(widget: const CompL2AScreenA()),
+      S.l2a: MaterialPageCreator<E, void>(widget: const CompL2AScreenA()),
       S.l2o: MaterialPageCreator<E, int>(
         widget: const CompL2AScreenO(),
         event: E.jump,
@@ -28,8 +28,8 @@ final l2aRouterProvider = Provider(
         ),
         event: E.backward,
       ),
-      S.l2b: MaterialPageCreator<void, void>(widget: const CompL2AScreenB()),
-      S.l2c: MaterialPageCreator<void, void>(widget: const CompL2AScreenC()),
+      S.l2b: MaterialPageCreator<E, void>(widget: const CompL2AScreenB()),
+      S.l2c: MaterialPageCreator<E, void>(widget: const CompL2AScreenC()),
     },
   ),
 );
