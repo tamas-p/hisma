@@ -19,41 +19,41 @@ Future<void> checkAll(
   S previous,
   S current,
   S next, {
-  bool fire = false,
+  Act act = Act.tap,
 }) async {
-  await action(machine, tester, E.back, fire: fire);
+  await action(machine, tester, E.back, act: act);
   checkTitle(machine, previous);
 
-  await action(machine, tester, E.forward, fire: fire);
+  await action(machine, tester, E.forward, act: act);
   checkTitle(machine, current);
 
-  await action(machine, tester, E.self, fire: fire);
+  await action(machine, tester, E.self, act: act);
   checkTitle(machine, current);
 
-  await action(machine, tester, E.forward, fire: fire);
+  await action(machine, tester, E.forward, act: act);
   checkTitle(machine, next);
 }
 
 Future<void> testIt({
   required StateMachineWithChangeNotifier<S, E, T> machine,
   required WidgetTester tester,
-  required bool fire,
+  required Act act,
 }) async {
-  await checkAll(machine, tester, S.n, S.a, S.b, fire: fire);
-  await checkAll(machine, tester, S.a, S.b, S.c, fire: fire);
-  await checkAll(machine, tester, S.b, S.c, S.d, fire: fire);
-  await checkAll(machine, tester, S.c, S.d, S.e, fire: fire);
-  await checkAll(machine, tester, S.d, S.e, S.f, fire: fire);
-  await checkAll(machine, tester, S.e, S.f, S.g, fire: fire);
-  await checkAll(machine, tester, S.f, S.g, S.h, fire: fire);
-  await checkAll(machine, tester, S.g, S.h, S.i, fire: fire);
-  await checkAll(machine, tester, S.h, S.i, S.j, fire: fire);
+  await checkAll(machine, tester, S.n, S.a, S.b, act: act);
+  await checkAll(machine, tester, S.a, S.b, S.c, act: act);
+  await checkAll(machine, tester, S.b, S.c, S.d, act: act);
+  await checkAll(machine, tester, S.c, S.d, S.e, act: act);
+  await checkAll(machine, tester, S.d, S.e, S.f, act: act);
+  await checkAll(machine, tester, S.e, S.f, S.g, act: act);
+  await checkAll(machine, tester, S.f, S.g, S.h, act: act);
+  await checkAll(machine, tester, S.g, S.h, S.i, act: act);
+  await checkAll(machine, tester, S.h, S.i, S.j, act: act);
 
-  await checkAll(machine, tester, S.i, S.j, S.k, fire: fire);
-  await checkAll(machine, tester, S.j, S.k, S.l, fire: fire);
-  await checkAll(machine, tester, S.k, S.l, S.m, fire: fire);
-  await checkAll(machine, tester, S.l, S.m, S.n, fire: fire);
-  await checkAll(machine, tester, S.m, S.n, S.a, fire: fire);
+  await checkAll(machine, tester, S.i, S.j, S.k, act: act);
+  await checkAll(machine, tester, S.j, S.k, S.l, act: act);
+  await checkAll(machine, tester, S.k, S.l, S.m, act: act);
+  await checkAll(machine, tester, S.l, S.m, S.n, act: act);
+  await checkAll(machine, tester, S.m, S.n, S.a, act: act);
 }
 
 void main() {
@@ -95,7 +95,7 @@ void main() {
           tester: tester,
         );
 
-        await testIt(machine: machine, tester: tester, fire: false);
+        await testIt(machine: machine, tester: tester, act: Act.tap);
       });
     },
     skip: false,
@@ -114,7 +114,7 @@ void main() {
           tester: tester,
         );
 
-        await testIt(machine: machine, tester: tester, fire: true);
+        await testIt(machine: machine, tester: tester, act: Act.fire);
       });
     },
     skip: false,

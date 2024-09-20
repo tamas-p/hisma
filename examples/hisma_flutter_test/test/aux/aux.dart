@@ -77,20 +77,24 @@ void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
   expect(find.text(path), findsOneWidget);
 }
 
+enum Act { fire, tap }
+
 Future<void> action<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
   E event, {
-  bool fire = false,
+  Act act = Act.tap,
 }) async {
-  if (fire) {
+  if (act == Act.fire) {
     await machine.fire(event);
     // We need this extra pumpAndSettle as pageless routes are created in a
     // subsequent frame by Future.delayed.
     // TODO: Remove this as new design will not use Future.delayed.
     await tester.pumpAndSettle();
-  } else {
+  } else if (act == Act.tap) {
     await tester.tap(find.text('$event').last);
+  } else {
+    throw Exception('Unsupported trigger: $act');
   }
   await tester.pumpAndSettle();
 }
@@ -99,8 +103,8 @@ Future<void> check<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
   E event, {
-  bool fire = false,
+  Act fire = Act.tap,
 }) async {
-  await action(machine, tester, event, fire: fire);
+  await action(machine, tester, event, act: fire);
   checkTitle(machine);
 }
