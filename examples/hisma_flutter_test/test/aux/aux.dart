@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart' as cupertino;
+import 'package:flutter/material.dart' as m;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
@@ -77,22 +78,25 @@ void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
   expect(find.text(path), findsOneWidget);
 }
 
-enum Act { fire, tap }
+enum Act { fire, tap, back }
 
 Future<void> action<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
-  E event, {
+  E? event, {
   Act act = Act.tap,
 }) async {
-  if (act == Act.fire) {
+  if (act == Act.fire && event != null) {
     await machine.fire(event);
     // We need this extra pumpAndSettle as pageless routes are created in a
     // subsequent frame by Future.delayed.
     // TODO: Remove this as new design will not use Future.delayed.
     await tester.pumpAndSettle();
-  } else if (act == Act.tap) {
+  } else if (act == Act.tap && event != null) {
     await tester.tap(find.text('$event').last);
+  } else if (act == Act.back) {
+    final backButton = find.byType(m.BackButton);
+    await tester.tap(backButton);
   } else {
     throw Exception('Unsupported trigger: $act');
   }
@@ -105,6 +109,18 @@ Future<void> check<S, E, T>(
   E event, {
   Act fire = Act.tap,
 }) async {
+  S where(S s, E e) {
+    final state = machine.states[s] as State<E, T, S>?;
+    final a = state!.etm[e];
+    final t = a![0];
+    final transition = machine.transitions[t] as Transition<S>?;
+    return transition!.to;
+  }
+
+  final s = machine.activeStateId;
+  if (s == null) throw Exception('Machine ${machine.name} is not started.');
+  final expected = where(s, event);
   await action(machine, tester, event, act: fire);
+  expect(machine.activeStateId, expected);
   checkTitle(machine);
 }

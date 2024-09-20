@@ -16,13 +16,16 @@ void main(List<String> args) {
 }
 
 class OverlayApp extends StatelessWidget {
-  const OverlayApp(this.machine, {super.key});
+  OverlayApp(this.machine, {super.key})
+      : generator = createOverlayGenerator(machine);
+
+  final HismaRouterGenerator<S, E> generator;
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: createOverlayGenerator(machine).routerDelegate,
+      routerDelegate: generator.routerDelegate,
     );
   }
 }
