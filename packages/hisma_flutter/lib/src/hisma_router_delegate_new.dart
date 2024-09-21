@@ -32,7 +32,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   @override
   Future<bool> popRoute() async {
     _log.info('popRoute');
-    doSmg(null);
+    fire(null);
     return SynchronousFuture<bool>(true);
   }
 
@@ -73,11 +73,11 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   }
 
   bool _onPopPage(Route<dynamic> route, dynamic result) {
-    doSmg(result);
+    fire(result);
     return false;
   }
 
-  void doSmg(dynamic result) {
+  void fire(dynamic result) {
     final presentation = mapping[machine.activeStateId];
     if (presentation is Creator<E>) {
       final event = presentation.event;
@@ -91,11 +91,10 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     }
   }
 
-  final _stateIds = <S>[];
-  List<Page<dynamic>>? _previousPages;
+  List<S> _stateIds = [];
+  late List<Page<dynamic>> _previousPages;
   List<Page<dynamic>> _createPages() {
     final activeStateId = machine.activeStateId;
-    final pages = <Page<dynamic>>[];
     // We only process if machine is active. If inactive we simply build
     // pages of the navigator from the current [_stateIds] (that was updated
     // during the previous builds). This is required to handle the case when a
@@ -117,38 +116,36 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
         _addState(activeStateId);
       }
 
-      for (final stateId in _stateIds) {
-        final presentation = mapping[stateId];
-        if (presentation is PageCreator) {
-          pages.add(
-            presentation.create(
-              name: stateId.toString(),
-              widget: presentation.widget,
-            ),
-          );
-        } else if (presentation is PagelessCreator) {
-          print('PagelessCreator');
-        } else {
-          throw Exception('NOK');
-        }
-      }
-
-      assert(pages.isNotEmpty);
-      return pages;
+      return _stateIdsToPages();
     }
 
-    return _previousPages!;
+    return _previousPages;
+  }
+
+  List<Page<dynamic>> _stateIdsToPages() {
+    final pages = <Page<dynamic>>[];
+    for (final stateId in _stateIds) {
+      final presentation = mapping[stateId];
+      if (presentation is PageCreator) {
+        pages.add(
+          presentation.create(
+            name: stateId.toString(),
+            widget: presentation.widget,
+          ),
+        );
+      } else if (presentation is PagelessCreator) {
+        print('PagelessCreator');
+      } else {
+        throw Exception('NOK');
+      }
+    }
+    assert(pages.isNotEmpty);
+    return pages;
   }
 
   void _cleanUpCircle(S activeStateId) {
     _log.fine('_cleanUpCircle($activeStateId)');
-    for (var i = _stateIds.length - 1; i >= 0; i--) {
-      if (_stateIds[i] != activeStateId) {
-        _stateIds.removeAt(i);
-      } else {
-        break;
-      }
-    }
+    _stateIds = _stateIds.sublist(0, _stateIds.indexOf(activeStateId) + 1);
   }
 
   void _addState(S stateId) {
