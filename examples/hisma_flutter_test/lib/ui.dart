@@ -30,8 +30,10 @@ class Screen<S, E, T> extends StatelessWidget {
           appBar: AppBar(
             title: Text(getTitle(machine, stateId)),
           ),
-          body: Column(
-            children: _createButtonsFromState(machine, context),
+          body: Center(
+            child: Column(
+              children: _createButtonsFromState(machine, context),
+            ),
           ),
         );
       },
