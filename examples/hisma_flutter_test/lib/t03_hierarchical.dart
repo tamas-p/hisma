@@ -31,8 +31,9 @@ class OverlayApp extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createOverlayGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine,
-) =>
+  StateMachineWithChangeNotifier<S, E, T> machine, [
+  int level = 0,
+]) =>
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
@@ -50,9 +51,33 @@ HismaRouterGenerator<S, E> createOverlayGenerator(
           event: E.back,
           overlay: true,
         ),
-        S.d: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.d),
-          event: E.back,
-        ),
+        S.d: level < 2
+            ? MaterialPageCreator<E, void>(
+                widget: Builder(
+                  builder: (context) {
+                    return Router(
+                      routerDelegate: createOverlayGenerator(
+                        machine.find('$testMachineName${level + 1}'),
+                        level + 1,
+                      ).routerDelegate,
+                      backButtonDispatcher: Router.of(context)
+                          .backButtonDispatcher!
+                          .createChildBackButtonDispatcher()
+                        ..takePriority(),
+                    );
+                  },
+                ),
+                event: E.back,
+              )
+            : MaterialPageCreator<E, void>(
+                widget: Screen(machine, S.d),
+                event: E.back,
+              ),
       },
     );
+
+Map<String, int> myMap = {
+  'a': 1,
+  'b': 2,
+  'c': 0 == 0 ? 3 : 4, // Conditional expression
+};

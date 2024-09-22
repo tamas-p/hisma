@@ -43,6 +43,9 @@ class StateMachine<S, E, T> {
         // TODO: Do we need ?? here?
         state.notifyMachine ??= _processNotification;
         state.machine = this;
+        for (final region in state.regions) {
+          region.machine.parent = this;
+        }
       }
     });
 
@@ -62,6 +65,9 @@ class StateMachine<S, E, T> {
 
   /// State machine name.
   final String name;
+
+  /// Parent machine.
+  StateMachine<S, E, T>? parent;
 
   /// Returns name of the parent state machine if that exist, null otherwise.
   /// It can be used e.g. by state machine monitors that implement [Monitor]

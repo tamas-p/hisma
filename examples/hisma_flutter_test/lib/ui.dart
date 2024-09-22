@@ -30,42 +30,59 @@ class Screen<S, E, T> extends StatelessWidget {
           appBar: AppBar(
             title: Text(getTitle(machine, stateId)),
           ),
-          body: _createButtonsFromState(machine.states[stateId], context),
+          body: Column(
+            children: _createButtonsFromState(machine, context),
+          ),
         );
       },
     );
   }
 
-  Widget _createButtonsFromState(
-    hisma.BaseState<dynamic, dynamic, dynamic>? state,
+  List<Widget> _createButtonsFromState(
+    StateMachineWithChangeNotifier<S, E, T> machine,
     BuildContext context,
   ) {
+    final state = machine.states[machine.activeStateId];
     final buttons = <Widget>[];
-    if (state is! hisma.State) throw ArgumentError();
-    for (final eventId in state.etm.keys) {
-      assert(machine == state.machine);
-      buttons.add(
-        Builder(
-          builder: (context) {
-            return TextButton(
-              onPressed: () async {
-                _log.info(
-                  () =>
-                      'Screen: state.machine.fire($eventId) - ${machine.name}',
-                );
-                await machine.fire(
-                  eventId as E,
-                  // arg: context,
-                );
-              },
-              child: Text(getButtonTitle(machine, eventId)),
-            );
-          },
+    if (state != null && state is hisma.State<E, T, S>) {
+      for (final eventId in state.etm.keys) {
+        // assert(machine == state.machine);
+        buttons.add(
+          Builder(
+            builder: (context) {
+              return TextButton(
+                onPressed: () async {
+                  _log.info(
+                    () =>
+                        'Screen: state.machine.fire($eventId) - ${machine.name}',
+                  );
+                  await machine.fire(
+                    eventId,
+                    // arg: context,
+                  );
+                },
+                child: Text(getButtonTitle(machine, eventId)),
+              );
+            },
+          ),
+        );
+      }
+    }
+
+    final parent = machine.parent;
+    if (parent != null && parent is StateMachineWithChangeNotifier<S, E, T>) {
+      print('parent name: ${parent.name}');
+      buttons.add(const Divider());
+      buttons.add(Text('from ${parent.name}'));
+      buttons.addAll(
+        _createButtonsFromState(
+          parent,
+          context,
         ),
       );
     }
 
-    return Column(children: buttons);
+    return buttons;
   }
 }
 

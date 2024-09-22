@@ -10,7 +10,7 @@ void main(List<String> args) {
   hm.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
-  runApp(NoOverlayApp(createSimpleMachine()));
+  runApp(NoOverlayApp(createSimpleMachine()..start()));
 }
 
 class NoOverlayApp extends StatelessWidget {
@@ -43,6 +43,10 @@ HismaRouterGenerator<S, E> createNoOverlayGenerator(
         ),
         S.c: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.c),
+          event: E.back,
+        ),
+        S.d: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.d),
           event: E.back,
         ),
       },
