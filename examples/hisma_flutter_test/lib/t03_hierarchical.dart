@@ -77,9 +77,3 @@ HismaRouterGenerator<S, E> createOverlayGenerator(
               ),
       },
     );
-
-Map<String, int> myMap = {
-  'a': 1,
-  'b': 2,
-  'c': 0 == 0 ? 3 : 4, // Conditional expression
-};
