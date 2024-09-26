@@ -71,10 +71,11 @@ void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
   // TODO: Use [] representation of hierarchic states.
   // expect(machine.activeStateId, stateId);
 
-  final activeMachines = getActiveMachines(machine);
-  final lm = activeMachines.last;
+  // final activeMachines = getActiveMachines(machine);
+  // final lm = activeMachines.last;
+  // final path = getTitle(lm, lm.activeStateId);
+  final path = getTitle(machine, machine.activeStateId);
 
-  final path = getTitle(lm, lm.activeStateId);
   expect(find.text(path), findsOneWidget);
 }
 
@@ -93,7 +94,7 @@ Future<void> action<S, E, T>(
     // TODO: Remove this as new design will not use Future.delayed.
     await tester.pumpAndSettle();
   } else if (act == Act.tap && event != null) {
-    await tester.tap(find.text('$event').last);
+    await tester.tap(find.text(getButtonTitle(machine, event)).first);
   } else if (act == Act.back) {
     final backButton = find.byType(m.BackButton);
     await tester.tap(backButton);
@@ -107,9 +108,9 @@ Future<void> check<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
   E event, {
-  Act fire = Act.tap,
+  Act act = Act.tap,
 }) async {
-  S where(S s, E e) {
+  S whereTo(S s, E e) {
     final state = machine.states[s] as State<E, T, S>?;
     final a = state!.etm[e];
     final t = a![0];
@@ -119,8 +120,8 @@ Future<void> check<S, E, T>(
 
   final s = machine.activeStateId;
   if (s == null) throw Exception('Machine ${machine.name} is not started.');
-  final expected = where(s, event);
-  await action(machine, tester, event, act: fire);
+  final expected = whereTo(s, event);
+  await action(machine, tester, event, act: act);
   expect(machine.activeStateId, expected);
   checkTitle(machine);
 }

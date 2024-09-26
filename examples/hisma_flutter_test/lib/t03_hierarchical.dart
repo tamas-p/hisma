@@ -12,11 +12,11 @@ void main(List<String> args) {
   hm.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
-  runApp(OverlayApp(createSimpleMachine()..start()));
+  runApp(HierarchicalApp(createSimpleMachine(hierarchical: true)..start()));
 }
 
-class OverlayApp extends StatelessWidget {
-  OverlayApp(this.machine, {super.key})
+class HierarchicalApp extends StatelessWidget {
+  HierarchicalApp(this.machine, {super.key})
       : generator = createOverlayGenerator(machine);
 
   final HismaRouterGenerator<S, E> generator;

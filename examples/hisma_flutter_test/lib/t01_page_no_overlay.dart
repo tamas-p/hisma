@@ -6,11 +6,13 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'simple_machine.dart';
 import 'ui.dart';
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
   hm.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
-  runApp(NoOverlayApp(createSimpleMachine()..start()));
+  final machine = createSimpleMachine();
+  await machine.start();
+  runApp(NoOverlayApp(machine));
 }
 
 class NoOverlayApp extends StatelessWidget {

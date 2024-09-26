@@ -8,7 +8,10 @@ enum E { forward, back, self }
 enum T { toA, toB, toC, toD }
 
 const testMachineName = 'testMachine';
-StateMachineWithChangeNotifier<S, E, T> createSimpleMachine([int level = 0]) =>
+StateMachineWithChangeNotifier<S, E, T> createSimpleMachine({
+  bool hierarchical = false,
+  int level = 0,
+}) =>
     StateMachineWithChangeNotifier<S, E, T>(
       name: '$testMachineName$level',
       events: E.values,
@@ -42,8 +45,13 @@ StateMachineWithChangeNotifier<S, E, T> createSimpleMachine([int level = 0]) =>
             E.self: [T.toD],
           },
           regions: [
-            if (level < 2)
-              Region<S, E, T, S>(machine: createSimpleMachine(level + 1)),
+            if (hierarchical && level < 2)
+              Region<S, E, T, S>(
+                machine: createSimpleMachine(
+                  hierarchical: hierarchical,
+                  level: level + 1,
+                ),
+              ),
           ],
         ),
       },

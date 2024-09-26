@@ -16,6 +16,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     // in turn will call setState to schedule its rebuild and that is
     // delegated to the build method of this class.
     machine.addListener(notifyListeners);
+    machine.routerDelegate = this;
   }
 
   @override

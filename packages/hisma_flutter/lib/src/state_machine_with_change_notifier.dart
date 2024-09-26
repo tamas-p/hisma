@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:hisma/hisma.dart';
 
+import '../hisma_flutter.dart';
 import 'hisma_pageless_handler.dart';
 
 class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
@@ -29,6 +30,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       );
 
   HismaPagelessHandler<S, E>? pagelessHandler;
+  HismaRouterDelegateNew<S, E>? routerDelegate;
 
   @override
   Future<void> fire(

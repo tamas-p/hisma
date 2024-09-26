@@ -14,34 +14,35 @@ void main() {
   testWidgets(
     'no overlay test with direct fire',
     (tester) async {
-      await checkAllStates(tester, trigger: Act.fire);
+      await checkAllStates(tester, act: Act.fire);
     },
   );
   testWidgets(
     'no overlay test with taps',
     (tester) async {
-      await checkAllStates(tester, trigger: Act.tap);
+      await checkAllStates(tester, act: Act.tap);
     },
   );
 }
 
 Future<void> checkAllStates(
   WidgetTester tester, {
-  required Act trigger,
+  required Act act,
 }) async {
   final machine = createSimpleMachine();
+  await machine.start();
   await tester.pumpWidget(NoOverlayApp(machine));
   checkTitle(machine);
 
   for (var i = 0; i < machine.states.length; i++) {
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.forward, fire: trigger);
-    await check(machine, tester, E.back, fire: trigger);
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.back, fire: trigger);
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.forward, fire: trigger);
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.forward, fire: trigger);
+    await check(machine, tester, E.self, act: act);
+    await check(machine, tester, E.forward, act: act);
+    await check(machine, tester, E.back, act: act);
+    await check(machine, tester, E.self, act: act);
+    await check(machine, tester, E.back, act: act);
+    await check(machine, tester, E.self, act: act);
+    await check(machine, tester, E.forward, act: act);
+    await check(machine, tester, E.self, act: act);
+    await check(machine, tester, E.forward, act: act);
   }
 }

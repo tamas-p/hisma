@@ -13,7 +13,7 @@ String getButtonTitle<S, E, T>(
   hisma.StateMachine<S, E, T> machine,
   dynamic event,
 ) =>
-    '$event';
+    '${machine.name}.$event';
 
 class Screen<S, E, T> extends StatelessWidget {
   Screen(this.machine, this.stateId, {super.key});

@@ -29,36 +29,37 @@ Future<void> checkAllStates(
   required Act trigger,
 }) async {
   final machine = createSimpleMachine();
+  await machine.start();
   final app = OverlayApp(machine);
   await tester.pumpWidget(app);
   expect(machine.activeStateId, machine.initialStateId);
   checkTitle(machine);
 
   for (var i = 0; i < machine.states.length; i++) {
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.forward, fire: trigger);
+    await check(machine, tester, E.self, act: trigger);
+    await check(machine, tester, E.forward, act: trigger);
 
     var presentation = app.generator.mapping[machine.activeStateId];
     var overlay = presentation is PageCreator && presentation.overlay;
     if (overlay) {
-      await check(machine, tester, E.back, fire: Act.back);
+      await check(machine, tester, E.back, act: Act.back);
     } else {
-      await check(machine, tester, E.back, fire: trigger);
+      await check(machine, tester, E.back, act: trigger);
     }
 
-    await check(machine, tester, E.self, fire: trigger);
+    await check(machine, tester, E.self, act: trigger);
 
     presentation = app.generator.mapping[machine.activeStateId];
     overlay = presentation is PageCreator && presentation.overlay;
     if (overlay) {
-      await check(machine, tester, E.back, fire: Act.back);
+      await check(machine, tester, E.back, act: Act.back);
     } else {
-      await check(machine, tester, E.back, fire: trigger);
+      await check(machine, tester, E.back, act: trigger);
     }
 
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.forward, fire: trigger);
-    await check(machine, tester, E.self, fire: trigger);
-    await check(machine, tester, E.forward, fire: trigger);
+    await check(machine, tester, E.self, act: trigger);
+    await check(machine, tester, E.forward, act: trigger);
+    await check(machine, tester, E.self, act: trigger);
+    await check(machine, tester, E.forward, act: trigger);
   }
 }
