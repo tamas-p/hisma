@@ -19,7 +19,7 @@ abstract class PageCreator<E, R> {
 }
 class MaterialPageCreator<E, R>
 class CupertinoPageCreator<E, R>
-abstract class PagelessCreator<E, R> {
+abstract class OpenCloseCreator<E, R> {
   Future<R?> open(BuildContext context)
   void close([R? value])
 }
@@ -31,10 +31,15 @@ class DialogCreator<E, R> {
 Presentation <|-- NoUIChange
 Presentation <|-- Creator
 Creator <|-- PageCreator
-Creator <|-- PagelessCreator
+Creator <|-- OpenCloseCreator
+
 PageCreator <|-- MaterialPageCreator
 PageCreator <|-- CupertinoPageCreator
-PagelessCreator <|-- DialogCreator
+
+OpenCloseCreator <|-- PagelessCreator
+OpenCloseCreator <|-- BottomSheetCreator
+OpenCloseCreator <|-- SnackBarCreator
+
 @enduml
 */
 
