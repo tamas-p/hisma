@@ -18,7 +18,7 @@ final l2aRouterProvider = Provider(
         event: E.jump,
         overlay: true,
       ),
-      S.l2a1: DialogCreator<E, void>(
+      S.l2a1: OldDialogCreator<E, void>(
         useRootNavigator: true,
         show: (dc, context) => generateDialog<E, void>(
           context: context,

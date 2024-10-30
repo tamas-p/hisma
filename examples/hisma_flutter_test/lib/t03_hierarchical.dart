@@ -17,7 +17,7 @@ void main(List<String> args) {
 
 class HierarchicalApp extends StatelessWidget {
   HierarchicalApp(this.machine, {super.key})
-      : generator = createOverlayGenerator(machine);
+      : generator = createHierarchicalGenerator(machine);
 
   final HismaRouterGenerator<S, E> generator;
 
@@ -30,7 +30,7 @@ class HierarchicalApp extends StatelessWidget {
   }
 }
 
-HismaRouterGenerator<S, E> createOverlayGenerator(
+HismaRouterGenerator<S, E> createHierarchicalGenerator(
   StateMachineWithChangeNotifier<S, E, T> machine, [
   int level = 0,
 ]) =>
@@ -58,7 +58,7 @@ HismaRouterGenerator<S, E> createOverlayGenerator(
                 widget: Builder(
                   builder: (context) {
                     return Router(
-                      routerDelegate: createOverlayGenerator(
+                      routerDelegate: createHierarchicalGenerator(
                         machine.find('$testMachineName${level + 1}'),
                         level + 1,
                       ).routerDelegate,

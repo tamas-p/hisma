@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
 Future<T?> generateDialog<T, E>({
-  required DialogCreator<T, E> dc,
+  required OldDialogCreator<T, E> dc,
   required BuildContext context,
   required String title,
   required String text,
@@ -31,7 +31,7 @@ Future<T?> generateDialog<T, E>({
     );
 
 Future<DateTime?> generateDatePicker<E>(
-  DialogCreator<E, DateTime> dc,
+  OldDialogCreator<E, DateTime> dc,
   BuildContext context,
 ) =>
     showDatePicker(

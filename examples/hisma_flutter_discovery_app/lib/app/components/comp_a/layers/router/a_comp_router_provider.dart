@@ -19,7 +19,7 @@ final aRouterProvider = Provider(
         widget:
             Router(routerDelegate: ref.read(l2aRouterProvider).routerDelegate),
       ),
-      S.ca1: DialogCreator(
+      S.ca1: OldDialogCreator(
         event: E.int1,
         useRootNavigator: true,
         // event: E.backward,

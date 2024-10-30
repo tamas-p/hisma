@@ -141,7 +141,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     if (presentation is PageCreator<dynamic, E>) {
       if (presentation.overlay == false) _stateIds.clear();
       _stateIds.add(stateId);
-    } else if (presentation is PagelessCreator<dynamic, E>) {
+    } else if (presentation is OldPagelessCreator<dynamic, E>) {
       _stateIds.add(stateId);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
@@ -214,7 +214,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     // routes, hence we only show a pageless route if it is the current (last).
     final lastPresentation = mapping[lastId];
     Page<dynamic>? lastPage;
-    if (lastPresentation is PagelessCreator<dynamic, E>) {
+    if (lastPresentation is OldPagelessCreator<dynamic, E>) {
       // lastPage = _addPageless(stateId: lastId, creator: lastPresentation);
     }
 
@@ -261,7 +261,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   // ignore: unused_element
   Page<dynamic> _addPageless({
     required S stateId,
-    required PagelessCreator<dynamic, E> creator,
+    required OldPagelessCreator<dynamic, E> creator,
   }) {
     final machineName = machine.name;
     final lastPageCreatorWithId = _getLastPageCreator();

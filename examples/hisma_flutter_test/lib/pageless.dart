@@ -65,7 +65,7 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
             description: 'Evaluate result.',
             action: (machine, dynamic arg) async {
               // print('Received: $arg');
-              if (arg is CtxArg && arg.arg is E) {
+              if (arg is OldCtxArg && arg.arg is E) {
                 if (arg.arg != E.self) {
                   await machine.fire(
                     arg.arg,
@@ -94,7 +94,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
           event: E.self,
           stateId: S.b,
         ),
-        S.c: DialogCreator<E, CtxArg>(
+        S.c: OldDialogCreator<E, OldCtxArg>(
           show: (dc, context) async {
             final dp = await showDatePicker(
               context: context,
@@ -103,12 +103,12 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
               lastDate: DateTime(2030),
             );
 
-            return CtxArg(dc.context!, dp);
+            return OldCtxArg(dc.context!, dp);
           },
           event: E.forward,
           useRootNavigator: useRootNavigator,
         ),
-        S.d: SnackBarCreator(
+        S.d: OldSnackBarCreator(
           snackBar: SnackBar(
             content: const Text('This is a SnackBar.'),
             // backgroundColor: Colors.green,
@@ -123,7 +123,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
           event: E.forward,
         ),
         S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
-        S.f: DialogCreator(
+        S.f: OldDialogCreator(
           show: (dc, context) async {
             final ret = Scaffold.of(context).showBottomSheet<void>(
               (BuildContext context) {

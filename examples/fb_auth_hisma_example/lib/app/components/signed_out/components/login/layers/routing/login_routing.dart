@@ -9,7 +9,7 @@ final loginRouter = HismaRouterGenerator<SLiM, ELiM>(
   machine: authMachine.find<SLiM, ELiM, TLiM>(loginMachineName),
   mapping: {
     SLiM.login: MaterialPageCreator<ELiM, void>(widget: const LoginScreen()),
-    SLiM.failedSignIn: DialogCreator<ELiM, void>(
+    SLiM.failedSignIn: OldDialogCreator<ELiM, void>(
       event: ELiM.ok,
       show: failedSignInDialog,
       useRootNavigator: true,

@@ -54,12 +54,12 @@ HismaRouterGenerator<S, E> createConcurrentHismaRouterGenerator({
         S.a: MaterialPageCreator<E, void>(
           widget: DoubleScreen(machine: machine),
         ),
-        S.b: DialogCreator<E, void>(
+        S.b: OldDialogCreator<E, void>(
           show: (dc, context) async => showMyBottomSheet(dc, context, 'Sub1'),
           event: E.back,
           useRootNavigator: true,
         ),
-        S.c: DialogCreator<E, void>(
+        S.c: OldDialogCreator<E, void>(
           show: (dc, context) async => showMyBottomSheet(dc, context, 'Sub2'),
           event: E.back,
           useRootNavigator: true,
@@ -120,7 +120,7 @@ class DoubleScreen extends StatelessWidget {
 }
 
 Future<void> showMyBottomSheet(
-  DialogCreator<E, void> dc,
+  OldDialogCreator<E, void> dc,
   BuildContext context,
   String str,
 ) async {

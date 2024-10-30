@@ -16,8 +16,8 @@ String getButtonTitle<S, E, T>(
     '${machine.name}.$event';
 
 class Screen<S, E, T> extends StatelessWidget {
-  Screen(this.machine, this.stateId, {super.key});
-  final Logger _log = Logger('$Screen');
+  const Screen(this.machine, this.stateId, {super.key});
+  // final Logger _log = Logger('$Screen');
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   final S stateId;
@@ -32,63 +32,61 @@ class Screen<S, E, T> extends StatelessWidget {
           ),
           body: Center(
             child: Column(
-              children: _createButtonsFromState(machine, context),
+              children: createButtonsFromState(machine, context),
             ),
           ),
         );
       },
     );
   }
-
-  List<Widget> _createButtonsFromState(
-    StateMachineWithChangeNotifier<S, E, T> machine,
-    BuildContext context,
-  ) {
-    final state = machine.states[machine.activeStateId];
-    final buttons = <Widget>[];
-    if (state != null && state is hisma.State<E, T, S>) {
-      for (final eventId in state.etm.keys) {
-        // assert(machine == state.machine);
-        buttons.add(
-          Builder(
-            builder: (context) {
-              return TextButton(
-                onPressed: () async {
-                  _log.info(
-                    () =>
-                        'Screen: state.machine.fire($eventId) - ${machine.name}',
-                  );
-                  await machine.fire(
-                    eventId,
-                    // arg: context,
-                  );
-                },
-                child: Text(getButtonTitle(machine, eventId)),
-              );
-            },
-          ),
-        );
-      }
-    }
-
-    final parent = machine.parent;
-    if (parent != null && parent is StateMachineWithChangeNotifier<S, E, T>) {
-      print('parent name: ${parent.name}');
-      buttons.add(const Divider());
-      buttons.add(Text('from ${parent.name}'));
-      buttons.addAll(
-        _createButtonsFromState(
-          parent,
-          context,
-        ),
-      );
-    }
-
-    return buttons;
-  }
 }
 
-class TestDialogCreator<S, E, T> extends DialogCreator<E, CtxArg> {
+//------------------------------------------------------------------------------
+
+Future<void> showTestDialog(
+  BuildContext context,
+  NavigatorState _,
+  Close<void> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+) =>
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: SizedBox(
+            height: 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('${machine.name} @ ${machine.activeStateId}'),
+                const Divider(endIndent: 10, indent: 10),
+                ...createButtonsFromState<dynamic, dynamic, dynamic>(
+                  machine,
+                  context,
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+Future<void> showTestDialogMini(
+  BuildContext context,
+  NavigatorState _,
+  Close<void> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+) =>
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return const AboutDialog();
+      },
+    );
+
+//------------------------------------------------------------------------------
+
+class TestDialogCreator<S, E, T> extends OldDialogCreator<E, OldCtxArg> {
   TestDialogCreator({
     required super.event,
     required super.useRootNavigator,
@@ -125,7 +123,7 @@ class TestDialogCreator<S, E, T> extends DialogCreator<E, CtxArg> {
       buttons.add(
         TextButton(
           onPressed: () {
-            close(CtxArg(context, eventId));
+            close(OldCtxArg(context, eventId));
           },
           child: Text(getButtonTitle(machine, eventId)),
         ),
@@ -178,7 +176,7 @@ class DatePickerPagelessRouteManager extends PagelessCreator<DateTime, E> {
 }
 */
 class SnackbarPagelessRouteManager<S, E, T>
-    extends PagelessCreator<E, SnackBarClosedReason> {
+    extends OldPagelessCreator<E, SnackBarClosedReason> {
   SnackbarPagelessRouteManager({
     required this.text,
     super.event,
@@ -213,4 +211,52 @@ class SnackbarPagelessRouteManager<S, E, T>
   void close([void value]) {
     ret?.close();
   }
+}
+
+List<Widget> createButtonsFromState<S, E, T>(
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  BuildContext context,
+) {
+  final log = Logger('createButtonsFromState');
+  final state = machine.states[machine.activeStateId];
+  final buttons = <Widget>[];
+  if (state != null && state is hisma.State<E, T, S>) {
+    for (final eventId in state.etm.keys) {
+      // assert(machine == state.machine);
+      buttons.add(
+        Builder(
+          builder: (context) {
+            return TextButton(
+              onPressed: () async {
+                log.info(
+                  () =>
+                      'Screen: state.machine.fire($eventId) - ${machine.name}',
+                );
+                await machine.fire(
+                  eventId,
+                  // arg: context,
+                );
+              },
+              child: Text(getButtonTitle(machine, eventId)),
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  final parent = machine.parent;
+  if (parent != null && parent is StateMachineWithChangeNotifier<S, E, T>) {
+    print('parent name: ${parent.name}');
+    buttons.add(const Divider());
+    buttons.add(Text('from ${parent.name}'));
+    buttons.addAll(
+      createButtonsFromState(
+        parent,
+        context,
+      ),
+    );
+  }
+
+  return buttons;
 }

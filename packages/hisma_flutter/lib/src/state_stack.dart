@@ -34,7 +34,7 @@ class StateStack<S> with ChangeNotifier {
       if (presentation.overlay == false) _stateIds.clear();
       _stateIds.add(newState);
       notifyListeners();
-    } else if (presentation is PagelessCreator) {
+    } else if (presentation is OldPagelessCreator) {
       _stateIds.add(newState);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.

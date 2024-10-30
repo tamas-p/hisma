@@ -12,7 +12,7 @@ final fRouterProvider = Provider(
     mapping: {
       S.fa: MaterialPageCreator<E, void>(widget: const CompFScreenA()),
       // S.fb: getPagelessCreator2(),
-      S.fb: DialogCreator<E, void>(
+      S.fb: OldDialogCreator<E, void>(
         useRootNavigator: true,
         event: E.backward,
         show: (dc, context) => generateDialog(

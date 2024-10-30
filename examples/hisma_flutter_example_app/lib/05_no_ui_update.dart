@@ -114,7 +114,7 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-Future<bool?> b1(DialogCreator<E, bool> dc, BuildContext context) =>
+Future<bool?> b1(OldDialogCreator<E, bool> dc, BuildContext context) =>
     showDialog<bool>(
       context: context,
       useRootNavigator: dc.useRootNavigator,
@@ -153,7 +153,7 @@ class ScreenC extends StatelessWidget {
 }
 
 Future<DateTime?> c1(
-  DialogCreator<E, DateTime> dc,
+  OldDialogCreator<E, DateTime> dc,
   BuildContext context,
 ) =>
     showDatePicker(
@@ -176,13 +176,13 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       event: E.backward,
       overlay: true,
     ),
-    S.b1: DialogCreator(show: b1, event: E.backward, useRootNavigator: true),
+    S.b1: OldDialogCreator(show: b1, event: E.backward, useRootNavigator: true),
     S.b2: NoUIChange(),
     S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
       event: E.backward,
     ),
-    S.c1: DialogCreator(show: c1, event: E.backward, useRootNavigator: true),
+    S.c1: OldDialogCreator(show: c1, event: E.backward, useRootNavigator: true),
   },
 );
 

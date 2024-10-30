@@ -52,7 +52,7 @@ final appRouterProvider = Provider(
         widget:
             Router(routerDelegate: ref.read(aRouterProvider).routerDelegate),
       ),
-      S.a1: DialogCreator<E, void>(
+      S.a1: OldDialogCreator<E, void>(
         useRootNavigator: true,
         event: E.backward,
         show: (dc, context) => generateDialog<E, void>(
@@ -72,7 +72,7 @@ final appRouterProvider = Provider(
         event: E.backward,
         overlay: true,
       ),
-      S.c: DialogCreator<E, DateTime>(
+      S.c: OldDialogCreator<E, DateTime>(
         useRootNavigator: true,
         event: E.forward,
         show: (dc, context) => generateDatePicker<E>(
@@ -80,7 +80,7 @@ final appRouterProvider = Provider(
           context,
         ),
       ),
-      S.d: DialogCreator<E, void>(
+      S.d: OldDialogCreator<E, void>(
         useRootNavigator: true,
         event: E.backward,
         show: (dc, context) => generateDialog<E, void>(

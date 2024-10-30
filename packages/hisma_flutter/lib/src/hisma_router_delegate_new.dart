@@ -16,6 +16,9 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     // in turn will call setState to schedule its rebuild and that is
     // delegated to the build method of this class.
     machine.addListener(notifyListeners);
+
+    // We make the machine know its corresponding HismaRouterDelegate.
+    // Machine will use it to handle ImperativeCreators.
     machine.routerDelegate = this;
   }
 
@@ -54,7 +57,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   final _log = getLogger('$HismaRouterDelegateNew');
 
   /// Required to find NavigatorState corresponding to this RouterDelegate.
-  final GlobalKey _navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey navigatorKey = GlobalKey<NavigatorState>();
 
   /// Machine that this router delegate represents.
   final StateMachineWithChangeNotifier<S, E, dynamic> machine;
@@ -67,7 +70,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   Widget _buildNavigator() {
     _log.info(() => 'm: ${machine.name}, st: ${machine.activeStateId}');
     return Navigator(
-      key: _navigatorKey,
+      key: navigatorKey,
       pages: _createPages(),
       onPopPage: _onPopPage,
     );
@@ -105,7 +108,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
-      if (_stateIds.contains(activeStateId)) {
+      if (isCircle()) {
         // Since we arrived back to a state that (more precisely the page
         // created by its Presentation) is already in the current
         // Navigator.pages (through the circle in the state transition graph),
@@ -134,10 +137,11 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
             widget: presentation.widget,
           ),
         );
-      } else if (presentation is PagelessCreator) {
-        print('PagelessCreator');
       } else {
-        throw Exception('NOK');
+        // throw ArgumentError(
+        //   'Presentation ${presentation.runtimeType} is not handled.',
+        // );
+        print('PAGELESS: $presentation @ ${machine.activeStateId}');
       }
     }
     assert(pages.isNotEmpty);
@@ -152,18 +156,50 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   void _addState(S stateId) {
     _log.fine('_addState($stateId)');
     final presentation = mapping[stateId];
+    assert(
+      presentation != null,
+      'Presentation is not handled for $stateId.'
+      ' Check mapping in your HismaRouterGenerator for machine ${machine.name}',
+    );
+
     if (presentation is PageCreator<E, dynamic>) {
       if (presentation.overlay == false) _stateIds.clear();
-      _stateIds.add(stateId);
-    } else if (presentation is PagelessCreator<dynamic, E>) {
       _stateIds.add(stateId);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
     } else {
       throw ArgumentError(
-        'Presentation ${presentation.runtimeType} is not handled for $stateId.'
-        ' Check mapping in your HismaRouterGenerator for machine ${machine.name}',
+        'Presentation ${presentation.runtimeType} is not supported.',
       );
+    }
+  }
+
+  /// Gives back whether jumping to the given stateId will pass PageCreators.
+  bool intermediatePageCreator(S stateId) {
+    if (_stateIds.contains(stateId)) {
+      for (final s in _stateIds.reversed) {
+        if (s == stateId) break;
+        if (mapping[s] is PageCreator) return true;
+      }
+    }
+    return false;
+  }
+
+  // state stack
+
+  bool isCircle() {
+    return _stateIds.contains(machine.activeStateId);
+  }
+
+  void addState(S id) {
+    _stateIds.add(id);
+  }
+
+  void windBack(S target, void Function(S stateId) processor) {
+    assert(_stateIds.contains(target));
+    for (final current in _stateIds.reversed) {
+      if (current == target) break;
+      processor(current);
     }
   }
 }

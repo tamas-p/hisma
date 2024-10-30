@@ -6,7 +6,7 @@ import 'state_machine_with_change_notifier.dart';
 
 class HismaPagelessHandler<S, E> {
   HismaPagelessHandler(this._machine, this._mapping) {
-    _machine.pagelessHandler = this;
+    // _machine.pagelessHandler = this;
   }
 
   final _log = getLogger('$HismaPagelessHandler');
@@ -19,7 +19,7 @@ class HismaPagelessHandler<S, E> {
   final Map<S, Presentation> _mapping;
 
   /// There can be only one pageless route shown at a time in the application.
-  static PagelessCreator<dynamic, dynamic>? shown;
+  static OldPagelessCreator<dynamic, dynamic>? shown;
 
   static void close() {
     if (shown != null) {
@@ -30,7 +30,7 @@ class HismaPagelessHandler<S, E> {
 
   bool isPageless(S stateId) {
     final creator = _mapping[stateId];
-    return creator is PagelessCreator<dynamic, E>;
+    return creator is OldPagelessCreator<dynamic, E>;
   }
 
   Future<void> openPageless({
@@ -38,7 +38,7 @@ class HismaPagelessHandler<S, E> {
     required BuildContext context,
   }) async {
     final creator = _mapping[stateId];
-    if (creator is! PagelessCreator<E, dynamic>) {
+    if (creator is! OldPagelessCreator<E, dynamic>) {
       throw ArgumentError('Not pageless but $creator');
     }
 
