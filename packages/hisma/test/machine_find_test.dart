@@ -6,13 +6,10 @@ import '../example/others/plantuml_example.dart';
 void main() {
   group('Machine find test from m1.', () {
     test('Machine find test - Not found.', () {
-      // expect(
-      //   () => m1.find<dynamic, dynamic, dynamic>('Does not exist'),
-      //   throwsA(const TypeMatcher<HismaMachineNotFoundException>()),
-      // );
-      m1;
-      final m = m1.find<S, E, T>('Does not exist');
-      print(m);
+      expect(
+        () => m1.find<dynamic, dynamic, dynamic>('Does not exist'),
+        throwsA(const TypeMatcher<HismaMachineNotFoundException>()),
+      );
       expect(
         () => m1.find<S, E, T>('Does not exist'),
         throwsA(const TypeMatcher<HismaMachineNotFoundException>()),

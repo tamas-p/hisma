@@ -67,7 +67,7 @@ class StateMachine<S, E, T> {
   final String name;
 
   /// Parent machine.
-  StateMachine<S, E, T>? parent;
+  StateMachine<dynamic, dynamic, dynamic>? parent;
 
   /// Returns name of the parent state machine if that exist, null otherwise.
   /// It can be used e.g. by state machine monitors that implement [Monitor]
