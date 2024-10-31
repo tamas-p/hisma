@@ -9,10 +9,10 @@ import '../../components/register/layers/routing/registration_router_generator.d
 final signedOutRouter = HismaRouterGenerator<SSoM, ESoM>(
   machine: authMachine.find<SSoM, ESoM, TSoM>(signedOutMachineName),
   mapping: {
-    SSoM.login: MaterialPageCreator<void, SSoM, ESoM>(
+    SSoM.login: MaterialPageCreator<ESoM, void>(
       widget: Router(routerDelegate: loginRouter.routerDelegate),
     ),
-    SSoM.registration: MaterialPageCreator<void, SSoM, ESoM>(
+    SSoM.registration: MaterialPageCreator<ESoM, void>(
       widget: Router(
         routerDelegate: registrationRouterGenerator.routerDelegate,
       ),

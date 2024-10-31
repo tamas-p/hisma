@@ -11,15 +11,15 @@ final signedInRouter = HismaRouterGenerator<SSiM, ESiM>(
   machine: authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName),
   mapping: {
     // S.main: MaterialPageCreator<S>(widget: const SignedInScreen()),
-    SSiM.main: MaterialPageCreator<void, SSiM, ESiM>(
+    SSiM.main: MaterialPageCreator<ESiM, void>(
       widget: Router(routerDelegate: mainRouter.routerDelegate),
     ),
-    SSiM.confirmSignOut: DialogCreator<void, ESiM>(
+    SSiM.confirmSignOut: OldDialogCreator<ESiM, void>(
       show: signOutConfirmationDialog,
       event: ESiM.cancel,
       useRootNavigator: true,
     ),
-    SSiM.profile: MaterialPageCreator<void, SSiM, ESiM>(
+    SSiM.profile: MaterialPageCreator<ESiM, void>(
       widget: Router(routerDelegate: profileRouter.routerDelegate),
       event: ESiM.back,
       overlay: true,

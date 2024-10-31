@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
 Future<void> createDialog({
-  required DialogCreator<dynamic, dynamic> dc,
+  required OldDialogCreator<dynamic, dynamic> dc,
   required BuildContext context,
   required bool useRootNavigator,
   required String title,

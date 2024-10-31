@@ -12,15 +12,15 @@ final l2aRouterProvider = Provider(
   (ref) => HismaRouterGenerator<S, E>(
     machine: ref.read(compL2AMachineProvider),
     mapping: {
-      S.l2a: MaterialPageCreator<void, S, E>(widget: const CompL2AScreenA()),
-      S.l2o: MaterialPageCreator<void, S, E>(
+      S.l2a: MaterialPageCreator<E, void>(widget: const CompL2AScreenA()),
+      S.l2o: MaterialPageCreator<E, int>(
         widget: const CompL2AScreenO(),
         event: E.jump,
         overlay: true,
       ),
-      S.l2a1: DialogCreator<void, E>(
+      S.l2a1: OldDialogCreator<E, void>(
         useRootNavigator: true,
-        show: (dc, context) => generateDialog<void, E>(
+        show: (dc, context) => generateDialog<E, void>(
           context: context,
           dc: dc,
           title: 'Problem during login',
@@ -28,8 +28,8 @@ final l2aRouterProvider = Provider(
         ),
         event: E.backward,
       ),
-      S.l2b: MaterialPageCreator<void, S, E>(widget: const CompL2AScreenB()),
-      S.l2c: MaterialPageCreator<void, S, E>(widget: const CompL2AScreenC()),
+      S.l2b: MaterialPageCreator<E, void>(widget: const CompL2AScreenB()),
+      S.l2c: MaterialPageCreator<E, void>(widget: const CompL2AScreenC()),
     },
   ),
 );

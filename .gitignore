@@ -45,4 +45,5 @@ pubspec_overrides.yaml
 **/linux/flutter/generated_plugins.cmake
 
 # FVM
+.fvmrc
 .fvm/flutter_sdk

@@ -16,6 +16,10 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     // in turn will call setState to schedule its rebuild and that is
     // delegated to the build method of this class.
     machine.addListener(notifyListeners);
+
+    // We make the machine know its corresponding HismaRouterDelegate.
+    // Machine will use it to handle ImperativeCreators.
+    machine.routerDelegate = this;
   }
 
   @override
@@ -32,24 +36,13 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   @override
   Future<bool> popRoute() async {
     _log.info('popRoute');
-
-    final creator = mapping[machine.activeStateId];
-    if (creator is Creator<E> && creator.event != null) {
-      _log.info(
-        'popRoute: Firing ${creator.event} on machine ${machine.name}.',
-      );
-      await machine.fire(creator.event as E);
-    } else {
-      _log.info('popRoute: Nothing to do for $creator.');
-    }
-
-    return true;
+    fire(null);
+    return SynchronousFuture<bool>(true);
   }
 
   @override
   Future<void> setNewRoutePath(S configuration) {
     _log.info('setNewRoutePath($configuration)');
-
     // TODO: implement setNewRoutePath
     return SynchronousFuture(null);
   }
@@ -64,7 +57,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   final _log = getLogger('$HismaRouterDelegateNew');
 
   /// Required to find NavigatorState corresponding to this RouterDelegate.
-  final GlobalKey _navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey navigatorKey = GlobalKey<NavigatorState>();
 
   /// Machine that this router delegate represents.
   final StateMachineWithChangeNotifier<S, E, dynamic> machine;
@@ -77,31 +70,136 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   Widget _buildNavigator() {
     _log.info(() => 'm: ${machine.name}, st: ${machine.activeStateId}');
     return Navigator(
-      key: _navigatorKey,
+      key: navigatorKey,
       pages: _createPages(),
-      onPopPage: (route, dynamic result) {
-        _log.info('onPopPage');
-        if (route.didPop(result)) return true;
-        return false;
-      },
+      onPopPage: _onPopPage,
     );
   }
 
-  List<Page<dynamic>> _createPages() {
-    final pages = <Page<dynamic>>[];
+  bool _onPopPage(Route<dynamic> route, dynamic result) {
+    fire(result);
+    return false;
+  }
+
+  void fire(dynamic result) {
     final presentation = mapping[machine.activeStateId];
-    if (presentation is PageCreator<dynamic, S, E>) {
-      final page = presentation.create(
-        name: '${machine.name}-${machine.activeStateId}',
-        widget: presentation.widget,
-      );
-      pages.add(page);
+    if (presentation is Creator<E>) {
+      final event = presentation.event;
+      if (event != null) {
+        machine.fire(event, arg: result);
+      } else {
+        _log.info('No event defined.');
+      }
+    } else {
+      throw Exception('NOK');
+    }
+  }
+
+  List<S> _stateIds = [];
+  late List<Page<dynamic>> _previousPages;
+  List<Page<dynamic>> _createPages() {
+    final activeStateId = machine.activeStateId;
+    // We only process if machine is active. If inactive we simply build
+    // pages of the navigator from the current [_stateIds] (that was updated
+    // during the previous builds). This is required to handle the case when a
+    // child machine gets inactivated but we need its previous presentation to
+    // allow the transition (by being the background) to the new page.
+    if (activeStateId != null) {
+      // We only process the state if it is not leading us back to a previous
+      // state in a circle that current _pageMap (hence current navigator pages)
+      // includes.
+      if (isCircle()) {
+        // Since we arrived back to a state that (more precisely the page
+        // created by its Presentation) is already in the current
+        // Navigator.pages (through the circle in the state transition graph),
+        // we have to clean up the pages on the circle.
+        _cleanUpCircle(activeStateId);
+      } else {
+        // This state (more precisely the page created by its Presentation) is
+        // not represented in Navigator.pages hence we need to add it.
+        _addState(activeStateId);
+      }
+
+      return _stateIdsToPages();
+    }
+
+    return _previousPages;
+  }
+
+  List<Page<dynamic>> _stateIdsToPages() {
+    final pages = <Page<dynamic>>[];
+    for (final stateId in _stateIds) {
+      final presentation = mapping[stateId];
+      if (presentation is PageCreator) {
+        pages.add(
+          presentation.create(
+            name: stateId.toString(),
+            widget: presentation.widget,
+          ),
+        );
+      } else {
+        // throw ArgumentError(
+        //   'Presentation ${presentation.runtimeType} is not handled.',
+        // );
+        print('PAGELESS: $presentation @ ${machine.activeStateId}');
+      }
+    }
+    assert(pages.isNotEmpty);
+    return pages;
+  }
+
+  void _cleanUpCircle(S activeStateId) {
+    _log.fine('_cleanUpCircle($activeStateId)');
+    _stateIds = _stateIds.sublist(0, _stateIds.indexOf(activeStateId) + 1);
+  }
+
+  void _addState(S stateId) {
+    _log.fine('_addState($stateId)');
+    final presentation = mapping[stateId];
+    assert(
+      presentation != null,
+      'Presentation is not handled for $stateId.'
+      ' Check mapping in your HismaRouterGenerator for machine ${machine.name}',
+    );
+
+    if (presentation is PageCreator<E, dynamic>) {
+      if (presentation.overlay == false) _stateIds.clear();
+      _stateIds.add(stateId);
+    } else if (presentation is NoUIChange) {
+      // Explicit no update was requested, so we do nothing.
     } else {
       throw ArgumentError(
-        'Presentation ${presentation.runtimeType} is not handled for ${machine.activeStateId}.'
-        ' Check mapping in your HismaRouterGenerator for machine ${machine.name}',
+        'Presentation ${presentation.runtimeType} is not supported.',
       );
     }
-    return pages;
+  }
+
+  /// Gives back whether jumping to the given stateId will pass PageCreators.
+  bool intermediatePageCreator(S stateId) {
+    if (_stateIds.contains(stateId)) {
+      for (final s in _stateIds.reversed) {
+        if (s == stateId) break;
+        if (mapping[s] is PageCreator) return true;
+      }
+    }
+    return false;
+  }
+
+  // state stack
+
+  bool isCircle() {
+    return _stateIds.contains(machine.activeStateId);
+  }
+
+  void addState(S id) {
+    _stateIds.add(id);
+  }
+
+  void windBack(S target, void Function(S stateId) processor) {
+    assert(_stateIds.contains(target));
+    for (final current in _stateIds.reversed) {
+      if (current == target) break;
+      processor(current);
+    }
   }
 }

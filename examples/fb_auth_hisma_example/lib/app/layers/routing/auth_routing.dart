@@ -10,11 +10,11 @@ import '../ui/init_screen.dart';
 final appRouter = HismaRouterGenerator<SAM, EAM>(
   machine: authMachine,
   mapping: {
-    SAM.init: MaterialPageCreator<void, SAM, EAM>(widget: const InitScreen()),
-    SAM.signedOut: MaterialPageCreator<void, SAM, EAM>(
+    SAM.init: MaterialPageCreator<EAM, void>(widget: const InitScreen()),
+    SAM.signedOut: MaterialPageCreator<EAM, void>(
       widget: Router(routerDelegate: signedOutRouter.routerDelegate),
     ),
-    SAM.signedIn: MaterialPageCreator<void, SAM, EAM>(
+    SAM.signedIn: MaterialPageCreator<EAM, void>(
       widget: Router(routerDelegate: signedInRouter.routerDelegate),
     ),
   },

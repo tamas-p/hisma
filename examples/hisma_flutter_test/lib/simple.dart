@@ -89,7 +89,7 @@ hf.HismaRouterGenerator<S, void> createRouterGenerator(
     hf.HismaRouterGenerator<S, void>(
       machine: machine,
       mapping: {
-        S.a: hf.MaterialPageCreator<void, S, void>(widget: const ScreenA()),
+        S.a: hf.MaterialPageCreator<void, void>(widget: const ScreenA()),
       },
     );
 

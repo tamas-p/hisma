@@ -5,7 +5,7 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../layers/machine/auth_machine.dart';
 
 Future<void> signOutConfirmationDialog(
-  DialogCreator<void, ESiM> dc,
+  OldDialogCreator<ESiM, void> dc,
   BuildContext context,
 ) {
   final signedInMachine =

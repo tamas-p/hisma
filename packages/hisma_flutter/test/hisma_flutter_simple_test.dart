@@ -68,8 +68,8 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
     HismaRouterGenerator(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<void, S, E>(widget: const ScreenA()),
-        S.b: MaterialPageCreator<void, S, E>(widget: const ScreenB()),
+        S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
+        S.b: MaterialPageCreator<E, void>(widget: const ScreenB()),
       },
     );
 

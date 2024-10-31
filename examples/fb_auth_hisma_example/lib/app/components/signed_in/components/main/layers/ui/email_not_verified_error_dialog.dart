@@ -6,7 +6,7 @@ import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
 Future<void> failedEmailVerifiedDialog(
-  DialogCreator<void, EMM> dc,
+  OldDialogCreator<EMM, void> dc,
   BuildContext context,
 ) =>
     createDialog(

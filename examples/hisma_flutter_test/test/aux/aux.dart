@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart' as cupertino;
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart' as m;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
@@ -71,27 +71,35 @@ void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
   // TODO: Use [] representation of hierarchic states.
   // expect(machine.activeStateId, stateId);
 
-  final activeMachines = getActiveMachines(machine);
-  final lm = activeMachines.last;
+  // final activeMachines = getActiveMachines(machine);
+  // final lm = activeMachines.last;
+  // final path = getTitle(lm, lm.activeStateId);
+  final path = getTitle(machine, machine.activeStateId);
 
-  final path = getTitle(lm, lm.activeStateId);
   expect(find.text(path), findsOneWidget);
 }
+
+enum Act { fire, tap, back }
 
 Future<void> action<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
-  E event, {
-  bool fire = false,
+  E? event, {
+  Act act = Act.tap,
 }) async {
-  if (fire) {
+  if (act == Act.fire && event != null) {
     await machine.fire(event);
     // We need this extra pumpAndSettle as pageless routes are created in a
     // subsequent frame by Future.delayed.
     // TODO: Remove this as new design will not use Future.delayed.
     await tester.pumpAndSettle();
+  } else if (act == Act.tap && event != null) {
+    await tester.tap(find.text(getButtonTitle(machine, event)).first);
+  } else if (act == Act.back) {
+    final backButton = find.byType(m.BackButton);
+    await tester.tap(backButton);
   } else {
-    await tester.tap(find.text('$event').last);
+    throw Exception('Unsupported trigger: $act');
   }
   await tester.pumpAndSettle();
 }
@@ -100,8 +108,20 @@ Future<void> check<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
   E event, {
-  bool fire = false,
+  Act act = Act.tap,
 }) async {
-  await action(machine, tester, event, fire: fire);
+  S whereTo(S s, E e) {
+    final state = machine.states[s] as State<E, T, S>?;
+    final a = state!.etm[e];
+    final t = a![0];
+    final transition = machine.transitions[t] as Transition<S>?;
+    return transition!.to;
+  }
+
+  final s = machine.activeStateId;
+  if (s == null) throw Exception('Machine ${machine.name} is not started.');
+  final expected = whereTo(s, event);
+  await action(machine, tester, event, act: act);
+  expect(machine.activeStateId, expected);
   checkTitle(machine);
 }

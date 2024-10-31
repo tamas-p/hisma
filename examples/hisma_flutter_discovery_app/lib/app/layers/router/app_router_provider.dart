@@ -46,33 +46,33 @@ final appRouterProvider = Provider(
     machine: ref.read(appMachineProvider),
     mapping: {
       // S.a: MaterialPageCreator<S>(widget: const AScreen()),
-      S.a: MaterialPageCreator<void, S, E>(
+      S.a: MaterialPageCreator<E, void>(
         // widget: const StatelessScreen(),
         // widget: const StatefulScreen(),
         widget:
             Router(routerDelegate: ref.read(aRouterProvider).routerDelegate),
       ),
-      S.a1: DialogCreator<void, E>(
+      S.a1: OldDialogCreator<E, void>(
         useRootNavigator: true,
         event: E.backward,
-        show: (dc, context) => generateDialog<void, E>(
+        show: (dc, context) => generateDialog<E, void>(
           dc: dc,
           context: context,
           title: 'Problem during login',
           text: 'Hello.',
         ),
       ),
-      S.b: MaterialPageCreator<void, S, E>(
+      S.b: MaterialPageCreator<E, void>(
         widget: const BScreen(),
         event: E.backward,
         overlay: true,
       ),
-      S.b1: MaterialPageCreator<void, S, E>(
+      S.b1: MaterialPageCreator<E, void>(
         widget: const B1Screen(),
         event: E.backward,
         overlay: true,
       ),
-      S.c: DialogCreator<DateTime, E>(
+      S.c: OldDialogCreator<E, DateTime>(
         useRootNavigator: true,
         event: E.forward,
         show: (dc, context) => generateDatePicker<E>(
@@ -80,22 +80,22 @@ final appRouterProvider = Provider(
           context,
         ),
       ),
-      S.d: DialogCreator<void, E>(
+      S.d: OldDialogCreator<E, void>(
         useRootNavigator: true,
         event: E.backward,
-        show: (dc, context) => generateDialog<void, E>(
+        show: (dc, context) => generateDialog<E, void>(
           dc: dc,
           context: context,
           title: 'Problem during login2',
           text: 'Hello2.',
         ),
       ),
-      S.e: MaterialPageCreator<void, S, E>(
+      S.e: MaterialPageCreator<E, void>(
         // S.e: MaterialPageCreator<S>(
         widget: const EScreen(),
         event: E.jump,
       ),
-      S.f: MaterialPageCreator<void, S, E>(
+      S.f: MaterialPageCreator<E, void>(
         widget:
             Router(routerDelegate: ref.read(fRouterProvider).routerDelegate),
       ),

@@ -57,9 +57,8 @@ class LoginScreen extends StatelessWidget {
 final authRouterGenerator = HismaRouterGenerator<AS, AE>(
   machine: authMachine,
   mapping: {
-    AS.signedOut:
-        MaterialPageCreator<void, AS, AE>(widget: const LoginScreen()),
-    AS.signedIn: MaterialPageCreator<void, AS, AE>(
+    AS.signedOut: MaterialPageCreator<AE, void>(widget: const LoginScreen()),
+    AS.signedIn: MaterialPageCreator<AE, void>(
       widget: Router<S>(routerDelegate: hismaRouterGenerator.routerDelegate),
     ),
   },
@@ -180,7 +179,7 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-Future<bool?> b1(DialogCreator<bool, E> dc, BuildContext context) =>
+Future<bool?> b1(OldDialogCreator<E, bool> dc, BuildContext context) =>
     showDialog<bool>(
       useRootNavigator: dc.useRootNavigator,
       context: context,
@@ -221,7 +220,7 @@ class ScreenC extends StatelessWidget {
   }
 }
 
-Future<DateTime?> c1(DialogCreator<DateTime, E> dc, BuildContext context) =>
+Future<DateTime?> c1(OldDialogCreator<E, DateTime> dc, BuildContext context) =>
     showDatePicker(
       useRootNavigator: dc.useRootNavigator,
       context: context,
@@ -236,20 +235,20 @@ Future<DateTime?> c1(DialogCreator<DateTime, E> dc, BuildContext context) =>
 final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
   mapping: {
-    S.a: MaterialPageCreator<void, S, E>(widget: const ScreenA()),
-    S.b: MaterialPageCreator<void, S, E>(
+    S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<E, void>(
       widget: const ScreenB(),
       event: E.backward,
       overlay: true,
     ),
-    S.b1: DialogCreator(show: b1, event: E.backward, useRootNavigator: true),
+    S.b1: OldDialogCreator(show: b1, event: E.backward, useRootNavigator: true),
     S.b2: NoUIChange(),
-    S.c: MaterialPageCreator<void, S, E>(
+    S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
       event: E.backward,
       overlay: true,
     ),
-    S.c1: DialogCreator(show: c1, event: E.backward, useRootNavigator: true),
+    S.c1: OldDialogCreator(show: c1, event: E.backward, useRootNavigator: true),
   },
 );
 

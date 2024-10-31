@@ -8,9 +8,8 @@ import '../ui/profile_screen.dart';
 final profileRouter = HismaRouterGenerator<SPM, EPM>(
   machine: authMachine.find<SPM, EPM, TPM>(profileMachineName),
   mapping: {
-    SPM.profile:
-        MaterialPageCreator<void, SPM, EPM>(widget: const ProfileScreen()),
-    SPM.error: DialogCreator<void, EPM>(
+    SPM.profile: MaterialPageCreator<EPM, void>(widget: const ProfileScreen()),
+    SPM.error: OldDialogCreator<EPM, void>(
       useRootNavigator: true,
       show: profileLoadFailed,
       event: EPM.back,

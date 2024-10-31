@@ -4,7 +4,7 @@ void initLogging() {
   // This shall be done 1st to allow Logger configuration for a hierarchy.
   hierarchicalLoggingEnabled = true;
 
-  Logger.root.level = Level.ALL;
+  Logger.root.level = Level.OFF;
   // Logger(vismaMonitorName).level = Level.INFO;
   Logger('hisma_flutter').level = Level.ALL;
   Logger.root.onRecord.listen((record) {
