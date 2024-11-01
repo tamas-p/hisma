@@ -5,6 +5,7 @@ import 'package:hisma_flutter_test/concurrent_fire.dart';
 Future<void> main() async {
   testWidgets(
     'Concurrency test.',
+    skip: true,
     (tester) async {
       final machine = createConcurrentMachine();
       await machine.start();

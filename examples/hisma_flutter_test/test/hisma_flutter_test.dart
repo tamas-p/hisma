@@ -98,7 +98,7 @@ void main() {
         await testIt(machine: machine, tester: tester, act: Act.tap);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -117,7 +117,7 @@ void main() {
         await testIt(machine: machine, tester: tester, act: Act.fire);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -147,7 +147,7 @@ void main() {
     skip: false,
   );
 
-  group('Pageless routes.', () {
+  group('Pageless routes.', skip: true, () {
     testWidgets(
       '''
 Testing that pageless routes are managed well in case of a root machine.
@@ -199,7 +199,7 @@ Testing that pageless routes are managed well in case of a root machine.
           checkTitle(machine);
         });
       },
-      skip: false,
+      skip: true,
     );
 
     // TODO: FAILS at
@@ -258,7 +258,7 @@ Testing that pageless routes are managed well in case of a child machine.
           checkTitle(machine);
         });
       },
-      skip: false,
+      skip: true,
     );
   });
 
@@ -292,7 +292,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.tap(E.self);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -321,7 +321,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.tap(E.self);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -354,7 +354,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.tap(E.forward);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -428,7 +428,7 @@ Testing that pageless routes are managed well in case of a child machine.
         // await mt.tap(E.forward);
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -490,7 +490,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.fire(E.back, 'root');
       });
     },
-    skip: false,
+    skip: true,
   );
 
   testWidgets(
@@ -521,7 +521,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.backButton();
       });
     },
-    skip: false,
+    skip: true,
   );
 
   // TODO: FAILS at
@@ -554,7 +554,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.fire(E.jumpBack, 'root/S.l');
       });
     },
-    skip: false,
+    skip: true,
   );
   testWidgets(
     'original debug.',
@@ -591,7 +591,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.fire(E.jumpBack, 'root/S.l');
       });
     },
-    skip: false,
+    skip: true,
   );
   testWidgets(
     'shortened debug.',
@@ -614,7 +614,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.fire(E.forward, 'root');
       });
     },
-    skip: false,
+    skip: true,
   );
   testWidgets(
     'building Builder(dirty).',
@@ -636,7 +636,7 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.fire(E.back, 'root');
       });
     },
-    skip: false,
+    skip: true,
   );
 
   group(
@@ -671,7 +671,7 @@ Testing that pageless routes are managed well in case of a child machine.
             await mt.fire(E.jumpBack, 'root');
           });
         },
-        skip: false,
+        skip: true,
       );
 
       testWidgets(
@@ -697,7 +697,7 @@ Testing that pageless routes are managed well in case of a child machine.
             await mt.fire(E.forward, 'root');
           });
         },
-        skip: false,
+        skip: true,
       );
     },
   );

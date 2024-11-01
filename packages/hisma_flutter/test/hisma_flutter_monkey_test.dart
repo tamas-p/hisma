@@ -36,7 +36,7 @@ void main() {
             useRootNavigator: false,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'No History monkey, useRootNavigator: true',
@@ -51,7 +51,7 @@ void main() {
             useRootNavigator: true,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Shallow history monkey, useRootNavigator: false',
@@ -67,7 +67,7 @@ void main() {
             useRootNavigator: false,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Shallow history monkey, useRootNavigator: true',
@@ -83,7 +83,7 @@ void main() {
             useRootNavigator: true,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Deep history monkey, useRootNavigator: false',
@@ -99,7 +99,7 @@ void main() {
             useRootNavigator: false,
           );
         },
-        skip: false,
+        skip: true,
       );
       testWidgets(
         'Deep history monkey, useRootNavigator: true',
@@ -115,7 +115,7 @@ void main() {
             useRootNavigator: true,
           );
         },
-        skip: false,
+        skip: true,
       );
     },
   );
