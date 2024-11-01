@@ -44,7 +44,5 @@ pubspec_overrides.yaml
 **/linux/flutter/generated_plugin_registrant.h
 **/linux/flutter/generated_plugins.cmake
 
-# FVM
-
 # FVM Version Cache
 .fvm/
