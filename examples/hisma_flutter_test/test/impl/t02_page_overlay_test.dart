@@ -9,7 +9,7 @@ void main() {
   // StateMachine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   // ];
-  auxInitLogging();
+  // auxInitLogging();
   testWidgets(
     'overlay test with direct fire',
     (tester) async {

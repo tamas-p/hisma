@@ -41,11 +41,31 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     dynamic arg,
     bool external = true,
   }) async {
-    final before = activeStateId;
+    final originalStateId = activeStateId;
+    final isOriginalInStack = routerDelegate.isInStack(originalStateId);
     await super.fire(eventId, arg: arg, external: external);
+    assert(
+      isOriginalInStack || routerDelegate.isInStack(activeStateId),
+      'Imperative ui was closed but the event defined in its creator led to '
+      'a state that is not present in the stack (the path is not forming a '
+      'circle). Check your mapping in your corresponding HismaRouterGenerator.',
+    );
     if (!external) return; // Why?
-    if (before == activeStateId) return; // No state change -> No UI change.
-    notifyListeners();
+    if (originalStateId == activeStateId) {
+      return; // No state change -> No UI change.
+    }
+
+    if (routerDelegate.isInStack(activeStateId)) {
+      notifyListeners();
+    } else {
+      final presentation = routerDelegate.mapping[activeStateId];
+      if (presentation is ImperativeCreator) {
+      } else if (presentation is PageCreator) {
+        notifyListeners();
+      } else {
+        throw ArgumentError('Unhandled presentation type $presentation');
+      }
+    }
   }
 
   Future<void> fire2(

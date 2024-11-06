@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:hisma/hisma.dart' as hm;
+import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
+import 'package:hisma_flutter_test/simple_machine.dart';
+import 'package:hisma_flutter_test/ui.dart';
 
-import 'simple_machine.dart';
-import 'ui.dart';
-
-Future<void> main(List<String> args) async {
-  hm.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-  ];
-  final machine = createSimpleMachine();
-  await machine.start();
-  runApp(ImperativeApp(machine));
+void main() {
+  // StateMachine.monitorCreators = [
+  //   (m) => VisualMonitor(m, host: '192.168.122.1'),
+  // ];
+  // auxInitLogging();
+  testWidgets(
+    'StateMachineWithChangeNotifier fire assertion test',
+    (tester) async {
+      final machine = createSimpleMachine();
+      await machine.start();
+      final app = ImperativeApp(machine);
+      await tester.pumpWidget(app);
+    },
+  );
 }
 
 class ImperativeApp extends StatelessWidget {
@@ -47,11 +52,12 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
         S.c: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
-          event: E.back,
+          event: E.forward,
         ),
-        S.d: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.d),
-          event: E.back,
+        S.d: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.forward,
         ),
       },
     );

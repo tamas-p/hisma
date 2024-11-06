@@ -202,4 +202,6 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
       processor(current);
     }
   }
+
+  bool isInStack(S? originalStateId) => _stateIds.contains(originalStateId);
 }
