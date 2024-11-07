@@ -32,7 +32,7 @@ class Screen<S, E, T> extends StatelessWidget {
           ),
           body: Center(
             child: Column(
-              children: createButtonsFromState(machine, context),
+              children: createButtonsFromState(machine),
             ),
           ),
         );
@@ -43,6 +43,46 @@ class Screen<S, E, T> extends StatelessWidget {
 
 //------------------------------------------------------------------------------
 
+class MyDialog extends StatefulWidget {
+  const MyDialog({super.key, required this.machine});
+  final StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine;
+
+  @override
+  State<MyDialog> createState() => _MyDialogState();
+}
+
+class _MyDialogState extends State<MyDialog> {
+  _MyDialogState();
+
+  late final String name;
+  late final List<Widget> children;
+
+  @override
+  void initState() {
+    super.initState();
+    name = '${widget.machine.name} @ ${widget.machine.activeStateId}';
+    children =
+        createButtonsFromState<dynamic, dynamic, dynamic>(widget.machine);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: SizedBox(
+        height: 300,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(name),
+            const Divider(endIndent: 10, indent: 10),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 Future<void> showTestDialog(
   BuildContext context,
   NavigatorState _,
@@ -52,22 +92,7 @@ Future<void> showTestDialog(
     showDialog<void>(
       context: context,
       builder: (context) {
-        return Dialog(
-          child: SizedBox(
-            height: 300,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('${machine.name} @ ${machine.activeStateId}'),
-                const Divider(endIndent: 10, indent: 10),
-                ...createButtonsFromState<dynamic, dynamic, dynamic>(
-                  machine,
-                  context,
-                )
-              ],
-            ),
-          ),
-        );
+        return MyDialog(machine: machine);
       },
     );
 
@@ -215,7 +240,6 @@ class SnackbarPagelessRouteManager<S, E, T>
 
 List<Widget> createButtonsFromState<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
-  BuildContext context,
 ) {
   final log = Logger('createButtonsFromState');
   final state = machine.states[machine.activeStateId];
@@ -251,10 +275,7 @@ List<Widget> createButtonsFromState<S, E, T>(
     buttons.add(const Divider());
     buttons.add(Text('from ${parent.name}'));
     buttons.addAll(
-      createButtonsFromState(
-        parent,
-        context,
-      ),
+      createButtonsFromState(parent),
     );
   }
 

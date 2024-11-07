@@ -4,13 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'assistance.dart';
 import 'creator.dart';
 import 'state_machine_with_change_notifier.dart';
+import 'state_stack.dart';
 
 class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     with ChangeNotifier {
   HismaRouterDelegateNew({
     required this.machine,
     required this.mapping,
-  }) {
+  }) : stack = StateStack<S>(mapping) {
     // Machine changes will result notifying listeners of this
     // router delegate that is the corresponding RouterState, which
     // in turn will call setState to schedule its rebuild and that is
@@ -95,7 +96,8 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     }
   }
 
-  List<S> _stateIds = [];
+  final StateStack<S> stack;
+
   late List<Page<dynamic>> _previousPages;
   List<Page<dynamic>> _createPages() {
     final activeStateId = machine.activeStateId;
@@ -108,12 +110,12 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
-      if (isCircle()) {
+      if (stack.contains(activeStateId)) {
         // Since we arrived back to a state that (more precisely the page
         // created by its Presentation) is already in the current
         // Navigator.pages (through the circle in the state transition graph),
         // we have to clean up the pages on the circle.
-        _cleanUpCircle(activeStateId);
+        stack.cleanUpCircle(activeStateId);
       } else {
         // This state (more precisely the page created by its Presentation) is
         // not represented in Navigator.pages hence we need to add it.
@@ -128,7 +130,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
 
   List<Page<dynamic>> _stateIdsToPages() {
     final pages = <Page<dynamic>>[];
-    for (final stateId in _stateIds) {
+    stack.goThrough((S stateId) {
       final presentation = mapping[stateId];
       if (presentation is PageCreator) {
         pages.add(
@@ -143,14 +145,9 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
         // );
         print('PAGELESS: $presentation @ ${machine.activeStateId}');
       }
-    }
+    });
     assert(pages.isNotEmpty);
     return pages;
-  }
-
-  void _cleanUpCircle(S activeStateId) {
-    _log.fine('_cleanUpCircle($activeStateId)');
-    _stateIds = _stateIds.sublist(0, _stateIds.indexOf(activeStateId) + 1);
   }
 
   void _addState(S stateId) {
@@ -163,8 +160,8 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     );
 
     if (presentation is PageCreator<E, dynamic>) {
-      if (presentation.overlay == false) _stateIds.clear();
-      _stateIds.add(stateId);
+      if (presentation.overlay == false) stack.clear();
+      stack.add(stateId);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
     } else {
@@ -173,35 +170,4 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
       );
     }
   }
-
-  /// Gives back whether jumping to the given stateId will pass PageCreators.
-  bool intermediatePageCreator(S stateId) {
-    if (_stateIds.contains(stateId)) {
-      for (final s in _stateIds.reversed) {
-        if (s == stateId) break;
-        if (mapping[s] is PageCreator) return true;
-      }
-    }
-    return false;
-  }
-
-  // state stack
-
-  bool isCircle() {
-    return _stateIds.contains(machine.activeStateId);
-  }
-
-  void addState(S id) {
-    _stateIds.add(id);
-  }
-
-  void windBack(S target, void Function(S stateId) processor) {
-    assert(_stateIds.contains(target));
-    for (final current in _stateIds.reversed) {
-      if (current == target) break;
-      processor(current);
-    }
-  }
-
-  bool isInStack(S? originalStateId) => _stateIds.contains(originalStateId);
 }
