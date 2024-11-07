@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:hisma/hisma.dart';
 
+import 'assistance.dart';
 import 'creator.dart';
 import 'hisma_router_delegate_new.dart';
 
@@ -65,20 +66,21 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     }
 
     final newPresentation = routerDelegate.mapping[newStateId];
+    assert(newPresentation != null, assertPresentationMsg(newStateId, name));
     if (routerDelegate.stack.contains(newStateId)) {
       // Circle
       if (newPresentation is ImperativeCreator) {
         if (!routerDelegate.stack.isLast(newStateId)) {
+          // Only if presentation was not already closed.
           if (routerDelegate.stack.rightBeforePage(newStateId)) {
             notifyListeners();
           } else {
-            // Only if presentation was not already closed.
-            print('imperative: backward close');
+            _windBack(newStateId, navigatorState);
           }
         }
       } else if (newPresentation is PageCreator) {
         if (routerDelegate.stack.hasImperatives(newStateId)) {
-          print('page: backward close');
+          _windBack(newStateId, navigatorState);
         } else {
           notifyListeners();
         }
@@ -88,21 +90,36 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     } else {
       // New Presentation
       if (newPresentation is ImperativeCreator<E, dynamic>) {
+        final oldStateId = activeStateId;
         routerDelegate.stack.add(newStateId);
         final dynamic result = await newPresentation.open(
           navigatorState?.context ?? routerDelegate.navigatorKey.currentContext,
         );
         routerDelegate.stack.remove(newStateId); // Signal that imp. was closed.
         final event = newPresentation.event;
-        if (event != null) {
+        if (event != null && activeStateId == oldStateId) {
           await fire(event, arg: result, external: external);
         }
       } else if (newPresentation is PageCreator) {
         notifyListeners();
       } else {
-        throw ArgumentError('Unhandled presentation type $newPresentation');
+        throw ArgumentError('Unhandled presentation type $newPresentation.');
       }
     }
+  }
+
+  void _windBack(S newStateId, NavigatorState? navigatorState) {
+    routerDelegate.stack.windBack(newStateId, (stateId) {
+      final presentation = routerDelegate.mapping[stateId];
+      if (presentation is ImperativeCreator) {
+        presentation.close();
+      } else if (presentation is PageCreator) {
+        final c = navigatorState?.context ??
+            routerDelegate.navigatorKey.currentContext;
+        assert(c != null);
+        if (c != null) Navigator.of(c).pop();
+      }
+    });
   }
 
   Future<void> fire2(

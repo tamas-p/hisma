@@ -3,14 +3,14 @@ import 'package:hisma/hisma.dart' as hm;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
-import 'simple_machine.dart';
+import 'machine_longer.dart';
 import 'ui.dart';
 
 Future<void> main(List<String> args) async {
   hm.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
-  final machine = createSimpleMachine();
+  final machine = createLongerMachine();
   await machine.start();
   runApp(ImperativeApp(machine));
 }
@@ -49,8 +49,33 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
           machine: machine,
           event: E.back,
         ),
-        S.d: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.d),
+        S.d: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.back,
+        ),
+        S.e: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.e),
+          event: E.back,
+          overlay: true,
+        ),
+        S.f: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.back,
+        ),
+        S.g: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.back,
+        ),
+        S.h: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.back,
+        ),
+        S.i: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.i),
           event: E.back,
           overlay: true,
         ),

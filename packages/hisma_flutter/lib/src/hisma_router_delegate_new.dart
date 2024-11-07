@@ -78,8 +78,19 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   }
 
   bool _onPopPage(Route<dynamic> route, dynamic result) {
-    fire(result);
-    return false;
+    final didPop = route.didPop(result);
+    if (didPop) {
+      stack.removeByStr(route.settings.name);
+      if (route.settings.name == machine.activeStateId.toString()) {
+        // We only fire if we are in the same state when the route
+        // from the presentation -> page -> route was created.
+        // Being in a different state indicates that there ended up here
+        // as a result a previous fire (that moved to another state) hence
+        // we shall not trigger another fire.
+        fire(result);
+      }
+    }
+    return didPop;
   }
 
   void fire(dynamic result) {
@@ -153,11 +164,8 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   void _addState(S stateId) {
     _log.fine('_addState($stateId)');
     final presentation = mapping[stateId];
-    assert(
-      presentation != null,
-      'Presentation is not handled for $stateId.'
-      ' Check mapping in your HismaRouterGenerator for machine ${machine.name}',
-    );
+    // TODO: Create unit test to check this assertion.
+    assert(presentation != null, assertPresentationMsg(stateId, machine.name));
 
     if (presentation is PageCreator<E, dynamic>) {
       if (presentation.overlay == false) stack.clear();

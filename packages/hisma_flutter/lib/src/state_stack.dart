@@ -15,6 +15,10 @@ class StateStack<S> {
   void clear() => _stateIds.clear();
   void add(S stateId) => _stateIds.add(stateId);
   void remove(S stateId) => _stateIds.remove(stateId);
+  void removeByStr(String? stateIdStr) =>
+      _stateIds.removeWhere((element) => element.toString() == stateIdStr);
+  void removeList(List<S> stateIds) =>
+      _stateIds.removeWhere((element) => stateIds.contains(element));
 
   void cleanUpCircle(S activeStateId) {
     _stateIds.removeRange(
@@ -34,7 +38,8 @@ class StateStack<S> {
   // TODO: Remove
   void windBack(S target, void Function(S stateId) processor) {
     assert(contains(target));
-    for (final current in _stateIds.reversed) {
+    final cpy = List<S>.from(_stateIds); // Avoid concurrent mod. exception.
+    for (final current in cpy.reversed) {
       if (current == target) break;
       processor(current);
     }
