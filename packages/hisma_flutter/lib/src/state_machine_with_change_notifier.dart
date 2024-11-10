@@ -22,6 +22,7 @@ import 'hisma_router_delegate_new.dart';
 // sequence path (sequence of stateIds that has been passed during building the
 // UI).
 
+// TODO: find better name for this class.
 class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     with ChangeNotifier {
   StateMachineWithChangeNotifier({
@@ -42,7 +43,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     dynamic arg,
     bool external = true,
   }) async {
-    final navigatorState = context != null ? Navigator.of(context) : null;
+    final navigatorState = context != null
+        ? Navigator.of(context)
+        : routerDelegate.navigatorKey.currentState;
     final originalStateId = activeStateId;
     final isOriginalInStack = routerDelegate.stack.contains(originalStateId);
     await super.fire(eventId, arg: arg, external: external);
@@ -54,56 +57,49 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       'a state that is not present in the stack (the path is not forming a '
       'circle). Check your mapping in your corresponding HismaRouterGenerator.',
     );
-    if (!external) {
-      print('External.');
-      return;
-    } // Why?
-    if (originalStateId == activeStateId) {
-      print(
-        'originalStateId: $originalStateId == activeStateId: $activeStateId',
-      );
-      return; // No state change -> No UI change.
-    }
+    if (!external) return; // Why?
+    if (originalStateId == activeStateId) return; // No change -> No UI change.
 
-    final newPresentation = routerDelegate.mapping[newStateId];
-    assert(newPresentation != null, assertPresentationMsg(newStateId, name));
+    final newPres = routerDelegate.mapping[newStateId];
+    assert(newPres != null, missingPresentationMsg(newStateId, name));
+    if (newPres is NoUIChange) return;
+    assert(newPres is PageCreator || newPres is ImperativeCreator);
     if (routerDelegate.stack.contains(newStateId)) {
       // Circle
-      if (newPresentation is ImperativeCreator) {
+      if (newPres is ImperativeCreator) {
         if (!routerDelegate.stack.isLast(newStateId)) {
           // Only if presentation was not already closed.
           if (routerDelegate.stack.rightBeforePage(newStateId)) {
-            notifyListeners();
+            notifyListeners(); //
           } else {
-            _windBack(newStateId, navigatorState);
+            _windBack(newStateId, navigatorState); //
           }
         }
-      } else if (newPresentation is PageCreator) {
+      } else if (newPres is PageCreator) {
         if (routerDelegate.stack.hasImperatives(newStateId)) {
-          _windBack(newStateId, navigatorState);
+          _windBack(newStateId, navigatorState); //
         } else {
-          notifyListeners();
+          notifyListeners(); //
         }
-      } else {
-        throw ArgumentError('Unhandled presentation type $newPresentation');
       }
     } else {
       // New Presentation
-      if (newPresentation is ImperativeCreator<E, dynamic>) {
+      if (newPres is ImperativeCreator<E, dynamic>) {
         final oldStateId = activeStateId;
         routerDelegate.stack.add(newStateId);
-        final dynamic result = await newPresentation.open(
-          navigatorState?.context ?? routerDelegate.navigatorKey.currentContext,
-        );
+        final dynamic result = await newPres.open(navigatorState?.context); //
         routerDelegate.stack.remove(newStateId); // Signal that imp. was closed.
-        final event = newPresentation.event;
+        final event = newPres.event;
+        // TODO: Instead of assert event could be required.
+        assert(
+          event != null,
+          'For imperative creator $newPres event shall not be null.',
+        );
         if (event != null && activeStateId == oldStateId) {
           await fire(event, arg: result, external: external);
         }
-      } else if (newPresentation is PageCreator) {
-        notifyListeners();
-      } else {
-        throw ArgumentError('Unhandled presentation type $newPresentation.');
+      } else if (newPres is PageCreator) {
+        notifyListeners(); //
       }
     }
   }

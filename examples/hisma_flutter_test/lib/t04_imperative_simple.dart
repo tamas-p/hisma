@@ -42,7 +42,7 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
-          event: E.back,
+          // event: E.back,
         ),
         S.c: PagelessCreator<E, void>(
           present: showTestDialog,

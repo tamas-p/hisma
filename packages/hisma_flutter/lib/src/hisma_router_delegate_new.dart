@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 import 'assistance.dart';
 import 'creator.dart';
@@ -11,7 +11,13 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   HismaRouterDelegateNew({
     required this.machine,
     required this.mapping,
-  }) : stack = StateStack<S>(mapping) {
+  }) : /* assert(
+            machine.history == null,
+            'Machine shall not have history defined when used with '
+            'HismaRouterDelegate as we can not simply jump (as history would '
+            'imply) to a state on the UI, rather it is a path that leads to a '
+            'certain UI state.'), */
+        stack = StateStack<S>(mapping) {
     // Machine changes will result notifying listeners of this
     // router delegate that is the corresponding RouterState, which
     // in turn will call setState to schedule its rebuild and that is
@@ -58,7 +64,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   final _log = getLogger('$HismaRouterDelegateNew');
 
   /// Required to find NavigatorState corresponding to this RouterDelegate.
-  final GlobalKey navigatorKey = GlobalKey<NavigatorState>();
+  final navigatorKey = GlobalKey<NavigatorState>();
 
   /// Machine that this router delegate represents.
   final StateMachineWithChangeNotifier<S, E, dynamic> machine;
@@ -87,6 +93,13 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
         // Being in a different state indicates that there ended up here
         // as a result a previous fire (that moved to another state) hence
         // we shall not trigger another fire.
+
+        // TODO: Instead of assert event could be required.
+        final pres = mapping[machine.activeStateId];
+        assert(
+          pres is Creator<E> && pres.event != null,
+          'For $pres event shall not be null when its overlay is true.',
+        );
         fire(result);
       }
     }
@@ -165,7 +178,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     _log.fine('_addState($stateId)');
     final presentation = mapping[stateId];
     // TODO: Create unit test to check this assertion.
-    assert(presentation != null, assertPresentationMsg(stateId, machine.name));
+    assert(presentation != null, missingPresentationMsg(stateId, machine.name));
 
     if (presentation is PageCreator<E, dynamic>) {
       if (presentation.overlay == false) stack.clear();

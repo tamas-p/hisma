@@ -53,6 +53,7 @@ HismaRouterGenerator<S, E> createOverlayGenerator(
         S.d: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.d),
           event: E.back,
+          overlay: true,
         ),
       },
     );

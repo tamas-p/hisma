@@ -3,7 +3,7 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 
 enum S { a, b, c, d, e, f, g, h, i }
 
-enum E { forward, back, self, jump }
+enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP }
 
 enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI }
 
@@ -20,7 +20,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         S.a: State(
           etm: {
             E.forward: [T.toB],
-            E.back: [T.toI],
+            // E.back: [T.toI],
             E.self: [T.toA],
           },
         ),
@@ -43,7 +43,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             E.forward: [T.toE],
             E.back: [T.toC],
             E.self: [T.toD],
-            E.jump: [T.toB],
+            E.jumpI: [T.toB],
           },
         ),
         S.e: State(
@@ -81,7 +81,10 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             E.forward: [T.toI],
             E.back: [T.toG],
             E.self: [T.toH],
-            E.jump: [T.toA],
+            E.jumpP: [T.toA],
+            E.jumpOP: [T.toE],
+            E.jumpI: [T.toB],
+            E.jumpBP: [T.toD],
           },
         ),
         S.i: State(
