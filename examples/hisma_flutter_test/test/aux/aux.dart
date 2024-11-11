@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as m;
+import 'package:flutter/widgets.dart' as w;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
@@ -104,6 +105,7 @@ Future<void> action<S, E, T>(
   await tester.pumpAndSettle();
 }
 
+/*
 Future<void> check<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
@@ -124,4 +126,62 @@ Future<void> check<S, E, T>(
   await action(machine, tester, event, act: act);
   expect(machine.activeStateId, expected);
   checkTitle(machine);
+}
+*/
+
+Future<void> check<S, E, T>(
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  WidgetTester tester,
+  E event, {
+  Map<S, Presentation>? mapping,
+  Future<void> Function({
+    required WidgetTester tester,
+    required Act act,
+    required StateMachineWithChangeNotifier<S, E, T> machine,
+    required Map<S, Presentation> m,
+  })?
+      cm,
+  Act act = Act.tap,
+}) async {
+  S whereTo(S s, E e) {
+    final state = machine.states[s] as State<E, T, S>?;
+    final a = state!.etm[e];
+    final t = a![0];
+    final transition = machine.transitions[t] as Transition<S>?;
+    return transition!.to;
+  }
+
+  final s = machine.activeStateId;
+  if (s == null) throw Exception('Machine ${machine.name} is not started.');
+  final expected = whereTo(s, event);
+
+  await action(machine, tester, event, act: act);
+  expect(machine.activeStateId, expected);
+
+  // Check if new mapping is a Router
+  final presentation = mapping?[machine.activeStateId];
+  if (presentation is PageCreator && presentation.widget is w.Builder) {
+    final childMachine = _getChildMachine(machine);
+    if (childMachine != null && cm != null) {
+      await cm(
+        tester: tester,
+        act: act,
+        machine: childMachine,
+        m: childMachine.routerDelegate.mapping,
+      );
+    }
+  } else {
+    checkTitle(machine);
+  }
+}
+
+StateMachineWithChangeNotifier<S, E, T>? _getChildMachine<S, E, T>(
+  StateMachineWithChangeNotifier<S, E, T> machine,
+) {
+  final state = machine.states[machine.activeStateId];
+  if (state is State<E, T, S>) {
+    return state.regions[0].machine as StateMachineWithChangeNotifier<S, E, T>;
+  } else {
+    return null;
+  }
 }

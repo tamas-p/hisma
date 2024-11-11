@@ -20,7 +20,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         S.a: State(
           etm: {
             E.forward: [T.toB],
-            // E.back: [T.toI],
+            E.back: [T.toI],
             E.self: [T.toA],
           },
         ),

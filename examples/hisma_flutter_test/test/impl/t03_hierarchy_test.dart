@@ -1,11 +1,9 @@
-import 'package:flutter/widgets.dart' as w;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/simple_machine.dart';
 import 'package:hisma_flutter_test/t03_hierarchical.dart';
 
-import '../aux/aux.dart';
+import '../../test/aux/aux.dart';
 
 void main() {
   // StateMachine.monitorCreators = [
@@ -40,7 +38,7 @@ Future<void> checkAllStates(
     tester: tester,
     act: act,
     machine: machine,
-    mapping: app.generator.mapping,
+    m: app.generator.mapping,
   );
 }
 
@@ -48,37 +46,39 @@ Future<void> checkMachine({
   required WidgetTester tester,
   required Act act,
   required StateMachineWithChangeNotifier<S, E, T> machine,
-  required Map<S, Presentation> mapping,
+  required Map<S, Presentation> m,
 }) async {
+  const cm = checkMachine;
   for (var i = 0; i < machine.states.length; i++) {
-    await _check(machine, tester, E.self, mapping, act: act);
-    await _check(machine, tester, E.forward, mapping, act: act);
+    await check(machine, tester, E.self, mapping: m, cm: cm, act: act);
+    await check(machine, tester, E.forward, mapping: m, cm: cm, act: act);
 
-    final presentation = mapping[machine.activeStateId];
+    final presentation = m[machine.activeStateId];
     final overlay = presentation is PageCreator && presentation.overlay;
     if (overlay) {
-      await _check(machine, tester, E.back, mapping, act: Act.back);
+      await check(machine, tester, E.back, mapping: m, cm: cm, act: Act.back);
     } else {
-      await _check(machine, tester, E.back, mapping, act: act);
+      await check(machine, tester, E.back, mapping: m, cm: cm, act: act);
     }
 
-    await _check(machine, tester, E.self, mapping, act: act);
+    await check(machine, tester, E.self, mapping: m, cm: cm, act: act);
 
     // presentation = mapping[machine.activeStateId];
     // overlay = presentation is PageCreator && presentation.overlay;
     // if (overlay) {
     // await _check(machine, tester, E.back, mapping, act: Act.back);
     // } else {
-    await _check(machine, tester, E.back, mapping, act: act);
+    await check(machine, tester, E.back, mapping: m, cm: cm, act: act);
     // }
 
-    await _check(machine, tester, E.self, mapping, act: act);
-    await _check(machine, tester, E.forward, mapping, act: act);
-    await _check(machine, tester, E.self, mapping, act: act);
-    await _check(machine, tester, E.forward, mapping, act: act);
+    await check(machine, tester, E.self, mapping: m, cm: cm, act: act);
+    await check(machine, tester, E.forward, mapping: m, cm: cm, act: act);
+    await check(machine, tester, E.self, mapping: m, cm: cm, act: act);
+    await check(machine, tester, E.forward, mapping: m, cm: cm, act: act);
   }
 }
 
+/*
 Future<void> _check(
   StateMachineWithChangeNotifier<S, E, T> machine,
   WidgetTester tester,
@@ -128,3 +128,4 @@ StateMachineWithChangeNotifier<S, E, T>? _getChildMachine(
     return null;
   }
 }
+*/
