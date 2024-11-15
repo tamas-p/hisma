@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as m;
 import 'package:flutter/widgets.dart' as w;
@@ -89,7 +91,9 @@ Future<void> action<S, E, T>(
   Act act = Act.tap,
 }) async {
   if (act == Act.fire && event != null) {
-    await machine.fire(event);
+    // We have to use unawaited for pageless routes like the one created by
+    // showDialog. Call would hang one showDialog is we await here.
+    unawaited(machine.fire(event));
     // We need this extra pumpAndSettle as pageless routes are created in a
     // subsequent frame by Future.delayed.
     // TODO: Remove this as new design will not use Future.delayed.
@@ -128,6 +132,57 @@ Future<void> check<S, E, T>(
   checkTitle(machine);
 }
 */
+
+class Checker<S, E, T> {
+  Checker({
+    required this.machine,
+    required this.tester,
+    required this.mapping,
+    required this.checkMachine,
+    required this.act,
+  });
+  StateMachineWithChangeNotifier<S, E, T> machine;
+  WidgetTester tester;
+  Map<S, Presentation> mapping;
+  Future<void> Function(Checker<S, E, T> checker) checkMachine;
+  Act act;
+
+  Future<void> check2(E event, [Act? act]) async {
+    S whereTo(S s, E e) {
+      final state = machine.states[s] as State<E, T, S>?;
+      final a = state!.etm[e];
+      final t = a![0];
+      final transition = machine.transitions[t] as Transition<S>?;
+      return transition!.to;
+    }
+
+    final s = machine.activeStateId;
+    if (s == null) throw Exception('Machine ${machine.name} is not started.');
+    final expected = whereTo(s, event);
+
+    await action(machine, tester, event, act: act ?? this.act);
+    expect(machine.activeStateId, expected);
+
+    // Check if new mapping is a Router
+    final presentation = mapping[machine.activeStateId];
+    if (presentation is PageCreator && presentation.widget is w.Builder) {
+      final childMachine = _getChildMachine(machine);
+      if (childMachine != null) {
+        await checkMachine(
+          Checker(
+            machine: childMachine,
+            tester: tester,
+            mapping: mapping,
+            checkMachine: checkMachine,
+            act: this.act,
+          ),
+        );
+      }
+    } else {
+      checkTitle(machine);
+    }
+  }
+}
 
 Future<void> check<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,

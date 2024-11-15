@@ -6,7 +6,10 @@ import 'package:logging/logging.dart';
 
 // import 'states_events_transitions.dart';
 
-String getTitle<S, E, T>(hisma.StateMachine<S, E, T> machine, S? stateId) =>
+String getTitle(
+  hisma.StateMachine<dynamic, dynamic, dynamic> machine,
+  dynamic stateId,
+) =>
     '${machine.name} - $stateId';
 
 String getButtonTitle<S, E, T>(
@@ -60,7 +63,8 @@ class _MyDialogState extends State<MyDialog> {
   @override
   void initState() {
     super.initState();
-    name = '${widget.machine.name} @ ${widget.machine.activeStateId}';
+    // name = '${widget.machine.name} @ ${widget.machine.activeStateId}';
+    name = getTitle(widget.machine, widget.machine.activeStateId);
     children =
         createButtonsFromState<dynamic, dynamic, dynamic>(widget.machine);
   }

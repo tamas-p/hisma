@@ -53,7 +53,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     if (newStateId == null) return; // Machine stopped, no need to update UI.
     assert(
       isOriginalInStack || routerDelegate.stack.contains(activeStateId),
-      'Imperative ui was closed but the event defined in its creator led to '
+      'UI element was closed but the event defined in its creator led to '
       'a state that is not present in the stack (the path is not forming a '
       'circle). Check your mapping in your corresponding HismaRouterGenerator.',
     );
