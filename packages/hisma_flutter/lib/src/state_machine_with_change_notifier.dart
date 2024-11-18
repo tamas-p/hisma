@@ -87,17 +87,35 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       if (newPres is ImperativeCreator<E, dynamic>) {
         final oldStateId = activeStateId;
         routerDelegate.stack.add(newStateId);
-        final dynamic result = await newPres.open(navigatorState?.context); //
-        routerDelegate.stack.remove(newStateId); // Signal that imp. was closed.
-        final event = newPres.event;
-        // TODO: Instead of assert event could be required.
-        assert(
-          event != null,
-          'For imperative creator $newPres event shall not be null.',
+
+        // We want open to be executed async to the fire.
+        unawaited(
+          newPres.open(navigatorState?.context).then((dynamic result) {
+            // Signal that imp. was closed shall be removed.
+            routerDelegate.stack.remove(newStateId);
+            final event = newPres.event;
+            // TODO: Instead of assert event could be required.
+            assert(
+              event != null,
+              'For imperative creator $newPres event shall not be null.',
+            );
+            if (event != null && activeStateId == oldStateId) {
+              fire(event, arg: result, external: external);
+            }
+          }),
         );
-        if (event != null && activeStateId == oldStateId) {
-          await fire(event, arg: result, external: external);
-        }
+
+        // final dynamic result = await newPres.open(navigatorState?.context); //
+        // routerDelegate.stack.remove(newStateId); // Signal that imp. was closed.
+        // final event = newPres.event;
+        // // TODO: Instead of assert event could be required.
+        // assert(
+        //   event != null,
+        //   'For imperative creator $newPres event shall not be null.',
+        // );
+        // if (event != null && activeStateId == oldStateId) {
+        //   await fire(event, arg: result, external: external);
+        // }
       } else if (newPres is PageCreator) {
         notifyListeners(); //
       }
