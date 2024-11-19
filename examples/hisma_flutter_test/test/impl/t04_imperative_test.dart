@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t04_imperative_simple.dart';
 
@@ -12,57 +13,79 @@ Future<void> main() async {
   testWidgets(
     'StateMachineWithChangeNotifier fire assertion test',
     (tester) async {
-      final machine = createLongerMachine();
-      await machine.start();
-      final app = ImperativeApp(machine);
-      await tester.pumpWidget(app);
-      expect(machine.activeStateId, machine.initialStateId);
-      checkTitle(machine);
-
-      final checker = Checker(
-        machine: machine,
-        mapping: app.gen.mapping,
-        tester: tester,
-        checkMachine: checkMachine,
-        act: Act.fire,
-      );
-
-      await checkMachine(checker);
+      await testAllStates(tester, act: Act.fire);
+      await testAllStates(tester, act: Act.tap);
     },
   );
 }
 
-// class ImperativeApp extends StatelessWidget {
-//   ImperativeApp(this.machine, {super.key});
-//   late final gen = createImperativeGenerator(machine);
+// TODO: delete this poc function
+Future<void> poc(WidgetTester tester) async {
+  final machine = createLongerMachine();
+  await machine.start();
+  final app = ImperativeApp(machine);
+  await tester.pumpWidget(app);
+  expect(machine.activeStateId, machine.initialStateId);
+  checkTitle(machine);
 
-//   final StateMachineWithChangeNotifier<S, E, T> machine;
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp.router(
-//       routerDelegate: gen.routerDelegate,
-//       routeInformationParser: gen.routeInformationParser,
-//     );
-//   }
-// }
+  await tester.tap(find.text('testMachine0.E.forward'));
+  await tester.pump();
 
-Future<void> checkMachine(Checker<S, E, T> c) async {
+  expect(find.text('testMachine0 - S.b'), findsOneWidget);
+
+  await tester.tap(find.text('testMachine0.E.forward').last);
+  await tester.pump();
+
+  // await machine.fire(E.forward);
+  // print('AFTER');
+  // await tester.pump();
+
+  expect(find.text('testMachine0 - S.c'), findsOneWidget);
+}
+
+Future<void> testAllStates(
+  WidgetTester tester, {
+  required Act act,
+}) async {
+  final machine = createLongerMachine();
+  await machine.start();
+  final app = ImperativeApp(machine);
+  await tester.pumpWidget(app);
+  expect(machine.activeStateId, machine.initialStateId);
+  checkTitle(machine);
+
+  await checkMachine(tester, act, machine, app.gen.mapping);
+}
+
+Future<void> checkMachine(
+  WidgetTester tester,
+  Act act,
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  Map<S, Presentation> mapping,
+) async {
+  final c = Checker(
+    tester: tester,
+    act: act,
+    machine: machine,
+    mapping: mapping,
+    checkMachine: checkMachine,
+  );
   // no_state_change
-  await c.check2(E.self);
+  await c.check(E.self);
 
   // new_presentation_imperative_open
-  await c.check2(E.forward);
-  await c.check2(E.forward);
-  await c.check2(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
 
   // new_presentation_page_notify
-  await c.check2(E.forward);
+  await c.check(E.forward);
 
   // new_presentation_imperative_open
-  await c.check2(E.forward);
-  await c.check2(E.forward);
-  await c.check2(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
 
   // new_presentation_page_notify_overlay
-  await c.check2(E.forward);
+  await c.check(E.forward);
 }

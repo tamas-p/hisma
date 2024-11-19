@@ -31,18 +31,26 @@ Future<void> checkAllStates(
 }) async {
   final machine = createSimpleMachine();
   await machine.start();
+  final app = NoOverlayApp(machine);
   await tester.pumpWidget(NoOverlayApp(machine));
   checkTitle(machine);
 
+  final c = Checker(
+    tester: tester,
+    act: act,
+    machine: machine,
+    mapping: app.gen.mapping,
+  );
+
   for (var i = 0; i < machine.states.length; i++) {
-    await check(machine, tester, E.self, act: act);
-    await check(machine, tester, E.forward, act: act);
-    await check(machine, tester, E.back, act: act);
-    await check(machine, tester, E.self, act: act);
-    await check(machine, tester, E.back, act: act);
-    await check(machine, tester, E.self, act: act);
-    await check(machine, tester, E.forward, act: act);
-    await check(machine, tester, E.self, act: act);
-    await check(machine, tester, E.forward, act: act);
+    await c.check(E.self);
+    await c.check(E.forward);
+    await c.check(E.back);
+    await c.check(E.self);
+    await c.check(E.back);
+    await c.check(E.self);
+    await c.check(E.forward);
+    await c.check(E.self);
+    await c.check(E.forward);
   }
 }

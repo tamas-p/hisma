@@ -37,31 +37,38 @@ Future<void> checkAllStates(
   expect(machine.activeStateId, machine.initialStateId);
   checkTitle(machine);
 
+  final c = Checker(
+    tester: tester,
+    act: trigger,
+    machine: machine,
+    mapping: app.generator.mapping,
+  );
+
   for (var i = 0; i < machine.states.length; i++) {
-    await check(machine, tester, E.self, act: trigger);
-    await check(machine, tester, E.forward, act: trigger);
+    await c.check(E.self);
+    await c.check(E.forward);
 
     final presentation = app.generator.mapping[machine.activeStateId];
     final overlay = presentation is PageCreator && presentation.overlay;
     if (overlay) {
-      await check(machine, tester, E.back, act: Act.back);
+      await c.check(E.back, act: Act.back);
     } else {
-      await check(machine, tester, E.back, act: trigger);
+      await c.check(E.back);
     }
 
-    await check(machine, tester, E.self, act: trigger);
+    await c.check(E.self);
 
     // presentation = app.generator.mapping[machine.activeStateId];
     // overlay = presentation is PageCreator && presentation.overlay;
     // if (overlay) {
-    //   await check(machine, tester, E.back, act: Act.back);
+    //   await check(E.back, act: Act.back);
     // } else {
-    await check(machine, tester, E.back, act: trigger);
+    await c.check(E.back);
     // }
 
-    await check(machine, tester, E.self, act: trigger);
-    await check(machine, tester, E.forward, act: trigger);
-    await check(machine, tester, E.self, act: trigger);
-    await check(machine, tester, E.forward, act: trigger);
+    await c.check(E.self);
+    await c.check(E.forward);
+    await c.check(E.self);
+    await c.check(E.forward);
   }
 }
