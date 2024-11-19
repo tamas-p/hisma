@@ -19,30 +19,6 @@ Future<void> main() async {
   );
 }
 
-// TODO: delete this poc function
-Future<void> poc(WidgetTester tester) async {
-  final machine = createLongerMachine();
-  await machine.start();
-  final app = ImperativeApp(machine);
-  await tester.pumpWidget(app);
-  expect(machine.activeStateId, machine.initialStateId);
-  checkTitle(machine);
-
-  await tester.tap(find.text('testMachine0.E.forward'));
-  await tester.pump();
-
-  expect(find.text('testMachine0 - S.b'), findsOneWidget);
-
-  await tester.tap(find.text('testMachine0.E.forward').last);
-  await tester.pump();
-
-  // await machine.fire(E.forward);
-  // print('AFTER');
-  // await tester.pump();
-
-  expect(find.text('testMachine0 - S.c'), findsOneWidget);
-}
-
 Future<void> testAllStates(
   WidgetTester tester, {
   required Act act,
@@ -88,4 +64,30 @@ Future<void> checkMachine(
 
   // new_presentation_page_notify_overlay
   await c.check(E.forward);
+}
+
+//------------------------------------------------------------------------------
+
+// TODO: delete this poc function
+Future<void> poc(WidgetTester tester) async {
+  final machine = createLongerMachine();
+  await machine.start();
+  final app = ImperativeApp(machine);
+  await tester.pumpWidget(app);
+  expect(machine.activeStateId, machine.initialStateId);
+  checkTitle(machine);
+
+  await tester.tap(find.text('testMachine0.E.forward'));
+  await tester.pump();
+
+  expect(find.text('testMachine0 - S.b'), findsOneWidget);
+
+  await tester.tap(find.text('testMachine0.E.forward').last);
+  await tester.pump();
+
+  // await machine.fire(E.forward);
+  // print('AFTER');
+  // await tester.pump();
+
+  expect(find.text('testMachine0 - S.c'), findsOneWidget);
 }
