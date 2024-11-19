@@ -40,14 +40,50 @@ Future<void> testAllStates(
   expect(machine.activeStateId, machine.initialStateId);
   checkTitle(machine);
 
-  final checker = Checker(
+  await checkMachine(tester, act, machine, app.generator.mapping);
+}
+
+Future<void> checkMachine(
+  WidgetTester tester,
+  Act act,
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  Map<S, Presentation> mapping,
+) async {
+  final c = Checker(
     tester: tester,
     act: act,
     machine: machine,
-    mapping: app.generator.mapping,
+    mapping: mapping,
+    checkMachine: checkMachine,
   );
 
-  await checker.checkMachine();
+  for (var i = 0; i < machine.states.length; i++) {
+    await c.check(E.self, act: act);
+    await c.check(E.forward, act: act);
+
+    final presentation = mapping[machine.activeStateId];
+    final overlay = presentation is PageCreator && presentation.overlay;
+    if (overlay) {
+      await c.check(E.back, act: Act.back);
+    } else {
+      await c.check(E.back, act: act);
+    }
+
+    await c.check(E.self, act: act);
+
+    // presentation = mapping[machine.activeStateId];
+    // overlay = presentation is PageCreator && presentation.overlay;
+    // if (overlay) {
+    // await _check(machine, tester, E.back, mapping, act: Act.back);
+    // } else {
+    await c.check(E.back, act: act);
+    // }
+
+    await c.check(E.self, act: act);
+    await c.check(E.forward, act: act);
+    await c.check(E.self, act: act);
+    await c.check(E.forward, act: act);
+  }
 }
 
 class Checker {
@@ -56,43 +92,19 @@ class Checker {
     required this.act,
     required this.machine,
     required this.mapping,
+    required this.checkMachine,
   });
 
   final WidgetTester tester;
   final Act act;
   final StateMachineWithChangeNotifier<S, E, T> machine;
   final Map<S, Presentation> mapping;
-
-  Future<void> checkMachine() async {
-    for (var i = 0; i < machine.states.length; i++) {
-      await check(E.self, act: act);
-      await check(E.forward, act: act);
-
-      final presentation = mapping[machine.activeStateId];
-      final overlay = presentation is PageCreator && presentation.overlay;
-      if (overlay) {
-        await check(E.back, act: Act.back);
-      } else {
-        await check(E.back, act: act);
-      }
-
-      await check(E.self, act: act);
-
-      // presentation = mapping[machine.activeStateId];
-      // overlay = presentation is PageCreator && presentation.overlay;
-      // if (overlay) {
-      // await _check(machine, tester, E.back, mapping, act: Act.back);
-      // } else {
-      await check(E.back, act: act);
-      // }
-
-      await check(E.self, act: act);
-      await check(E.forward, act: act);
-      await check(E.self, act: act);
-      await check(E.forward, act: act);
-    }
-  }
-
+  Future<void> Function(
+    WidgetTester tester,
+    Act act,
+    StateMachineWithChangeNotifier<S, E, T> machine,
+    Map<S, Presentation> mapping,
+  ) checkMachine;
   Future<void> check(
     E event, {
     Act act = Act.tap,
@@ -114,14 +126,7 @@ class Checker {
 
     final childMachine = _getChildMachine(machine);
     if (childMachine != null) {
-      final childChecker = Checker(
-        tester: tester,
-        act: act,
-        machine: childMachine,
-        mapping: mapping,
-      );
-
-      await childChecker.checkMachine();
+      await checkMachine(tester, act, childMachine, mapping);
     } else {
       checkTitle(machine);
     }
