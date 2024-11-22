@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t04_imperative_simple.dart';
+import 'package:hisma_flutter_test/ui.dart';
 
 import '../../test/aux/aux.dart';
 
@@ -11,9 +13,14 @@ Future<void> main() async {
   // ];
   // auxInitLogging();
   testWidgets(
-    'StateMachineWithChangeNotifier fire assertion test',
+    'StateMachineWithChangeNotifier test with fire',
     (tester) async {
       await testAllStates(tester, act: Act.fire);
+    },
+  );
+  testWidgets(
+    'StateMachineWithChangeNotifier test with tap',
+    (tester) async {
       await testAllStates(tester, act: Act.tap);
     },
   );
@@ -46,24 +53,116 @@ Future<void> checkMachine(
     mapping: mapping,
     checkMachine: checkMachine,
   );
-  // no_state_change
+  // test: no_state_change
   await c.check(E.self);
 
-  // new_presentation_imperative_open
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: new_presentation_imperative_open
   await c.check(E.forward);
   await c.check(E.forward);
   await c.check(E.forward);
 
-  // new_presentation_page_notify
+  // test: new_presentation_page_notify_overlay
   await c.check(E.forward);
 
-  // new_presentation_imperative_open
+  // test: new_presentation_imperative_open
   await c.check(E.forward);
   await c.check(E.forward);
   await c.check(E.forward);
 
-  // new_presentation_page_notify_overlay
+  // test: new_presentation_page_notify_overlay
   await c.check(E.forward);
+
+  // test: circle_to_page_has_no_imperatives
+  // test: imperative_closed
+  await c.check(E.forward);
+
+  //------
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: circle_to_imperative
+  await c.check(E.jumpI);
+
+  //------
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: circle_to_imperative
+  await c.check(E.jumpI);
+
+  //------
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: circle_to_imperative_before_page
+  await c.check(E.jumpBP);
+
+  //------
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: circle_to_page_has_imperatives
+  await c.check(E.jumpP);
+
+  //------
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+
+  // test: new_presentation_imperative_open
+  await c.check(E.forward);
+  await c.check(E.forward);
+  await c.check(E.forward);
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.forward);
+
+  // test: new_presentation_page_notify
+  await c.check(E.jumpP);
+
+  // test: new_presentation_page_notify_overlay
+  await c.check(E.back);
 }
 
 //------------------------------------------------------------------------------

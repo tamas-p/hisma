@@ -1,11 +1,11 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
-enum S { a, b, c, d, e, f, g, h, i }
+enum S { a, b, c, d, e, f, g, h, i, j, k, l }
 
 enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP }
 
-enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI }
+enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL }
 
 const testMachineName = 'testMachine';
 StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
@@ -20,7 +20,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         S.a: State(
           etm: {
             E.forward: [T.toB],
-            E.back: [T.toI],
+            E.back: [T.toK],
             E.self: [T.toA],
           },
         ),
@@ -43,7 +43,6 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             E.forward: [T.toE],
             E.back: [T.toC],
             E.self: [T.toD],
-            E.jumpI: [T.toB],
           },
         ),
         S.e: State(
@@ -52,21 +51,13 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             E.back: [T.toD],
             E.self: [T.toE],
           },
-          regions: [
-            if (hierarchical && level < 2)
-              Region<S, E, T, S>(
-                machine: createLongerMachine(
-                  hierarchical: hierarchical,
-                  level: level + 1,
-                ),
-              ),
-          ],
         ),
         S.f: State(
           etm: {
             E.forward: [T.toG],
             E.back: [T.toE],
             E.self: [T.toF],
+            E.jumpI: [T.toD],
           },
         ),
         S.g: State(
@@ -75,23 +66,47 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             E.back: [T.toF],
             E.self: [T.toG],
           },
+          regions: [
+            if (hierarchical && level < 2)
+              Region<S, E, T, S>(
+                machine: createLongerMachine(
+                  hierarchical: hierarchical,
+                  level: level + 1,
+                ),
+              ),
+          ],
         ),
         S.h: State(
           etm: {
             E.forward: [T.toI],
             E.back: [T.toG],
             E.self: [T.toH],
-            E.jumpP: [T.toA],
-            E.jumpOP: [T.toE],
-            E.jumpI: [T.toB],
-            E.jumpBP: [T.toD],
           },
         ),
         S.i: State(
           etm: {
-            E.forward: [T.toA],
+            E.forward: [T.toJ],
             E.back: [T.toH],
             E.self: [T.toI],
+          },
+        ),
+        S.j: State(
+          etm: {
+            E.forward: [T.toK],
+            E.back: [T.toI],
+            E.self: [T.toJ],
+            E.jumpP: [T.toC],
+            E.jumpOP: [T.toG],
+            E.jumpI: [T.toE],
+            E.jumpBP: [T.toF],
+          },
+        ),
+        S.k: State(
+          etm: {
+            E.forward: [T.toA],
+            E.back: [T.toJ],
+            E.self: [T.toK],
+            E.jumpP: [T.toL],
           },
           regions: [
             if (hierarchical && level < 2)
@@ -102,6 +117,12 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
                 ),
               ),
           ],
+        ),
+        S.l: State(
+          etm: {
+            E.back: [T.toK],
+            E.self: [T.toL],
+          },
         ),
       },
       transitions: {
@@ -114,5 +135,8 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         T.toG: Transition(to: S.g),
         T.toH: Transition(to: S.h),
         T.toI: Transition(to: S.i),
+        T.toJ: Transition(to: S.j),
+        T.toK: Transition(to: S.k),
+        T.toL: Transition(to: S.l),
       },
     );

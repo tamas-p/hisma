@@ -50,19 +50,33 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     final isOriginalInStack = routerDelegate.stack.contains(originalStateId);
     await super.fire(eventId, arg: arg, external: external);
     final newStateId = activeStateId;
-    if (newStateId == null) return; // Machine stopped, no need to update UI.
+    if (newStateId == null) {
+      // Machine stopped, no need to update UI.
+      // test: ? stopped_machine
+      return;
+    }
     assert(
       isOriginalInStack || routerDelegate.stack.contains(activeStateId),
       'UI element was closed but the event defined in its creator led to '
       'a state that is not present in the stack (the path is not forming a '
       'circle). Check your mapping in your corresponding HismaRouterGenerator.',
     );
-    if (!external) return; // Why?
-    if (originalStateId == activeStateId) return; // No change -> No UI change.
+    if (!external) {
+      // Why? test: ? external_fire
+      return;
+    }
+    if (originalStateId == activeStateId) {
+      // No change -> No UI change.
+      // test: no_state_change
+      return;
+    }
 
     final newPres = routerDelegate.mapping[newStateId];
     assert(newPres != null, missingPresentationMsg(newStateId, name));
-    if (newPres is NoUIChange) return;
+    if (newPres is NoUIChange) {
+      // test: ? no_ui_change
+      return;
+    }
     assert(newPres is PageCreator || newPres is ImperativeCreator);
     if (routerDelegate.stack.contains(newStateId)) {
       // Circle
@@ -70,27 +84,33 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         if (!routerDelegate.stack.isLast(newStateId)) {
           // Only if presentation was not already closed.
           if (routerDelegate.stack.rightBeforePage(newStateId)) {
-            notifyListeners(); //
+            // test: circle_to_imperative_before_page
+            notifyListeners();
           } else {
-            _windBack(newStateId, navigatorState); //
+            // test: circle_to_imperative
+            _windBack(newStateId, navigatorState);
           }
         }
       } else if (newPres is PageCreator) {
         if (routerDelegate.stack.hasImperatives(newStateId)) {
-          _windBack(newStateId, navigatorState); //
+          // test: circle_to_page_has_imperatives
+          _windBack(newStateId, navigatorState);
         } else {
-          notifyListeners(); //
+          // test: circle_to_page_has_no_imperatives
+          notifyListeners();
         }
       }
     } else {
       // New Presentation
       if (newPres is ImperativeCreator<E, dynamic>) {
+        // test: new_presentation_imperative_open
         final oldStateId = activeStateId;
         routerDelegate.stack.add(newStateId);
 
         // We want open to be executed async to the fire.
         unawaited(
           newPres.open(navigatorState?.context).then((dynamic result) {
+            // test: imperative_closed
             // Signal that imp. was closed shall be removed.
             routerDelegate.stack.remove(newStateId);
             final event = newPres.event;
@@ -104,20 +124,10 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
             }
           }),
         );
-
-        // final dynamic result = await newPres.open(navigatorState?.context); //
-        // routerDelegate.stack.remove(newStateId); // Signal that imp. was closed.
-        // final event = newPres.event;
-        // // TODO: Instead of assert event could be required.
-        // assert(
-        //   event != null,
-        //   'For imperative creator $newPres event shall not be null.',
-        // );
-        // if (event != null && activeStateId == oldStateId) {
-        //   await fire(event, arg: result, external: external);
-        // }
       } else if (newPres is PageCreator) {
-        notifyListeners(); //
+        // test: new_presentation_page_notify
+        // test: new_presentation_page_notify_overlay
+        notifyListeners();
       }
     }
   }

@@ -39,14 +39,14 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
           widget: Screen(machine, S.a),
           event: E.back,
         ),
-        S.b: PagelessCreator<E, void>(
-          present: showTestDialog,
-          machine: machine,
+        S.b: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.b),
+          overlay: true,
           event: E.back,
         ),
-        S.c: PagelessCreator<E, void>(
-          present: showTestDialog,
-          machine: machine,
+        S.c: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.c),
+          overlay: true,
           event: E.back,
         ),
         S.d: PagelessCreator<E, void>(
@@ -54,30 +54,44 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
           machine: machine,
           event: E.back,
         ),
-        S.e: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.e),
+        S.e: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
           event: E.back,
-          overlay: true,
         ),
         S.f: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
           event: E.back,
         ),
-        S.g: PagelessCreator<E, void>(
-          present: showTestDialog,
-          machine: machine,
+        S.g: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.g),
           event: E.back,
+          overlay: true,
         ),
         S.h: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
           event: E.back,
         ),
-        S.i: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.i),
+        S.i: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.back,
+        ),
+        S.j: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
+          event: E.back,
+        ),
+        S.k: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.k),
           event: E.back,
           overlay: true,
+        ),
+        S.l: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.l),
+          event: E.back,
         ),
       },
     );
