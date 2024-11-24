@@ -185,6 +185,8 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
       stack.add(stateId);
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
+      // TODO: Since machine will never send notify if pres was NoUIChange
+      // we will never get here => this branch can be removed from here.
     } else {
       throw ArgumentError(
         'Presentation ${presentation.runtimeType} is not supported.',
