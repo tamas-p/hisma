@@ -61,6 +61,7 @@ abstract class Creator<E> extends Presentation {
 /// defined in the creator map of [HismaRouterDelegate]. This way we get
 /// assertion failed in case the machine gets to a state that is not defined in
 /// the creator list. Alternative is using an [InternalTransition].
+/// TODO: remove this class as using InternalTransition is better for this purpose.
 class NoUIChange extends Presentation {}
 
 //-----------------------------------------------------------------------------

@@ -138,6 +138,7 @@ class Checker<S, E, T> {
   Future<void> check(
     E event, {
     Act? act,
+    bool titleToBeChecked = true,
   }) async {
     S whereTo(S s, E e) {
       final state = machine.states[s] as State<E, T, S>?;
@@ -157,7 +158,7 @@ class Checker<S, E, T> {
     final childMachine = _getChildMachine(machine);
     if (childMachine != null && checkMachine != null) {
       await checkMachine!(tester, act ?? this.act, childMachine, mapping);
-    } else {
+    } else if (titleToBeChecked) {
       checkTitle(machine);
     }
   }

@@ -1,11 +1,11 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
-enum S { a, b, c, d, e, f, g, h, i, j, k, l }
+enum S { a, b, c, d, e, f, g, h, i, j, k, l, m, n }
 
 enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP }
 
-enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL }
+enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL, toM, toN }
 
 const testMachineName = 'testMachine';
 StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
@@ -120,8 +120,22 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         ),
         S.l: State(
           etm: {
+            E.forward: [T.toM],
             E.back: [T.toK],
             E.self: [T.toL],
+          },
+        ),
+        S.m: State(
+          etm: {
+            E.forward: [T.toN],
+            E.back: [T.toL],
+            E.self: [T.toM],
+          },
+        ),
+        S.n: State(
+          etm: {
+            E.back: [T.toM],
+            E.self: [T.toM],
           },
         ),
       },
@@ -138,5 +152,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         T.toJ: Transition(to: S.j),
         T.toK: Transition(to: S.k),
         T.toL: Transition(to: S.l),
+        T.toM: Transition(to: S.m),
+        T.toN: Transition(to: S.n),
       },
     );

@@ -24,6 +24,23 @@ Future<void> main() async {
       await testAllStates(tester, act: Act.tap);
     },
   );
+
+  testWidgets('description', (tester) async {
+    const name = 'Push';
+    await tester.pumpWidget(
+      MaterialApp(
+        home: TextButton(
+          onPressed: () {
+            assert(false);
+          },
+          child: const Text(name),
+        ),
+      ),
+    );
+
+    // await tester.tap(find.text(name).last);
+    // await tester.pumpAndSettle();
+  });
 }
 
 Future<void> testAllStates(
@@ -163,6 +180,21 @@ Future<void> checkMachine(
 
   // test: new_presentation_page_notify_overlay
   await c.check(E.back);
+
+  // test: new_presentation_page_notify
+  await c.check(E.jumpP);
+
+  // test: no_ui_change
+  await c.check(E.forward, titleToBeChecked: false);
+
+  // test: no_state_change
+  await c.check(E.self, titleToBeChecked: false);
+
+  // test: missing_presentation
+  // expect(
+  //   c.check(E.forward),
+  //   throwsA(isA<AssertionError>()),
+  // );
 }
 
 //------------------------------------------------------------------------------

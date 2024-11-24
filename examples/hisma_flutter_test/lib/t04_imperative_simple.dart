@@ -93,5 +93,6 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
           widget: Screen(machine, S.l),
           event: E.back,
         ),
+        S.m: NoUIChange(),
       },
     );

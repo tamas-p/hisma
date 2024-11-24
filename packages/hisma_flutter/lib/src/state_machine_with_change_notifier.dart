@@ -47,7 +47,8 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         ? Navigator.of(context)
         : routerDelegate.navigatorKey.currentState;
     final originalStateId = activeStateId;
-    final isOriginalInStack = routerDelegate.stack.contains(originalStateId);
+    final isOriginalStateIdInStack =
+        routerDelegate.stack.contains(originalStateId);
     await super.fire(eventId, arg: arg, external: external);
     final newStateId = activeStateId;
     if (newStateId == null) {
@@ -55,8 +56,10 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       // test: ? stopped_machine
       return;
     }
+    final isNewStateIdInStack = routerDelegate.stack.contains(activeStateId);
     assert(
-      isOriginalInStack || routerDelegate.stack.contains(activeStateId),
+      // test: ?
+      isOriginalStateIdInStack || isNewStateIdInStack,
       'UI element was closed but the event defined in its creator led to '
       'a state that is not present in the stack (the path is not forming a '
       'circle). Check your mapping in your corresponding HismaRouterGenerator.',
@@ -72,13 +75,15 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     }
 
     final newPres = routerDelegate.mapping[newStateId];
+    // test: missing_presentation ?
     assert(newPres != null, missingPresentationMsg(newStateId, name));
     if (newPres is NoUIChange) {
       // test: ? no_ui_change
+      routerDelegate.stack.add(newStateId);
       return;
     }
     assert(newPres is PageCreator || newPres is ImperativeCreator);
-    if (routerDelegate.stack.contains(newStateId)) {
+    if (isNewStateIdInStack) {
       // Circle
       if (newPres is ImperativeCreator) {
         if (!routerDelegate.stack.isLast(newStateId)) {
