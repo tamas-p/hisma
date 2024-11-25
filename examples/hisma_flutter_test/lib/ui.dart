@@ -95,6 +95,7 @@ Future<void> showTestDialog(
 ) =>
     showDialog<void>(
       context: context,
+      useRootNavigator: false,
       builder: (context) {
         return MyDialog(machine: machine);
       },
@@ -108,6 +109,7 @@ Future<void> showTestDialogMini(
 ) =>
     showDialog<void>(
       context: context,
+      useRootNavigator: false,
       builder: (context) {
         return const AboutDialog();
       },
