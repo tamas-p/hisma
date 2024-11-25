@@ -11,7 +11,7 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
   HismaRouterDelegateNew({
     required this.machine,
     required this.mapping,
-  }) : /* assert(
+  }) : /* TODO: assert(
             machine.history == null,
             'Machine shall not have history defined when used with '
             'HismaRouterDelegate as we can not simply jump (as history would '

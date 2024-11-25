@@ -78,7 +78,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     // test: missing_presentation ?
     assert(newPres != null, missingPresentationMsg(newStateId, name));
     if (newPres is NoUIChange) {
-      // test: ? no_ui_change
+      // test: no_ui_change
       routerDelegate.stack.add(newStateId);
       return;
     }
