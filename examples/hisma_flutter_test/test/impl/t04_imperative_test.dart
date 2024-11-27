@@ -23,23 +23,6 @@ Future<void> main() async {
       await testAllStates(tester, act: Act.tap);
     },
   );
-
-  testWidgets('description', (tester) async {
-    const name = 'Push';
-    await tester.pumpWidget(
-      MaterialApp(
-        home: TextButton(
-          onPressed: () {
-            assert(false);
-          },
-          child: const Text(name),
-        ),
-      ),
-    );
-
-    // await tester.tap(find.text(name).last);
-    // await tester.pumpAndSettle();
-  });
 }
 
 Future<void> testAllStates(
