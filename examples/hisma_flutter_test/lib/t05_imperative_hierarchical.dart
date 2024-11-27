@@ -12,12 +12,14 @@ Future<void> main(List<String> args) async {
   ];
   final machine = createLongerMachine(hierarchical: true);
   await machine.start();
-  runApp(HierarchicalImperativeApp(machine));
+  final app = HierarchicalImperativeApp(machine);
+  runApp(app);
 }
 
 class HierarchicalImperativeApp extends StatelessWidget {
   HierarchicalImperativeApp(this.machine, {super.key});
-  late final gen = createHierarchicalImpGenerator(machine);
+  final generators = Generators();
+  late final gen = generators.createHierarchicalImpGenerator(machine);
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   @override
@@ -29,11 +31,19 @@ class HierarchicalImperativeApp extends StatelessWidget {
   }
 }
 
-HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine, [
-  int level = 0,
-]) =>
-    HismaRouterGenerator<S, E>(
+class Generators {
+  final _generators = <String, HismaRouterGenerator<S, E>>{};
+  HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
+    StateMachineWithChangeNotifier<S, E, T> parentMachine, [
+    int level = 0,
+  ]) {
+    final state = parentMachine.activeStateId;
+    final name = '$testMachineName$level${level == 0 ? '' : state ?? ''}';
+    final cachedGenerator = _generators[name];
+    if (cachedGenerator != null) return cachedGenerator;
+
+    final machine = parentMachine.find<S, E, T>(name);
+    final generator = HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
@@ -73,7 +83,7 @@ HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
                   builder: (context) {
                     return Router(
                       routerDelegate: createHierarchicalImpGenerator(
-                        machine.find('$testMachineName${level + 1}'),
+                        machine,
                         level + 1,
                       ).routerDelegate,
                       backButtonDispatcher: Router.of(context)
@@ -106,15 +116,42 @@ HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
           machine: machine,
           event: E.back,
         ),
-        S.k: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.k),
-          event: E.back,
-          overlay: true,
-        ),
+        S.k: level < 2
+            ? MaterialPageCreator<E, void>(
+                // TODO: Create utility router class that creates
+                // BackButtonDispatcher.
+                widget: Builder(
+                  builder: (context) {
+                    return Router(
+                      routerDelegate: createHierarchicalImpGenerator(
+                        machine,
+                        level + 1,
+                      ).routerDelegate,
+                      backButtonDispatcher: Router.of(context)
+                          .backButtonDispatcher!
+                          .createChildBackButtonDispatcher()
+                        ..takePriority(),
+                    );
+                  },
+                ),
+                event: E.back,
+                overlay: true,
+              )
+            : MaterialPageCreator<E, void>(
+                widget: Screen(machine, S.k),
+                event: E.back,
+                overlay: true,
+              ),
         S.l: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.l),
           event: E.back,
+          overlay: true,
         ),
         S.m: NoUIChange(),
       },
     );
+
+    _generators[name] = generator;
+    return generator;
+  }
+}

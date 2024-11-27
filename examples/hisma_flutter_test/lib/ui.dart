@@ -73,7 +73,7 @@ class _MyDialogState extends State<MyDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: SizedBox(
-        height: 380,
+        height: 500,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

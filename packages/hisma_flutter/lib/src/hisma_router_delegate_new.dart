@@ -124,13 +124,22 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
 
   late List<Page<dynamic>> _previousPages;
   List<Page<dynamic>> _createPages() {
+    final presentation = mapping[machine.activeStateId];
+    if (presentation is ImperativeCreator) {
+      // TODO: remove this part
+      // return _previousPages;
+    }
+
     final activeStateId = machine.activeStateId;
     // We only process if machine is active. If inactive we simply build
     // pages of the navigator from the current [_stateIds] (that was updated
     // during the previous builds). This is required to handle the case when a
     // child machine gets inactivated but we need its previous presentation to
     // allow the transition (by being the background) to the new page.
-    if (activeStateId != null) {
+    if (activeStateId == null) {
+      // TODO: It seems we never get here. Do we need this at all?
+      return _previousPages;
+    } else {
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
@@ -145,11 +154,8 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
         // not represented in Navigator.pages hence we need to add it.
         _addState(activeStateId);
       }
-
-      return _stateIdsToPages();
+      return _previousPages = _stateIdsToPages();
     }
-
-    return _previousPages;
   }
 
   List<Page<dynamic>> _stateIdsToPages() {
@@ -183,6 +189,8 @@ class HismaRouterDelegateNew<S, E> extends RouterDelegate<S>
     if (presentation is PageCreator<E, dynamic>) {
       if (presentation.overlay == false) stack.clear();
       stack.add(stateId);
+    } else if (presentation is ImperativeCreator) {
+      // We skip Imperative creators.
     } else if (presentation is NoUIChange) {
       // Explicit no update was requested, so we do nothing.
       // TODO: Since machine will never send notify if pres was NoUIChange

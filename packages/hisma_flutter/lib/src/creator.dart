@@ -170,12 +170,16 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
 
   @override
   Future<R?> open(BuildContext? context) async {
-    if (_opened) return null;
-    assert(
-      !_opened,
-      'We shall not call open on this object if it was already opened '
-      'and not yet closed.',
-    );
+    if (_opened) {
+      print('Already opened!');
+      // TODO: remove _opened as it is not needed.
+      // return null;
+    }
+    // assert(
+    //   !_opened,
+    //   'We shall not call open on this object if it was already opened '
+    //   'and not yet closed.',
+    // );
     assert(context != null);
     if (context != null) _navigatorState = Navigator.of(context);
 

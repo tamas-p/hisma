@@ -11,9 +11,10 @@ const testMachineName = 'testMachine';
 StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
   bool hierarchical = false,
   int level = 0,
+  S? state,
 }) =>
     StateMachineWithChangeNotifier<S, E, T>(
-      name: '$testMachineName$level',
+      name: '$testMachineName$level${state ?? ''}',
       events: E.values,
       initialStateId: S.a,
       states: {
@@ -72,6 +73,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
                 machine: createLongerMachine(
                   hierarchical: hierarchical,
                   level: level + 1,
+                  state: S.g,
                 ),
               ),
           ],
@@ -114,6 +116,7 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
                 machine: createLongerMachine(
                   hierarchical: hierarchical,
                   level: level + 1,
+                  state: S.k,
                 ),
               ),
           ],
