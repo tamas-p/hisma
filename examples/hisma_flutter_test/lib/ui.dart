@@ -72,16 +72,13 @@ class _MyDialogState extends State<MyDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: SizedBox(
-        height: 500,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(name),
-            const Divider(endIndent: 10, indent: 10),
-            ...children,
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(name),
+          const Divider(endIndent: 10, indent: 10),
+          ...children,
+        ],
       ),
     );
   }

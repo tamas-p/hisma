@@ -32,17 +32,14 @@ class HierarchicalImperativeApp extends StatelessWidget {
 }
 
 class Generators {
-  final _generators = <String, HismaRouterGenerator<S, E>>{};
   HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
     StateMachineWithChangeNotifier<S, E, T> parentMachine, [
     int level = 0,
   ]) {
     final state = parentMachine.activeStateId;
     final name = '$testMachineName$level${level == 0 ? '' : state ?? ''}';
-    final cachedGenerator = _generators[name];
-    if (cachedGenerator != null) return cachedGenerator;
-
     final machine = parentMachine.find<S, E, T>(name);
+
     final generator = HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
@@ -151,7 +148,6 @@ class Generators {
       },
     );
 
-    _generators[name] = generator;
     return generator;
   }
 }
