@@ -3,16 +3,18 @@ import 'package:hisma/hisma.dart' as h;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+import '../ui.dart';
+import '../utility.dart';
 import 'states_events_transitions.dart';
-import 'ui.dart';
 
-StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
+StateMachineWithChangeNotifier<S, E, T> createParentChainMachine({
   required String name,
+  required h.HistoryLevel? historyLevel,
 }) =>
-    StateMachineWithChangeNotifier<S, E, T>(
+    StateMachineWithChangeNotifier(
       name: name,
-      events: E.values,
       initialStateId: S.a,
+      events: E.values,
       states: {
         S.a: h.State(
           etm: {
@@ -22,65 +24,96 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
         S.b: h.State(
           etm: {
             E.back: [T.toA],
+          },
+          regions: [
+            h.Region<S, E, T, S>(
+              machine:
+                  createChildMachine(name: 'child', historyLevel: historyLevel),
+            )
+          ],
+        ),
+      },
+      transitions: {
+        T.toA: h.Transition(to: S.a),
+        T.toB: h.Transition(to: S.b),
+      },
+    );
+
+StateMachineWithChangeNotifier<S, E, T> createChildMachine({
+  required String name,
+  h.HistoryLevel? historyLevel,
+}) =>
+    StateMachineWithChangeNotifier(
+      name: name,
+      initialStateId: S.a,
+      events: E.values,
+      history: historyLevel,
+      states: {
+        S.a: h.State(
+          etm: {
+            E.forward: [T.toB],
+          },
+        ),
+        S.b: h.State(
+          etm: {
             E.forward: [T.toC],
-            E.self: [T.toN],
+            E.back: [T.toA],
           },
         ),
         S.c: h.State(
           etm: {
-            E.back: [T.toB],
             E.forward: [T.toD],
+            E.back: [T.toB],
           },
         ),
         S.d: h.State(
           etm: {
-            E.back: [T.toC],
             E.forward: [T.toE],
+            E.back: [T.toC],
           },
         ),
         S.e: h.State(
           etm: {
-            E.back: [T.toD],
             E.forward: [T.toF],
+            E.back: [T.toD],
           },
         ),
         S.f: h.State(
           etm: {
             E.back: [T.toE],
-            E.forward: [T.toA],
           },
         ),
       },
       transitions: {
-        // TODO: of by mistake Transition(to: T.toB) is used instead of
-        // Transition(to: S.b) there is not type check -> error prone.
         T.toA: h.Transition(to: S.a),
         T.toB: h.Transition(to: S.b),
         T.toC: h.Transition(to: S.c),
         T.toD: h.Transition(to: S.d),
         T.toE: h.Transition(to: S.e),
         T.toF: h.Transition(to: S.f),
-        T.toN: h.InternalTransition(
-          onAction: h.Action(
-            description: 'Evaluate result.',
-            action: (machine, dynamic arg) async {
-              // print('Received: $arg');
-              if (arg is OldCtxArg && arg.arg is E) {
-                if (arg.arg != E.self) {
-                  await machine.fire(
-                    arg.arg,
-                    arg: arg.context,
-                    external: false,
-                  );
-                }
-              }
-            },
+      },
+    );
+
+HismaRouterGenerator<S, E> createParentHismaRouterGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool useRootNavigator,
+}) =>
+    HismaRouterGenerator<S, E>(
+      machine: machine,
+      mapping: {
+        S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
+        S.b: MaterialPageCreator<E, void>(
+          widget: Router(
+            routerDelegate: createChildHismaRouterGenerator(
+              machine: machine.find('child'),
+              useRootNavigator: useRootNavigator,
+            ).routerDelegate,
           ),
         ),
       },
     );
 
-HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
+HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
   required StateMachineWithChangeNotifier<S, E, T> machine,
   required bool useRootNavigator,
 }) =>
@@ -91,19 +124,23 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
-          event: E.self,
+          event: E.back,
         ),
-        S.c: PagelessCreator<E, DateTime?>(
-          present: showTestDatePicker,
-          machine: machine,
-          event: E.forward,
+        S.c: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.c),
+          overlay: true,
+          event: E.back,
         ),
         S.d: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
-          event: E.forward,
+          event: E.back,
         ),
-        S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
+        S.e: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.e),
+          overlay: true,
+          event: E.back,
+        ),
         S.f: PagelessCreator<E, void>(
           present: showTestDialog,
           machine: machine,
@@ -112,12 +149,12 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
       },
     );
 
-class PagelessApp extends StatelessWidget {
-  PagelessApp({
+class ChainApp extends StatelessWidget {
+  ChainApp({
     required StateMachineWithChangeNotifier<S, E, T> machine,
     required bool useRootNavigator,
     super.key,
-  }) : _routerGenerator = createPagelessHismaRouterGenerator(
+  }) : _routerGenerator = createParentHismaRouterGenerator(
           machine: machine,
           useRootNavigator: useRootNavigator,
         );
@@ -132,19 +169,22 @@ class PagelessApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routerDelegate: _routerGenerator.routerDelegate,
-      // routeInformationParser: _routerGenerator.routeInformationParser,
+      routeInformationParser: _routerGenerator.routeInformationParser,
     );
   }
 }
 
 Future<void> main() async {
-  // initLogging();
+  initLogging();
   h.StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),
   ];
-  final machine = createPagelessMachine(name: 'root');
+  final machine = createParentChainMachine(
+    name: 'root',
+    historyLevel: h.HistoryLevel.shallow,
+  );
   await machine.start();
 
-  runApp(PagelessApp(machine: machine, useRootNavigator: true));
+  runApp(ChainApp(machine: machine, useRootNavigator: true));
 }

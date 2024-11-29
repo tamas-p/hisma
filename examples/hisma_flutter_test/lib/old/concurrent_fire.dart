@@ -3,9 +3,9 @@ import 'package:hisma/hisma.dart' as h;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+import '../ui.dart';
+import '../utility.dart';
 import 'states_events_transitions.dart';
-import 'ui.dart';
-import 'utility.dart';
 
 StateMachineWithChangeNotifier<S, E, T> createConcurrentMachine() =>
     StateMachineWithChangeNotifier(

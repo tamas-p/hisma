@@ -2,15 +2,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
-import 'package:hisma_flutter_test/chain_machine.dart';
-import 'package:hisma_flutter_test/machine.dart';
-import 'package:hisma_flutter_test/main.dart';
-import 'package:hisma_flutter_test/states_events_transitions.dart';
+import 'package:hisma_flutter_test/old/chain_machine.dart';
+import 'package:hisma_flutter_test/old/machine.dart';
+import 'package:hisma_flutter_test/old/main.dart';
+import 'package:hisma_flutter_test/old/states_events_transitions.dart';
 import 'package:hisma_flutter_test/ui.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 
-import 'aux/aux.dart';
+import '../aux/aux.dart';
 
 const _loggerName = 'FlutterTest';
 final Logger _log = Logger(_loggerName);

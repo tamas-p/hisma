@@ -3,7 +3,7 @@ import 'package:hisma/hisma.dart' as hm;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
-import 'simple_machine.dart';
+import 'machine_simple.dart';
 import 'ui.dart';
 
 Future<void> main(List<String> args) async {

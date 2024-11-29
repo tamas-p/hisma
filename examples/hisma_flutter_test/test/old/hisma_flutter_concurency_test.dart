@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hisma_flutter_test/concurrent_fire.dart';
+import 'package:hisma_flutter_test/old/concurrent_fire.dart';
 
 Future<void> main() async {
   testWidgets(

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hisma_flutter_test/simple_machine.dart';
+import 'package:hisma_flutter_test/machine_simple.dart';
 // import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter_test/t01_page_no_overlay.dart';
 // import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';

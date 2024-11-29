@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
-import 'package:hisma_flutter_test/machine.dart';
-import 'package:hisma_flutter_test/main.dart';
-import 'package:hisma_flutter_test/states_events_transitions.dart';
+import 'package:hisma_flutter_test/old/machine.dart';
+import 'package:hisma_flutter_test/old/main.dart';
+import 'package:hisma_flutter_test/old/states_events_transitions.dart';
 import 'package:logging/logging.dart';
 
 import '../../../examples/hisma_flutter_test/test/aux/aux.dart';

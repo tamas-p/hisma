@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hisma/hisma.dart' as h;
 import 'package:hisma_flutter/hisma_flutter.dart' as hf;
 
-import 'utility.dart';
+import '../utility.dart';
 
 final machine = createMachine();
 

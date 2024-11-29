@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
+import '../ui.dart';
 import 'machine.dart';
 import 'states_events_transitions.dart';
-import 'ui.dart';
 
 HismaRouterGenerator<S, E> createHismaRouterGenerator({
   required StateMachineWithChangeNotifier<S, E, T> machine,
