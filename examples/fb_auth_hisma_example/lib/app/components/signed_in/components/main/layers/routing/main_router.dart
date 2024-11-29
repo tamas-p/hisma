@@ -13,10 +13,10 @@ final mainRouter = HismaRouterGenerator<SMM, EMM>(
     SMM.emailNotVerified: MaterialPageCreator<EMM, void>(
       widget: const EmailNotVerifiedScreen(),
     ),
-    SMM.error: OldDialogCreator<EMM, void>(
+    SMM.error: PagelessCreator<EMM, void>(
+      present: failedEmailVerifiedDialog,
+      machine: authMachine.find<SMM, EMM, TMM>(mainMachineName),
       event: EMM.back,
-      show: failedEmailVerifiedDialog,
-      useRootNavigator: true,
     ),
     SMM.app: MaterialPageCreator<EMM, void>(widget: const SignedInScreen()),
   },

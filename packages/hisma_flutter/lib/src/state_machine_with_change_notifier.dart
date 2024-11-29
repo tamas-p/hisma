@@ -5,7 +5,7 @@ import 'package:hisma/hisma.dart';
 
 import 'assistance.dart';
 import 'creator.dart';
-import 'hisma_router_delegate_new.dart';
+import 'hisma_router_delegate.dart';
 
 // Challenges:
 //
@@ -34,7 +34,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     required super.transitions,
   });
 
-  late HismaRouterDelegateNew<S, E> routerDelegate;
+  late HismaRouterDelegate<S, E> routerDelegate;
 
   @override
   Future<void> fire(

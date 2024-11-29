@@ -6,12 +6,13 @@ import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
 Future<void> failedEmailVerifiedDialog(
-  OldDialogCreator<EMM, void> dc,
   BuildContext context,
+  NavigatorState _,
+  Close<DateTime> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     createDialog(
-      useRootNavigator: dc.useRootNavigator,
-      dc: dc,
+      useRootNavigator: false,
       context: context,
       message: 'Problem during sending verification email',
       title: '${authMachine.find<SMM, EMM, TMM>(mainMachineName).data}',

@@ -6,13 +6,14 @@ import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
 Future<void> failedSignInDialog(
-  OldDialogCreator<ELiM, void> dc,
   BuildContext context,
+  NavigatorState _,
+  Close<DateTime> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     createDialog(
-      dc: dc,
       context: context,
-      useRootNavigator: dc.useRootNavigator,
+      useRootNavigator: false,
       message: 'Problem during login',
       title: '${authMachine.find<SLiM, ELiM, TLiM>(loginMachineName).data}',
     );

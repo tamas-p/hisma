@@ -4,6 +4,7 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import 'states_events_transitions.dart';
+import 'ui.dart';
 import 'utility.dart';
 
 StateMachineWithChangeNotifier<S, E, T> createConcurrentMachine() =>
@@ -54,15 +55,15 @@ HismaRouterGenerator<S, E> createConcurrentHismaRouterGenerator({
         S.a: MaterialPageCreator<E, void>(
           widget: DoubleScreen(machine: machine),
         ),
-        S.b: OldDialogCreator<E, void>(
-          show: (dc, context) async => showMyBottomSheet(dc, context, 'Sub1'),
+        S.b: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
           event: E.back,
-          useRootNavigator: true,
         ),
-        S.c: OldDialogCreator<E, void>(
-          show: (dc, context) async => showMyBottomSheet(dc, context, 'Sub2'),
+        S.c: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
           event: E.back,
-          useRootNavigator: true,
         )
       },
     );
@@ -120,7 +121,6 @@ class DoubleScreen extends StatelessWidget {
 }
 
 Future<void> showMyBottomSheet(
-  OldDialogCreator<E, void> dc,
   BuildContext context,
   String str,
 ) async {
@@ -141,8 +141,7 @@ Future<void> showMyBottomSheet(
               ElevatedButton(
                 child: const Text('Close BottomSheet'),
                 onPressed: () {
-                  // Navigator.pop(context);
-                  dc.close();
+                  Navigator.of(context).pop();
                 },
               ),
             ],

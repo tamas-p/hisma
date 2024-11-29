@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
@@ -12,15 +13,20 @@ final fRouterProvider = Provider(
     mapping: {
       S.fa: MaterialPageCreator<E, void>(widget: const CompFScreenA()),
       // S.fb: getPagelessCreator2(),
-      S.fb: OldDialogCreator<E, void>(
-        useRootNavigator: true,
+      S.fb: PagelessCreator<E, void>(
         event: E.backward,
-        show: (dc, context) => generateDialog(
-          dc: dc,
+        present: (
+          BuildContext context,
+          NavigatorState _,
+          Close<DateTime> close,
+          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+        ) =>
+            generateDialog<void, E>(
           context: context,
           title: 'Test1',
           text: 'Demo test1.',
         ),
+        machine: ref.read(compFMachineProvider),
       ),
       // S.b: MaterialPageCreator<S>(widget: const CompFScreenB()),
       S.fc: MaterialPageCreator<E, void>(widget: const CompFScreenC()),

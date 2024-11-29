@@ -88,71 +88,26 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
-        S.b: TestDialogCreator(
+        S.b: PagelessCreator<E, void>(
+          present: showTestDialog,
           machine: machine,
-          useRootNavigator: false,
           event: E.self,
-          stateId: S.b,
         ),
-        S.c: OldDialogCreator<E, OldCtxArg>(
-          show: (dc, context) async {
-            final dp = await showDatePicker(
-              context: context,
-              initialDate: DateTime(2000),
-              firstDate: DateTime(1990),
-              lastDate: DateTime(2030),
-            );
-
-            return OldCtxArg(dc.context!, dp);
-          },
+        S.c: PagelessCreator<E, DateTime?>(
+          present: showTestDatePicker,
+          machine: machine,
           event: E.forward,
-          useRootNavigator: useRootNavigator,
         ),
-        S.d: OldSnackBarCreator(
-          snackBar: SnackBar(
-            content: const Text('This is a SnackBar.'),
-            // backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {
-                print('UNDO');
-              },
-            ),
-          ),
+        S.d: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
           event: E.forward,
         ),
         S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
-        S.f: OldDialogCreator(
-          show: (dc, context) async {
-            final ret = Scaffold.of(context).showBottomSheet<void>(
-              (BuildContext context) {
-                return Container(
-                  height: 200,
-                  color: Colors.amber,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const Text('BottomSheet'),
-                        ElevatedButton(
-                          child: const Text('Close BottomSheet'),
-                          onPressed: () {
-                            // Navigator.pop(context);
-                            dc.close();
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-            return ret.closed;
-          },
+        S.f: PagelessCreator<E, void>(
+          present: showTestDialog,
+          machine: machine,
           event: E.back,
-          useRootNavigator: useRootNavigator,
         ),
       },
     );

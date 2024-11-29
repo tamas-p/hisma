@@ -112,8 +112,21 @@ Future<void> showTestDialogMini(
       },
     );
 
-//------------------------------------------------------------------------------
+Future<DateTime?> showTestDatePicker(
+  BuildContext context,
+  NavigatorState _,
+  Close<DateTime> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+) =>
+    showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1990),
+      lastDate: DateTime(2030),
+    );
 
+//------------------------------------------------------------------------------
+/*
 class TestDialogCreator<S, E, T> extends OldDialogCreator<E, OldCtxArg> {
   TestDialogCreator({
     required super.event,
@@ -240,7 +253,7 @@ class SnackbarPagelessRouteManager<S, E, T>
     ret?.close();
   }
 }
-
+*/
 List<Widget> createButtonsFromState<S, E, T>(
   StateMachineWithChangeNotifier<S, E, T> machine,
 ) {

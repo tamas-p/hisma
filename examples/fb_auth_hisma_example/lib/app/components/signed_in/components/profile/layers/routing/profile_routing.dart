@@ -9,9 +9,9 @@ final profileRouter = HismaRouterGenerator<SPM, EPM>(
   machine: authMachine.find<SPM, EPM, TPM>(profileMachineName),
   mapping: {
     SPM.profile: MaterialPageCreator<EPM, void>(widget: const ProfileScreen()),
-    SPM.error: OldDialogCreator<EPM, void>(
-      useRootNavigator: true,
-      show: profileLoadFailed,
+    SPM.error: PagelessCreator<EPM, void>(
+      present: profileLoadFailed,
+      machine: authMachine.find<SPM, EPM, TPM>(profileMachineName),
       event: EPM.back,
     ),
   },

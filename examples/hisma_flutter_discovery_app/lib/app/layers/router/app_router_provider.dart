@@ -52,11 +52,16 @@ final appRouterProvider = Provider(
         widget:
             Router(routerDelegate: ref.read(aRouterProvider).routerDelegate),
       ),
-      S.a1: OldDialogCreator<E, void>(
-        useRootNavigator: true,
+      S.a1: PagelessCreator<E, void>(
+        machine: ref.read(appMachineProvider),
         event: E.backward,
-        show: (dc, context) => generateDialog<E, void>(
-          dc: dc,
+        present: (
+          BuildContext context,
+          NavigatorState _,
+          Close<DateTime> close,
+          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+        ) =>
+            generateDialog<E, void>(
           context: context,
           title: 'Problem during login',
           text: 'Hello.',
@@ -72,19 +77,29 @@ final appRouterProvider = Provider(
         event: E.backward,
         overlay: true,
       ),
-      S.c: OldDialogCreator<E, DateTime>(
-        useRootNavigator: true,
+      S.c: PagelessCreator<E, DateTime>(
         event: E.forward,
-        show: (dc, context) => generateDatePicker<E>(
-          dc,
+        machine: ref.read(appMachineProvider),
+        present: (
+          BuildContext context,
+          NavigatorState _,
+          Close<DateTime> close,
+          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+        ) =>
+            generateDatePicker<E>(
           context,
         ),
       ),
-      S.d: OldDialogCreator<E, void>(
-        useRootNavigator: true,
+      S.d: PagelessCreator<E, void>(
+        machine: ref.read(appMachineProvider),
         event: E.backward,
-        show: (dc, context) => generateDialog<E, void>(
-          dc: dc,
+        present: (
+          BuildContext context,
+          NavigatorState _,
+          Close<DateTime> close,
+          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+        ) =>
+            generateDialog<E, void>(
           context: context,
           title: 'Problem during login2',
           text: 'Hello2.',

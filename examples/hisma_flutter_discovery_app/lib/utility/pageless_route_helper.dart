@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hisma_flutter/hisma_flutter.dart';
 
-Future<T?> generateDialog<T, E>({
-  required OldDialogCreator<T, E> dc,
+Future<R?> generateDialog<R, E>({
   required BuildContext context,
   required String title,
   required String text,
 }) =>
-    showDialog<T>(
-      useRootNavigator: dc.useRootNavigator,
+    showDialog<R>(
+      useRootNavigator: false,
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -22,7 +20,7 @@ Future<T?> generateDialog<T, E>({
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                dc.close();
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -31,11 +29,10 @@ Future<T?> generateDialog<T, E>({
     );
 
 Future<DateTime?> generateDatePicker<E>(
-  OldDialogCreator<E, DateTime> dc,
   BuildContext context,
 ) =>
     showDatePicker(
-      useRootNavigator: dc.useRootNavigator,
+      useRootNavigator: false,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),

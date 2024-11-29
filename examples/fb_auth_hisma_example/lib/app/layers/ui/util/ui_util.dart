@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hisma_flutter/hisma_flutter.dart';
 
 Future<void> createDialog({
-  required OldDialogCreator<dynamic, dynamic> dc,
   required BuildContext context,
   required bool useRootNavigator,
   required String title,
@@ -25,7 +23,7 @@ Future<void> createDialog({
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                dc.close();
+                Navigator.of(context).pop();
               },
             ),
           ],

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
@@ -18,14 +19,19 @@ final l2aRouterProvider = Provider(
         event: E.jump,
         overlay: true,
       ),
-      S.l2a1: OldDialogCreator<E, void>(
-        useRootNavigator: true,
-        show: (dc, context) => generateDialog<E, void>(
+      S.l2a1: PagelessCreator<E, void>(
+        present: (
+          BuildContext context,
+          NavigatorState _,
+          Close<DateTime> close,
+          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+        ) =>
+            generateDialog<E, void>(
           context: context,
-          dc: dc,
           title: 'Problem during login',
           text: 'Hello.',
         ),
+        machine: ref.read(compL2AMachineProvider),
         event: E.backward,
       ),
       S.l2b: MaterialPageCreator<E, void>(widget: const CompL2AScreenB()),

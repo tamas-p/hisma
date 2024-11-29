@@ -6,6 +6,7 @@ import 'package:hisma_flutter_test/machine.dart';
 import 'package:hisma_flutter_test/main.dart';
 import 'package:hisma_flutter_test/states_events_transitions.dart';
 import 'package:hisma_flutter_test/ui.dart';
+import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 
 import 'aux/aux.dart';
@@ -58,6 +59,10 @@ Future<void> testIt({
 
 void main() {
   // auxInitLogging();
+
+  StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+  ];
 
   /// We are testing
   /// - State change initiated from

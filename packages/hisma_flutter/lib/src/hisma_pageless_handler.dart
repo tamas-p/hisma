@@ -1,9 +1,10 @@
+/*
 import 'package:flutter/widgets.dart';
 
 import 'assistance.dart';
 import 'creator.dart';
 import 'state_machine_with_change_notifier.dart';
-
+TODO: delete
 class HismaPagelessHandler<S, E> {
   HismaPagelessHandler(this._machine, this._mapping) {
     // _machine.pagelessHandler = this;
@@ -81,3 +82,4 @@ class HismaPagelessHandler<S, E> {
     }
   }
 }
+*/

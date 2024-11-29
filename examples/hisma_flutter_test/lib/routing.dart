@@ -28,25 +28,22 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         // event: E.self,
         overlay: true,
       ),
-      S.d: TestDialogCreator(
+      S.d: PagelessCreator<E, void>(
+        present: showTestDialog,
         machine: machine,
-        stateId: S.d,
         event: E.self,
-        useRootNavigator: useRootNavigator,
       ),
       // S.d: MaterialPageCreator<E, void>(widget: Screen(machine, S.d)),
-      S.e: TestDialogCreator(
+      S.e: PagelessCreator<E, void>(
+        present: showTestDialog,
         machine: machine,
-        stateId: S.e,
         event: E.self,
-        useRootNavigator: useRootNavigator,
       ),
       // S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
-      S.f: TestDialogCreator(
+      S.f: PagelessCreator<E, void>(
+        present: showTestDialog,
         machine: machine,
-        stateId: S.f,
         event: E.self,
-        useRootNavigator: useRootNavigator,
       ),
       // S.f: MaterialPageCreator<E, void>(widget: Screen(machine, S.f)),
       S.g: MaterialPageCreator<E, void>(
@@ -54,11 +51,10 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         overlay: true,
         event: E.back,
       ),
-      S.h: TestDialogCreator(
+      S.h: PagelessCreator<E, void>(
+        present: showTestDialog,
         machine: machine,
-        stateId: S.h,
         event: E.self,
-        useRootNavigator: useRootNavigator,
       ),
       // S.h: MaterialPageCreator<E, void>(widget: Screen(machine, S.h)),
       S.i: MaterialPageCreator<E, void>(
@@ -118,18 +114,16 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
           ),
         )
       else
-        S.l: TestDialogCreator(
+        S.l: PagelessCreator<E, void>(
+          present: showTestDialog,
           machine: machine,
-          stateId: S.l,
           event: E.self,
-          useRootNavigator: useRootNavigator,
         ),
       // S.l: MaterialPageCreator<E, void>(widget: Screen(machine, S.l)),
-      S.m: TestDialogCreator(
+      S.m: PagelessCreator<E, void>(
+        present: showTestDialog,
         machine: machine,
-        stateId: S.m,
         event: E.self,
-        useRootNavigator: useRootNavigator,
       ),
       // S.m: MaterialPageCreator<E, void>(widget: Screen(machine, S.m)),
       S.n: MaterialPageCreator<E, void>(

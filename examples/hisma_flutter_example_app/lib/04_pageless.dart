@@ -92,12 +92,13 @@ class ScreenB extends StatelessWidget {
 }
 
 Future<bool?> b1(
-  OldDialogCreator<E, bool> dc,
-  BuildContext context, {
-  void Function(BuildContext)? setContext,
-}) =>
+  BuildContext context,
+  NavigatorState _,
+  Close<DateTime> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+) =>
     showDialog<bool>(
-      useRootNavigator: dc.useRootNavigator,
+      useRootNavigator: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -107,7 +108,7 @@ Future<bool?> b1(
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                dc.close(true);
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -127,9 +128,14 @@ class ScreenC extends StatelessWidget {
   }
 }
 
-Future<DateTime?> c1(OldDialogCreator<E, DateTime> dc, BuildContext context) =>
+Future<DateTime?> c1(
+  BuildContext context,
+  NavigatorState _,
+  Close<DateTime> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+) =>
     showDatePicker(
-      useRootNavigator: dc.useRootNavigator,
+      useRootNavigator: false,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
@@ -147,13 +153,21 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       widget: const ScreenB(),
       event: E.backward,
     ),
-    S.b1: OldDialogCreator(show: b1, event: E.backward, useRootNavigator: true),
+    S.b1: PagelessCreator<E, void>(
+      present: b1,
+      event: E.backward,
+      machine: machine,
+    ),
     S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
       event: E.backward,
       overlay: true,
     ),
-    S.c1: OldDialogCreator(show: c1, event: E.backward, useRootNavigator: true),
+    S.c1: PagelessCreator(
+      present: c1,
+      event: E.backward,
+      machine: machine,
+    ),
   },
 );
 

@@ -19,16 +19,20 @@ final aRouterProvider = Provider(
         widget:
             Router(routerDelegate: ref.read(l2aRouterProvider).routerDelegate),
       ),
-      S.ca1: OldDialogCreator(
+      S.ca1: PagelessCreator<E, void>(
         event: E.int1,
-        useRootNavigator: true,
-        // event: E.backward,
-        show: (dc, context) => generateDialog(
-          dc: dc,
+        present: (
+          BuildContext context,
+          NavigatorState _,
+          Close<DateTime> close,
+          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+        ) =>
+            generateDialog<void, E>(
           context: context,
           title: 'Problem during login ca1',
           text: 'Hello ca1.',
         ),
+        machine: ref.read(compAMachineProvider),
       ),
       S.ca2: NoUIChange(),
       S.cb: MaterialPageCreator<E, void>(widget: const CompAScreenB()),

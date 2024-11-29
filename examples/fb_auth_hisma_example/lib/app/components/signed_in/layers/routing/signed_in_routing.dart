@@ -14,10 +14,10 @@ final signedInRouter = HismaRouterGenerator<SSiM, ESiM>(
     SSiM.main: MaterialPageCreator<ESiM, void>(
       widget: Router(routerDelegate: mainRouter.routerDelegate),
     ),
-    SSiM.confirmSignOut: OldDialogCreator<ESiM, void>(
-      show: signOutConfirmationDialog,
+    SSiM.confirmSignOut: PagelessCreator<ESiM, void>(
+      machine: authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName),
+      present: signOutConfirmationDialog,
       event: ESiM.cancel,
-      useRootNavigator: true,
     ),
     SSiM.profile: MaterialPageCreator<ESiM, void>(
       widget: Router(routerDelegate: profileRouter.routerDelegate),

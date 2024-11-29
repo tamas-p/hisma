@@ -5,13 +5,15 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../layers/machine/auth_machine.dart';
 
 Future<void> signOutConfirmationDialog(
-  OldDialogCreator<ESiM, void> dc,
   BuildContext context,
+  NavigatorState _,
+  Close<DateTime> close,
+  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) {
   final signedInMachine =
       authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);
   return showDialog(
-    useRootNavigator: dc.useRootNavigator,
+    useRootNavigator: false,
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(

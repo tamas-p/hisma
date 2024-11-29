@@ -121,33 +121,30 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
-        S.b: TestDialogCreator(
+        S.b: PagelessCreator<E, void>(
+          present: showTestDialog,
           machine: machine,
-          stateId: S.b,
           event: E.back,
-          useRootNavigator: useRootNavigator,
         ),
         S.c: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.c),
           overlay: true,
           event: E.back,
         ),
-        S.d: TestDialogCreator(
+        S.d: PagelessCreator<E, void>(
+          present: showTestDialog,
           machine: machine,
-          stateId: S.d,
           event: E.back,
-          useRootNavigator: useRootNavigator,
         ),
         S.e: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.e),
           overlay: true,
           event: E.back,
         ),
-        S.f: TestDialogCreator(
+        S.f: PagelessCreator<E, void>(
+          present: showTestDialog,
           machine: machine,
-          stateId: S.f,
           event: E.back,
-          useRootNavigator: useRootNavigator,
         ),
       },
     );

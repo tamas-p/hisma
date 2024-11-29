@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hisma/hisma.dart';
-import 'package:logging/logging.dart';
 
 import '../hisma_flutter.dart';
 import 'assistance.dart';
-import 'hisma_router_delegate.dart';
 
 /*
 @startuml
@@ -43,7 +41,7 @@ ImperativeCreator <|-- SnackBarCreator
 @enduml
 */
 
-final Logger _log = Logger('creator');
+// final Logger _log = Logger('creator');
 
 /// Presentation of state machine states.
 abstract class Presentation {}
@@ -54,11 +52,11 @@ abstract class Creator<E> extends Presentation {
   E? event;
 }
 
-/// Use this class to indicate for [HismaRouterDelegate] that when machine
+/// Use this class to indicate for [HismaRouterDelegateOld] that when machine
 /// arrives to this state the user interface shall not be updated (e.g this
 /// state is transitional, only does some service invocation or computing).
 /// It is a better approach than silent no-update on UI if a state is not
-/// defined in the creator map of [HismaRouterDelegate]. This way we get
+/// defined in the creator map of [HismaRouterDelegateOld]. This way we get
 /// assertion failed in case the machine gets to a state that is not defined in
 /// the creator list. Alternative is using an [InternalTransition].
 /// TODO: remove this class as using InternalTransition is better for this purpose.
@@ -68,7 +66,7 @@ class NoUIChange extends Presentation {}
 
 /// Eliminates redundancy of giving stateId twice when defining creator maps
 /// (mapping) of [HismaRouterGenerator]. With the help of this class
-/// [HismaRouterDelegate] will call the [create] function with a given state.
+/// [HismaRouterDelegateOld] will call the [create] function with a given state.
 abstract class PageCreator<E, R> extends Creator<E> {
   PageCreator({
     required this.widget,
@@ -245,6 +243,7 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
 
 //------------------------------------------------------------------------------
 
+/*
 abstract class OldPagelessCreator<E, R> extends Creator<E> {
   OldPagelessCreator({required super.event});
 
@@ -337,3 +336,5 @@ class OldSnackBarCreator<E> extends OldPagelessCreator<E, OldCtxArg> {
 //     // TODO: implement close
 //   }
 // }
+
+*/

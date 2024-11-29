@@ -10,11 +10,17 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
   mapping: {
     SRM.registration:
         MaterialPageCreator<ERM, void>(widget: const RegistrationScreen()),
-    SRM.failed: OldDialogCreator<ERM, void>(
-      useRootNavigator: true,
+    SRM.failed: PagelessCreator<ERM, void>(
       event: ERM.ok,
-      show: (dc, context) => showDialog(
-        useRootNavigator: dc.useRootNavigator,
+      machine: authMachine.find<SRM, ERM, TRM>(registerMachineName),
+      present: (
+        BuildContext context,
+        NavigatorState _,
+        Close<DateTime> close,
+        StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+      ) =>
+          showDialog(
+        useRootNavigator: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -32,7 +38,7 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
               TextButton(
                 child: const Text('OK'),
                 onPressed: () {
-                  dc.close();
+                  Navigator.of(context).pop();
                 },
               ),
             ],
