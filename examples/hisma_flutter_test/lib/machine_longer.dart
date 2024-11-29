@@ -1,20 +1,21 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
+import 'ui.dart';
+
 enum S { a, b, c, d, e, f, g, h, i, j, k, l, m, n }
 
 enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP }
 
 enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL, toM, toN }
 
-const testMachineName = 'testMachine';
 StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
+  String name = 'root',
   bool hierarchical = false,
   int level = 0,
-  S? state,
 }) =>
     StateMachineWithChangeNotifier<S, E, T>(
-      name: '$testMachineName$level${state ?? ''}',
+      name: name,
       events: E.values,
       initialStateId: S.a,
       states: {
@@ -71,9 +72,9 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             if (hierarchical && level < 2)
               Region<S, E, T, S>(
                 machine: createLongerMachine(
+                  name: getMachineName(name, S.g),
                   hierarchical: hierarchical,
                   level: level + 1,
-                  state: S.g,
                 ),
               ),
           ],
@@ -114,9 +115,9 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
             if (hierarchical && level < 2)
               Region<S, E, T, S>(
                 machine: createLongerMachine(
+                  name: getMachineName(name, S.k),
                   hierarchical: hierarchical,
                   level: level + 1,
-                  state: S.k,
                 ),
               ),
           ],

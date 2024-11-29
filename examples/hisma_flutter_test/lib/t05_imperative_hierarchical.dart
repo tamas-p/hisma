@@ -37,8 +37,10 @@ class Generators {
     int level = 0,
   ]) {
     final state = parentMachine.activeStateId;
-    final name = '$testMachineName$level${level == 0 ? '' : state ?? ''}';
-    final machine = parentMachine.find<S, E, T>(name);
+    // final name = '$testMachineName$level${level == 0 ? '' : state ?? ''}';
+    final name = getMachineName(parentMachine.name, state);
+    final machine =
+        level == 0 ? parentMachine : parentMachine.find<S, E, T>(name);
 
     final generator = HismaRouterGenerator<S, E>(
       machine: machine,

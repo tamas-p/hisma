@@ -74,7 +74,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
               return Router(
                 routerDelegate: HismaRouterGeneratorManager.instance
                     .getRG(
-                      machineName: getName(machine.name, S.k),
+                      machineName: getMachineName(machine.name, S.k),
                       level: level + 1,
                       useRootNavigator: useRootNavigator,
                     )
@@ -100,7 +100,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
               return Router(
                 routerDelegate: HismaRouterGeneratorManager.instance
                     .getRG(
-                      machineName: getName(machine.name, S.l),
+                      machineName: getMachineName(machine.name, S.l),
                       level: level + 1,
                       useRootNavigator: useRootNavigator,
                     )

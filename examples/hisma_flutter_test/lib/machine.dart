@@ -3,6 +3,7 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:logging/logging.dart';
 
 import 'states_events_transitions.dart';
+import 'ui.dart';
 
 const int hierarchyDepth = 4;
 
@@ -57,7 +58,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine({
             T.toK,
             T.toH,
             createMachine(
-              name: getName(name, S.k),
+              name: getMachineName(name, S.k),
               level: level + 1,
               historyLevel: historyLevel,
             ),
@@ -71,7 +72,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine({
             T.toL,
             T.toI,
             createMachine(
-              name: getName(name, S.l),
+              name: getMachineName(name, S.l),
               level: level + 1,
               historyLevel: historyLevel,
             ),
@@ -111,5 +112,3 @@ Action getEntryAction() => Action(
         }
       },
     );
-
-String getName<S>(String current, S stateId) => '$current/$stateId';

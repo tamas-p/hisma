@@ -6,6 +6,8 @@ import 'package:logging/logging.dart';
 
 // import 'states_events_transitions.dart';
 
+String getMachineName<S>(String current, S stateId) => '$current/$stateId';
+
 String getTitle(
   hisma.StateMachine<dynamic, dynamic, dynamic> machine,
   dynamic stateId,

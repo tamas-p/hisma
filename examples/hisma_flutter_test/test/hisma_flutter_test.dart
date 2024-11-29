@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
@@ -103,7 +104,7 @@ void main() {
         await testIt(machine: machine, tester: tester, act: Act.tap);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -122,7 +123,7 @@ void main() {
         await testIt(machine: machine, tester: tester, act: Act.fire);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -158,6 +159,7 @@ void main() {
 Testing that pageless routes are managed well in case of a root machine.
 ''',
       (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
         const machineName = 'root';
         await multiplier(({
           required HistoryLevel? historyLevel,
@@ -175,8 +177,7 @@ Testing that pageless routes are managed well in case of a root machine.
           checkTitle(machine);
 
           await tester.tap(
-            find.text('${E.jumpBack}').last,
-            warnIfMissed: false,
+            find.textContaining(E.jumpBack.toString()).first,
           );
           await tester.pumpAndSettle();
           checkTitle(machine);
@@ -204,7 +205,7 @@ Testing that pageless routes are managed well in case of a root machine.
           checkTitle(machine);
         });
       },
-      skip: true,
+      skip: false,
     );
 
     // TODO: FAILS at
@@ -217,6 +218,7 @@ Testing that pageless routes are managed well in case of a child machine.
 ''',
       (tester) async {
         const machineName = 'root';
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
         await multiplier(({
           required HistoryLevel? historyLevel,
           required bool useRootNavigator,
@@ -233,7 +235,7 @@ Testing that pageless routes are managed well in case of a child machine.
           checkTitle(machine);
 
           await tester.tap(
-            find.text('${E.jumpBack}').last,
+            find.textContaining(E.jumpBack.toString()).first,
             warnIfMissed: false,
           );
           await tester.pumpAndSettle();
@@ -263,7 +265,7 @@ Testing that pageless routes are managed well in case of a child machine.
           checkTitle(machine);
         });
       },
-      skip: true,
+      skip: false,
     );
   });
 
@@ -282,22 +284,22 @@ Testing that pageless routes are managed well in case of a child machine.
 
         final mt = MachineTester(tester, machine);
 
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.forward);
-        await mt.tap(E.forward);
-        await mt.tap(E.forward);
-        await mt.tap(E.forward);
+        await mt.tapL(E.jumpBack);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.forward);
 
         await mt.fire(E.forward, 'root');
-        await mt.tap(E.jump);
+        await mt.tapL(E.jump);
 
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
 
-        await mt.tap(E.forward);
-        await mt.tap(E.self);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.self);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -314,19 +316,19 @@ Testing that pageless routes are managed well in case of a child machine.
         );
         final mt = MachineTester(tester, machine);
 
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.forward);
-        await mt.tap(E.forward);
-        await mt.tap(E.forward);
+        await mt.tapL(E.jumpBack);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.forward);
 
         await mt.fire(E.jump, 'root');
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
 
-        await mt.tap(E.forward);
-        await mt.tap(E.self);
+        await mt.tapL(E.forward);
+        await mt.tapL(E.self);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -343,23 +345,23 @@ Testing that pageless routes are managed well in case of a child machine.
         );
         final mt = MachineTester(tester, machine);
 
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
+        await mt.tapF(E.jumpBack);
 
         await mt.fire(E.back, 'root/S.l');
 
         await mt.fire(E.jumpBack, 'root/S.l');
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
 
         await mt.fire(E.forward, 'root');
-        await mt.tap(E.jump);
+        await mt.tapL(E.jump);
 
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
 
-        await mt.tap(E.forward);
+        await mt.tapL(E.forward);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -378,25 +380,25 @@ Testing that pageless routes are managed well in case of a child machine.
         final mt = MachineTester(tester, machine);
 
         // await mt.fire(E.self, 'root');
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
         // await mt.fire(E.self, 'root');
         await mt.fire(E.forward, 'root/S.l');
         // await mt.tap(E.self);
         // await mt.tap(E.self);
         await mt.fire(E.jumpBack, 'root/S.l');
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         // await mt.tap(E.self);
-        await mt.tap(E.forward);
-        await mt.tap(E.back);
-        await mt.tap(E.forward);
+        await mt.tapF(E.forward);
+        await mt.tapF(E.back);
+        await mt.tapF(E.forward);
         // await mt.fire(E.self, 'root');
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.jumpBack, 'root/S.l');
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
         // await mt.fire(E.self, 'root/S.l');
 
         await mt.fire(E.forward, 'root');
-        await mt.tap(E.jump);
+        await mt.tapL(E.jump);
 
         // await mt.tap(E.self);
         // await mt.tap(E.jumpBack);
@@ -414,10 +416,10 @@ Testing that pageless routes are managed well in case of a child machine.
         // await mt.tap(E.back);
         // await mt.tap(E.jump);
 
-        await mt.tap(E.jumpBack);
+        await mt.tapL(E.jumpBack);
 
         // await mt.fire(E.jumpBack, 'root');
-        await mt.tap(E.forward);
+        await mt.tapL(E.forward);
 
         // await mt.tap(E.jumpBack);
         // await mt.fire(E.back, 'root');
@@ -433,7 +435,7 @@ Testing that pageless routes are managed well in case of a child machine.
         // await mt.tap(E.forward);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -487,15 +489,15 @@ Testing that pageless routes are managed well in case of a child machine.
         // await mt.fire(E.self, 'root');
         // await mt.tap(E.jumpBack);
 
-        await mt.tap(E.back);
+        await mt.tapF(E.back);
 
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.forward, 'root/S.k');
         await mt.fire(E.back, 'root');
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
@@ -515,14 +517,14 @@ Testing that pageless routes are managed well in case of a child machine.
         await mt.fire(E.self, 'root');
         await mt.fire(E.jumpBack, 'root');
         await mt.fire(E.jumpBack, 'root/S.l');
-        await mt.tap(E.self);
-        await mt.tap(E.forward);
+        await mt.tapF(E.self);
+        await mt.tapF(E.forward);
         await mt.fire(E.self, 'root');
-        await mt.tap(E.forward);
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.forward);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.forward, 'root');
         await mt.fire(E.jumpBack, 'root');
-        await mt.tap(E.back);
+        await mt.tapF(E.back);
         await mt.backButton();
       });
     },
@@ -546,20 +548,20 @@ Testing that pageless routes are managed well in case of a child machine.
         );
         final mt = MachineTester(tester, machine);
 
-        await mt.tap(E.back);
-        await mt.tap(E.back);
-        await mt.tap(E.back);
-        await mt.tap(E.back);
-        await mt.tap(E.back);
+        await mt.tapF(E.back);
+        await mt.tapF(E.back);
+        await mt.tapL(E.back);
+        await mt.tapF(E.back);
+        await mt.tapF(E.back);
 
         // Here when we are back to S.l/S.a the S.l/S.m dialog was still shown.
         await mt.fire(E.self, 'root');
 
-        await mt.fire(E.forward, 'root/S.l');
+        await mt.fire(E.forward, 'root/S.l'); // here
         await mt.fire(E.jumpBack, 'root/S.l');
       });
     },
-    skip: true,
+    skip: false,
   );
   testWidgets(
     'original debug.',
@@ -576,23 +578,23 @@ Testing that pageless routes are managed well in case of a child machine.
         final mt = MachineTester(tester, machine);
 
         await mt.fire(E.forward, 'root');
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.back);
+        await mt.tapF(E.jumpBack);
+        await mt.tapF(E.back);
         await mt.fire(E.forward, 'root');
-        await mt.tap(E.back);
-        await mt.tap(E.forward);
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.back);
+        await mt.tapF(E.forward);
+        await mt.tapF(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.back, 'root');
         await mt.fire(E.forward, 'root/S.k');
-        await mt.tap(E.back);
+        await mt.tapF(E.back);
         await mt.fire(E.jumpBack, 'root/S.k');
         // await mt.fire(E.self, 'root/S.k/S.l');
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.forward, 'root/S.k');
         await mt.fire(E.forward, 'root');
 
-        await mt.tap(E.forward);
+        await mt.tapF(E.forward);
         await mt.fire(E.jumpBack, 'root/S.l');
       });
     },
@@ -612,14 +614,14 @@ Testing that pageless routes are managed well in case of a child machine.
         );
         final mt = MachineTester(tester, machine);
 
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.back, 'root');
-        await mt.tap(E.jumpBack);
+        await mt.tapF(E.jumpBack);
         await mt.fire(E.forward, 'root/S.k');
         await mt.fire(E.forward, 'root');
       });
     },
-    skip: true,
+    skip: false,
   );
   testWidgets(
     'building Builder(dirty).',
@@ -634,14 +636,14 @@ Testing that pageless routes are managed well in case of a child machine.
           tester: tester,
         );
         final mt = MachineTester(tester, machine);
-        await mt.tap(E.jumpBack);
-        await mt.tap(E.back);
-        await mt.tap(E.back);
+        await mt.tapF(E.jumpBack);
+        await mt.tapF(E.back);
+        await mt.tapF(E.back);
         await mt.fire(E.forward, 'root');
         await mt.fire(E.back, 'root');
       });
     },
-    skip: true,
+    skip: false,
   );
 
   group(
@@ -661,14 +663,14 @@ Testing that pageless routes are managed well in case of a child machine.
             );
             final mt = MachineTester(tester, machine);
 
-            await mt.tap(E.jumpBack);
+            await mt.tapL(E.jumpBack);
 
-            await mt.tap(E.forward);
-            await mt.tap(E.forward);
-            await mt.tap(E.forward);
-            await mt.tap(E.forward);
-            await mt.tap(E.forward);
-            await mt.tap(E.forward);
+            await mt.tapL(E.forward);
+            await mt.tapL(E.forward);
+            await mt.tapL(E.forward);
+            await mt.tapL(E.forward);
+            await mt.tapL(E.forward);
+            await mt.tapL(E.forward);
 
             await mt.backButton();
 
@@ -702,7 +704,7 @@ Testing that pageless routes are managed well in case of a child machine.
             await mt.fire(E.forward, 'root');
           });
         },
-        skip: true,
+        skip: false,
       );
     },
   );
@@ -720,9 +722,15 @@ class MachineTester {
     await _check();
   }
 
-  Future<void> tap(E eventId) async {
+  Future<void> tapF(E eventId) async {
     _log.info('${machine.getActiveStateRecursive()} <tap> $eventId');
-    await tester.tap(find.text(eventId.toString()).last, warnIfMissed: false);
+    await tester.tap(find.textContaining(eventId.toString()).first);
+    await _check();
+  }
+
+  Future<void> tapL(E eventId) async {
+    _log.info('${machine.getActiveStateRecursive()} <tap> $eventId');
+    await tester.tap(find.textContaining(eventId.toString()).last);
     await _check();
   }
 
@@ -749,11 +757,12 @@ Future<void> multiplier(
   await tc(historyLevel: null, useRootNavigator: false);
   await tc(historyLevel: null, useRootNavigator: true);
 
-  await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: false);
-  await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: true);
+  // TODO: remove allowing history state in machine
+  // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: false);
+  // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: true);
 
-  await tc(historyLevel: HistoryLevel.deep, useRootNavigator: false);
-  await tc(historyLevel: HistoryLevel.deep, useRootNavigator: true);
+  // await tc(historyLevel: HistoryLevel.deep, useRootNavigator: false);
+  // await tc(historyLevel: HistoryLevel.deep, useRootNavigator: true);
 }
 
 Future<StateMachineWithChangeNotifier<S, E, T>> getMachine({
