@@ -7,13 +7,14 @@ import '../../../../../../layers/ui/util/ui_util.dart';
 
 Future<void> profileLoadFailed(
   BuildContext context,
+  bool rootNavigator,
   NavigatorState _,
   Close<DateTime> close,
   StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     createDialog(
       context: context,
-      useRootNavigator: true,
+      useRootNavigator: rootNavigator,
       message: 'Problem during loading profile data.',
       title: '${authMachine.find<SPM, EPM, TPM>(profileMachineName)}',
     );

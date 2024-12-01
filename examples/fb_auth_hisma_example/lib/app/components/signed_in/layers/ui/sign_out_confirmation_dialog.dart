@@ -6,6 +6,7 @@ import '../../../../layers/machine/auth_machine.dart';
 
 Future<void> signOutConfirmationDialog(
   BuildContext context,
+  bool rootNavigator,
   NavigatorState _,
   Close<DateTime> close,
   StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
@@ -13,7 +14,7 @@ Future<void> signOutConfirmationDialog(
   final signedInMachine =
       authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);
   return showDialog(
-    useRootNavigator: false,
+    useRootNavigator: rootNavigator,
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(

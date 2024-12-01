@@ -18,7 +18,7 @@ String getButtonTitle<S, E, T>(
   hisma.StateMachine<S, E, T> machine,
   dynamic event,
 ) =>
-    '${machine.name}.$event';
+    '${machine.name}@${machine.activeStateId}#$event';
 
 class Screen<S, E, T> extends StatelessWidget {
   const Screen(this.machine, this.stateId, {super.key});
@@ -74,13 +74,15 @@ class _MyDialogState extends State<MyDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(name),
-          const Divider(endIndent: 10, indent: 10),
-          ...children,
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(name),
+            const Divider(endIndent: 10, indent: 10),
+            ...children,
+          ],
+        ),
       ),
     );
   }
@@ -88,13 +90,15 @@ class _MyDialogState extends State<MyDialog> {
 
 Future<void> showTestDialog(
   BuildContext context,
+  bool rootNavigator,
   NavigatorState _,
   Close<void> close,
   StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     showDialog<void>(
       context: context,
-      useRootNavigator: false,
+      barrierColor: const Color(0x01000000),
+      useRootNavigator: rootNavigator,
       builder: (context) {
         return MyDialog(machine: machine);
       },
@@ -116,11 +120,13 @@ Future<void> showTestDialogMini(
 
 Future<DateTime?> showTestDatePicker(
   BuildContext context,
+  bool rootNavigator,
   NavigatorState _,
   Close<DateTime> close,
   StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     showDatePicker(
+      useRootNavigator: rootNavigator,
       context: context,
       initialDate: DateTime(2000),
       firstDate: DateTime(1990),

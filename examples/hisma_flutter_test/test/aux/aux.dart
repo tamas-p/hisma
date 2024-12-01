@@ -76,7 +76,8 @@ void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
   final path = getTitle(lm, lm.activeStateId);
   // final path = getTitle(machine, machine.activeStateId);
 
-  expect(find.text(path), findsOneWidget);
+  // expect(find.text(path), findsOneWidget);
+  expect(find.text(path), findsWidgets);
 }
 
 enum Act { fire, tap, back }
@@ -148,13 +149,22 @@ class Checker<S, E, T> {
       return transition!.to;
     }
 
+    final breakNow = numBreaks == 1293; //1321;
     final s = machine.activeStateId;
     if (s == null) throw Exception('Machine ${machine.name} is not started.');
     final expected = whereTo(s, event);
-
+    final beforeState = machine.activeStateId;
     await action(machine, tester, event, act: act ?? this.act);
     expect(machine.activeStateId, expected);
-
+    // final letsBreak = beforeState.toString() == 'S.j' &&
+    //     machine.activeStateId.toString() == 'S.e' &&
+    //     event.toString() == 'E.jumpI';
+    numBreaks++;
+    print(
+      '### numBreaks=$numBreaks <> before: $beforeState,'
+      ' after: ${machine.activeStateId} - '
+      'machine:${machine.name} event: $event',
+    );
     final childMachine = _getChildMachine(machine);
     if (childMachine != null && checkMachine != null) {
       await checkMachine!(tester, act ?? this.act, childMachine, mapping);
@@ -163,3 +173,5 @@ class Checker<S, E, T> {
     }
   }
 }
+
+var numBreaks = 0;

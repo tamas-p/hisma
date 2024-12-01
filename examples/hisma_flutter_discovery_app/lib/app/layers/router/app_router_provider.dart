@@ -57,12 +57,14 @@ final appRouterProvider = Provider(
         event: E.backward,
         present: (
           BuildContext context,
+          bool rootNavigator,
           NavigatorState _,
           Close<DateTime> close,
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
             generateDialog<E, void>(
           context: context,
+          rootNavigator: rootNavigator,
           title: 'Problem during login',
           text: 'Hello.',
         ),
@@ -82,25 +84,26 @@ final appRouterProvider = Provider(
         machine: ref.read(appMachineProvider),
         present: (
           BuildContext context,
+          bool rootNavigator,
           NavigatorState _,
           Close<DateTime> close,
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
-            generateDatePicker<E>(
-          context,
-        ),
+            generateDatePicker<E>(context, rootNavigator),
       ),
       S.d: PagelessCreator<E, void>(
         machine: ref.read(appMachineProvider),
         event: E.backward,
         present: (
           BuildContext context,
+          bool rootNavigator,
           NavigatorState _,
           Close<DateTime> close,
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
             generateDialog<E, void>(
           context: context,
+          rootNavigator: rootNavigator,
           title: 'Problem during login2',
           text: 'Hello2.',
         ),

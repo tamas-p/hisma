@@ -181,12 +181,13 @@ class ScreenB extends StatelessWidget {
 
 Future<bool?> b1(
   BuildContext context,
+  bool rootNavigator,
   NavigatorState _,
   Close<DateTime> close,
   StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     showDialog<bool>(
-      useRootNavigator: false,
+      useRootNavigator: rootNavigator,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -227,12 +228,13 @@ class ScreenC extends StatelessWidget {
 
 Future<DateTime?> c1(
   BuildContext context,
+  bool rootNavigator,
   NavigatorState _,
   Close<DateTime> close,
   StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 ) =>
     showDatePicker(
-      useRootNavigator: false,
+      useRootNavigator: rootNavigator,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),

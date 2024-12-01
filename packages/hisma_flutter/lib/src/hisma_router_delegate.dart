@@ -10,13 +10,14 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   HismaRouterDelegate({
     required this.machine,
     required this.mapping,
-  }) : /* TODO: assert(
+  }) /* TODO: assert(
             machine.history == null,
             'Machine shall not have history defined when used with '
             'HismaRouterDelegate as we can not simply jump (as history would '
             'imply) to a state on the UI, rather it is a path that leads to a '
             'certain UI state.'), */
-        stack = StateStack<S>(mapping) {
+  // stack = StateStack()
+  {
     // Machine changes will result notifying listeners of this
     // router delegate that is the corresponding RouterState, which
     // in turn will call setState to schedule its rebuild and that is
@@ -86,7 +87,8 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     final didPop = route.didPop(result);
     if (didPop) {
       stack.removeByStr(route.settings.name);
-      if (route.settings.name == machine.activeStateId.toString()) {
+      final activeKey = getKey(machine.name, machine.activeStateId);
+      if (route.settings.name == activeKey) {
         // We only fire if we are in the same state when the route
         // from the presentation -> page -> route was created.
         // Being in a different state indicates that there ended up here
@@ -119,7 +121,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     }
   }
 
-  final StateStack<S> stack;
+  final stack = StateStack();
 
   late List<Page<dynamic>> _previousPages;
   List<Page<dynamic>> _createPages() {
@@ -142,12 +144,12 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
       // We only process the state if it is not leading us back to a previous
       // state in a circle that current _pageMap (hence current navigator pages)
       // includes.
-      if (stack.contains(activeStateId)) {
+      if (stack.contains(getKey(machine.name, activeStateId))) {
         // Since we arrived back to a state that (more precisely the page
         // created by its Presentation) is already in the current
         // Navigator.pages (through the circle in the state transition graph),
         // we have to clean up the pages on the circle.
-        stack.cleanUpCircle(activeStateId);
+        stack.cleanUpCircle(getKey(machine.name, activeStateId));
       } else {
         // This state (more precisely the page created by its Presentation) is
         // not represented in Navigator.pages hence we need to add it.
@@ -159,12 +161,11 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
 
   List<Page<dynamic>> _stateIdsToPages() {
     final pages = <Page<dynamic>>[];
-    stack.goThrough((S stateId) {
-      final presentation = mapping[stateId];
+    stack.goThrough((String key, Presentation presentation) {
       if (presentation is PageCreator) {
         pages.add(
           presentation.create(
-            name: stateId.toString(),
+            name: key,
             widget: presentation.widget,
           ),
         );
@@ -187,7 +188,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
 
     if (presentation is PageCreator<E, dynamic>) {
       if (presentation.overlay == false) stack.clear();
-      stack.add(stateId);
+      stack.add(getKey(machine.name, stateId), presentation);
     } else if (presentation is ImperativeCreator) {
       // We skip Imperative creators.
     } else if (presentation is NoUIChange) {

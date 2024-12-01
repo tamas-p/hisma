@@ -22,12 +22,14 @@ final l2aRouterProvider = Provider(
       S.l2a1: PagelessCreator<E, void>(
         present: (
           BuildContext context,
+          bool rootNavigator,
           NavigatorState _,
           Close<DateTime> close,
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
             generateDialog<E, void>(
           context: context,
+          rootNavigator: rootNavigator,
           title: 'Problem during login',
           text: 'Hello.',
         ),

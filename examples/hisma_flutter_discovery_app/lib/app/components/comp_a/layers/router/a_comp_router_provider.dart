@@ -23,12 +23,14 @@ final aRouterProvider = Provider(
         event: E.int1,
         present: (
           BuildContext context,
+          bool rootNavigator,
           NavigatorState _,
           Close<DateTime> close,
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
             generateDialog<void, E>(
           context: context,
+          rootNavigator: rootNavigator,
           title: 'Problem during login ca1',
           text: 'Hello ca1.',
         ),

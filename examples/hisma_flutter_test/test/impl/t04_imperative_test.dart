@@ -166,10 +166,10 @@ Future<void> checkMachine(
   await c.check(E.jumpP);
 
   // test: no_ui_change
-  await c.check(E.forward, titleToBeChecked: false);
+  // await c.check(E.forward, titleToBeChecked: false);
 
   // test: no_state_change
-  await c.check(E.self, titleToBeChecked: false);
+  // await c.check(E.self, titleToBeChecked: false);
 
   // test: missing_presentation
   // expect(

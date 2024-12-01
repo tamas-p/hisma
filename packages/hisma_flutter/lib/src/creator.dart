@@ -150,13 +150,21 @@ abstract class ImperativeCreator<E, R> extends Creator<E> {
 }
 
 class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
-  PagelessCreator({required this.present, required super.machine, super.event});
+  PagelessCreator({
+    required this.present,
+    this.rootNavigator = true,
+    required super.machine,
+    super.event,
+  });
   Future<R?> Function(
     BuildContext context,
+    bool rootNavigator,
+    // TODO: probably we do not need navigatorState and close to be passed.
     NavigatorState navigatorState,
     Close<R> close,
     StateMachineWithChangeNotifier<dynamic, E, dynamic> machine,
   ) present;
+  bool rootNavigator;
 
   bool _opened = false;
   late NavigatorState _navigatorState;
@@ -179,11 +187,14 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     //   'and not yet closed.',
     // );
     assert(context != null);
-    if (context != null) _navigatorState = Navigator.of(context);
+    if (context != null) {
+      _navigatorState = Navigator.of(context, rootNavigator: rootNavigator);
+    }
 
     _opened = true;
     final result = await present(
       context ?? _navigatorState.context,
+      rootNavigator,
       _navigatorState,
       close,
       machine,

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 Future<R?> generateDialog<R, E>({
   required BuildContext context,
+  required bool rootNavigator,
   required String title,
   required String text,
 }) =>
     showDialog<R>(
-      useRootNavigator: false,
+      useRootNavigator: rootNavigator,
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -30,9 +31,10 @@ Future<R?> generateDialog<R, E>({
 
 Future<DateTime?> generateDatePicker<E>(
   BuildContext context,
+  bool rootNavigator,
 ) =>
     showDatePicker(
-      useRootNavigator: false,
+      useRootNavigator: rootNavigator,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),

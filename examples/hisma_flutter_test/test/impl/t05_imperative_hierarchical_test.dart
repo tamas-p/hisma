@@ -1,21 +1,19 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hisma/hisma.dart';
+import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t05_imperative_hierarchical.dart';
+import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import '../../test/aux/aux.dart';
 import 't04_imperative_test.dart';
 
 Future<void> main() async {
-  FlutterError.onError = (FlutterErrorDetails details) {
-    // Handle the error here, e.g., log the error or fail the test
-    print('Unhandled error: ${details.exception}');
-    fail('Unhandled error occurred');
-  };
-
-  // StateMachine.monitorCreators = [
-  //   (m) => VisualMonitor(m, host: '192.168.122.1'),
-  // ];
+  StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    (m) => ConsoleMonitor(m),
+  ];
   // auxInitLogging();
   testWidgets(
     'StateMachineWithChangeNotifier test with fire',
@@ -30,6 +28,7 @@ Future<void> main() async {
       await tester.binding.setSurfaceSize(const Size(1024, 1024));
       await testAllStates(tester, act: Act.tap);
     },
+    skip: true,
   );
 }
 

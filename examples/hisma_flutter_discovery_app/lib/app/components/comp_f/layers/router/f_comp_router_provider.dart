@@ -17,12 +17,14 @@ final fRouterProvider = Provider(
         event: E.backward,
         present: (
           BuildContext context,
+          bool rootNavigator,
           NavigatorState _,
           Close<DateTime> close,
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
             generateDialog<void, E>(
           context: context,
+          rootNavigator: rootNavigator,
           title: 'Test1',
           text: 'Demo test1.',
         ),
