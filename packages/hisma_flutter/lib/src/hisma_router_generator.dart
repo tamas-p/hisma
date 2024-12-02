@@ -16,7 +16,8 @@ class HismaRouterGenerator<S, E> {
   late final RouteInformationParser<S> _routeInformationParser =
       HismaRouteInformationParser<S, E>(this);
 
-  late final RouterDelegate<S> _routerDelegate = HismaRouterDelegate<S, E>(
+  late final HismaRouterDelegate<S, E> _routerDelegate =
+      HismaRouterDelegate<S, E>(
     machine: machine,
     mapping: mapping,
   );
@@ -26,7 +27,7 @@ class HismaRouterGenerator<S, E> {
 
   RouteInformationParser<S> get routeInformationParser =>
       _routeInformationParser;
-  RouterDelegate<S> get routerDelegate => _routerDelegate;
+  HismaRouterDelegate<S, E> get routerDelegate => _routerDelegate;
 
   // HismaPagelessHandler<S, E> get pagelessHandler => _pagelessHandler;
 }

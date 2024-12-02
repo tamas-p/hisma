@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 
 // import 'states_events_transitions.dart';
 
+// TODO: We could remove gteMachineName and only use getKey.
 String getMachineName<S>(String current, S stateId) => '$current/$stateId';
 
 String getTitle(

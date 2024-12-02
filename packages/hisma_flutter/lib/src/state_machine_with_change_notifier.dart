@@ -6,7 +6,8 @@ import 'package:hisma/hisma.dart';
 import 'assistance.dart';
 import 'creator.dart';
 import 'hisma_router_delegate.dart';
-import 'state_stack.dart';
+
+String getKey(String machineName, dynamic stateId) => '$machineName@$stateId';
 
 // Challenges:
 //

@@ -92,8 +92,6 @@ class StateStackO<S> {
 */
 //------------------------------------------------------------------------------
 
-String getKey(String machineName, dynamic stateId) => '$machineName@$stateId';
-
 class StateStack {
   StateStack();
 

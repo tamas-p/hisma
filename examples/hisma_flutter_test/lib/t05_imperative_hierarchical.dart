@@ -32,16 +32,15 @@ class HierarchicalImperativeApp extends StatelessWidget {
 }
 
 class Generators {
+  // This map is needed to support hot reload as child Routers will
+  // be rebuilt and loose their HismaRouterDelegate state but the corresponding
+  // machine active state is preserved.
+  // TODO: it might be better with a similar approach as Widgets finds their
+  // elements and state. Then we would not need to explicitly manage this.
+  final generators = <String, HismaRouterGenerator<S, E>>{};
   HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
-    StateMachineWithChangeNotifier<S, E, T> parentMachine, [
-    int level = 0,
-  ]) {
-    final state = parentMachine.activeStateId;
-    // final name = '$testMachineName$level${level == 0 ? '' : state ?? ''}';
-    final name = getMachineName(parentMachine.name, state);
-    final machine =
-        level == 0 ? parentMachine : parentMachine.find<S, E, T>(name);
-
+    StateMachineWithChangeNotifier<S, E, T> machine,
+  ) {
     final generator = HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
@@ -74,17 +73,21 @@ class Generators {
           machine: machine,
           event: E.back,
         ),
-        S.g: level < 2
+        S.g: machine.name.split('/').length < 3
             ? MaterialPageCreator<E, void>(
                 // TODO: Create utility router class that creates
                 // BackButtonDispatcher.
                 widget: Builder(
                   builder: (context) {
                     return Router(
-                      routerDelegate: createHierarchicalImpGenerator(
-                        machine,
-                        level + 1,
-                      ).routerDelegate,
+                      routerDelegate: (generators.putIfAbsent(
+                        getMachineName(machine.name, S.g),
+                        () => createHierarchicalImpGenerator(
+                          machine.find<S, E, T>(
+                            getMachineName(machine.name, S.g),
+                          ),
+                        ),
+                      )).routerDelegate,
                       backButtonDispatcher: Router.of(context)
                           .backButtonDispatcher!
                           .createChildBackButtonDispatcher()
@@ -115,17 +118,23 @@ class Generators {
           machine: machine,
           event: E.back,
         ),
-        S.k: level < 2
+        S.k: machine.name.split('/').length < 3
             ? MaterialPageCreator<E, void>(
                 // TODO: Create utility router class that creates
                 // BackButtonDispatcher.
                 widget: Builder(
                   builder: (context) {
                     return Router(
-                      routerDelegate: createHierarchicalImpGenerator(
-                        machine,
-                        level + 1,
-                      ).routerDelegate,
+                      routerDelegate: generators
+                          .putIfAbsent(
+                            getMachineName(machine.name, S.k),
+                            () => createHierarchicalImpGenerator(
+                              machine.find<S, E, T>(
+                                getMachineName(machine.name, S.k),
+                              ),
+                            ),
+                          )
+                          .routerDelegate,
                       backButtonDispatcher: Router.of(context)
                           .backButtonDispatcher!
                           .createChildBackButtonDispatcher()
