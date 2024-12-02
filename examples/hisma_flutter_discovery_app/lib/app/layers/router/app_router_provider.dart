@@ -80,7 +80,7 @@ final appRouterProvider = Provider(
         overlay: true,
       ),
       S.c: PagelessCreator<E, DateTime>(
-        event: E.forward,
+        event: E.backward,
         machine: ref.read(appMachineProvider),
         present: (
           BuildContext context,
@@ -111,9 +111,11 @@ final appRouterProvider = Provider(
       S.e: MaterialPageCreator<E, void>(
         // S.e: MaterialPageCreator<S>(
         widget: const EScreen(),
-        event: E.jump,
+        overlay: true,
+        event: E.backward,
       ),
       S.f: MaterialPageCreator<E, void>(
+        overlay: true,
         widget:
             Router(routerDelegate: ref.read(fRouterProvider).routerDelegate),
       ),
