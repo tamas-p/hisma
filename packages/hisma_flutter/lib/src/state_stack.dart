@@ -149,7 +149,7 @@ class StateStack {
     }
   }
 
-  void windBack(
+  void windBackTo(
     String targetKey,
     void Function(Presentation) processor,
   ) {
@@ -160,6 +160,16 @@ class StateStack {
     );
     for (final current in cpy.entries.toList().reversed) {
       if (current.key == targetKey) break;
+      processor(current.value);
+    }
+  }
+
+  void windBackAll(void Function(Presentation) processor) {
+    // Avoid concurrent mod. exception.
+    final cpy = LinkedHashMap<String, Presentation>.from(
+      _stack,
+    );
+    for (final current in cpy.entries.toList().reversed) {
       processor(current.value);
     }
   }

@@ -37,8 +37,13 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     required super.transitions,
   });
 
-  late HismaRouterDelegate<S, E> routerDelegate;
-
+  late HismaRouterDelegate<S, E> _routerDelegate;
+  bool _initialized = false;
+  // ignore: avoid_setters_without_getters
+  set routerDelegate(HismaRouterDelegate<S, E> rd) {
+    _routerDelegate = rd;
+    _initialized = true;
+  }
 /*
   @override
   Future<void> fireO(
@@ -143,14 +148,28 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
 */
 
   void _windBack(S newStateId, NavigatorState? navigatorState) {
-    routerDelegate.stack.windBack(getKey(name, newStateId), (presentation) {
+    _routerDelegate.stack.windBackTo(getKey(name, newStateId), (presentation) {
       if (presentation is ImperativeCreator) {
         presentation.close();
       } else if (presentation is PageCreator) {
         final c = navigatorState?.context ??
-            routerDelegate.navigatorKey.currentContext;
+            _routerDelegate.navigatorKey.currentContext;
         assert(c != null);
         if (c != null) Navigator.of(c).pop();
+      }
+    });
+  }
+
+  void _windBackAll(NavigatorState? navigatorState) {
+    _routerDelegate.stack.windBackAll((presentation) {
+      if (presentation is PagelessCreator) {
+        // && presentation.rootNavigator) {
+        presentation.close();
+      } else if (presentation is PageCreator) {
+        final c = navigatorState?.context ??
+            _routerDelegate.navigatorKey.currentContext;
+        // assert(c != null);
+        // if (c != null) Navigator.of(c).pop();
       }
     });
   }
@@ -164,10 +183,10 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   }) async {
     final navigatorState = context != null
         ? Navigator.of(context)
-        : routerDelegate.navigatorKey.currentState;
+        : _routerDelegate.navigatorKey.currentState;
     final originalStateId = activeStateId;
     final isOriginalStateIdInStack =
-        routerDelegate.stack.contains(getKey(name, originalStateId));
+        _routerDelegate.stack.contains(getKey(name, originalStateId));
     await super.fire(eventId, arg: arg, external: external);
     final newStateId = activeStateId;
     if (newStateId == null) {
@@ -176,7 +195,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       return;
     }
     final isNewStateIdInStack =
-        routerDelegate.stack.contains(getKey(name, activeStateId));
+        _routerDelegate.stack.contains(getKey(name, activeStateId));
     assert(
       // test: ? assert_on_no_circle
       isOriginalStateIdInStack || isNewStateIdInStack,
@@ -194,25 +213,25 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       return;
     }
 
-    final newPres = routerDelegate.mapping[newStateId];
+    final newPres = _routerDelegate.mapping[newStateId];
     // test: missing_presentation ?
     assert(newPres != null, missingPresentationMsg(newStateId, name));
     if (newPres is NoUIChange) {
       // test: no_ui_change
-      routerDelegate.stack.add(getKey(name, newStateId), newPres);
+      _routerDelegate.stack.add(getKey(name, newStateId), newPres);
       return;
     }
     assert(newPres is PageCreator || newPres is ImperativeCreator);
     if (isNewStateIdInStack) {
       // Circle
       if (newPres is ImperativeCreator) {
-        if (!routerDelegate.stack.isLast(getKey(name, newStateId))) {
+        if (!_routerDelegate.stack.isLast(getKey(name, newStateId))) {
           // Only if presentation was not already closed.
           // test: circle_to_imperative
         }
         _windBack(newStateId, navigatorState);
       } else if (newPres is PageCreator) {
-        if (routerDelegate.stack.hasImperatives(getKey(name, newStateId))) {
+        if (_routerDelegate.stack.hasImperatives(getKey(name, newStateId))) {
           // test: circle_to_page_has_imperatives
           _windBack(newStateId, navigatorState);
         } else {
@@ -225,14 +244,14 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       if (newPres is ImperativeCreator<E, dynamic>) {
         // test: new_presentation_imperative_open
         final oldStateId = activeStateId;
-        routerDelegate.stack.add(getKey(name, newStateId), newPres);
+        _routerDelegate.stack.add(getKey(name, newStateId), newPres);
         final newIsImperativeInRoot =
             newPres is PagelessCreator<E, dynamic> && newPres.rootNavigator;
         if (newIsImperativeInRoot) {
           var p = parent
               as StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>?;
           while (p != null) {
-            p.routerDelegate.stack.add(getKey(name, newStateId), newPres);
+            p._routerDelegate.stack.add(getKey(name, newStateId), newPres);
             p = p.parent
                 as StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>?;
           }
@@ -243,12 +262,12 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
           newPres.open(navigatorState?.context).then((dynamic result) {
             // test: imperative_closed
             // Signal that imp. was closed shall be removed.
-            routerDelegate.stack.remove(getKey(name, newStateId));
+            _routerDelegate.stack.remove(getKey(name, newStateId));
             if (newIsImperativeInRoot) {
               var p = parent
                   as StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>?;
               while (p != null) {
-                p.routerDelegate.stack.remove(getKey(name, newStateId));
+                p._routerDelegate.stack.remove(getKey(name, newStateId));
                 p = p.parent as StateMachineWithChangeNotifier<dynamic, dynamic,
                     dynamic>?;
               }
@@ -268,6 +287,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       } else if (newPres is PageCreator) {
         // test: new_presentation_page_notify
         // test: new_presentation_page_notify_overlay
+        _windBackAll(navigatorState);
         notifyListeners();
       }
     }
@@ -343,7 +363,13 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       arg: arg,
       historyFlowDown: historyFlowDown,
     );
+
     notifyListeners();
+    if (_initialized) {
+      final navigatorState = _routerDelegate.navigatorKey.currentState;
+      _windBackAll(navigatorState);
+      // _windBack(initialStateId, navigatorState);
+    }
   }
 
   // We shall NOT send notification in case of stop as RouterDelegate would
@@ -352,9 +378,14 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   //
   // @override
   // Future<void> stop({required dynamic arg}) async {
-  //   // TODO: Why required arg?
-  //   await super.stop(arg: arg);
-  //   // notifyListeners();
+  // TODO: Why required arg?
+  // await super.stop(arg: arg);
+  // if (_initialized) {
+  //   final navigatorState = _routerDelegate.navigatorKey.currentState;
+  //   _windBackAll(navigatorState);
+  //   // _windBack(initialStateId, navigatorState);
+  // }
+  // notifyListeners();
   // }
 
   @override

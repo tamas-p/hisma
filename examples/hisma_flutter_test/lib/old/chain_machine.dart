@@ -174,6 +174,7 @@ class ChainApp extends StatelessWidget {
   }
 }
 
+// TODO: move main function to the beginning of the files.
 Future<void> main() async {
   initLogging();
   h.StateMachine.monitorCreators = [

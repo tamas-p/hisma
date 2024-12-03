@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
+import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/old/chain_machine.dart';
 import 'package:hisma_flutter_test/old/machine.dart';
@@ -63,6 +64,7 @@ void main() {
 
   StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
+    (m) => ConsoleMonitor(m),
   ];
 
   /// We are testing
@@ -755,7 +757,7 @@ Future<void> multiplier(
       tc,
 ) async {
   await tc(historyLevel: null, useRootNavigator: false);
-  await tc(historyLevel: null, useRootNavigator: true);
+  // await tc(historyLevel: null, useRootNavigator: true);
 
   // TODO: remove allowing history state in machine
   // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: false);

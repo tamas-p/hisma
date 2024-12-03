@@ -14,11 +14,10 @@ Future<void> main() async {
     // (m) => ConsoleMonitor(m),
   ];
   initLogging();
-  final simpleMachine =
-      createMachine(name: 'root', historyLevel: HistoryLevel.shallow);
+  final simpleMachine = createMachine(name: 'root', historyLevel: null);
   await simpleMachine.start();
 
-  runApp(MyApp(machine: simpleMachine, useRootNavigator: true));
+  runApp(MyApp(machine: simpleMachine, useRootNavigator: false));
 }
 
 class MyApp extends StatelessWidget {
@@ -26,12 +25,15 @@ class MyApp extends StatelessWidget {
     required StateMachineWithChangeNotifier<S, E, T> machine,
     required bool useRootNavigator,
     super.key,
-  }) : _routerGenerator = createHismaRouterGenerator(
-          machine: machine,
-          useRootNavigator: useRootNavigator,
-        );
+  }) {
+    _routerGenerator = _generators.createHismaRouterGenerator(
+      machine: machine,
+      useRootNavigator: useRootNavigator,
+    );
+  }
 
-  final HismaRouterGenerator<S, E> _routerGenerator;
+  final _generators = Generators();
+  late final HismaRouterGenerator<S, E> _routerGenerator;
 
   @override
   Widget build(BuildContext context) {
