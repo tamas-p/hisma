@@ -12,12 +12,18 @@ Future<void> main(List<String> args) async {
   ];
   final machine = createLongerMachine();
   await machine.start();
-  runApp(ImperativeApp(machine));
+  runApp(ImperativeApp(machine: machine, rootNavigator: true));
 }
 
 class ImperativeApp extends StatelessWidget {
-  ImperativeApp(this.machine, {super.key});
-  late final gen = createImperativeGenerator(machine);
+  ImperativeApp({
+    required this.machine,
+    required this.rootNavigator,
+    super.key,
+  });
+  final bool rootNavigator;
+  late final gen =
+      createImperativeGenerator(machine: machine, rootNavigator: rootNavigator);
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   @override
@@ -29,9 +35,10 @@ class ImperativeApp extends StatelessWidget {
   }
 }
 
-HismaRouterGenerator<S, E> createImperativeGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine,
-) =>
+HismaRouterGenerator<S, E> createImperativeGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool rootNavigator,
+}) =>
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
@@ -51,16 +58,19 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
         ),
         S.d: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
         S.e: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
         S.f: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
@@ -71,16 +81,19 @@ HismaRouterGenerator<S, E> createImperativeGenerator(
         ),
         S.h: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
         S.i: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
         S.j: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),

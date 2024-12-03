@@ -15,30 +15,51 @@ Future<void> main() async {
     (m) => ConsoleMonitor(m),
   ];
   // auxInitLogging();
-  testWidgets(
-    'StateMachineWithChangeNotifier test with fire',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1024, 1024));
-      await testAllStates(tester, act: Act.fire);
-    },
-  );
-  testWidgets(
-    'StateMachineWithChangeNotifier test with tap',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1024, 1024));
-      await testAllStates(tester, act: Act.tap);
-    },
-    skip: true,
-  );
+  group('Imperative hierarchical test with fire', () {
+    testWidgets(
+      'rootNavigator: false',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
+        await testAllStates(tester, act: Act.fire, rootNavigator: false);
+      },
+    );
+    testWidgets(
+      'rootNavigator: true',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
+        await testAllStates(tester, act: Act.fire, rootNavigator: true);
+      },
+    );
+  });
+  group('Imperative hierarchical test with tap', () {
+    testWidgets(
+      'rootNavigator: false',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
+        await testAllStates(tester, act: Act.tap, rootNavigator: false);
+      },
+    );
+    testWidgets(
+      'rootNavigator: true',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
+        await testAllStates(tester, act: Act.tap, rootNavigator: true);
+      },
+    );
+  });
 }
 
 Future<void> testAllStates(
   WidgetTester tester, {
+  required bool rootNavigator,
   required Act act,
 }) async {
   final machine = createLongerMachine(hierarchical: true);
   await machine.start();
-  final app = HierarchicalImperativeApp(machine);
+  final app = HierarchicalImperativeApp(
+    machine: machine,
+    rootNavigator: rootNavigator,
+  );
   final box = ConstrainedBox(
     constraints: const BoxConstraints(minHeight: 1000, minWidth: 1000),
     child: app,

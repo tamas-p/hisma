@@ -10,27 +10,44 @@ Future<void> main() async {
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   // ];
   // auxInitLogging();
-  testWidgets(
-    'StateMachineWithChangeNotifier test with fire',
-    (tester) async {
-      await testAllStates(tester, act: Act.fire);
-    },
-  );
-  testWidgets(
-    'StateMachineWithChangeNotifier test with tap',
-    (tester) async {
-      await testAllStates(tester, act: Act.tap);
-    },
-  );
+  group('Imperative test with fire', () {
+    testWidgets(
+      'rootNavigator: false',
+      (tester) async {
+        await testAllStates(tester, act: Act.fire, rootNavigator: false);
+      },
+    );
+    testWidgets(
+      'rootNavigator: true',
+      (tester) async {
+        await testAllStates(tester, act: Act.fire, rootNavigator: true);
+      },
+    );
+    group('Imperative test with tap', () {
+      testWidgets(
+        'rootNavigator: false',
+        (tester) async {
+          await testAllStates(tester, act: Act.tap, rootNavigator: false);
+        },
+      );
+      testWidgets(
+        'rootNavigator: true',
+        (tester) async {
+          await testAllStates(tester, act: Act.tap, rootNavigator: true);
+        },
+      );
+    });
+  });
 }
 
 Future<void> testAllStates(
   WidgetTester tester, {
   required Act act,
+  required bool rootNavigator,
 }) async {
   final machine = createLongerMachine();
   await machine.start();
-  final app = ImperativeApp(machine);
+  final app = ImperativeApp(machine: machine, rootNavigator: rootNavigator);
   await tester.pumpWidget(app);
   expect(machine.activeStateId, machine.initialStateId);
   checkTitle(machine);
@@ -176,30 +193,4 @@ Future<void> checkMachine(
   //   c.check(E.forward),
   //   throwsA(isA<AssertionError>()),
   // );
-}
-
-//------------------------------------------------------------------------------
-
-// TODO: delete this poc function
-Future<void> poc(WidgetTester tester) async {
-  final machine = createLongerMachine();
-  await machine.start();
-  final app = ImperativeApp(machine);
-  await tester.pumpWidget(app);
-  expect(machine.activeStateId, machine.initialStateId);
-  checkTitle(machine);
-
-  await tester.tap(find.text('testMachine0.E.forward'));
-  await tester.pump();
-
-  expect(find.text('testMachine0 - S.b'), findsOneWidget);
-
-  await tester.tap(find.text('testMachine0.E.forward').last);
-  await tester.pump();
-
-  // await machine.fire(E.forward);
-  // print('AFTER');
-  // await tester.pump();
-
-  expect(find.text('testMachine0 - S.c'), findsOneWidget);
 }
