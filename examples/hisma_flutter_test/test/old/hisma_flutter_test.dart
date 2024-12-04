@@ -155,7 +155,7 @@ void main() {
     skip: false,
   );
 
-  group('Pageless routes.', skip: true, () {
+  group('Pageless routes.', skip: false, () {
     testWidgets(
       '''
 Testing that pageless routes are managed well in case of a root machine.
@@ -437,7 +437,7 @@ Testing that pageless routes are managed well in case of a child machine.
         // await mt.tap(E.forward);
       });
     },
-    skip: true,
+    skip: false,
   );
 
   testWidgets(
