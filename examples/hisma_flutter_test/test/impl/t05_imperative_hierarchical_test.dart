@@ -17,14 +17,14 @@ Future<void> main() async {
   // auxInitLogging();
   group('Imperative hierarchical test with fire', () {
     testWidgets(
-      'rootNavigator: false',
+      'Imperative hierarchical test with fire, rootNavigator: false',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(1024, 1024));
         await testAllStates(tester, act: Act.fire, rootNavigator: false);
       },
     );
     testWidgets(
-      'rootNavigator: true',
+      'Imperative hierarchical test with fire, rootNavigator: true',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(1024, 1024));
         await testAllStates(tester, act: Act.fire, rootNavigator: true);
@@ -33,14 +33,14 @@ Future<void> main() async {
   });
   group('Imperative hierarchical test with tap', () {
     testWidgets(
-      'rootNavigator: false',
+      'Imperative hierarchical test with tap, rootNavigator: false',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(1024, 1024));
         await testAllStates(tester, act: Act.tap, rootNavigator: false);
       },
     );
     testWidgets(
-      'rootNavigator: true',
+      'Imperative hierarchical test with tap, rootNavigator: true',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(1024, 1024));
         await testAllStates(tester, act: Act.tap, rootNavigator: true);

@@ -98,6 +98,8 @@ Future<void> showTestDialog(
 ) =>
     showDialog<void>(
       context: context,
+      // This is to not completely gray out background when manually testing.
+      // This allows visual checks of lower layers in the navigator stack.
       barrierColor: const Color(0x01000000),
       useRootNavigator: rootNavigator,
       builder: (context) {

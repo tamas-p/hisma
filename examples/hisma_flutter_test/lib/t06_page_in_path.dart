@@ -1,0 +1,298 @@
+import 'package:flutter/material.dart';
+import 'package:hisma/hisma.dart' as h;
+import 'package:hisma_flutter/hisma_flutter.dart';
+import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
+
+import 'ui.dart';
+
+Future<void> main(List<String> args) async {
+  h.StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+  ];
+  final machine = createParentMachine();
+  await machine.start();
+  final app = PageInPathApp(machine: machine, rootNavigator: true);
+  runApp(app);
+}
+
+class PageInPathApp extends StatelessWidget {
+  PageInPathApp({
+    required this.machine,
+    required this.rootNavigator,
+    super.key,
+  });
+  final bool rootNavigator;
+  late final gen = createGenerator(machine: machine, rootNavigator: true);
+
+  final StateMachineWithChangeNotifier<S, E, T> machine;
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerDelegate: gen.routerDelegate,
+      routeInformationParser: gen.routeInformationParser,
+    );
+  }
+}
+
+HismaRouterGenerator<S, E> createGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool rootNavigator,
+}) =>
+    HismaRouterGenerator(
+      machine: machine,
+      mapping: {
+        S.a: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.a),
+        ),
+        S.b: PagelessCreator<E, void>(
+          present: showTestDialog,
+          rootNavigator: true,
+          machine: machine,
+          event: E.back,
+        ),
+        S.c: MaterialPageCreator<E, void>(
+          widget: Router(
+            routerDelegate: createChildGenerator(
+              machine: machine.find(child1),
+              rootNavigator: rootNavigator,
+            ).routerDelegate,
+          ),
+        ),
+        S.d: MaterialPageCreator<E, void>(
+          widget: Router(
+            routerDelegate: createChildGenerator(
+              machine: machine.find(child2),
+              rootNavigator: rootNavigator,
+            ).routerDelegate,
+          ),
+        ),
+      },
+    );
+
+HismaRouterGenerator<S, E> createChildGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool rootNavigator,
+}) =>
+    HismaRouterGenerator(
+      machine: machine,
+      mapping: {
+        S.a: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.a),
+        ),
+        S.b: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.b),
+          overlay: true,
+          event: E.back,
+        ),
+        S.c: PagelessCreator<E, void>(
+          present: showTestDialog,
+          rootNavigator: true,
+          machine: machine,
+          event: E.back,
+        ),
+        S.d: PagelessCreator<E, void>(
+          present: showTestDialog,
+          rootNavigator: false,
+          machine: machine,
+          event: E.back,
+        ),
+        S.e: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.e),
+          overlay: true,
+          event: E.back,
+        ),
+        S.f: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.f),
+          overlay: true,
+          event: E.back,
+        ),
+        S.g: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.g),
+          event: E.back,
+        ),
+      },
+    );
+
+enum S { a, b, c, d, e, f, g }
+
+enum E { forward, fwdC, fwdD, back, self, restart }
+
+enum T { toA, toB, toC, toD, toE, toF, toG, restart }
+
+StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
+    StateMachineWithChangeNotifier(
+      name: 'parent',
+      events: E.values,
+      initialStateId: S.a,
+      states: {
+        S.a: h.State(
+          etm: {
+            E.fwdC: [T.toB],
+          },
+        ),
+        S.b: h.State(
+          etm: {
+            E.fwdC: [T.toC],
+            E.fwdD: [T.toD],
+            E.back: [T.toA],
+            E.restart: [T.restart],
+          },
+        ),
+        S.c: h.State(
+          etm: {
+            E.back: [T.toB],
+            E.fwdD: [T.toD],
+            E.self: [T.toC],
+          },
+          regions: [
+            h.Region<S, E, T, S>(machine: createChild1Machine()),
+          ],
+        ),
+        S.d: h.State(
+          etm: {
+            E.back: [T.toB],
+            E.fwdC: [T.toC],
+            E.self: [T.toD],
+          },
+          regions: [
+            h.Region<S, E, T, S>(machine: createChild2Machine()),
+          ],
+        ),
+      },
+      transitions: {
+        T.toA: h.Transition(to: S.a),
+        T.toB: h.Transition(to: S.b),
+        T.toC: h.Transition(to: S.c),
+        T.toD: h.Transition(to: S.d),
+        T.restart: h.InternalTransition(
+          onAction: h.Action(
+            description: 'restart machine',
+            action: (machine, dynamic _) async {
+              print('Restart machine.');
+              await machine.stop(arg: null);
+              await machine.start();
+            },
+          ),
+        ),
+      },
+    );
+
+const String child1 = 'child1';
+StateMachineWithChangeNotifier<S, E, T> createChild1Machine() =>
+    StateMachineWithChangeNotifier(
+      name: child1,
+      events: E.values,
+      initialStateId: S.a,
+      states: {
+        S.a: h.State(
+          etm: {
+            E.forward: [T.toB],
+          },
+        ),
+        S.b: h.State(
+          etm: {
+            E.forward: [T.toC],
+            E.back: [T.toA],
+          },
+        ),
+        S.c: h.State(
+          etm: {
+            E.forward: [T.toD],
+            E.back: [T.toB],
+          },
+        ),
+        S.d: h.State(
+          etm: {
+            E.forward: [T.toE],
+            E.back: [T.toC],
+          },
+        ),
+        S.e: h.State(
+          etm: {
+            E.forward: [T.toF],
+            E.back: [T.toD],
+          },
+        ),
+        S.f: h.State(
+          etm: {
+            E.forward: [T.toG],
+            E.back: [T.toE],
+          },
+        ),
+        S.g: h.State(
+          etm: {
+            E.forward: [T.toA],
+            E.back: [T.toF],
+          },
+        ),
+      },
+      transitions: {
+        T.toA: h.Transition(to: S.a),
+        T.toB: h.Transition(to: S.b),
+        T.toC: h.Transition(to: S.c),
+        T.toD: h.Transition(to: S.d),
+        T.toE: h.Transition(to: S.e),
+        T.toF: h.Transition(to: S.f),
+        T.toG: h.Transition(to: S.g),
+      },
+    );
+
+const String child2 = 'child2';
+StateMachineWithChangeNotifier<S, E, T> createChild2Machine() =>
+    StateMachineWithChangeNotifier(
+      name: child2,
+      events: E.values,
+      initialStateId: S.a,
+      states: {
+        S.a: h.State(
+          etm: {
+            E.forward: [T.toB],
+          },
+        ),
+        S.b: h.State(
+          etm: {
+            E.forward: [T.toC],
+            E.back: [T.toA],
+          },
+        ),
+        S.c: h.State(
+          etm: {
+            E.forward: [T.toD],
+            E.back: [T.toB],
+          },
+        ),
+        S.d: h.State(
+          etm: {
+            E.forward: [T.toE],
+            E.back: [T.toC],
+          },
+        ),
+        S.e: h.State(
+          etm: {
+            E.forward: [T.toF],
+            E.back: [T.toD],
+          },
+        ),
+        S.f: h.State(
+          etm: {
+            E.forward: [T.toG],
+            E.back: [T.toE],
+          },
+        ),
+        S.g: h.State(
+          etm: {
+            E.forward: [T.toA],
+            E.back: [T.toF],
+          },
+        ),
+      },
+      transitions: {
+        T.toA: h.Transition(to: S.a),
+        T.toB: h.Transition(to: S.b),
+        T.toC: h.Transition(to: S.c),
+        T.toD: h.Transition(to: S.d),
+        T.toE: h.Transition(to: S.e),
+        T.toF: h.Transition(to: S.f),
+        T.toG: h.Transition(to: S.g),
+      },
+    );

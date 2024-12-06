@@ -285,72 +285,33 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
           }),
         );
       } else if (newPres is PageCreator) {
+        // if (newPres.overlay == false && parent != null) {
+        //   // If we arrive to (non-overlay) page we have to clean up pageless
+        //   // in case they are on the root navigator and the new page is not.
+        //   // Not sure how realistic scenario is this, since normally you would
+        //   // have one such page in the beginning of a path and you only return
+        //   // there (a circle) and then windup would happen as handling circle.
+        //   _routerDelegate.stack.windBackAll((presentation) {
+        //     if (presentation is PagelessCreator && presentation.rootNavigator) {
+        //       presentation.close();
+        //     }
+        //   });
+        // }
+
+        _routerDelegate.stack.windBackAll((presentation) {
+          if (presentation is PagelessCreator) {
+            presentation.close();
+          }
+        });
+
+        // _windBackAll(navigatorState);
+
         // test: new_presentation_page_notify
         // test: new_presentation_page_notify_overlay
-        _windBackAll(navigatorState);
         notifyListeners();
       }
     }
   }
-
-/*
-  Future<void> fire2(
-    E eventId, {
-    BuildContext? context,
-    dynamic arg,
-    bool external = true,
-  }) async {
-    final before = activeStateId;
-    await super.fire(eventId, arg: arg, external: external);
-    if (!external) return; // Why?
-    if (before == activeStateId) return; // No state change -> No UI change.
-
-    // These are only to allow type propagation.
-    final id = activeStateId;
-    assert(id != null);
-    if (id != null) {
-      if (routerDelegate.stack.contains(activeStateId)) {
-        routerDelegate.stack.windBack(id, (S stateId) {
-          final p = routerDelegate.mapping[stateId];
-          assert(p is ImperativeCreator);
-          if (p is ImperativeCreator) p.close();
-        });
-      }
-
-      final presentation = routerDelegate.mapping[id];
-
-      if (presentation is ImperativeCreator<E, dynamic>) {
-        assert(!routerDelegate.stack.intermediatePageCreator(id));
-        print('ImperativeCreator');
-        routerDelegate.stack.add(id);
-        final before = activeStateId;
-        final dynamic result = await presentation
-            .open(context ?? routerDelegate.navigatorKey.currentContext);
-
-        print('activeStateId: $activeStateId');
-        if (activeStateId == before) {
-          final event = presentation.event;
-          if (event != null) {
-            // We only want here to update the machine, since the UI has been
-            // already updated - we arrive here when the corresponding
-            // imperatively created UI was closed.
-            await super.fire(event, arg: result, external: external);
-            assert(
-              routerDelegate.stack.contains(activeStateId),
-              'activeStateId $activeStateId is NOT closing a circle. '
-              'When we got here the imperatively created ui was already closed '
-              'implying that we are going backwards on the list of states that '
-              'created UIs before. If we detect that the new state where we go '
-              'from here is not in this list we fail this assertion.',
-            );
-          }
-        }
-      } else {
-        notifyListeners();
-      }
-    }
-  }
-*/
 
   @override
   Future<void> start({
@@ -365,10 +326,15 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     );
 
     notifyListeners();
-    if (_initialized) {
-      final navigatorState = _routerDelegate.navigatorKey.currentState;
-      _windBackAll(navigatorState);
-      // _windBack(initialStateId, navigatorState);
+    // In case of a stop-start of a machine (e.g. self transition in the
+    // enclosing state in the parent machine) we need to clean pageless
+    // created in root navigator.
+    if (_initialized && parent != null) {
+      _routerDelegate.stack.windBackAll((presentation) {
+        if (presentation is PagelessCreator && presentation.rootNavigator) {
+          presentation.close();
+        }
+      });
     }
   }
 
@@ -376,17 +342,12 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   // try building Navigator.pages and that is not needed as pages shall remain
   // to allow transition from old to new state.
   //
-  // @override
-  // Future<void> stop({required dynamic arg}) async {
-  // TODO: Why required arg?
-  // await super.stop(arg: arg);
-  // if (_initialized) {
-  //   final navigatorState = _routerDelegate.navigatorKey.currentState;
-  //   _windBackAll(navigatorState);
-  //   // _windBack(initialStateId, navigatorState);
-  // }
-  // notifyListeners();
-  // }
+  @override
+  Future<void> stop({required dynamic arg}) async {
+    // TODO: Why required arg?
+    await super.stop(arg: arg);
+    // notifyListeners();
+  }
 
   @override
   StateMachineWithChangeNotifier<S1, E1, T1> find<S1, E1, T1>(String name) {
