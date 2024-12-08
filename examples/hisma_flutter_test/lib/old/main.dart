@@ -17,7 +17,7 @@ Future<void> main() async {
   final simpleMachine = createMachine(name: 'root', historyLevel: null);
   await simpleMachine.start();
 
-  runApp(MyApp(machine: simpleMachine, useRootNavigator: false));
+  runApp(MyApp(machine: simpleMachine, useRootNavigator: true));
 }
 
 class MyApp extends StatelessWidget {

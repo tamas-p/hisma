@@ -28,6 +28,7 @@ final fRouterProvider = Provider(
           title: 'Test1',
           text: 'Demo test1.',
         ),
+        rootNavigator: true,
         machine: ref.read(compFMachineProvider),
       ),
       // S.b: MaterialPageCreator<S>(widget: const CompFScreenB()),

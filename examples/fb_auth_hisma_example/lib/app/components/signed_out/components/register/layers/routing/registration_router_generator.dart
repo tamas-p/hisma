@@ -46,6 +46,7 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
           );
         },
       ),
+      rootNavigator: true,
     ),
   },
 );

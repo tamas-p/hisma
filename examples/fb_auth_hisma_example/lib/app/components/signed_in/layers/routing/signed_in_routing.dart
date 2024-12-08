@@ -17,6 +17,7 @@ final signedInRouter = HismaRouterGenerator<SSiM, ESiM>(
     SSiM.confirmSignOut: PagelessCreator<ESiM, void>(
       machine: authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName),
       present: signOutConfirmationDialog,
+      rootNavigator: true,
       event: ESiM.cancel,
     ),
     SSiM.profile: MaterialPageCreator<ESiM, void>(

@@ -34,6 +34,7 @@ final aRouterProvider = Provider(
           title: 'Problem during login ca1',
           text: 'Hello ca1.',
         ),
+        rootNavigator: true,
         machine: ref.read(compAMachineProvider),
       ),
       S.ca2: NoUIChange(),

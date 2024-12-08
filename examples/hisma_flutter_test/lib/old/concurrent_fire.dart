@@ -57,11 +57,13 @@ HismaRouterGenerator<S, E> createConcurrentHismaRouterGenerator({
         ),
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: true,
           machine: machine,
           event: E.back,
         ),
         S.c: PagelessCreator<E, void>(
           present: showTestDialog,
+          rootNavigator: true,
           machine: machine,
           event: E.back,
         )

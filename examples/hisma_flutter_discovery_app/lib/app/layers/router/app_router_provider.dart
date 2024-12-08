@@ -68,6 +68,7 @@ final appRouterProvider = Provider(
           title: 'Problem during login',
           text: 'Hello.',
         ),
+        rootNavigator: true,
       ),
       S.b: MaterialPageCreator<E, void>(
         widget: const BScreen(),
@@ -90,6 +91,7 @@ final appRouterProvider = Provider(
           StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
         ) =>
             generateDatePicker<E>(context, rootNavigator),
+        rootNavigator: true,
       ),
       S.d: PagelessCreator<E, void>(
         machine: ref.read(appMachineProvider),
@@ -107,6 +109,7 @@ final appRouterProvider = Provider(
           title: 'Problem during login2',
           text: 'Hello2.',
         ),
+        rootNavigator: true,
       ),
       S.e: MaterialPageCreator<E, void>(
         // S.e: MaterialPageCreator<S>(

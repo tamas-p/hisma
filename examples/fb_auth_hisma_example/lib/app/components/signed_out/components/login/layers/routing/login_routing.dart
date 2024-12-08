@@ -12,6 +12,7 @@ final loginRouter = HismaRouterGenerator<SLiM, ELiM>(
     SLiM.failedSignIn: PagelessCreator<ELiM, void>(
       event: ELiM.ok,
       present: failedSignInDialog,
+      rootNavigator: true,
       machine: authMachine.find<SLiM, ELiM, TLiM>(loginMachineName),
     ),
   },

@@ -33,6 +33,7 @@ final l2aRouterProvider = Provider(
           title: 'Problem during login',
           text: 'Hello.',
         ),
+        rootNavigator: true,
         machine: ref.read(compL2AMachineProvider),
         event: E.backward,
       ),

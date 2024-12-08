@@ -152,7 +152,7 @@ abstract class ImperativeCreator<E, R> extends Creator<E> {
 class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   PagelessCreator({
     required this.present,
-    this.rootNavigator = true,
+    required this.rootNavigator,
     required super.machine,
     super.event,
   });

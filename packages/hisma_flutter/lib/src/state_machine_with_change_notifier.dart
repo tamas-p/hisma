@@ -350,7 +350,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   Future<void> stop({required dynamic arg}) async {
     // TODO: Why required arg?
     await super.stop(arg: arg);
-    // notifyListeners();
+    notifyListeners();
     if (_initialized && parent != null) {
       _routerDelegate.stack.windBackAll((presentation) {
         if (presentation is PagelessCreator) {
