@@ -12,7 +12,7 @@ Future<void> main(List<String> args) async {
   ];
   final machine = createLongerMachine(hierarchical: true);
   await machine.start();
-  final app = HierarchicalImperativeApp(machine: machine, rootNavigator: true);
+  final app = HierarchicalImperativeApp(machine: machine, rootNavigator: false);
   runApp(app);
 }
 

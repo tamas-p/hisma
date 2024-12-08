@@ -174,6 +174,15 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     if (_opened) _navigatorState.pop(result);
   }
 
+  // Flutter Navigation does not complete pageless routes created in child
+  // navigators when their page they belong to is removed but it silently
+  // removes them from the navigator. This is why we shall explicitly set these
+  // pageless as closed here (as we can not rely that the functions that created
+  // them e.g. showDialog will complete).
+  void setClosed() {
+    _opened = false;
+  }
+
   @override
   Future<R?> open(BuildContext? context) async {
     assert(

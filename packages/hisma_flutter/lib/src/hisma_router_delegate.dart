@@ -43,7 +43,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   @override
   Future<bool> popRoute() async {
     _log.info('popRoute');
-    fire(null);
+    _fire(null);
     return SynchronousFuture<bool>(true);
   }
 
@@ -101,13 +101,13 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
           pres is Creator<E> && pres.event != null,
           'For $pres event shall not be null when its overlay is true.',
         );
-        fire(result);
+        _fire(result);
       }
     }
     return didPop;
   }
 
-  void fire(dynamic result) {
+  void _fire(dynamic result) {
     final presentation = mapping[machine.activeStateId];
     if (presentation is Creator<E>) {
       final event = presentation.event;

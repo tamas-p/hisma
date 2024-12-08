@@ -298,11 +298,13 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         //   });
         // }
 
-        _routerDelegate.stack.windBackAll((presentation) {
-          if (presentation is PagelessCreator) {
-            presentation.close();
-          }
-        });
+        if (!newPres.overlay) {
+          _routerDelegate.stack.windBackAll((presentation) {
+            if (presentation is PagelessCreator) {
+              presentation.close();
+            }
+          });
+        }
 
         // _windBackAll(navigatorState);
 
@@ -328,14 +330,16 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     notifyListeners();
     // In case of a stop-start of a machine (e.g. self transition in the
     // enclosing state in the parent machine) we need to clean pageless
-    // created in root navigator.
-    if (_initialized && parent != null) {
-      _routerDelegate.stack.windBackAll((presentation) {
-        if (presentation is PagelessCreator && presentation.rootNavigator) {
-          presentation.close();
-        }
-      });
-    }
+    // created in root navigator. We only need to take care about the pageless
+    // as the pages are handled by the navigator when replacing its stack when
+    // the machine is started.
+    // if (_initialized && parent != null) {
+    //   _routerDelegate.stack.windBackAll((presentation) {
+    //     if (presentation is PagelessCreator /*&& presentation.rootNavigator*/) {
+    //       // presentation.close();
+    //     }
+    //   });
+    // }
   }
 
   // We shall NOT send notification in case of stop as RouterDelegate would
@@ -347,6 +351,17 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     // TODO: Why required arg?
     await super.stop(arg: arg);
     // notifyListeners();
+    if (_initialized && parent != null) {
+      _routerDelegate.stack.windBackAll((presentation) {
+        if (presentation is PagelessCreator) {
+          if (presentation.rootNavigator) {
+            presentation.close();
+          } else {
+            presentation.setClosed();
+          }
+        }
+      });
+    }
   }
 
   @override
