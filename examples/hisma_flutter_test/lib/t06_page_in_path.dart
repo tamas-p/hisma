@@ -57,6 +57,7 @@ HismaRouterGenerator<S, E> createGenerator({
               rootNavigator: rootNavigator,
             ).routerDelegate,
           ),
+          overlay: true,
         ),
         S.d: MaterialPageCreator<E, void>(
           widget: Router(
@@ -65,6 +66,17 @@ HismaRouterGenerator<S, E> createGenerator({
               rootNavigator: rootNavigator,
             ).routerDelegate,
           ),
+          overlay: true,
+        ),
+        S.e: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.e),
+          overlay: true,
+          event: E.back,
+        ),
+        S.f: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.f),
+          overlay: true,
+          event: E.back,
         ),
       },
     );
@@ -86,13 +98,13 @@ HismaRouterGenerator<S, E> createChildGenerator({
         ),
         S.c: PagelessCreator<E, void>(
           present: showTestDialog,
-          rootNavigator: true,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
         S.d: PagelessCreator<E, void>(
           present: showTestDialog,
-          rootNavigator: false,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
@@ -115,19 +127,20 @@ HismaRouterGenerator<S, E> createChildGenerator({
 
 enum S { a, b, c, d, e, f, g }
 
-enum E { forward, fwdC, fwdD, back, self, restart }
+enum E { forward, fwdC, fwdD, back, self, restart, stop }
 
-enum T { toA, toB, toC, toD, toE, toF, toG, restart }
+enum T { toA, toB, toC, toD, toE, toF, toG, restart, stop }
 
+const parent = 'parent';
 StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
     StateMachineWithChangeNotifier(
-      name: 'parent',
+      name: parent,
       events: E.values,
       initialStateId: S.a,
       states: {
         S.a: h.State(
           etm: {
-            E.fwdC: [T.toB],
+            E.forward: [T.toB],
           },
         ),
         S.b: h.State(
@@ -152,11 +165,27 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
           etm: {
             E.back: [T.toB],
             E.fwdC: [T.toC],
+            E.forward: [T.toE],
             E.self: [T.toD],
           },
           regions: [
             h.Region<S, E, T, S>(machine: createChild2Machine()),
           ],
+        ),
+        S.e: h.State(
+          etm: {
+            E.back: [T.toD],
+            E.forward: [T.toF],
+            E.self: [T.toE],
+          },
+        ),
+        S.f: h.State(
+          etm: {
+            E.back: [T.toE],
+            E.self: [T.toF],
+            E.restart: [T.restart],
+            E.stop: [T.stop],
+          },
         ),
       },
       transitions: {
@@ -174,6 +203,17 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
             },
           ),
         ),
+        T.stop: h.InternalTransition(
+          onAction: h.Action(
+            description: 'stop machine',
+            action: (machine, dynamic _) async {
+              print('Stop machine.');
+              await machine.stop(arg: null);
+            },
+          ),
+        ),
+        T.toE: h.Transition(to: S.e),
+        T.toF: h.Transition(to: S.f),
       },
     );
 
