@@ -11,7 +11,7 @@ Future<void> main(List<String> args) async {
   ];
   final machine = createParentMachine();
   await machine.start();
-  final app = PageInPathApp(machine: machine, rootNavigator: true);
+  final app = PageInPathApp(machine: machine, rootNavigator: false);
   runApp(app);
 }
 
@@ -23,7 +23,7 @@ class PageInPathApp extends StatelessWidget {
   });
   final bool rootNavigator;
   late final gen =
-      createGenerator(machine: machine, rootNavigator: rootNavigator);
+      createParentGenerator(machine: machine, rootNavigator: rootNavigator);
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   @override
@@ -35,7 +35,7 @@ class PageInPathApp extends StatelessWidget {
   }
 }
 
-HismaRouterGenerator<S, E> createGenerator({
+HismaRouterGenerator<S, E> createParentGenerator({
   required StateMachineWithChangeNotifier<S, E, T> machine,
   required bool rootNavigator,
 }) =>
@@ -76,7 +76,7 @@ HismaRouterGenerator<S, E> createGenerator({
         ),
         S.f: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.f),
-          overlay: true,
+          // overlay: true,
           event: E.back,
         ),
       },
@@ -186,6 +186,7 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
             E.self: [T.toF],
             E.restart: [T.restart],
             E.stop: [T.stop],
+            E.forward: [T.toA],
           },
         ),
       },

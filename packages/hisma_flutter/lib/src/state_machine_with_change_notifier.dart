@@ -298,7 +298,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         //   });
         // }
 
-        // test: page_in_path
         // If we arrive to (non-overlay) page we have to clean up pageless
         // in case they are on the root navigator and the new page is not.
         // Not sure how realistic scenario is this, since normally you would
@@ -307,6 +306,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         if (!newPres.overlay && parent != null) {
           _routerDelegate.stack.windBackAll((presentation) {
             if (presentation is PagelessCreator && presentation.rootNavigator) {
+              // test: page_in_path
               presentation.close();
             }
           });
@@ -363,12 +363,14 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
           if (presentation.rootNavigator) {
             // We can safely close the dialog in the root navigator as we know
             // that this dialog must be on the top of the navigator stack.
+            // test: restart_in_child_test_root_navigator
             presentation.close();
           } else {
             // We only need to set closed as the pageless will be removed by
             // the framework, but it does not complete its creator function
             // so we have to do it here explicitly.
             // TODO: use stack.remove instead of setClosed().
+            // test: leave_state_in_parent
             presentation.setClosed();
           }
         }
