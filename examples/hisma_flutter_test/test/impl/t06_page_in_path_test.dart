@@ -26,7 +26,7 @@ Future<void> main() async {
       (tester) async {
         await testAllStates(tester, act: Act.fire, rootNavigator: true);
       },
-      skip: true,
+      skip: false,
     );
   });
   group('Imperative hierarchical test with tap', () {
@@ -35,7 +35,7 @@ Future<void> main() async {
       (tester) async {
         await testAllStates(tester, act: Act.tap, rootNavigator: false);
       },
-      skip: true,
+      skip: false,
     );
     testWidgets(
       'Page in path test with tap, rootNavigator: true',
@@ -65,63 +65,50 @@ Future<void> testAllStates(
   await checkMachine(tester, act, machine, app.gen.mapping);
 }
 
+class Checker {
+  Checker({required this.tester, required this.machine, required this.act});
+  WidgetTester tester;
+  StateMachineWithChangeNotifier<S, E, T> machine;
+  Act act;
+
+  Future<void> check(E event, S expected) async {
+    await action(machine, tester, event, act: act);
+    expect(machine.activeStateId, expected);
+    checkTitle(machine);
+  }
+}
+
 Future<void> checkMachine(
   WidgetTester tester,
   Act act,
   StateMachineWithChangeNotifier<S, E, T> machine,
   Map<S, Presentation> mapping,
 ) async {
-  final c = Checker(
+  final p = Checker(
     tester: tester,
     act: act,
     machine: machine,
-    mapping: mapping,
-    checkMachine: checkMachine,
   );
 
-  await action(machine, tester, E.forward, act: act);
-  expect(machine.activeStateId, S.b);
-  checkTitle(machine);
-
-  await action(machine, tester, E.fwdC, act: act);
-  expect(machine.activeStateId, S.c);
-  checkTitle(machine);
-
   final child1Machine = machine.find<S, E, T>(child1);
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.b);
-  checkTitle(child1Machine);
+  final c1 = Checker(
+    tester: tester,
+    act: act,
+    machine: child1Machine,
+  );
 
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.c);
-  checkTitle(child1Machine);
+  await p.check(E.forward, S.b);
+  await p.check(E.fwdC, S.c);
 
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.d);
-  checkTitle(child1Machine);
+  await c1.check(E.forward, S.b);
+  await c1.check(E.forward, S.c);
+  await c1.check(E.forward, S.d);
+  await c1.check(E.forward, S.e);
+  await c1.check(E.forward, S.f);
+  await c1.check(E.forward, S.g);
 
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.e);
-  checkTitle(child1Machine);
-
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.f);
-  checkTitle(child1Machine);
-
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.g);
-  checkTitle(child1Machine);
-
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.a);
-  checkTitle(child1Machine);
-
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.b);
-  checkTitle(child1Machine);
-
+  await c1.check(E.forward, S.a);
+  await c1.check(E.forward, S.b);
   // test: page_in_path
-  await action(child1Machine, tester, E.forward, act: act);
-  expect(child1Machine.activeStateId, S.c);
-  checkTitle(child1Machine);
+  await c1.check(E.forward, S.c);
 }

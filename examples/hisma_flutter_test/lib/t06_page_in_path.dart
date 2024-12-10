@@ -22,7 +22,8 @@ class PageInPathApp extends StatelessWidget {
     super.key,
   });
   final bool rootNavigator;
-  late final gen = createGenerator(machine: machine, rootNavigator: true);
+  late final gen =
+      createGenerator(machine: machine, rootNavigator: rootNavigator);
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   @override
@@ -46,7 +47,7 @@ HismaRouterGenerator<S, E> createGenerator({
         ),
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
-          rootNavigator: true,
+          rootNavigator: rootNavigator,
           machine: machine,
           event: E.back,
         ),
