@@ -47,6 +47,14 @@ class BsScreen extends StatelessWidget {
           return Column(
             children: [
               MyButton(machine: machine),
+              TextButton(
+                onPressed: () {
+                  machine.fire(E.fwdC);
+                },
+                child: Text(
+                  E.fwdC.toString(),
+                ),
+              ),
             ],
           );
         },
@@ -62,9 +70,9 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        machine.fire(E.forward, context: context);
+        machine.fire(E.fwdB, context: context);
       },
-      child: Text(E.forward.toString()),
+      child: Text(E.fwdB.toString()),
     );
   }
 }
@@ -113,14 +121,42 @@ HismaRouterGenerator<S, E> createGenerator({
           },
           machine: machine,
         ),
+        S.c: PagelessCreator<E, int>(
+          machine: machine,
+          rootNavigator: false,
+          event: E.back,
+          present: (context, rootNavigator, navigatorState, close, machine) =>
+              showModalBottomSheet<int>(
+            context: context,
+            builder: (context) => Container(
+              height: 200,
+              color: Colors.amber,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text('ModalBottomSheet'),
+                    ElevatedButton(
+                      child: const Text('Close BottomSheet'),
+                      onPressed: () {
+                        close(99);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        )
       },
     );
 
-enum S { a, b }
+enum S { a, b, c }
 
-enum E { forward, back }
+enum E { fwdB, fwdC, back }
 
-enum T { toA, toB }
+enum T { toA, toB, toC }
 
 StateMachineWithChangeNotifier<S, E, T> createMachine() =>
     StateMachineWithChangeNotifier<S, E, T>(
@@ -130,7 +166,8 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
       states: {
         S.a: h.State(
           etm: {
-            E.forward: [T.toB],
+            E.fwdB: [T.toB],
+            E.fwdC: [T.toC],
           },
         ),
         S.b: h.State(
@@ -138,9 +175,23 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
             E.back: [T.toA],
           },
         ),
+        S.c: h.State(
+          etm: {
+            E.back: [T.toA],
+          },
+        ),
       },
       transitions: {
-        T.toA: h.Transition(to: S.a),
+        T.toA: h.Transition(
+          to: S.a,
+          onAction: h.Action(
+            description: 'print return value',
+            action: (machine, dynamic arg) {
+              print('arg: $arg');
+            },
+          ),
+        ),
         T.toB: h.Transition(to: S.b),
+        T.toC: h.Transition(to: S.c),
       },
     );
