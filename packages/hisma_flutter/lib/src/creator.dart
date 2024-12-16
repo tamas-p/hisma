@@ -145,6 +145,7 @@ typedef Close<T> = void Function([T? result]);
 abstract class ImperativeCreator<E, R> extends Creator<E> {
   ImperativeCreator({super.event, required this.machine});
   StateMachineWithChangeNotifier<dynamic, E, dynamic> machine;
+  bool _opened = false;
   Future<R?> open(BuildContext? context);
   void close([R? result]);
 }
@@ -166,7 +167,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   ) present;
   bool rootNavigator;
 
-  bool _opened = false;
   late NavigatorState _navigatorState;
 
   @override
@@ -209,7 +209,11 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
 }
 
 class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
-  BottomSheetCreator(this.present, {required super.machine});
+  BottomSheetCreator({
+    required this.present,
+    required super.machine,
+    super.event,
+  });
   PersistentBottomSheetController<R> Function(
     BuildContext? context,
     Close<R> close,
@@ -224,9 +228,16 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
 
   @override
   Future<R?> open(BuildContext? context) async {
+    assert(
+      !_opened,
+      'We shall not call open on this object if it was already opened '
+      'and not yet closed.',
+    );
+    _opened = true;
     _persistentSheetController = present(context, close);
-    final result = _persistentSheetController?.closed;
-    if (result == null) return null;
+    final result = await _persistentSheetController?.closed;
+    _opened = false;
+    // if (result == null) return null;
     return result;
   }
 }

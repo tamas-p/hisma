@@ -259,7 +259,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
 
         // We want open to be executed async to the fire.
         unawaited(
-          newPres.open(navigatorState?.context).then((dynamic result) {
+          newPres
+              .open(context ?? navigatorState?.context)
+              .then((dynamic result) {
             // test: imperative_closed
             // Signal that imp. was closed shall be removed.
             _routerDelegate.stack.remove(getKey(name, newStateId));
