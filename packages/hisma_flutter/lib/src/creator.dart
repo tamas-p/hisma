@@ -243,7 +243,7 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
 }
 
 class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
-  SnackBarCreator(this.present, {required super.machine});
+  SnackBarCreator({required this.present, required super.machine, super.event});
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> Function(
     BuildContext? context,
@@ -258,12 +258,20 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
   }
 
   @override
-  Future<SnackBarClosedReason?> open(BuildContext? context) {
+  Future<SnackBarClosedReason?> open(BuildContext? context) async {
+    assert(
+      !_opened,
+      'We shall not call open on this object if it was already opened '
+      'and not yet closed.',
+    );
+    _opened = true;
     assert(context != null);
     _scaffoldMessengerState = ScaffoldMessenger.of(context!);
     final scaffoldFeatureController =
         present(context, _scaffoldMessengerState, close);
-    return scaffoldFeatureController.closed;
+    final reason = await scaffoldFeatureController.closed;
+    _opened = false;
+    return reason;
   }
 }
 

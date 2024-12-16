@@ -55,6 +55,14 @@ class BsScreen extends StatelessWidget {
                   E.fwdC.toString(),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  machine.fire(E.fwdD);
+                },
+                child: Text(
+                  E.fwdD.toString(),
+                ),
+              ),
             ],
           );
         },
@@ -148,15 +156,31 @@ HismaRouterGenerator<S, E> createGenerator({
               ),
             ),
           ),
-        )
+        ),
+        S.d: SnackBarCreator(
+          machine: machine,
+          event: E.back,
+          present: (context, scaffoldMessengerState, close) =>
+              scaffoldMessengerState.showSnackBar(
+            SnackBar(
+              content: const Text('A SnackBar has been shown.'),
+              action: SnackBarAction(
+                label: 'Dismiss',
+                onPressed: () {
+                  close();
+                },
+              ),
+            ),
+          ),
+        ),
       },
     );
 
-enum S { a, b, c }
+enum S { a, b, c, d }
 
-enum E { fwdB, fwdC, back }
+enum E { fwdB, fwdC, fwdD, back }
 
-enum T { toA, toB, toC }
+enum T { toA, toB, toC, toD }
 
 StateMachineWithChangeNotifier<S, E, T> createMachine() =>
     StateMachineWithChangeNotifier<S, E, T>(
@@ -168,6 +192,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
           etm: {
             E.fwdB: [T.toB],
             E.fwdC: [T.toC],
+            E.fwdD: [T.toD],
           },
         ),
         S.b: h.State(
@@ -176,6 +201,11 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
           },
         ),
         S.c: h.State(
+          etm: {
+            E.back: [T.toA],
+          },
+        ),
+        S.d: h.State(
           etm: {
             E.back: [T.toA],
           },
@@ -193,5 +223,6 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
         ),
         T.toB: h.Transition(to: S.b),
         T.toC: h.Transition(to: S.c),
+        T.toD: h.Transition(to: S.d),
       },
     );
