@@ -29,10 +29,10 @@ Future<R?> generateDialog<R, E>({
       },
     );
 
-Future<DateTime?> generateDatePicker<E>(
-  BuildContext context,
-  bool rootNavigator,
-) =>
+Future<DateTime?> generateDatePicker<E>({
+  required BuildContext context,
+  required bool rootNavigator,
+}) =>
     showDatePicker(
       useRootNavigator: rootNavigator,
       context: context,

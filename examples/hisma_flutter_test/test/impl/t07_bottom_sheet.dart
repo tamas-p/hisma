@@ -133,7 +133,13 @@ HismaRouterGenerator<S, E> createGenerator({
           machine: machine,
           rootNavigator: false,
           event: E.back,
-          present: (context, rootNavigator, navigatorState, close, machine) =>
+          present: ({
+            required context,
+            required rootNavigator,
+            required navigatorState,
+            required close,
+            required machine,
+          }) =>
               showModalBottomSheet<int>(
             context: context,
             builder: (context) => Container(

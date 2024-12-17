@@ -15,13 +15,14 @@ final fRouterProvider = Provider(
       // S.fb: getPagelessCreator2(),
       S.fb: PagelessCreator<E, void>(
         event: E.backward,
-        present: (
-          BuildContext context,
-          bool rootNavigator,
-          NavigatorState _,
-          Close<DateTime> close,
-          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-        ) =>
+        present: ({
+          required BuildContext context,
+          required bool rootNavigator,
+          required NavigatorState navigatorState,
+          required Close<DateTime> close,
+          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
+              machine,
+        }) =>
             generateDialog<void, E>(
           context: context,
           rootNavigator: rootNavigator,

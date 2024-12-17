@@ -55,13 +55,14 @@ final appRouterProvider = Provider(
       S.a1: PagelessCreator<E, void>(
         machine: ref.read(appMachineProvider),
         event: E.backward,
-        present: (
-          BuildContext context,
-          bool rootNavigator,
-          NavigatorState _,
-          Close<DateTime> close,
-          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-        ) =>
+        present: ({
+          required BuildContext context,
+          required bool rootNavigator,
+          required NavigatorState navigatorState,
+          required Close<DateTime> close,
+          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
+              machine,
+        }) =>
             generateDialog<E, void>(
           context: context,
           rootNavigator: rootNavigator,
@@ -83,26 +84,31 @@ final appRouterProvider = Provider(
       S.c: PagelessCreator<E, DateTime>(
         event: E.backward,
         machine: ref.read(appMachineProvider),
-        present: (
-          BuildContext context,
-          bool rootNavigator,
-          NavigatorState _,
-          Close<DateTime> close,
-          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-        ) =>
-            generateDatePicker<E>(context, rootNavigator),
+        present: ({
+          required BuildContext context,
+          required bool rootNavigator,
+          required NavigatorState navigatorState,
+          required Close<DateTime> close,
+          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
+              machine,
+        }) =>
+            generateDatePicker<E>(
+          context: context,
+          rootNavigator: rootNavigator,
+        ),
         rootNavigator: true,
       ),
       S.d: PagelessCreator<E, void>(
         machine: ref.read(appMachineProvider),
         event: E.backward,
-        present: (
-          BuildContext context,
-          bool rootNavigator,
-          NavigatorState _,
-          Close<DateTime> close,
-          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-        ) =>
+        present: ({
+          required BuildContext context,
+          required bool rootNavigator,
+          required NavigatorState navigatorState,
+          required Close<DateTime> close,
+          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
+              machine,
+        }) =>
             generateDialog<E, void>(
           context: context,
           rootNavigator: rootNavigator,

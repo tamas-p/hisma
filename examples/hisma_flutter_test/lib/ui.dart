@@ -89,13 +89,13 @@ class _MyDialogState extends State<MyDialog> {
   }
 }
 
-Future<void> showTestDialog(
-  BuildContext context,
-  bool rootNavigator,
-  NavigatorState _,
-  Close<void> close,
-  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-) =>
+Future<void> showTestDialog({
+  required BuildContext context,
+  required bool rootNavigator,
+  required NavigatorState navigatorState,
+  required Close<void> close,
+  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+}) =>
     showDialog<void>(
       context: context,
       // This is to not completely gray out background when manually testing.
@@ -121,13 +121,13 @@ Future<void> showTestDialogMini(
       },
     );
 
-Future<DateTime?> showTestDatePicker(
-  BuildContext context,
-  bool rootNavigator,
-  NavigatorState _,
-  Close<DateTime> close,
-  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-) =>
+Future<DateTime?> showTestDatePicker({
+  required BuildContext context,
+  required bool rootNavigator,
+  required NavigatorState navigatorState,
+  required Close<DateTime> close,
+  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+}) =>
     showDatePicker(
       useRootNavigator: rootNavigator,
       context: context,

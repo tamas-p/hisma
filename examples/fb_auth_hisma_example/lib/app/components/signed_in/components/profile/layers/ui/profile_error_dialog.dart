@@ -5,13 +5,13 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
-Future<void> profileLoadFailed(
-  BuildContext context,
-  bool rootNavigator,
-  NavigatorState _,
-  Close<DateTime> close,
-  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-) =>
+Future<void> profileLoadFailed({
+  required BuildContext context,
+  required bool rootNavigator,
+  required NavigatorState navigatorState,
+  required Close<DateTime> close,
+  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+}) =>
     createDialog(
       context: context,
       useRootNavigator: rootNavigator,

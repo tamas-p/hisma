@@ -14,6 +14,7 @@ Future<void> main() async {
     // (m) => ConsoleMonitor(m),
   ];
   initLogging();
+  // ignore: avoid_redundant_argument_values
   final simpleMachine = createMachine(name: 'root', historyLevel: null);
   await simpleMachine.start();
 

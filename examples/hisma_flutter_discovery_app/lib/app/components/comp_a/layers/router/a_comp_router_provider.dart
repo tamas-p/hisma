@@ -21,13 +21,14 @@ final aRouterProvider = Provider(
       ),
       S.ca1: PagelessCreator<E, void>(
         event: E.int1,
-        present: (
-          BuildContext context,
-          bool rootNavigator,
-          NavigatorState _,
-          Close<DateTime> close,
-          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-        ) =>
+        present: ({
+          required BuildContext context,
+          required bool rootNavigator,
+          required NavigatorState navigatorState,
+          required Close<DateTime> close,
+          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
+              machine,
+        }) =>
             generateDialog<void, E>(
           context: context,
           rootNavigator: rootNavigator,

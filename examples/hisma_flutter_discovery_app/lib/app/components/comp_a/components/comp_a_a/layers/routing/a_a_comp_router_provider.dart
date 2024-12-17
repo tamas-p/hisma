@@ -20,13 +20,14 @@ final l2aRouterProvider = Provider(
         overlay: true,
       ),
       S.l2a1: PagelessCreator<E, void>(
-        present: (
-          BuildContext context,
-          bool rootNavigator,
-          NavigatorState _,
-          Close<DateTime> close,
-          StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-        ) =>
+        present: ({
+          required BuildContext context,
+          required bool rootNavigator,
+          required NavigatorState navigatorState,
+          required Close<DateTime> close,
+          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
+              machine,
+        }) =>
             generateDialog<E, void>(
           context: context,
           rootNavigator: rootNavigator,

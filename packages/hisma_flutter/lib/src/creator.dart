@@ -157,14 +157,14 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     required super.machine,
     super.event,
   });
-  Future<R?> Function(
-    BuildContext context,
-    bool rootNavigator,
+  Future<R?> Function({
+    required BuildContext context,
+    required bool rootNavigator,
     // TODO: probably we do not need navigatorState and close to be passed.
-    NavigatorState navigatorState,
-    Close<R> close,
-    StateMachineWithChangeNotifier<dynamic, E, dynamic> machine,
-  ) present;
+    required NavigatorState navigatorState,
+    required Close<R> close,
+    required StateMachineWithChangeNotifier<dynamic, E, dynamic> machine,
+  }) present;
   bool rootNavigator;
 
   late NavigatorState _navigatorState;
@@ -197,11 +197,11 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
 
     _opened = true;
     final result = await present(
-      context ?? _navigatorState.context,
-      rootNavigator,
-      _navigatorState,
-      close,
-      machine,
+      context: context ?? _navigatorState.context,
+      rootNavigator: rootNavigator,
+      navigatorState: _navigatorState,
+      close: close,
+      machine: machine,
     );
     _opened = false;
     return result;

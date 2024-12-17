@@ -160,20 +160,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     });
   }
 
-  void _windBackAll(NavigatorState? navigatorState) {
-    _routerDelegate.stack.windBackAll((presentation) {
-      if (presentation is PagelessCreator) {
-        // && presentation.rootNavigator) {
-        presentation.close();
-      } else if (presentation is PageCreator) {
-        final c = navigatorState?.context ??
-            _routerDelegate.navigatorKey.currentContext;
-        // assert(c != null);
-        // if (c != null) Navigator.of(c).pop();
-      }
-    });
-  }
-
   @override
   Future<void> fire(
     E eventId, {

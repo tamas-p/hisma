@@ -91,13 +91,13 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-Future<bool?> b1(
-  BuildContext context,
-  bool rootNavigator,
-  NavigatorState _,
-  Close<DateTime> close,
-  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-) =>
+Future<bool?> b1({
+  required BuildContext context,
+  required bool rootNavigator,
+  required NavigatorState navigatorState,
+  required Close<DateTime> close,
+  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+}) =>
     showDialog<bool>(
       useRootNavigator: rootNavigator,
       context: context,
@@ -129,13 +129,13 @@ class ScreenC extends StatelessWidget {
   }
 }
 
-Future<DateTime?> c1(
-  BuildContext context,
-  bool rootNavigator,
-  NavigatorState _,
-  Close<DateTime> close,
-  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
-) =>
+Future<DateTime?> c1({
+  required BuildContext context,
+  required bool rootNavigator,
+  required NavigatorState navigatorState,
+  required Close<DateTime> close,
+  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+}) =>
     showDatePicker(
       useRootNavigator: rootNavigator,
       context: context,
