@@ -44,13 +44,11 @@ class MyRouterDelegate extends RouterDelegate<bool> with ChangeNotifier {
 
   @override
   Future<bool> popRoute() {
-    // TODO: implement popRoute
     throw UnimplementedError();
   }
 
   @override
   Future<void> setNewRoutePath(bool configuration) {
-    // TODO: implement setNewRoutePath
     throw UnimplementedError();
   }
 }
