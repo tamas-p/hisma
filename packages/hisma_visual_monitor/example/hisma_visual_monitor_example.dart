@@ -3,6 +3,15 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_visual_monitor/src/visual_monitor/client/visual_monitor.dart';
 
+Future<void> main() async {
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+  ];
+
+  await lightMachine.start();
+  await play();
+}
+
 enum S { on, off }
 
 enum E { turnOn, turnOff }
@@ -52,13 +61,4 @@ Future<void> play() async {
     await Future<void>.delayed(const Duration(seconds: 1));
     await lightMachine.fire(E.turnOff);
   }
-}
-
-Future<void> main() async {
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-  ];
-
-  await lightMachine.start();
-  await play();
 }

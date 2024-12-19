@@ -6,6 +6,72 @@ import 'package:hisma/hisma.dart';
 // import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:test/test.dart';
 
+Future<void> main() async {
+  // initLogging();
+  // StateMachine.monitorCreators = [
+  //   (machine) => ConsoleMonitor(machine),
+  // ];
+
+  group(
+    'Group A',
+    () {
+      test('Test 1', () async {
+        final m1 = createMachine1();
+        unawaited(
+          Future<void>.delayed(const Duration(seconds: 1)).then((value) async {
+            print('# FIRE start.');
+            await m1.fire(E.c);
+            print('# FIRE stop.');
+          }),
+        );
+
+        await m1.start();
+        print('m1.data:${m1.data}');
+
+        await m1.fire(E.b);
+        print('m1.data:${m1.data}');
+
+        print('main finished.');
+      });
+    },
+    skip: true,
+  );
+
+  test('B1', () async {
+    final m2 = createMachine2();
+
+    await m2.start();
+    await m2.fire(E.b, arg: {Sel.onExit});
+    expect(m2.activeStateId, S.b);
+  });
+
+  test('B2', () async {
+    final m2 = createMachine2();
+
+    await m2.start();
+    await m2.fire(E.b, arg: {Sel.guard});
+    expect(m2.activeStateId, S.b);
+  });
+
+  test('B3', () async {
+    final m2 = createMachine2();
+
+    await m2.start();
+    await m2.fire(E.b, arg: {Sel.action});
+    expect(m2.activeStateId, S.b);
+  });
+
+  test('B4', () async {
+    final m2 = createMachine2();
+
+    await m2.start();
+    await m2.fire(E.b, arg: {Sel.onEntry});
+    // TODO: this should be S.b.
+    // If queuing will be added to hisma it will be S.b.
+    expect(m2.activeStateId, S.c);
+  });
+}
+
 enum S { a, b, c, f }
 
 enum E { a, b, c, f }
@@ -133,69 +199,3 @@ Action createGenAction(Sel sel) => Action(
     );
 
 enum Sel { guard, action, onEntry, onExit }
-
-Future<void> main() async {
-  // initLogging();
-  // StateMachine.monitorCreators = [
-  //   (machine) => ConsoleMonitor(machine),
-  // ];
-
-  group(
-    'Group A',
-    () {
-      test('Test 1', () async {
-        final m1 = createMachine1();
-        unawaited(
-          Future<void>.delayed(const Duration(seconds: 1)).then((value) async {
-            print('# FIRE start.');
-            await m1.fire(E.c);
-            print('# FIRE stop.');
-          }),
-        );
-
-        await m1.start();
-        print('m1.data:${m1.data}');
-
-        await m1.fire(E.b);
-        print('m1.data:${m1.data}');
-
-        print('main finished.');
-      });
-    },
-    skip: true,
-  );
-
-  test('B1', () async {
-    final m2 = createMachine2();
-
-    await m2.start();
-    await m2.fire(E.b, arg: {Sel.onExit});
-    expect(m2.activeStateId, S.b);
-  });
-
-  test('B2', () async {
-    final m2 = createMachine2();
-
-    await m2.start();
-    await m2.fire(E.b, arg: {Sel.guard});
-    expect(m2.activeStateId, S.b);
-  });
-
-  test('B3', () async {
-    final m2 = createMachine2();
-
-    await m2.start();
-    await m2.fire(E.b, arg: {Sel.action});
-    expect(m2.activeStateId, S.b);
-  });
-
-  test('B4', () async {
-    final m2 = createMachine2();
-
-    await m2.start();
-    await m2.fire(E.b, arg: {Sel.onEntry});
-    // TODO: this should be S.b.
-    // If queuing will be added to hisma it will be S.b.
-    expect(m2.activeStateId, S.c);
-  });
-}

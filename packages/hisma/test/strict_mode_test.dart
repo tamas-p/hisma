@@ -2,6 +2,38 @@ import 'package:hisma/hisma.dart';
 import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 
+void main() {
+  group('StateMachine assertions.', () {
+    group('Default strict mode.', () {
+      testAll(matcher: isA<AssertionError>());
+    });
+
+    group('Strict mode set to true.', () {
+      group('At class level.', () {
+        testAll(cStrict: true, matcher: isA<AssertionError>());
+      });
+      group('At object level.', () {
+        testAll(oStrict: true, matcher: isA<AssertionError>());
+      });
+      group('Object level has preference.', () {
+        testAll(cStrict: false, oStrict: true, matcher: isA<AssertionError>());
+      });
+    });
+
+    group('Strict mode is set to false.', () {
+      group('At class level.', () {
+        testAll(cStrict: false);
+      });
+      group('At object level.', () {
+        testAll(oStrict: false);
+      });
+      group('Object level has preference.', () {
+        testAll(cStrict: true, oStrict: false);
+      });
+    });
+  });
+}
+
 enum S { a, b, c }
 
 enum E { forward, backward }
@@ -178,36 +210,4 @@ void testAll({
     matcher: matcher,
   );
   testFireNotHandledEvent(cStrict: cStrict, oStrict: oStrict, matcher: matcher);
-}
-
-void main() {
-  group('StateMachine assertions.', () {
-    group('Default strict mode.', () {
-      testAll(matcher: isA<AssertionError>());
-    });
-
-    group('Strict mode set to true.', () {
-      group('At class level.', () {
-        testAll(cStrict: true, matcher: isA<AssertionError>());
-      });
-      group('At object level.', () {
-        testAll(oStrict: true, matcher: isA<AssertionError>());
-      });
-      group('Object level has preference.', () {
-        testAll(cStrict: false, oStrict: true, matcher: isA<AssertionError>());
-      });
-    });
-
-    group('Strict mode is set to false.', () {
-      group('At class level.', () {
-        testAll(cStrict: false);
-      });
-      group('At object level.', () {
-        testAll(oStrict: false);
-      });
-      group('Object level has preference.', () {
-        testAll(cStrict: true, oStrict: false);
-      });
-    });
-  });
 }

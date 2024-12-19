@@ -2,61 +2,6 @@ import 'package:test/test.dart';
 import 'package:visma/src/visualizer/visual_monitor/server/overview_manager.dart';
 import 'package:visma/src/visualizer/visual_monitor/server/statemachine_manager.dart';
 
-const _expected = '''
-@startmindmap State machine hierarchy diagram
-!pragma layout smetana
-<style>
-  mindmapDiagram {
-    node {
-      ' BackgroundColor lightGreen
-    }
-    :depth(0) {
-      BackGroundColor DarkSeaGreen
-    }
-    :depth(1) {
-      BackGroundColor MediumSeaGreen
-    }
-    :depth(2) {
-      BackGroundColor LightSeaGreen
-    }
-  }
-</style>
-* SM Watcher
-** host1
-*** 111
-**** [[/machine/page/host1/111/SM%201 SM 1]]
-***** [[/machine/page/host1/111/SM%201.1 SM 1.1]]
-***** [[/machine/page/host1/111/SM%201.2 SM 1.2]]
-****** [[/machine/page/host1/111/SM%201.2.1 SM 1.2.1]]
-****** [[/machine/page/host1/111/SM%201.2.2 SM 1.2.2]]
-****** [[/machine/page/host1/111/SM%201.2.3 SM 1.2.3]]
-**** [[/machine/page/host1/111/SM%202 SM 2]]
-***** [[/machine/page/host1/111/SM%202.1 SM 2.1]]
-***** [[/machine/page/host1/111/SM%202.2 SM 2.2]]
-***** [[/machine/page/host1/111/SM%202.3 SM 2.3]]
-***** [[/machine/page/host1/111/SM%202.4 SM 2.4]]
-**** [[/machine/page/host1/111/SM%203 SM 3]]
-***** [[/machine/page/host1/111/SM%203.1 SM 3.1]]
-***** [[/machine/page/host1/111/SM%203.1.1 SM 3.1.1]]
-***** [[/machine/page/host1/111/SM%203.1.2 SM 3.1.2]]
-***** [[/machine/page/host1/111/SM%203.1.3 SM 3.1.3]]
-***** [[/machine/page/host1/111/SM%203.1.4 SM 3.1.4]]
-@endmindmap
-''';
-
-void add(
-  OverviewManager overviewManager, {
-  required String smId,
-  required String? parentSmId,
-}) {
-  final uniqueSmId =
-      StateMachineId(hostname: 'host1', domain: '111', smId: smId);
-  overviewManager.add(
-    uniqueSmId: uniqueSmId,
-    children: {},
-  );
-}
-
 // TODO: Extend testing with hostname & domain.
 void main() {
   group(
@@ -113,5 +58,60 @@ void main() {
       // TODO: fix this test
     },
     skip: true,
+  );
+}
+
+const _expected = '''
+@startmindmap State machine hierarchy diagram
+!pragma layout smetana
+<style>
+  mindmapDiagram {
+    node {
+      ' BackgroundColor lightGreen
+    }
+    :depth(0) {
+      BackGroundColor DarkSeaGreen
+    }
+    :depth(1) {
+      BackGroundColor MediumSeaGreen
+    }
+    :depth(2) {
+      BackGroundColor LightSeaGreen
+    }
+  }
+</style>
+* SM Watcher
+** host1
+*** 111
+**** [[/machine/page/host1/111/SM%201 SM 1]]
+***** [[/machine/page/host1/111/SM%201.1 SM 1.1]]
+***** [[/machine/page/host1/111/SM%201.2 SM 1.2]]
+****** [[/machine/page/host1/111/SM%201.2.1 SM 1.2.1]]
+****** [[/machine/page/host1/111/SM%201.2.2 SM 1.2.2]]
+****** [[/machine/page/host1/111/SM%201.2.3 SM 1.2.3]]
+**** [[/machine/page/host1/111/SM%202 SM 2]]
+***** [[/machine/page/host1/111/SM%202.1 SM 2.1]]
+***** [[/machine/page/host1/111/SM%202.2 SM 2.2]]
+***** [[/machine/page/host1/111/SM%202.3 SM 2.3]]
+***** [[/machine/page/host1/111/SM%202.4 SM 2.4]]
+**** [[/machine/page/host1/111/SM%203 SM 3]]
+***** [[/machine/page/host1/111/SM%203.1 SM 3.1]]
+***** [[/machine/page/host1/111/SM%203.1.1 SM 3.1.1]]
+***** [[/machine/page/host1/111/SM%203.1.2 SM 3.1.2]]
+***** [[/machine/page/host1/111/SM%203.1.3 SM 3.1.3]]
+***** [[/machine/page/host1/111/SM%203.1.4 SM 3.1.4]]
+@endmindmap
+''';
+
+void add(
+  OverviewManager overviewManager, {
+  required String smId,
+  required String? parentSmId,
+}) {
+  final uniqueSmId =
+      StateMachineId(hostname: 'host1', domain: '111', smId: smId);
+  overviewManager.add(
+    uniqueSmId: uniqueSmId,
+    children: {},
   );
 }

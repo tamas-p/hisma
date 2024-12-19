@@ -12,25 +12,6 @@ import '../firebase_options.dart';
 
 // final log = getLogger('main');
 
-void initLogging() {
-  // This shall be done 1st to allow Logger configuration for a hierarchy.
-  hierarchicalLoggingEnabled = true;
-
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger(fbAuthHismaExample).level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    // if (record.loggerName == hisma.StateMachine.loggerName) {
-    // ignore: avoid_print
-    print(
-      '${record.level.name}: '
-      '${record.time}: '
-      '${record.loggerName}: '
-      '${record.message}',
-    );
-    // }
-  });
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -49,6 +30,25 @@ void main() async {
   await authMachine.start();
 
   runApp(const MyApp());
+}
+
+void initLogging() {
+  // This shall be done 1st to allow Logger configuration for a hierarchy.
+  hierarchicalLoggingEnabled = true;
+
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger(fbAuthHismaExample).level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    // if (record.loggerName == hisma.StateMachine.loggerName) {
+    // ignore: avoid_print
+    print(
+      '${record.level.name}: '
+      '${record.time}: '
+      '${record.loggerName}: '
+      '${record.message}',
+    );
+    // }
+  });
 }
 
 class MyApp extends StatelessWidget {

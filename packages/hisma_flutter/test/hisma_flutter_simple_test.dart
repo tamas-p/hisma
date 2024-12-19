@@ -5,6 +5,36 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:logging/logging.dart';
 
+Future<void> main() async {
+  testWidgets('hisma_flutter test1', (tester) async {});
+  StateMachine.monitorCreators = [
+    // (m) => VisualMonitor(m),
+    // (m) => ConsoleMonitor(m),
+  ];
+  // initLogging();
+  final simpleMachine = createSimpleMachine();
+
+  testWidgets(
+    'description',
+    (tester) async {
+      await simpleMachine.start();
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(MyApp(simpleMachine));
+
+      // Verify that the title of the home page is displayed.
+      expect(find.text('$ScreenA'), findsOneWidget);
+
+      await simpleMachine.fire(E.forward);
+      await tester.pumpAndSettle();
+
+      // Verify that the title of the home page is displayed.
+      expect(find.text('$ScreenB'), findsOneWidget);
+    },
+  );
+  // print('Waiting...');
+  // await Future<void>.delayed(const Duration(hours: 1));
+}
+
 enum S { a, b }
 
 enum E { forward, back }
@@ -90,36 +120,6 @@ class MyApp extends StatelessWidget {
       routeInformationParser: _routerGenerator.routeInformationParser,
     );
   }
-}
-
-Future<void> main() async {
-  testWidgets('hisma_flutter test1', (tester) async {});
-  StateMachine.monitorCreators = [
-    // (m) => VisualMonitor(m),
-    // (m) => ConsoleMonitor(m),
-  ];
-  // initLogging();
-  final simpleMachine = createSimpleMachine();
-
-  testWidgets(
-    'description',
-    (tester) async {
-      await simpleMachine.start();
-      // Build our app and trigger a frame.
-      await tester.pumpWidget(MyApp(simpleMachine));
-
-      // Verify that the title of the home page is displayed.
-      expect(find.text('$ScreenA'), findsOneWidget);
-
-      await simpleMachine.fire(E.forward);
-      await tester.pumpAndSettle();
-
-      // Verify that the title of the home page is displayed.
-      expect(find.text('$ScreenB'), findsOneWidget);
-    },
-  );
-  // print('Waiting...');
-  // await Future<void>.delayed(const Duration(hours: 1));
 }
 
 void initLogging() {

@@ -7,6 +7,19 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import '01_simple.dart' as lm;
 import '02_compound_single_region.dart' as bm;
 
+Future<void> main() async {
+  // initLogging();
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+    (machine) => ConsoleMonitor(machine),
+  ];
+
+  await lightMachine.start();
+  while (true) {
+    await play();
+  }
+}
+
 enum S { blue, red }
 
 enum E { change }
@@ -74,17 +87,4 @@ Future<void> play() async {
 
   await Future<void>.delayed(const Duration(seconds: 1));
   await lightMachine.fire(lm.E.turnOff);
-}
-
-Future<void> main() async {
-  // initLogging();
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    (machine) => ConsoleMonitor(machine),
-  ];
-
-  await lightMachine.start();
-  while (true) {
-    await play();
-  }
 }

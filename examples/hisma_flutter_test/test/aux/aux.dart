@@ -90,10 +90,6 @@ Future<void> action<S, E, T>(
 }) async {
   if (act == Act.fire && event != null) {
     await machine.fire(event);
-    // We need this extra pumpAndSettle as pageless routes are created in a
-    // subsequent frame by Future.delayed.
-    // TODO: Remove this as new design will not use Future.delayed.
-    await tester.pumpAndSettle();
   } else if (act == Act.tap && event != null) {
     await tester.tap(find.text(getButtonTitle(machine, event)).last);
   } else if (act == Act.back) {

@@ -7,6 +7,18 @@ import '../ui.dart';
 import '../utility.dart';
 import 'states_events_transitions.dart';
 
+Future<void> main() async {
+  initLogging();
+  h.StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    // (m) => ConsoleMonitor(m),
+  ];
+  final machine = createConcurrentMachine();
+  await machine.start();
+
+  runApp(DoubleApp(machine: machine));
+}
+
 StateMachineWithChangeNotifier<S, E, T> createConcurrentMachine() =>
     StateMachineWithChangeNotifier(
       events: E.values,
@@ -176,16 +188,4 @@ class DoubleApp extends StatelessWidget {
       routeInformationParser: _routerGenerator.routeInformationParser,
     );
   }
-}
-
-Future<void> main() async {
-  initLogging();
-  h.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-    // (m) => ConsoleMonitor(m),
-  ];
-  final machine = createConcurrentMachine();
-  await machine.start();
-
-  runApp(DoubleApp(machine: machine));
 }

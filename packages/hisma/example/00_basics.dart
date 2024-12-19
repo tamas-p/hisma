@@ -3,6 +3,16 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+Future<void> main(List<String> args) async {
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+  ];
+
+  emptyMachine.activeStateId;
+  await minimalMachine.start();
+  await guardsMachine.start();
+}
+
 final emptyMachine = StateMachine(
   name: 'empty',
   initialStateId: null,
@@ -86,13 +96,3 @@ final guardsMachine = StateMachine<S, E, T>(
     ),
   },
 );
-
-Future<void> main(List<String> args) async {
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-  ];
-
-  emptyMachine.activeStateId;
-  await minimalMachine.start();
-  await guardsMachine.start();
-}

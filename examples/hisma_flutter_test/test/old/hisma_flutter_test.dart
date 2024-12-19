@@ -16,80 +16,12 @@ import '../aux/aux.dart';
 const _loggerName = 'FlutterTest';
 final Logger _log = Logger(_loggerName);
 
-Future<void> checkAll(
-  StateMachineWithChangeNotifier<S, E, T> machine,
-  WidgetTester tester,
-  S previous,
-  S current,
-  S next, {
-  Act act = Act.tap,
-}) async {
-  await action(machine, tester, E.back, act: act);
-  checkTitle(machine, previous);
-
-  await action(machine, tester, E.forward, act: act);
-  checkTitle(machine, current);
-
-  await action(machine, tester, E.self, act: act);
-  checkTitle(machine, current);
-
-  await action(machine, tester, E.forward, act: act);
-  checkTitle(machine, next);
-}
-
-Future<void> testIt({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
-  required WidgetTester tester,
-  required Act act,
-}) async {
-  await checkAll(machine, tester, S.n, S.a, S.b, act: act);
-  await checkAll(machine, tester, S.a, S.b, S.c, act: act);
-  await checkAll(machine, tester, S.b, S.c, S.d, act: act);
-  await checkAll(machine, tester, S.c, S.d, S.e, act: act);
-  await checkAll(machine, tester, S.d, S.e, S.f, act: act);
-  await checkAll(machine, tester, S.e, S.f, S.g, act: act);
-  await checkAll(machine, tester, S.f, S.g, S.h, act: act);
-  await checkAll(machine, tester, S.g, S.h, S.i, act: act);
-  await checkAll(machine, tester, S.h, S.i, S.j, act: act);
-
-  await checkAll(machine, tester, S.i, S.j, S.k, act: act);
-  await checkAll(machine, tester, S.j, S.k, S.l, act: act);
-  await checkAll(machine, tester, S.k, S.l, S.m, act: act);
-  await checkAll(machine, tester, S.l, S.m, S.n, act: act);
-  await checkAll(machine, tester, S.m, S.n, S.a, act: act);
-}
-
 void main() {
   // auxInitLogging();
-
   StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     (m) => ConsoleMonitor(m),
   ];
-
-  /// We are testing
-  /// - State change initiated from
-  ///   - UI
-  ///   - firing event
-  /// - Self transition -> no change
-  /// - Different route types
-  ///   - Paged route
-  ///   - Overlay paged route
-  ///     - back by clicking on back button
-  ///   - Pageless route
-  ///     - click on OK etc.
-  ///     - dispose buy clicking on edge
-  ///     - manage return value
-  ///     - No fire if state already changed: SnackBar
-  /// - Circles
-  ///   - one hop circle
-  ///   - multiple hop circle with only paged routes
-  ///   - multiple hop circle with paged and overlay paged routes
-  ///   - multiple hop circle with paged and overlay paged and pageless routes
-  /// - History states
-  ///   - Simple
-  ///   - Switch from one history state to another one
-  ///
   testWidgets(
     'UI initiated state change.',
     (tester) async {
@@ -210,10 +142,6 @@ Testing that pageless routes are managed well in case of a root machine.
       skip: false,
     );
 
-    // TODO: FAILS at
-    // await tc(historyLevel: null, useRootNavigator: true);
-    // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: true);
-    // await tc(historyLevel: HistoryLevel.deep, useRootNavigator: true);
     testWidgets(
       '''
 Testing that pageless routes are managed well in case of a child machine.
@@ -535,8 +463,6 @@ Testing that pageless routes are managed well in case of a child machine.
     skip: false,
   );
 
-  // TODO: FAILS at
-  // await tc(historyLevel: null, useRootNavigator: true);
   testWidgets(
     'When pageless needs to be popped explicitly when'
     ' becomes inactive its machine.',
@@ -712,6 +638,49 @@ Testing that pageless routes are managed well in case of a child machine.
       );
     },
   );
+}
+
+Future<void> checkAll(
+  StateMachineWithChangeNotifier<S, E, T> machine,
+  WidgetTester tester,
+  S previous,
+  S current,
+  S next, {
+  Act act = Act.tap,
+}) async {
+  await action(machine, tester, E.back, act: act);
+  checkTitle(machine, previous);
+
+  await action(machine, tester, E.forward, act: act);
+  checkTitle(machine, current);
+
+  await action(machine, tester, E.self, act: act);
+  checkTitle(machine, current);
+
+  await action(machine, tester, E.forward, act: act);
+  checkTitle(machine, next);
+}
+
+Future<void> testIt({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required WidgetTester tester,
+  required Act act,
+}) async {
+  await checkAll(machine, tester, S.n, S.a, S.b, act: act);
+  await checkAll(machine, tester, S.a, S.b, S.c, act: act);
+  await checkAll(machine, tester, S.b, S.c, S.d, act: act);
+  await checkAll(machine, tester, S.c, S.d, S.e, act: act);
+  await checkAll(machine, tester, S.d, S.e, S.f, act: act);
+  await checkAll(machine, tester, S.e, S.f, S.g, act: act);
+  await checkAll(machine, tester, S.f, S.g, S.h, act: act);
+  await checkAll(machine, tester, S.g, S.h, S.i, act: act);
+  await checkAll(machine, tester, S.h, S.i, S.j, act: act);
+
+  await checkAll(machine, tester, S.i, S.j, S.k, act: act);
+  await checkAll(machine, tester, S.j, S.k, S.l, act: act);
+  await checkAll(machine, tester, S.k, S.l, S.m, act: act);
+  await checkAll(machine, tester, S.l, S.m, S.n, act: act);
+  await checkAll(machine, tester, S.m, S.n, S.a, act: act);
 }
 
 class MachineTester {

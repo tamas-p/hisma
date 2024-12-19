@@ -6,6 +6,18 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import '../ui.dart';
 import 'states_events_transitions.dart';
 
+Future<void> main() async {
+  // initLogging();
+  h.StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    // (m) => ConsoleMonitor(m),
+  ];
+  final machine = createPagelessMachine(name: 'root');
+  await machine.start();
+
+  runApp(PagelessApp(machine: machine, useRootNavigator: true));
+}
+
 StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
   required String name,
 }) =>
@@ -139,16 +151,4 @@ class PagelessApp extends StatelessWidget {
       // routeInformationParser: _routerGenerator.routeInformationParser,
     );
   }
-}
-
-Future<void> main() async {
-  // initLogging();
-  h.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-    // (m) => ConsoleMonitor(m),
-  ];
-  final machine = createPagelessMachine(name: 'root');
-  await machine.start();
-
-  runApp(PagelessApp(machine: machine, useRootNavigator: true));
 }

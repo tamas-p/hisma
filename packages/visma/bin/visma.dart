@@ -21,6 +21,69 @@ const _help = 'help';
 
 const defaultPort = 4020;
 
+Future<void> main(List<String> args) async {
+  await runZonedGuarded(() async {
+    initLogging();
+    final argResults = parseArgs(args);
+
+    late final Converter converter;
+    if (argResults[_plantumlPublic] == true) {
+      _log.warning(
+        '+---------------------------------------------------------------------------------+',
+      );
+      _log.warning(
+        '| Started with --plantuml_public.                                                 |',
+      );
+      _log.warning(
+        '|                                                                                 |',
+      );
+      _log.warning(
+        '| visma will use the public PlantUML service at https://www.plantuml.com/plantuml |',
+      );
+      _log.warning(
+        '| Your diagrams will be transferred to that service over the Internet.            |',
+      );
+      _log.warning(
+        '| This besides its security implications also impacts performance.                |',
+      );
+      _log.warning(
+        '| Use this mode ONLY if you accept these conditions.                              |',
+      );
+      _log.warning(
+        '+---------------------------------------------------------------------------------+',
+      );
+      converter = Converter.public();
+    } else if (argResults[_plantumlUrl] != null) {
+      final url = argResults[_plantumlUrl] as String;
+      converter = Converter.url(url);
+    } else {
+      final jarPath = argResults[_plantumlJar] as String?;
+      final pv = argResults[_plantumlPort] as String?;
+      final portValue = pv == null ? defaultPort : int.parse(pv);
+      final bindValue = argResults[_plantumlBind] as String?;
+      converter = await Converter.createLocal(
+        jar: jarPath,
+        port: portValue,
+        bind: bindValue,
+      );
+    }
+
+    final pv = argResults[_port] as String?;
+    final portValue = pv == null ? null : int.parse(pv);
+    final bindValue = argResults[_bind] as String?;
+    final vs = VisualizationServer(
+      converter: converter,
+      bind: bindValue,
+      port: portValue,
+    );
+    await vs.startServer();
+    print('visFinished.');
+  }, (error, stackTrace) {
+    _log.severe('Shutting down due to $error');
+    exit(1);
+  });
+}
+
 ArgResults parseArgs(List<String> args) {
   final parser = ArgParser();
 
@@ -84,67 +147,4 @@ Options:''');
   }
 
   return argResults;
-}
-
-Future<void> main(List<String> args) async {
-  await runZonedGuarded(() async {
-    initLogging();
-    final argResults = parseArgs(args);
-
-    late final Converter converter;
-    if (argResults[_plantumlPublic] == true) {
-      _log.warning(
-        '+---------------------------------------------------------------------------------+',
-      );
-      _log.warning(
-        '| Started with --plantuml_public.                                                 |',
-      );
-      _log.warning(
-        '|                                                                                 |',
-      );
-      _log.warning(
-        '| visma will use the public PlantUML service at https://www.plantuml.com/plantuml |',
-      );
-      _log.warning(
-        '| Your diagrams will be transferred to that service over the Internet.            |',
-      );
-      _log.warning(
-        '| This besides its security implications also impacts performance.                |',
-      );
-      _log.warning(
-        '| Use this mode ONLY if you accept these conditions.                              |',
-      );
-      _log.warning(
-        '+---------------------------------------------------------------------------------+',
-      );
-      converter = Converter.public();
-    } else if (argResults[_plantumlUrl] != null) {
-      final url = argResults[_plantumlUrl] as String;
-      converter = Converter.url(url);
-    } else {
-      final jarPath = argResults[_plantumlJar] as String?;
-      final pv = argResults[_plantumlPort] as String?;
-      final portValue = pv == null ? defaultPort : int.parse(pv);
-      final bindValue = argResults[_plantumlBind] as String?;
-      converter = await Converter.createLocal(
-        jar: jarPath,
-        port: portValue,
-        bind: bindValue,
-      );
-    }
-
-    final pv = argResults[_port] as String?;
-    final portValue = pv == null ? null : int.parse(pv);
-    final bindValue = argResults[_bind] as String?;
-    final vs = VisualizationServer(
-      converter: converter,
-      bind: bindValue,
-      port: portValue,
-    );
-    await vs.startServer();
-    print('visFinished.');
-  }, (error, stackTrace) {
-    _log.severe('Shutting down due to $error');
-    exit(1);
-  });
 }

@@ -2,6 +2,20 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+Future<void> main(List<String> args) async {
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+    (machine) => ConsoleMonitor(machine),
+  ];
+  await sm.start();
+  // sm.fire(E.e1);
+  // sm.fire(E.e2);
+  // sm.fire(E.e2);
+
+  // sm1.start();
+  // sm1.fire('something');
+}
+
 //------------------------------------------------------------------------------
 // Parent machine
 //------------------------------------------------------------------------------
@@ -97,16 +111,3 @@ final sm1 = StateMachine<String, String, String>(
 
 //------------------------------------------------------------------------------
 
-Future<void> main(List<String> args) async {
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    (machine) => ConsoleMonitor(machine),
-  ];
-  await sm.start();
-  // sm.fire(E.e1);
-  // sm.fire(E.e2);
-  // sm.fire(E.e2);
-
-  // sm1.start();
-  // sm1.fire('something');
-}

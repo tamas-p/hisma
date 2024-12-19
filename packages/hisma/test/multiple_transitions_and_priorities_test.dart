@@ -3,6 +3,33 @@
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
+void main() {
+  group('Transition priorities test', () {
+    test('Simple', () async {
+      final m1 = createSimpleMachine('m1');
+      await m1.start();
+      expect(m1.activeStateId, equals(S.a));
+      await m1.fire(E.change);
+      expect(m1.activeStateId, equals(S.c));
+    });
+
+    test('With guards', () async {
+      final m1 = createSimpleMachine('m1');
+      final checker = Checker(m1);
+      await m1.start();
+
+      await checker({cb: false, cc: false, cd: false}, S.a);
+      await checker({cb: false, cc: false, cd: true}, S.d);
+      await checker({cb: false, cc: true, cd: false}, S.c);
+      await checker({cb: false, cc: true, cd: true}, S.c);
+      await checker({cb: true, cc: false, cd: false}, S.b);
+      await checker({cb: true, cc: false, cd: true}, S.d);
+      await checker({cb: true, cc: true, cd: false}, S.c);
+      await checker({cb: true, cc: true, cd: true}, S.c);
+    });
+  });
+}
+
 enum S { a, b, c, d }
 
 enum E { change, back }
@@ -89,31 +116,4 @@ class Checker {
     await machine.fire(E.back);
     expect(machine.activeStateId, equals(S.a));
   }
-}
-
-void main() {
-  group('Transition priorities test', () {
-    test('Simple', () async {
-      final m1 = createSimpleMachine('m1');
-      await m1.start();
-      expect(m1.activeStateId, equals(S.a));
-      await m1.fire(E.change);
-      expect(m1.activeStateId, equals(S.c));
-    });
-
-    test('With guards', () async {
-      final m1 = createSimpleMachine('m1');
-      final checker = Checker(m1);
-      await m1.start();
-
-      await checker({cb: false, cc: false, cd: false}, S.a);
-      await checker({cb: false, cc: false, cd: true}, S.d);
-      await checker({cb: false, cc: true, cd: false}, S.c);
-      await checker({cb: false, cc: true, cd: true}, S.c);
-      await checker({cb: true, cc: false, cd: false}, S.b);
-      await checker({cb: true, cc: false, cd: true}, S.d);
-      await checker({cb: true, cc: true, cd: false}, S.c);
-      await checker({cb: true, cc: true, cd: true}, S.c);
-    });
-  });
 }

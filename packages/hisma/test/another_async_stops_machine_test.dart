@@ -5,6 +5,22 @@ import 'dart:async';
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
+void main() {
+  group('Asynchronous state change tests.', () {
+    test('Async Test 1', () async {
+      await m1.start();
+      await m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+      await m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+      await m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+      await m1.fire(E.change, arg: 0);
+      print('Active state: ${m1.activeStateId}');
+    });
+  });
+}
+
 enum S { a, b, f }
 
 enum E { change, finish }
@@ -51,19 +67,3 @@ Action createAction() => Action(
         print(machine.activeStateId);
       },
     );
-
-void main() {
-  group('Asynchronous state change tests.', () {
-    test('Async Test 1', () async {
-      await m1.start();
-      await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
-      await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
-      await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
-      await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
-    });
-  });
-}

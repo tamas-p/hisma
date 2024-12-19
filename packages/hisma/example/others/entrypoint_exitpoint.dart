@@ -2,6 +2,29 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+Future<void> main(List<String> args) async {
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+    (machine) => ConsoleMonitor(machine),
+  ];
+
+  // final sm = createMachine(name: 'sm');
+  final sm = createMachine(
+    name: 'l0',
+    child: createMachine(
+      name: 'l1',
+      child: createMachine(
+        name: 'l2',
+        child: createMachine(
+          name: 'l3',
+        ),
+      ),
+    ),
+  );
+
+  await sm.start();
+}
+
 enum S { ep1, ep3, ep4, ep2, a, b, c, fs, ex }
 
 enum E { next, inside, finish, exit, deep, done }
@@ -88,26 +111,3 @@ StateMachine<S, E, T> createMachine({
         T.toEx: Transition(to: S.ex),
       },
     );
-
-Future<void> main(List<String> args) async {
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    (machine) => ConsoleMonitor(machine),
-  ];
-
-  // final sm = createMachine(name: 'sm');
-  final sm = createMachine(
-    name: 'l0',
-    child: createMachine(
-      name: 'l1',
-      child: createMachine(
-        name: 'l2',
-        child: createMachine(
-          name: 'l3',
-        ),
-      ),
-    ),
-  );
-
-  await sm.start();
-}

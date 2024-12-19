@@ -3,66 +3,6 @@
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
-enum S { a, b, end }
-
-enum E { changeException, changeOnError, finish }
-
-enum T { toA, toBThrow, toBOnError, toEnd }
-
-StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
-    StateMachine<S, E, T>(
-      data: value,
-      name: name,
-      initialStateId: S.a,
-      states: {
-        S.a: State(
-          etm: {
-            E.changeException: [T.toBThrow],
-            E.changeOnError: [T.toBOnError],
-          },
-        ),
-        S.b: State(
-          etm: {
-            E.changeException: [T.toA],
-            E.changeOnError: [T.toA],
-            E.finish: [T.toEnd],
-          },
-        ),
-        S.end: FinalState(),
-      },
-      transitions: {
-        T.toA: Transition(to: S.a),
-        T.toBThrow: Transition(
-          to: S.b,
-          minInterval: const Duration(milliseconds: 100),
-          onAction: Action(
-            description: 'double',
-            action: (machine, arg) {
-              machine.data = (machine.data as int) * 2;
-            },
-          ),
-        ),
-        T.toBOnError: Transition(
-          to: S.b,
-          minInterval: const Duration(milliseconds: 100),
-          onAction: Action(
-            description: 'double',
-            action: (machine, arg) {
-              machine.data = (machine.data as int) * 2;
-            },
-          ),
-          onError: OnErrorAction(
-            description: 'divide',
-            action: (machine, onErrorData) {
-              expect(onErrorData.source, OnErrorSource.maxInterval);
-              machine.data = (machine.data as int) ~/ 2;
-            },
-          ),
-        ),
-        T.toEnd: Transition(to: S.end),
-      },
-    );
-
 void main() {
   group('Transition interval test', () {
     test('Interval test positive - throw', () async {
@@ -172,3 +112,63 @@ void main() {
     });
   });
 }
+
+enum S { a, b, end }
+
+enum E { changeException, changeOnError, finish }
+
+enum T { toA, toBThrow, toBOnError, toEnd }
+
+StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
+    StateMachine<S, E, T>(
+      data: value,
+      name: name,
+      initialStateId: S.a,
+      states: {
+        S.a: State(
+          etm: {
+            E.changeException: [T.toBThrow],
+            E.changeOnError: [T.toBOnError],
+          },
+        ),
+        S.b: State(
+          etm: {
+            E.changeException: [T.toA],
+            E.changeOnError: [T.toA],
+            E.finish: [T.toEnd],
+          },
+        ),
+        S.end: FinalState(),
+      },
+      transitions: {
+        T.toA: Transition(to: S.a),
+        T.toBThrow: Transition(
+          to: S.b,
+          minInterval: const Duration(milliseconds: 100),
+          onAction: Action(
+            description: 'double',
+            action: (machine, arg) {
+              machine.data = (machine.data as int) * 2;
+            },
+          ),
+        ),
+        T.toBOnError: Transition(
+          to: S.b,
+          minInterval: const Duration(milliseconds: 100),
+          onAction: Action(
+            description: 'double',
+            action: (machine, arg) {
+              machine.data = (machine.data as int) * 2;
+            },
+          ),
+          onError: OnErrorAction(
+            description: 'divide',
+            action: (machine, onErrorData) {
+              expect(onErrorData.source, OnErrorSource.maxInterval);
+              machine.data = (machine.data as int) ~/ 2;
+            },
+          ),
+        ),
+        T.toEnd: Transition(to: S.end),
+      },
+    );

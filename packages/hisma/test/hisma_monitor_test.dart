@@ -6,80 +6,6 @@ import 'package:test/test.dart';
 
 import '../example/others/entrypoint_exitpoint.dart';
 
-void initLogging() {
-  // This shall be done 1st to allow Logger configuration for a hierarchy.
-  hierarchicalLoggingEnabled = true;
-
-  Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((record) {
-    print(
-      '${record.level.name}: '
-      '${record.time}: '
-      '${record.loggerName}: '
-      '${record.message}',
-    );
-  });
-}
-
-enum S1 { a, b, end }
-
-enum E1 { change, finish }
-
-enum T1 { toA, toB, toEnd }
-
-StateMachine<S1, E1, T1> createSimpleMachine(String name) =>
-    StateMachine<S1, E1, T1>(
-      name: name,
-      initialStateId: S1.a,
-      states: {
-        S1.a: State(
-          etm: {
-            E1.change: [T1.toB],
-          },
-        ),
-        S1.b: State(
-          etm: {
-            E1.change: [T1.toA],
-            E1.finish: [T1.toEnd],
-          },
-        ),
-        S1.end: FinalState(),
-      },
-      transitions: {
-        T1.toA: Transition(to: S1.a),
-        T1.toB: Transition(to: S1.b),
-        T1.toEnd: Transition(to: S1.end),
-      },
-    );
-
-class TestMonitor implements Monitor {
-  TestMonitor(this.machine, this._checker);
-  final StateMachine<dynamic, dynamic, dynamic> machine;
-  final Checker _checker;
-
-  @override
-  Future<void> notifyCreation() async {
-    final value = _checker.createCounterMap[machine.name];
-    _checker.createCounterMap[machine.name] = value == null ? 1 : value + 1;
-  }
-
-  @override
-  Future<void> notifyStateChange() async {
-    final value = _checker.changeCounterMap[machine.name];
-    _checker.changeCounterMap[machine.name] = value == null ? 1 : value + 1;
-  }
-}
-
-class Checker {
-  final createCounterMap = <String, int>{};
-  final changeCounterMap = <String, int>{};
-
-  void call(String name, int? create, int? change) {
-    expect(createCounterMap[name], equals(create));
-    expect(changeCounterMap[name], equals(change));
-  }
-}
-
 void main() {
   // initLogging();
   group('Hisma monitor', () {
@@ -275,4 +201,78 @@ void main() {
     checker(l2, 1, 11);
     checker(l3, 1, 5);
   });
+}
+
+void initLogging() {
+  // This shall be done 1st to allow Logger configuration for a hierarchy.
+  hierarchicalLoggingEnabled = true;
+
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    print(
+      '${record.level.name}: '
+      '${record.time}: '
+      '${record.loggerName}: '
+      '${record.message}',
+    );
+  });
+}
+
+enum S1 { a, b, end }
+
+enum E1 { change, finish }
+
+enum T1 { toA, toB, toEnd }
+
+StateMachine<S1, E1, T1> createSimpleMachine(String name) =>
+    StateMachine<S1, E1, T1>(
+      name: name,
+      initialStateId: S1.a,
+      states: {
+        S1.a: State(
+          etm: {
+            E1.change: [T1.toB],
+          },
+        ),
+        S1.b: State(
+          etm: {
+            E1.change: [T1.toA],
+            E1.finish: [T1.toEnd],
+          },
+        ),
+        S1.end: FinalState(),
+      },
+      transitions: {
+        T1.toA: Transition(to: S1.a),
+        T1.toB: Transition(to: S1.b),
+        T1.toEnd: Transition(to: S1.end),
+      },
+    );
+
+class TestMonitor implements Monitor {
+  TestMonitor(this.machine, this._checker);
+  final StateMachine<dynamic, dynamic, dynamic> machine;
+  final Checker _checker;
+
+  @override
+  Future<void> notifyCreation() async {
+    final value = _checker.createCounterMap[machine.name];
+    _checker.createCounterMap[machine.name] = value == null ? 1 : value + 1;
+  }
+
+  @override
+  Future<void> notifyStateChange() async {
+    final value = _checker.changeCounterMap[machine.name];
+    _checker.changeCounterMap[machine.name] = value == null ? 1 : value + 1;
+  }
+}
+
+class Checker {
+  final createCounterMap = <String, int>{};
+  final changeCounterMap = <String, int>{};
+
+  void call(String name, int? create, int? change) {
+    expect(createCounterMap[name], equals(create));
+    expect(changeCounterMap[name], equals(change));
+  }
 }

@@ -3,28 +3,6 @@ import 'package:test/test.dart';
 
 import '../example/others/entrypoint_exitpoint.dart';
 
-class ES {
-  ES(this.event, this.expected);
-  final E event;
-  final S expected;
-}
-
-class MachineTester {
-  MachineTester(this.root);
-  final StateMachine<S, E, T> root;
-
-  Future<void> startCheck(S expected) async {
-    await root.start();
-    expect(root.activeStateId, equals(expected));
-  }
-
-  Future<void> check(String name, E event, List<dynamic> expected) async {
-    await root.find<S, E, T>(name).fire(event);
-    // print(root.getActiveStateRecursive());
-    expect(root.getActiveStateRecursive(), equals(expected));
-  }
-}
-
 void main() {
   group('EntryPoint test', () {
     setUp(
@@ -258,4 +236,26 @@ void main() {
       ]
     ]);
   });
+}
+
+class ES {
+  ES(this.event, this.expected);
+  final E event;
+  final S expected;
+}
+
+class MachineTester {
+  MachineTester(this.root);
+  final StateMachine<S, E, T> root;
+
+  Future<void> startCheck(S expected) async {
+    await root.start();
+    expect(root.activeStateId, equals(expected));
+  }
+
+  Future<void> check(String name, E event, List<dynamic> expected) async {
+    await root.find<S, E, T>(name).fire(event);
+    // print(root.getActiveStateRecursive());
+    expect(root.getActiveStateRecursive(), equals(expected));
+  }
 }

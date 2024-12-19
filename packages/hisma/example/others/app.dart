@@ -1,7 +1,14 @@
 import 'package:hisma/hisma.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
-//------------------------
+void main() async {
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+    // (machine) => ActiveStateMonitor(machine),
+  ];
+  await sm.start();
+  // sm;
+}
 
 enum MA {
   m1,
@@ -194,12 +201,3 @@ final sm = StateMachine<S, E, T>(
     ),
   },
 );
-
-void main() async {
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    // (machine) => ActiveStateMonitor(machine),
-  ];
-  await sm.start();
-  // sm;
-}

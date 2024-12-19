@@ -1,88 +1,6 @@
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
-enum S { a, b }
-
-enum E { inc, dec, triple, trisect }
-
-enum T { toA, toB, triple, trisect }
-
-StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
-      name: 'm1',
-      data: data,
-      initialStateId: S.a,
-      states: {
-        S.a: State(
-          etm: {
-            E.inc: [T.toB],
-            E.triple: [T.triple],
-            E.trisect: [T.trisect],
-          },
-          onEntry: Action(
-            description: 'double',
-            action: (machine, arg) {
-              final data = machine.data;
-              if (data is int) machine.data = data * 2;
-            },
-          ),
-          onExit: Action(
-            description: 'half',
-            action: (machine, arg) {
-              final data = machine.data;
-              if (data is int) machine.data = data ~/ 2;
-            },
-          ),
-        ),
-        S.b: State(
-          etm: {
-            E.dec: [T.toA],
-            E.triple: [T.triple],
-            E.trisect: [T.trisect],
-          },
-        ),
-      },
-      transitions: {
-        T.toA: Transition(
-          to: S.a,
-          onAction: Action(
-            description: 'decrease',
-            action: (machine, arg) {
-              final data = machine.data;
-              if (data is int) machine.data = data - 2;
-            },
-          ),
-        ),
-        T.toB: Transition(
-          to: S.b,
-          onAction: Action(
-            description: 'increase',
-            action: (machine, arg) {
-              final data = machine.data;
-              if (data is int) machine.data = data + 2;
-            },
-          ),
-        ),
-        T.triple: InternalTransition(
-          onAction: Action(
-            description: 'Triple it.',
-            action: (machine, arg) {
-              final data = machine.data;
-              if (data is int) machine.data = data * 3;
-            },
-          ),
-        ),
-        T.trisect: InternalTransition(
-          onAction: Action(
-            description: 'Trisect it.',
-            action: (machine, arg) {
-              final data = machine.data;
-              if (data is int) machine.data = data ~/ 3;
-            },
-          ),
-        ),
-      },
-    );
-
 void main() {
   group('Data initialization tests', () {
     test('data initialization 1', () async {
@@ -169,3 +87,85 @@ void main() {
     );
   });
 }
+
+enum S { a, b }
+
+enum E { inc, dec, triple, trisect }
+
+enum T { toA, toB, triple, trisect }
+
+StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
+      name: 'm1',
+      data: data,
+      initialStateId: S.a,
+      states: {
+        S.a: State(
+          etm: {
+            E.inc: [T.toB],
+            E.triple: [T.triple],
+            E.trisect: [T.trisect],
+          },
+          onEntry: Action(
+            description: 'double',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data * 2;
+            },
+          ),
+          onExit: Action(
+            description: 'half',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data ~/ 2;
+            },
+          ),
+        ),
+        S.b: State(
+          etm: {
+            E.dec: [T.toA],
+            E.triple: [T.triple],
+            E.trisect: [T.trisect],
+          },
+        ),
+      },
+      transitions: {
+        T.toA: Transition(
+          to: S.a,
+          onAction: Action(
+            description: 'decrease',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data - 2;
+            },
+          ),
+        ),
+        T.toB: Transition(
+          to: S.b,
+          onAction: Action(
+            description: 'increase',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data + 2;
+            },
+          ),
+        ),
+        T.triple: InternalTransition(
+          onAction: Action(
+            description: 'Triple it.',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data * 3;
+            },
+          ),
+        ),
+        T.trisect: InternalTransition(
+          onAction: Action(
+            description: 'Trisect it.',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data ~/ 3;
+            },
+          ),
+        ),
+      },
+    );

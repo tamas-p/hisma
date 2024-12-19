@@ -5,41 +5,6 @@ import 'package:test/test.dart';
 
 import '../example/05_history.dart';
 
-class Checker {
-  Checker({
-    required this.machine,
-    required this.ml1,
-    required this.ml2,
-    required this.ml3,
-  });
-
-  final StateMachine<S, E, T> machine;
-  final String ml1;
-  final String ml2;
-  final String ml3;
-
-  Future<void> turnL1Off() async {
-    await machine.fire(E.off);
-  }
-
-  Future<void> turnL1On() async {
-    await machine.fire(E.on);
-  }
-
-  Future<void> startAndTurnOnAll() async {
-    await machine.start();
-    await machine.find<S, E, T>(ml1).fire(E.on);
-    await machine.find<S, E, T>(ml2).fire(E.on);
-    await machine.find<S, E, T>(ml3).fire(E.on);
-  }
-
-  void call({required S? l1, required S? l2, required S? l3}) {
-    expect(machine.find<S, E, T>(ml1).activeStateId, equals(l1));
-    expect(machine.find<S, E, T>(ml2).activeStateId, equals(l2));
-    expect(machine.find<S, E, T>(ml3).activeStateId, equals(l3));
-  }
-}
-
 void main() {
   group('History tests', () {
     test('No history', () async {
@@ -81,4 +46,39 @@ void main() {
       checker(l1: S.on, l2: S.on, l3: S.on);
     });
   });
+}
+
+class Checker {
+  Checker({
+    required this.machine,
+    required this.ml1,
+    required this.ml2,
+    required this.ml3,
+  });
+
+  final StateMachine<S, E, T> machine;
+  final String ml1;
+  final String ml2;
+  final String ml3;
+
+  Future<void> turnL1Off() async {
+    await machine.fire(E.off);
+  }
+
+  Future<void> turnL1On() async {
+    await machine.fire(E.on);
+  }
+
+  Future<void> startAndTurnOnAll() async {
+    await machine.start();
+    await machine.find<S, E, T>(ml1).fire(E.on);
+    await machine.find<S, E, T>(ml2).fire(E.on);
+    await machine.find<S, E, T>(ml3).fire(E.on);
+  }
+
+  void call({required S? l1, required S? l2, required S? l3}) {
+    expect(machine.find<S, E, T>(ml1).activeStateId, equals(l1));
+    expect(machine.find<S, E, T>(ml2).activeStateId, equals(l2));
+    expect(machine.find<S, E, T>(ml3).activeStateId, equals(l3));
+  }
 }

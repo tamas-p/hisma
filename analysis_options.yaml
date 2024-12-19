@@ -44,7 +44,7 @@ analyzer:
     implicit-dynamic: false
 
   errors:
-     todo: ignore
+     todo: warning
      public_member_api_docs: ignore
      unawaited_futures: warning
 

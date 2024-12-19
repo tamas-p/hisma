@@ -7,6 +7,17 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import 'utils.dart';
 
+Future<void> main() async {
+  hisma.StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m),
+  ];
+
+  await authMachine.start();
+  runApp(const MyApp());
+}
+
+//------------------------------------------------------------------------------
+
 enum AS { signedIn, signedOut }
 
 enum AE { signIn, signOut }
@@ -289,12 +300,3 @@ class MyApp extends StatelessWidget {
 }
 
 //------------------------------------------------------------------------------
-
-Future<void> main() async {
-  hisma.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m),
-  ];
-
-  await authMachine.start();
-  runApp(const MyApp());
-}

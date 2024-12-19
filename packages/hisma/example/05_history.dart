@@ -5,6 +5,18 @@ import 'package:hisma/src/assistance.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+void main(List<String> args) {
+  initLogging();
+  StateMachine.monitorCreators = [
+    (machine) => VisualMonitor(machine),
+    (machine) => ConsoleMonitor(machine),
+  ];
+
+  smNoHistory.start();
+  smShallow.start();
+  smDeep.start();
+}
+
 enum S { on, off }
 
 enum E { on, off }
@@ -83,15 +95,3 @@ final smDeep = createMachine(
     ),
   ),
 );
-
-void main(List<String> args) {
-  initLogging();
-  StateMachine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    (machine) => ConsoleMonitor(machine),
-  ];
-
-  smNoHistory.start();
-  smShallow.start();
-  smDeep.start();
-}

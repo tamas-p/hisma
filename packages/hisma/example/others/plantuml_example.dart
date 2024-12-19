@@ -4,6 +4,120 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+Future<void> main() async {
+  VisualMonitor.hostname = 'tam we/\\// %#@&(as';
+  VisualMonitor.domain = 'some/ ~!!%&thing';
+  StateMachine.monitorCreators = [
+    // (machine) => VisualMonitor(
+    //       machine,
+    //       showRegions: {
+    //         S.s1.toString(),
+    //         SS2.s2.toString(),
+    //       },
+    //     ),
+    (machine) => VisualMonitor(machine),
+    (machine) => ConsoleMonitor(
+          machine,
+          printer: (str) {
+            print('-MONITOR----------------------------------------------');
+            print(str);
+          },
+        ),
+  ];
+
+  print('Start.');
+  // await sm1.register();
+  // await sm1.register();
+  // await sm1.register();
+  // await subSubSm3.register();
+  // await subSubSm2.register();
+  // await subSubSm1.register();
+  // await subSubSm0.register();
+  // await subSm2.register();
+  // await subSm1.register();
+  // await subSm1.register();
+  // await subSm1.register();
+  // await subSm1.register();
+  // await subSm1.register();
+  // await subSm1.register();
+  // await subSm1.register();
+
+  // m1;
+
+  // Just to create all objects.
+  await Future<void>.delayed(const Duration(seconds: 1));
+  await Future<void>.delayed(const Duration(seconds: 1));
+
+  print('sm1.hashCode=${m1.hashCode}');
+  print('sm1.runtimeType=${m1.runtimeType}');
+  print('subSm1.runtimeType=${m1s1.runtimeType}');
+  print('subSm2.runtimeType=${m1s2.runtimeType}');
+
+  // await m1s1s1.start();
+
+  await m1.start();
+
+/*
+  await m1.fire(E.e1);
+  await m1.fire(E.e3);
+  await m1.fire(E.e2);
+  await m1.fire(E.e6);
+  await m1.fire(E.e4);
+  await m1.fire(E.e5);
+
+  // print(pretty(sm1.getActiveStateRecursive()));
+
+  await m1s1.fire(SE.e4);
+  await Future<void>.delayed(const Duration(seconds: 1));
+  // print(pretty(sm1.getActiveStateRecursive()));
+
+  // print('SM: ${sm1.toString()}, ${sm1.hashCode}');
+  // print(pretty(sm1.getActiveStateRecursive()));
+  await m1s1.fire(SE.e3);
+
+  await m1.fire(E.e1);
+
+  await m1.fire(E.e2);
+
+  // ssm1.fire(SE.e2);
+  // ssm1.fire(SE.e3);
+
+  await m1s1s1.fire(SSE0.e1);
+  await m1s1s1.fire(SSE0.e3);
+
+  await Future<void>.delayed(const Duration(seconds: 1));
+
+  await m1.notifyMonitors();
+
+  await m1.notifyMonitors();
+
+  await m1.fire(E.e2);
+  await m1s1s1.fire(SSE0.e1);
+  await m1s1s1.fire(SSE0.e3);
+  await m1.fire(E.e2);
+  await m1.fire(E.e6);
+  await m1.fire(E.e5);
+  await m1s2.fire(SE2.e4);
+  await m1s2.fire(SE2.e3); // It triggers two EntryPoint transactions!
+  // await m1s2.fire(SE2.e6);
+
+  await m1s2s2.fire(SSE2.e5);
+  await Future<void>.delayed(const Duration(seconds: 1));
+  print('#################################################################');
+  print(pretty(m1.getActiveStateRecursive()));
+  print('#################################################################');
+  await m1.notifyMonitors();
+
+  await m1.fire(E.e6);
+
+  await Future<void>.delayed(const Duration(seconds: 1));
+
+  print('main done.');
+  print('SM: ${m1.toString()}, ${m1.hashCode}');
+  print('Exit.');
+  */
+}
+
 //------------------------------------------------------------------------------
 
 enum S { en1, s1, s2, s3, s4 }
@@ -210,7 +324,8 @@ final m1s2 = StateMachine<SS2, SE2, ST2>(
         Region<SS2, SE2, ST2, SSS3>(
           machine: m1s2s3,
           entryConnectors: {
-            Trigger(source: SS2.s3, event: SE2.e3, transition: ST2.t1): SSS3.en1,
+            Trigger(source: SS2.s3, event: SE2.e3, transition: ST2.t1):
+                SSS3.en1,
           },
           exitConnectors: {
             SSS3.ex1: SE2.e2,
@@ -416,117 +531,3 @@ final m1s2s3 = StateMachine<SSS3, SSE3, SST3>(
 );
 
 //------------------------------------------------------------------------------
-
-Future<void> main() async {
-  VisualMonitor.hostname = 'tam we/\\// %#@&(as';
-  VisualMonitor.domain = 'some/ ~!!%&thing';
-  StateMachine.monitorCreators = [
-    // (machine) => VisualMonitor(
-    //       machine,
-    //       showRegions: {
-    //         S.s1.toString(),
-    //         SS2.s2.toString(),
-    //       },
-    //     ),
-    (machine) => VisualMonitor(machine),
-    (machine) => ConsoleMonitor(
-          machine,
-          printer: (str) {
-            print('-MONITOR----------------------------------------------');
-            print(str);
-          },
-        ),
-  ];
-
-  print('Start.');
-  // await sm1.register();
-  // await sm1.register();
-  // await sm1.register();
-  // await subSubSm3.register();
-  // await subSubSm2.register();
-  // await subSubSm1.register();
-  // await subSubSm0.register();
-  // await subSm2.register();
-  // await subSm1.register();
-  // await subSm1.register();
-  // await subSm1.register();
-  // await subSm1.register();
-  // await subSm1.register();
-  // await subSm1.register();
-  // await subSm1.register();
-
-  // m1;
-
-  // Just to create all objects.
-  await Future<void>.delayed(const Duration(seconds: 1));
-  await Future<void>.delayed(const Duration(seconds: 1));
-
-  print('sm1.hashCode=${m1.hashCode}');
-  print('sm1.runtimeType=${m1.runtimeType}');
-  print('subSm1.runtimeType=${m1s1.runtimeType}');
-  print('subSm2.runtimeType=${m1s2.runtimeType}');
-
-  // await m1s1s1.start();
-
-  await m1.start();
-
-/*
-  await m1.fire(E.e1);
-  await m1.fire(E.e3);
-  await m1.fire(E.e2);
-  await m1.fire(E.e6);
-  await m1.fire(E.e4);
-  await m1.fire(E.e5);
-
-  // print(pretty(sm1.getActiveStateRecursive()));
-
-  await m1s1.fire(SE.e4);
-  await Future<void>.delayed(const Duration(seconds: 1));
-  // print(pretty(sm1.getActiveStateRecursive()));
-
-  // print('SM: ${sm1.toString()}, ${sm1.hashCode}');
-  // print(pretty(sm1.getActiveStateRecursive()));
-  await m1s1.fire(SE.e3);
-
-  await m1.fire(E.e1);
-
-  await m1.fire(E.e2);
-
-  // ssm1.fire(SE.e2);
-  // ssm1.fire(SE.e3);
-
-  await m1s1s1.fire(SSE0.e1);
-  await m1s1s1.fire(SSE0.e3);
-
-  await Future<void>.delayed(const Duration(seconds: 1));
-
-  await m1.notifyMonitors();
-
-  await m1.notifyMonitors();
-
-  await m1.fire(E.e2);
-  await m1s1s1.fire(SSE0.e1);
-  await m1s1s1.fire(SSE0.e3);
-  await m1.fire(E.e2);
-  await m1.fire(E.e6);
-  await m1.fire(E.e5);
-  await m1s2.fire(SE2.e4);
-  await m1s2.fire(SE2.e3); // It triggers two EntryPoint transactions!
-  // await m1s2.fire(SE2.e6);
-
-  await m1s2s2.fire(SSE2.e5);
-  await Future<void>.delayed(const Duration(seconds: 1));
-  print('#################################################################');
-  print(pretty(m1.getActiveStateRecursive()));
-  print('#################################################################');
-  await m1.notifyMonitors();
-
-  await m1.fire(E.e6);
-
-  await Future<void>.delayed(const Duration(seconds: 1));
-
-  print('main done.');
-  print('SM: ${m1.toString()}, ${m1.hashCode}');
-  print('Exit.');
-  */
-}

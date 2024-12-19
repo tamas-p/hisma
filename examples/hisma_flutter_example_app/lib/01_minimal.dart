@@ -5,6 +5,17 @@ import 'package:hisma/hisma.dart' as hisma;
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
+Future<void> main() async {
+  hisma.StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m),
+  ];
+
+  await machine.start();
+  runApp(const MyApp());
+}
+
+//------------------------------------------------------------------------------
+
 enum S { a }
 
 enum E { e1 }
@@ -56,11 +67,4 @@ class MyApp extends StatelessWidget {
 
 //------------------------------------------------------------------------------
 
-Future<void> main() async {
-  hisma.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m),
-  ];
 
-  await machine.start();
-  runApp(const MyApp());
-}

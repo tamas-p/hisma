@@ -7,6 +7,21 @@ import '../ui.dart';
 import '../utility.dart';
 import 'states_events_transitions.dart';
 
+Future<void> main() async {
+  initLogging();
+  h.StateMachine.monitorCreators = [
+    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    // (m) => ConsoleMonitor(m),
+  ];
+  final machine = createParentChainMachine(
+    name: 'root',
+    historyLevel: h.HistoryLevel.shallow,
+  );
+  await machine.start();
+
+  runApp(ChainApp(machine: machine, useRootNavigator: true));
+}
+
 StateMachineWithChangeNotifier<S, E, T> createParentChainMachine({
   required String name,
   required h.HistoryLevel? historyLevel,
@@ -175,20 +190,4 @@ class ChainApp extends StatelessWidget {
       routeInformationParser: _routerGenerator.routeInformationParser,
     );
   }
-}
-
-// TODO: move main function to the beginning of the files.
-Future<void> main() async {
-  initLogging();
-  h.StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-    // (m) => ConsoleMonitor(m),
-  ];
-  final machine = createParentChainMachine(
-    name: 'root',
-    historyLevel: h.HistoryLevel.shallow,
-  );
-  await machine.start();
-
-  runApp(ChainApp(machine: machine, useRootNavigator: true));
 }

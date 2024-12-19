@@ -1,52 +1,6 @@
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
-enum S { a, b }
-
-enum E { inc, dec }
-
-enum T { toA, toB }
-
-StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
-      name: 'm1',
-      data: data,
-      initialStateId: S.a,
-      states: {
-        S.a: State(
-          etm: {
-            E.inc: [T.toB],
-          },
-        ),
-        S.b: State(
-          etm: {
-            E.dec: [T.toA],
-          },
-        ),
-      },
-      transitions: {
-        T.toA: Transition(
-          to: S.a,
-          onAction: Action(
-            description: 'decrease',
-            action: (machine, arg) {
-              machine.data =
-                  (machine.data as int) - (arg != null && arg is int ? arg : 1);
-            },
-          ),
-        ),
-        T.toB: Transition(
-          to: S.b,
-          onAction: Action(
-            description: 'increase',
-            action: (machine, arg) {
-              machine.data =
-                  (machine.data as int) + (arg != null && arg is int ? arg : 1);
-            },
-          ),
-        ),
-      },
-    );
-
 void main() {
   group('Data initialization tests', () {
     test('data initialization 1', () async {
@@ -122,3 +76,49 @@ void main() {
     },
   );
 }
+
+enum S { a, b }
+
+enum E { inc, dec }
+
+enum T { toA, toB }
+
+StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
+      name: 'm1',
+      data: data,
+      initialStateId: S.a,
+      states: {
+        S.a: State(
+          etm: {
+            E.inc: [T.toB],
+          },
+        ),
+        S.b: State(
+          etm: {
+            E.dec: [T.toA],
+          },
+        ),
+      },
+      transitions: {
+        T.toA: Transition(
+          to: S.a,
+          onAction: Action(
+            description: 'decrease',
+            action: (machine, arg) {
+              machine.data =
+                  (machine.data as int) - (arg != null && arg is int ? arg : 1);
+            },
+          ),
+        ),
+        T.toB: Transition(
+          to: S.b,
+          onAction: Action(
+            description: 'increase',
+            action: (machine, arg) {
+              machine.data =
+                  (machine.data as int) + (arg != null && arg is int ? arg : 1);
+            },
+          ),
+        ),
+      },
+    );
