@@ -33,15 +33,17 @@ class BottomSheetApp extends StatelessWidget {
   }
 }
 
-class BsScreen extends StatelessWidget {
-  const BsScreen({required this.machine, super.key});
+const mainAppScreenTitle = 'Modeless Test App';
+
+class MainScreen extends StatelessWidget {
+  const MainScreen({required this.machine, super.key});
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BottomSheer Screen')),
+      appBar: AppBar(title: const Text(mainAppScreenTitle)),
       body: Builder(
         builder: (context) {
           return Column(
@@ -85,6 +87,11 @@ class MyButton extends StatelessWidget {
   }
 }
 
+const modelessBottomSheetText = 'ModelessBottomSheet';
+const modalBottomSheetText = 'ModalBottomSheet';
+const snackBarText = 'A SnackBar has been shown.';
+const closeButtonTitle = 'Close this widget';
+
 HismaRouterGenerator<S, E> createGenerator({
   required StateMachineWithChangeNotifier<S, E, T> machine,
   required bool rootNavigator,
@@ -93,7 +100,7 @@ HismaRouterGenerator<S, E> createGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
-          widget: BsScreen(machine: machine),
+          widget: MainScreen(machine: machine),
         ),
         // S.b: PagelessCreator<E, void>(
         //   present: showTestDialog,
@@ -114,9 +121,9 @@ HismaRouterGenerator<S, E> createGenerator({
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      const Text('BottomSheet'),
+                      const Text(modelessBottomSheetText),
                       ElevatedButton(
-                        child: const Text('Close BottomSheet'),
+                        child: const Text(closeButtonTitle),
                         onPressed: () {
                           close();
                         },
@@ -150,9 +157,9 @@ HismaRouterGenerator<S, E> createGenerator({
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Text('ModalBottomSheet'),
+                    const Text(modalBottomSheetText),
                     ElevatedButton(
-                      child: const Text('Close BottomSheet'),
+                      child: const Text(closeButtonTitle),
                       onPressed: () {
                         close(99);
                       },
@@ -169,9 +176,9 @@ HismaRouterGenerator<S, E> createGenerator({
           present: (context, scaffoldMessengerState, close) =>
               scaffoldMessengerState.showSnackBar(
             SnackBar(
-              content: const Text('A SnackBar has been shown.'),
+              content: const Text(snackBarText),
               action: SnackBarAction(
-                label: 'Dismiss',
+                label: closeButtonTitle,
                 onPressed: () {
                   close();
                 },

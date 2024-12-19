@@ -208,6 +208,10 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   }
 }
 
+/// Experimental class to manage the modeless BottomSheet created by invoking
+/// showBottomSheet. Since modeless UI can not be well represented by a
+/// state in a state machine (user can interact with other UI representing
+/// other state) the usefulness of this class is questionable.
 class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
   BottomSheetCreator({
     required this.present,
@@ -242,6 +246,10 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
   }
 }
 
+/// Experimental class to manage the modeless SnackBar created by invoking
+/// showSnackBar. Since modeless UI can not be well represented by a
+/// state in a state machine (user can interact with other UI representing
+/// other state) the usefulness of this class is questionable.
 class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
   SnackBarCreator({required this.present, required super.machine, super.event});
 
