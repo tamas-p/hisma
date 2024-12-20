@@ -1,18 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine_simple.dart';
 import 'package:hisma_flutter_test/t03_hierarchical.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import '../aux/aux.dart';
 
 // import '../../test/aux/aux.dart';
 
 void main() {
-  StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-  ];
+  // StateMachine.monitorCreators = [
+  //   (m) => VisualMonitor(m, host: '192.168.122.1'),
+  // ];
   // auxInitLogging();
   testWidgets(
     'overlay test with direct fire',

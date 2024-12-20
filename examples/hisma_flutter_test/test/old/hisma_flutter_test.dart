@@ -1,14 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
-import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/old/chain_machine.dart';
 import 'package:hisma_flutter_test/old/machine.dart';
 import 'package:hisma_flutter_test/old/main.dart';
 import 'package:hisma_flutter_test/old/states_events_transitions.dart';
 import 'package:hisma_flutter_test/ui.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:logging/logging.dart';
 
 import '../aux/aux.dart';
@@ -18,10 +16,10 @@ final Logger _log = Logger(_loggerName);
 
 void main() {
   // auxInitLogging();
-  StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-    (m) => ConsoleMonitor(m),
-  ];
+  // StateMachine.monitorCreators = [
+  //   (m) => VisualMonitor(m, host: '192.168.122.1'),
+  //   (m) => ConsoleMonitor(m),
+  // ];
   testWidgets(
     'UI initiated state change.',
     (tester) async {

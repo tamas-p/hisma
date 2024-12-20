@@ -1,17 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hisma/hisma.dart';
-import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/t06_page_in_path.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import '../../test/aux/aux.dart';
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-    (m) => ConsoleMonitor(m),
-  ];
+  // StateMachine.monitorCreators = [
+  //   (m) => VisualMonitor(m, host: '192.168.122.1'),
+  //   (m) => ConsoleMonitor(m),
+  // ];
   // auxInitLogging();
   group('Page in path in child', () {
     testWidgets(
