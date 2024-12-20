@@ -10,14 +10,12 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   HismaRouterDelegate({
     required this.machine,
     required this.mapping,
-  }) /* TODO: assert(
+  }) : assert(
             machine.history == null,
-            'Machine shall not have history defined when used with '
+            'Machine (name: ${machine.name}) shall not have history defined when used with '
             'HismaRouterDelegate as we can not simply jump (as history would '
             'imply) to a state on the UI, rather it is a path that leads to a '
-            'certain UI state.'), */
-  // stack = StateStack()
-  {
+            'certain UI state.') {
     // Machine changes will result notifying listeners of this
     // router delegate that is the corresponding RouterState, which
     // in turn will call setState to schedule its rebuild and that is

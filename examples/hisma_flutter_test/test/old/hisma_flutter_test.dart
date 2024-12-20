@@ -728,9 +728,9 @@ Future<void> multiplier(
       tc,
 ) async {
   await tc(historyLevel: null, useRootNavigator: false);
-  // await tc(historyLevel: null, useRootNavigator: true);
+  await tc(historyLevel: null, useRootNavigator: true);
 
-  // TODO: remove allowing history state in machine
+  // History state shall not be used.
   // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: false);
   // await tc(historyLevel: HistoryLevel.shallow, useRootNavigator: true);
 
