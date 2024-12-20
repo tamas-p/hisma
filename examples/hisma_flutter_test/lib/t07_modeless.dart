@@ -230,7 +230,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
           onAction: h.Action(
             description: 'print return value',
             action: (machine, dynamic arg) {
-              print('arg: $arg');
+              // print('arg: $arg');
             },
           ),
         ),

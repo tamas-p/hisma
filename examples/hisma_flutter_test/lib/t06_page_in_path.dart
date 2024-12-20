@@ -199,7 +199,7 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
           onAction: h.Action(
             description: 'restart machine',
             action: (machine, dynamic _) async {
-              print('Restart machine.');
+              // print('Restart machine.');
               await machine.stop(arg: null);
               await machine.start();
             },
@@ -209,7 +209,7 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
           onAction: h.Action(
             description: 'stop machine',
             action: (machine, dynamic _) async {
-              print('Stop machine.');
+              // print('Stop machine.');
               await machine.stop(arg: null);
             },
           ),

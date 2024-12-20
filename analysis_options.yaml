@@ -17,7 +17,7 @@ linter:
   rules:
     omit_local_variable_types: true
     sort_constructors_first: true
-    avoid_print: false
+    avoid_print: true
     prefer_single_quotes: true
     #flutter_style_todos: true
     public_member_api_docs: true
@@ -44,7 +44,7 @@ analyzer:
     implicit-dynamic: false
 
   errors:
-     todo: warning
+     # todo: warning
      public_member_api_docs: ignore
      unawaited_futures: warning
 

@@ -1,5 +1,8 @@
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
+
+import 'assistance.dart';
 import 'creator.dart';
 
 /*
@@ -98,14 +101,17 @@ class StateStack {
   final LinkedHashMap<String, Presentation> _stack =
       LinkedHashMap<String, Presentation>();
 
+  final _log = getLogger('$StateStack');
+
   void printIt(String str) {
-    print('>>> $str >>>');
+    if (!kDebugMode) return;
+    _log.finest('>>> $str >>>');
     final list = _stack.entries.toList();
     for (var i = 0; i < list.length; i++) {
       final e = list[i];
-      print('$i. ${e.key} : ${e.value}');
+      _log.finest('$i. ${e.key} : ${e.value}');
     }
-    print('<<<<<<<<<<<<<<<<');
+    _log.finest('<<<<<<<<<<<<<<<<');
   }
 
   void clear() {

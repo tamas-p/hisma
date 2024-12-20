@@ -167,11 +167,6 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
             widget: presentation.widget,
           ),
         );
-      } else {
-        // throw ArgumentError(
-        //   'Presentation ${presentation.runtimeType} is not handled.',
-        // );
-        print('PAGELESS: $presentation @ ${machine.activeStateId}');
       }
     });
     assert(pages.isNotEmpty);
