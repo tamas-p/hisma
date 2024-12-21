@@ -1,11 +1,13 @@
-// ignore_for_file: avoid_print
-
 import 'package:hisma/hisma.dart';
+import 'package:hisma/src/assistance.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:test/test.dart';
 
 import '../example/others/entrypoint_exitpoint.dart';
 import 'util.dart';
+
+const _testName = 'compound_state_test';
+final _log = getLogger(_testName);
 
 void main() {
   late StateMachine<L1S, L1E, L1T> mL1;
@@ -36,8 +38,6 @@ void main() {
         completion(equals(null)),
       );
       expect(mL1.getActiveStateRecursive(), equals([L1S.s1]));
-      // print(sm.getActiveState());
-      // print(pretty(sm.getActiveState()));
       final expected1 = [
         L1S.s2,
         [
@@ -57,14 +57,14 @@ void main() {
         ]
       ];
 
-      print(mL1.getActiveStateRecursive());
-      print(pretty(mL1.getActiveStateRecursive()));
+      _log.finest(mL1.getActiveStateRecursive());
+      _log.finest(pretty(mL1.getActiveStateRecursive()));
 
       // await mL1.fire(L1_EID.e1);
       await fireAndCheck(mL1, L1E.e1, expected1);
 
-      print(mL1.getActiveStateRecursive());
-      print(pretty(mL1.getActiveStateRecursive()));
+      _log.finest(mL1.getActiveStateRecursive());
+      _log.finest(pretty(mL1.getActiveStateRecursive()));
     });
 
     test('Simple state check 2.', () async {

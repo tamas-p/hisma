@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 
 import 'package:hisma/hisma.dart';
-// import 'package:hisma_console_monitor/hisma_console_monitor.dart';
+import 'package:hisma/src/assistance.dart';
 import 'package:test/test.dart';
+
+const _testName = 'state_change_inside_state_change_test';
+final _log = getLogger(_testName);
 
 Future<void> main() async {
   // initLogging();
@@ -19,19 +20,18 @@ Future<void> main() async {
         final m1 = createMachine1();
         unawaited(
           Future<void>.delayed(const Duration(seconds: 1)).then((value) async {
-            print('# FIRE start.');
+            _log.finest('# FIRE start.');
             await m1.fire(E.c);
-            print('# FIRE stop.');
+            _log.finest('# FIRE stop.');
           }),
         );
 
         await m1.start();
-        print('m1.data:${m1.data}');
+        _log.finest('m1.data:${m1.data}');
 
         await m1.fire(E.b);
-        print('m1.data:${m1.data}');
-
-        print('main finished.');
+        _log.finest('m1.data:${m1.data}');
+        _log.finest('main finished.');
       });
     },
     skip: true,
@@ -100,9 +100,9 @@ StateMachine<S, E, T> createMachine1() => StateMachine<S, E, T>(
           // onEntry: Action(
           //   description: 'fire',
           //   action: (machine, arg) async {
-          //     print('> S.b onEntry started.');
+          //     _log.finest('> S.b onEntry started.');
           //     await machine.fire(E.a);
-          //     print('>     S.b onEntry finished.');
+          //     _log.finest('>     S.b onEntry finished.');
           //   },
           // ),
           onExit: addAction('S.b onExit'),
@@ -118,9 +118,9 @@ StateMachine<S, E, T> createMachine1() => StateMachine<S, E, T>(
           guard: Guard(
             description: 'g1',
             condition: (machine, arg) async {
-              print('> T.b Guard started.');
+              _log.finest('> T.b Guard started.');
               await Future<void>.delayed(const Duration(seconds: 3));
-              print('>     T.b Guard finished.');
+              _log.finest('>     T.b Guard finished.');
               return true;
             },
           ),
@@ -133,14 +133,14 @@ StateMachine<S, E, T> createMachine1() => StateMachine<S, E, T>(
 Action addAction(String name) => Action(
       description: name,
       action: (machine, arg) {
-        print('> $name started.');
+        _log.finest('> $name started.');
         final tmp = (machine.data as int) + 1;
 
         // await Future<void>.delayed(const Duration(seconds: 1));
         // await machine.fire(E.b);
 
         machine.data = tmp;
-        print('>     $name finished.');
+        _log.finest('>     $name finished.');
       },
     );
 
@@ -192,7 +192,7 @@ Action createGenAction(Sel sel) => Action(
       description: 'go to S.c',
       action: (machine, arg) async {
         if (((arg ?? <Sel>{}) as Set<Sel>).contains(sel)) {
-          print('Fire - $sel & $arg');
+          _log.finest('Fire - $sel & $arg');
           await machine.fire(E.c);
         }
       },

@@ -1,22 +1,24 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 
 import 'package:hisma/hisma.dart';
+import 'package:hisma/src/assistance.dart';
 import 'package:test/test.dart';
+
+const _testName = 'another_async_stops_machine';
+final _log = getLogger(_testName);
 
 void main() {
   group('Asynchronous state change tests.', () {
     test('Async Test 1', () async {
       await m1.start();
       await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
+      _log.finest('Active state: ${m1.activeStateId}');
       await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
+      _log.finest('Active state: ${m1.activeStateId}');
       await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
+      _log.finest('Active state: ${m1.activeStateId}');
       await m1.fire(E.change, arg: 0);
-      print('Active state: ${m1.activeStateId}');
+      _log.finest('Active state: ${m1.activeStateId}');
     });
   });
 }
@@ -64,6 +66,6 @@ Action createAction() => Action(
       description: 'delay',
       action: (machine, arg) async {
         await Future<void>.delayed(Duration(seconds: arg as int));
-        print(machine.activeStateId);
+        _log.finest(machine.activeStateId);
       },
     );

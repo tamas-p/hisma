@@ -1,7 +1,9 @@
-// ignore_for_file: avoid_print
-
 import 'package:hisma/hisma.dart';
+import 'package:hisma/src/assistance.dart';
 import 'package:test/test.dart';
+
+const _testName = 'compound_action_test';
+final _log = getLogger(_testName);
 
 Future<void> main() async {
   group('Group A', () {
@@ -142,9 +144,8 @@ StateMachine<S, E, T> createMachine({
           onEntry: Action(
             description: 'add',
             action: (machine, arg) {
-              print(
-                '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg',
-              );
+              _log.finest('${machine.name}/${machine.activeStateId}'
+                  ' - onEntry - data: ${machine.data}, arg: $arg');
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) + arg;
               }
@@ -153,9 +154,8 @@ StateMachine<S, E, T> createMachine({
           onExit: Action(
             description: 'subtract',
             action: (machine, arg) {
-              print(
-                '${machine.name}/${machine.activeStateId} - onExit - data: ${machine.data}, arg: $arg',
-              );
+              _log.finest('${machine.name}/${machine.activeStateId}'
+                  ' - onExit - data: ${machine.data}, arg: $arg');
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) - arg;
               }
@@ -205,9 +205,8 @@ StateMachine<S, E, T> createMachine({
           onEntry: Action(
             description: 'add',
             action: (machine, arg) {
-              print(
-                '${machine.name}/${machine.activeStateId} - onEntry - data: ${machine.data}, arg: $arg',
-              );
+              _log.finest('${machine.name}/${machine.activeStateId}'
+                  ' - onEntry - data: ${machine.data}, arg: $arg');
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) + arg;
               }
@@ -216,9 +215,8 @@ StateMachine<S, E, T> createMachine({
           onExit: Action(
             description: 'subtract',
             action: (machine, arg) {
-              print(
-                '${machine.name}/${machine.activeStateId} - data: ${machine.data}, arg: $arg',
-              );
+              _log.finest('${machine.name}/${machine.activeStateId}'
+                  ' - data: ${machine.data}, arg: $arg');
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) - arg;
               }
@@ -241,9 +239,9 @@ StateMachine<S, E, T> createMachine({
           onAction: Action(
             description: 'add',
             action: (machine, arg) {
-              print(
-                '${machine.name}/${machine.activeStateId} - toB Transition action @ ${machine.name}, data: ${machine.data}, arg:$arg',
-              );
+              _log.finest('${machine.name}/${machine.activeStateId}'
+                  ' - toB Transition action @ ${machine.name},'
+                  ' data: ${machine.data}, arg:$arg');
               if (machine.data is int && arg is int) {
                 machine.data = (machine.data as int) + arg;
               }

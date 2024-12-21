@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:hisma/hisma.dart';
 import 'package:test/test.dart';
 
