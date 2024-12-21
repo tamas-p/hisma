@@ -131,6 +131,7 @@ class Checker<S, E, T> {
     StateMachineWithChangeNotifier<S, E, T> machine,
     Map<S, Presentation> mapping,
   )? checkMachine;
+  final _seen = <S?>{};
 
   Future<void> check(
     E event, {
@@ -149,9 +150,11 @@ class Checker<S, E, T> {
     if (s == null) throw Exception('Machine ${machine.name} is not started.');
     final expected = whereTo(s, event);
     await action(machine, tester, event, act: act ?? this.act);
-    expect(machine.activeStateId, expected);
+    final ns = machine.activeStateId;
+    expect(ns, expected);
     final childMachine = _getChildMachine(machine);
-    if (childMachine != null && checkMachine != null) {
+    if (!_seen.contains(ns) && childMachine != null && checkMachine != null) {
+      _seen.add(ns);
       await checkMachine!(tester, act ?? this.act, childMachine, mapping);
     } else if (titleToBeChecked) {
       checkTitle(machine);
