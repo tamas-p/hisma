@@ -9,21 +9,6 @@ import 'hisma_router_delegate.dart';
 
 String getKey(String machineName, dynamic stateId) => '$machineName@$stateId';
 
-// Challenges:
-//
-// Imperative navigation interfering with paged (declarative navigation):
-//    When jumping back a state mapped to a ImperativeCreator we might
-//    already have one or more states on the stack mapped to PageCreators.
-//    Handling this would require popping up imperatively the corresponding
-//    paged routes.
-//
-//    Solution: Passing PageCreators is not allowed (assert).
-//
-// Principles
-// A UI element shall ONLY be closed if a circle is formed in that state
-// sequence path (sequence of stateIds that has been passed during building the
-// UI).
-
 // TODO: find better name for this class.
 // TODO: Introduce unique ID for machines besides of the String name.
 class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
