@@ -42,7 +42,7 @@ Future<void> main() async {
         await tester.binding.setSurfaceSize(const Size(1024, 1024));
         await testAllStates(tester, act: Act.tap, rootNavigator: true);
       },
-      // Can not be executed by tap as pageless always on top of child
+      // Cannot be executed by tap as pageless on root is always on top of child
       // pages effectively making it impossible to tap on buttons in these
       // child pages.
       skip: true,
