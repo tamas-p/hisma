@@ -29,108 +29,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     _routerDelegate = rd;
     _initialized = true;
   }
-/*
-  @override
-  Future<void> fireO(
-    E eventId, {
-    BuildContext? context,
-    dynamic arg,
-    bool external = true,
-  }) async {
-    final navigatorState = context != null
-        ? Navigator.of(context)
-        : routerDelegate.navigatorKey.currentState;
-    final originalStateId = activeStateId;
-    final isOriginalStateIdInStack =
-        routerDelegate.stack.contains(originalStateId);
-    await super.fire(eventId, arg: arg, external: external);
-    final newStateId = activeStateId;
-    if (newStateId == null) {
-      // Machine stopped, no need to update UI.
-      // test: ? stopped_machine
-      return;
-    }
-    final isNewStateIdInStack = routerDelegate.stack.contains(activeStateId);
-    assert(
-      // test: ? assert_on_no_circle
-      isOriginalStateIdInStack || isNewStateIdInStack,
-      'UI element was closed but the event defined in its creator led to '
-      'a state that is not present in the stack (the path is not forming a '
-      'circle). Check your mapping in your corresponding HismaRouterGenerator.',
-    );
-    if (!external) {
-      // Why? test: ? external_fire
-      return;
-    }
-    if (originalStateId == activeStateId) {
-      // No change -> No UI change.
-      // test: no_state_change
-      return;
-    }
-
-    final newPres = routerDelegate.mapping[newStateId];
-    // test: missing_presentation ?
-    assert(newPres != null, missingPresentationMsg(newStateId, name));
-    if (newPres is NoUIChange) {
-      // test: no_ui_change
-      routerDelegate.stack.add(newStateId);
-      return;
-    }
-    assert(newPres is PageCreator || newPres is ImperativeCreator);
-    if (isNewStateIdInStack) {
-      // Circle
-      if (newPres is ImperativeCreator) {
-        if (!routerDelegate.stack.isLast(newStateId)) {
-          // Only if presentation was not already closed.
-          if (routerDelegate.stack.rightBeforePage(newStateId)) {
-            // test: circle_to_imperative_before_page
-            notifyListeners();
-          } else {
-            // test: circle_to_imperative
-            _windBack(newStateId, navigatorState);
-          }
-        }
-      } else if (newPres is PageCreator) {
-        if (routerDelegate.stack.hasImperatives(newStateId)) {
-          // test: circle_to_page_has_imperatives
-          _windBack(newStateId, navigatorState);
-        } else {
-          // test: circle_to_page_has_no_imperatives
-          notifyListeners();
-        }
-      }
-    } else {
-      // New Presentation
-      if (newPres is ImperativeCreator<E, dynamic>) {
-        // test: new_presentation_imperative_open
-        final oldStateId = activeStateId;
-        routerDelegate.stack.add(newStateId);
-
-        // We want open to be executed async to the fire.
-        unawaited(
-          newPres.open(navigatorState?.context).then((dynamic result) {
-            // test: imperative_closed
-            // Signal that imp. was closed shall be removed.
-            routerDelegate.stack.remove(newStateId);
-            final event = newPres.event;
-            // TODO: Instead of assert event could be required.
-            assert(
-              event != null,
-              'For imperative creator $newPres event shall not be null.',
-            );
-            if (event != null && activeStateId == oldStateId) {
-              fire(event, arg: result, external: external);
-            }
-          }),
-        );
-      } else if (newPres is PageCreator) {
-        // test: new_presentation_page_notify
-        // test: new_presentation_page_notify_overlay
-        notifyListeners();
-      }
-    }
-  }
-*/
 
   void _windBack(S newStateId, NavigatorState? navigatorState) {
     _routerDelegate.stack.windBackTo(getKey(name, newStateId), (presentation) {
@@ -258,19 +156,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
           }),
         );
       } else if (newPres is PageCreator) {
-        // if (newPres.overlay == false && parent != null) {
-        //   // If we arrive to (non-overlay) page we have to clean up pageless
-        //   // in case they are on the root navigator and the new page is not.
-        //   // Not sure how realistic scenario is this, since normally you would
-        //   // have one such page in the beginning of a path and you only return
-        //   // there (a circle) and then windup would happen as handling circle.
-        //   _routerDelegate.stack.windBackAll((presentation) {
-        //     if (presentation is PagelessCreator && presentation.rootNavigator) {
-        //       presentation.close();
-        //     }
-        //   });
-        // }
-
         // If we arrive to (non-overlay) page we have to clean up pageless
         // in case they are on the root navigator and the new page is not.
         // Not sure how realistic scenario is this, since normally you would
@@ -284,8 +169,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
             }
           });
         }
-
-        // _windBackAll(navigatorState);
 
         // test: new_presentation_page_notify
         // test: new_presentation_page_notify_overlay
@@ -307,24 +190,11 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     );
 
     notifyListeners();
-    // In case of a stop-start of a machine (e.g. self transition in the
-    // enclosing state in the parent machine) we need to clean pageless
-    // created in root navigator. We only need to take care about the pageless
-    // as the pages are handled by the navigator when replacing its stack when
-    // the machine is started.
-    // if (_initialized && parent != null) {
-    //   _routerDelegate.stack.windBackAll((presentation) {
-    //     if (presentation is PagelessCreator /*&& presentation.rootNavigator*/) {
-    //       // presentation.close();
-    //     }
-    //   });
-    // }
   }
 
   // We shall NOT send notification in case of stop as RouterDelegate would
   // try building Navigator.pages and that is not needed as pages shall remain
   // to allow transition from old to new state.
-  //
   @override
   Future<void> stop({required dynamic arg}) async {
     // TODO: Why required arg?
