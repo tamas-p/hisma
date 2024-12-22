@@ -170,20 +170,11 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     final presentation = mapping[stateId];
     // TODO: Create unit test to check this assertion.
     assert(presentation != null, missingPresentationMsg(stateId, machine.name));
+    assert(presentation is PageCreator);
 
     if (presentation is PageCreator<E, dynamic>) {
       if (presentation.overlay == false) stack.clear();
       stack.add(getKey(machine.name, stateId), presentation);
-    } else if (presentation is ImperativeCreator) {
-      // We skip Imperative creators.
-    } else if (presentation is NoUIChange) {
-      // Explicit no update was requested, so we do nothing.
-      // TODO: Since machine will never send notify if pres was NoUIChange
-      // we will never get here => this branch can be removed from here.
-    } else {
-      throw ArgumentError(
-        'Presentation ${presentation.runtimeType} is not supported.',
-      );
     }
   }
 }
