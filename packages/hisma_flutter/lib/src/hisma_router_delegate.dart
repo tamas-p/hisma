@@ -124,19 +124,11 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   late List<Page<dynamic>> _previousPages;
   List<Page<dynamic>> _createPages() {
     final presentation = mapping[machine.activeStateId];
-    if (presentation is ImperativeCreator) {
-      // TODO: remove this part
-      // return _previousPages;
-    }
-
     final activeStateId = machine.activeStateId;
-    // We only process if machine is active. If inactive we simply build
-    // pages of the navigator from the current [_stateIds] (that was updated
-    // during the previous builds). This is required to handle the case when a
-    // child machine gets inactivated but we need its previous presentation to
-    // allow the transition (by being the background) to the new page.
-    if (activeStateId == null) {
-      // TODO: It seems we never get here. Do we need this at all?
+    // We only process if machine is active and the active state is a
+    // PageCreator. In other cases we simply return the previously created
+    // pages list.
+    if (activeStateId == null || presentation is! PageCreator) {
       return _previousPages;
     } else {
       // We only process the state if it is not leading us back to a previous
