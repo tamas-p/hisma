@@ -1,5 +1,5 @@
 @startmindmap State machine hierarchy diagram
-title Object hierachy diagram created to help designing StateMachine.copyWith() 
+title Object hierarchy diagram created to help designing StateMachine.copyWith() 
 <style>
 mindmapDiagram {
     .simple { 
