@@ -22,12 +22,7 @@ class HismaRouterGenerator<S, E> {
     mapping: mapping,
   );
 
-  // late final HismaPagelessHandler<S, E> _pagelessHandler =
-  //     HismaPagelessHandler(machine, mapping);
-
   RouteInformationParser<S> get routeInformationParser =>
       _routeInformationParser;
   HismaRouterDelegate<S, E> get routerDelegate => _routerDelegate;
-
-  // HismaPagelessHandler<S, E> get pagelessHandler => _pagelessHandler;
 }
