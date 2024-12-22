@@ -2,24 +2,21 @@ import 'package:flutter/widgets.dart';
 
 import 'hisma_router_generator.dart';
 
+/// Placeholder to implement Hisma route information parser later.
 class HismaRouteInformationParser<S, E> extends RouteInformationParser<S> {
-  HismaRouteInformationParser(this.myRouter) {
-    // print('HismaRouteInformationParser($myRouter)');
-  }
+  HismaRouteInformationParser(this.routerGenerator);
 
-  final HismaRouterGenerator<S, E> myRouter;
+  final HismaRouterGenerator<S, E> routerGenerator;
 
   @override
   Future<S> parseRouteInformation(RouteInformation routeInformation) async {
-    // print('parseRouteInformation(${routeInformation.location})');
-    return myRouter.machine.initialStateId;
+    return routerGenerator.machine.initialStateId;
   }
 
   @override
   RouteInformation? restoreRouteInformation(S configuration) {
-    // print('root restoreRouteInformation: $configuration');
     return RouteInformation(
-      location: '/${myRouter.machine.name}-$configuration',
+      location: '/${routerGenerator.machine.name}-$configuration',
     );
   }
 }
