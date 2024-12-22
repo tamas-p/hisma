@@ -41,8 +41,6 @@ ImperativeCreator <|-- SnackBarCreator
 @enduml
 */
 
-// final Logger _log = Logger('creator');
-
 /// Presentation of state machine states.
 abstract class Presentation {}
 
@@ -98,7 +96,6 @@ Page<R> _createPage<R>({
   required Widget widget,
   required String name,
 }) {
-  // print('__createPage: $name');
   return MaterialPage<R>(
     child: widget,
 
@@ -282,101 +279,3 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
     return reason;
   }
 }
-
-//------------------------------------------------------------------------------
-
-/*
-abstract class OldPagelessCreator<E, R> extends Creator<E> {
-  OldPagelessCreator({required super.event});
-
-  Future<R?> open(BuildContext context);
-  void close([R? value]);
-}
-
-class OldDialogCreator<E, R> extends OldPagelessCreator<E, R> {
-  OldDialogCreator({
-    required this.show,
-    required super.event,
-    required this.useRootNavigator,
-  });
-
-  final bool useRootNavigator;
-  final Future<R?> Function(OldDialogCreator<E, R> dc, BuildContext context)
-      show;
-  BuildContext? context;
-
-  @override
-  Future<R?> open(BuildContext context) {
-    this.context = context;
-    return show(this, context);
-  }
-
-  @override
-  void close([R? value]) {
-    final context = this.context;
-    if (context != null) {
-      // TODO: When Flutter version > 3.7 use the context.mounted instead.
-      try {
-        (context as Element).widget;
-      } catch (e) {
-        // TODO: We shall never get there. It only happens during during
-        // consecutive execution of widget tests. To be investigated.
-        _log.info('No render-object found. Widget is not mounted.');
-        return;
-      }
-      Navigator.of(context, rootNavigator: useRootNavigator).pop(value);
-    }
-  }
-}
-
-class OldSnackBarCreator<E> extends OldPagelessCreator<E, OldCtxArg> {
-  OldSnackBarCreator({
-    required this.snackBar,
-    required super.event,
-  });
-
-  SnackBar snackBar;
-
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? ret;
-
-  @override
-  Future<OldCtxArg?> open(BuildContext context) async {
-    ret = ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    final res =
-        ret != null ? ret!.closed : Future<SnackBarClosedReason?>.value();
-    final r = await res;
-    // ignore: use_build_context_synchronously
-    return OldCtxArg(context, r);
-  }
-
-  @override
-  void close([OldCtxArg? value]) {
-    ret?.close();
-  }
-}
-
-// class BottomSheetCreator<T, E> extends PagelessCreator<T, E> {
-//   BottomSheetCreator({
-//     required this.useRootNavigator,
-//     required this.show,
-//     required super.event,
-//   });
-
-//   final bool useRootNavigator;
-//   final PersistentBottomSheetController<T> Function(
-//     BottomSheetCreator<T, E> dc,
-//     BuildContext context,
-//   ) show;
-
-//   @override
-//   Future<T?> open(BuildContext context) {
-//     final ret = show.call(this, context);
-//   }
-
-//   @override
-//   void close([SnackBarClosedReason? value]) {
-//     // TODO: implement close
-//   }
-// }
-
-*/
