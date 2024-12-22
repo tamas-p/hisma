@@ -1,81 +1,30 @@
-@startuml Class Diagram
-class Application #LightYellow
-class StateMachineWithChangeNotifier<S, E, T> #LightYellow
-class RouterDelegate<S> #LightBlue
-class HismaRouterDelegate<S, E> #LightGreen
-class HismaRouterGenerator<S, E> #LightGreen
-class Map<S, Presentation> #LightYellow
-class StatelessWidget #LightBlue
-class MaterialApp #LightBlue
-class StateStack<S> #LightGreen
-class PagelessHandler #LightGreen
+@startuml hisma_flutter_class_diagram
+!$flutter = LightBlue
+!$hisma_flutter = LightGreen
+!$app = LightYellow
 
-StatelessWidget <|-- Application
-MaterialApp -- Application : build
-MaterialApp o-- HismaRouterGenerator
-Application *-- StateMachineWithChangeNotifier
-HismaRouterGenerator -* Application
 
-' HismaRouterGenerator o-- StateMachineWithChangeNotifier
-HismaRouterGenerator --o StateMachineWithChangeNotifier
+class Application #$app
+class StateMachineWithChangeNotifier<S, E, T> #$app
+class HismaRouterDelegate<S, E> #$hisma_flutter
+class HismaRouterGenerator<S, E> #$hisma_flutter
+class Map<S, Presentation> #$app
+class MaterialApp #$flutter
+class StateStack #$hisma_flutter
+
+Application -- MaterialApp : build
+StateMachineWithChangeNotifier -* Application
+Application *-- HismaRouterGenerator
+
+MaterialApp o-- HismaRouterDelegate
+
+StateMachineWithChangeNotifier o--o HismaRouterDelegate
+
 HismaRouterDelegate -* HismaRouterGenerator
-
-RouterDelegate <|-- HismaRouterDelegate
 
 HismaRouterGenerator *-- Map
 HismaRouterDelegate o-- Map
-Map --o StateStack
 
-StateMachineWithChangeNotifier *--  StateStack
-
-StateStack *-- PagelessHandler
-StateStack o-- HismaRouterDelegate
-
-@enduml
-
-@startuml How state change is propagated
-class StateMachineWithChangeNotifier<S, E, T> #LightYellow
-class HismaRouterDelegate<S, E> #LightGreen
-class StateStack<S> #LightGreen
-class PagelessHandler #LightGreen
-
-StateMachineWithChangeNotifier o-- StateStack
-StateStack o-- HismaRouterDelegate
-StateStack *-- PagelessHandler
-
-@enduml
-
-@startuml New Class Diagram
-class Application #LightYellow
-class StateMachineWithChangeNotifier<S, E, T> #LightYellow
-class RouterDelegate<S> #LightBlue
-class HismaRouterDelegate<S, E> #LightGreen
-class HismaRouterGenerator<S, E> #LightGreen
-class Map<S, Presentation> #LightYellow
-class StatelessWidget #LightBlue
-class MaterialApp #LightBlue
-class StateStack<S> #LightGreen
-class PagelessHandler #LightGreen
-
-StatelessWidget <|-- Application
-MaterialApp -- Application : build
-MaterialApp o-- HismaRouterGenerator
-Application *-- StateMachineWithChangeNotifier
-HismaRouterGenerator -* Application
-
-' HismaRouterGenerator o-- StateMachineWithChangeNotifier
-HismaRouterGenerator --o StateMachineWithChangeNotifier
-HismaRouterDelegate -* HismaRouterGenerator
-
-RouterDelegate <|-- HismaRouterDelegate
-
-HismaRouterGenerator *-- Map
-HismaRouterDelegate o-- Map
-Map --o StateStack
-
-StateMachineWithChangeNotifier *--  StateStack
-
-StateStack *-- PagelessHandler
-StateStack o-- HismaRouterDelegate
+StateStack -* HismaRouterDelegate  
 
 @enduml
