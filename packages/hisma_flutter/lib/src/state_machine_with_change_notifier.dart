@@ -196,8 +196,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   // try building Navigator.pages and that is not needed as pages shall remain
   // to allow transition from old to new state.
   @override
-  Future<void> stop({required dynamic arg}) async {
-    // TODO: Why required arg?
+  Future<void> stop({dynamic arg}) async {
     await super.stop(arg: arg);
     // TODO: do we need this notify here?
     // notifyListeners();

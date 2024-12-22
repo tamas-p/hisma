@@ -467,7 +467,7 @@ Changed: $changed
 
   /// Stopping the state machine also exiting active state and
   /// recursively stopping all potential child machines.
-  Future<void> stop({required dynamic arg}) async {
+  Future<void> stop({dynamic arg}) async {
     _log.fine(() => '$name  stop, state:$activeStateId, arg:$arg');
     await _exitState(arg: arg);
     _activeStateId = null;
