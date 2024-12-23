@@ -19,7 +19,3 @@ class ExitNotificationFromMachine<E> extends Message {
   E exitPointId;
   dynamic arg;
 }
-
-class GetName extends Message {
-  String? name;
-}

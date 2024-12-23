@@ -73,11 +73,7 @@ class StateMachine<S, E, T> {
   /// It can be used e.g. by state machine monitors that implement [Monitor]
   /// interface to display parent related actions for a state machine (e.g. in
   /// PlantUmlConverter in hisma_visual_monitor).
-  String? get parentName {
-    final nameMessage = GetName();
-    notifyRegion?.call(nameMessage);
-    return nameMessage.name;
-  }
+  String? get parentName => parent?.name;
 
   final S initialStateId;
   final StateMap<S, E, T> states;
@@ -660,8 +656,6 @@ Changed: $changed
       notifyMonitors();
       // await notifyParentAboutMyStateChange?.call();
       await notifyRegion?.call(StateChangeNotification());
-    } else if (notification is GetName) {
-      notification.name = name;
     }
   }
 
