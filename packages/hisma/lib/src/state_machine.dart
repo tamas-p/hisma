@@ -41,7 +41,7 @@ class StateMachine<S, E, T> {
       _log.fine(() => 'myName=$name');
       if (state is State<E, T, S>) {
         // TODO: Do we need ?? here?
-        state.notifyMachine ??= _processNotification;
+        state.notifyMachine ??= _processStateNotification;
         state.machine = this;
         for (final region in state.regions) {
           region.machine.parent = this;
@@ -642,7 +642,7 @@ class StateMachine<S, E, T> {
     return selectedTransitionWithId;
   }
 
-  Future<void> _processNotification(Message notification) async {
+  Future<void> _processStateNotification(Message notification) async {
     if (notification is ExitNotificationFromRegion<E>) {
       _log.info(
         () =>
