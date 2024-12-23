@@ -17,15 +17,15 @@ Future<void> main() async {
       expect(machine.activeStateId, machine.initialStateId);
       expect(find.text(mainAppScreenTitle), findsWidgets);
 
-      await ttt(tester, E.fwdB, modelessBottomSheetText);
-      await ttt(tester, E.fwdC, modalBottomSheetText);
-      await ttt(tester, E.fwdD, snackBarText);
+      await check(tester, E.fwdB, modelessBottomSheetText);
+      await check(tester, E.fwdC, modalBottomSheetText);
+      await check(tester, E.fwdD, snackBarText);
     },
     skip: false,
   );
 }
 
-Future<void> ttt(WidgetTester tester, E event, String expected) async {
+Future<void> check(WidgetTester tester, E event, String expected) async {
   await tester.tap(find.text(event.toString()));
   await tester.pumpAndSettle();
   expect(find.text(mainAppScreenTitle), findsWidgets);
