@@ -77,15 +77,6 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
             description: 'Evaluate result.',
             action: (machine, dynamic arg) async {
               // print('Received: $arg');
-              if (arg is OldCtxArg && arg.arg is E) {
-                if (arg.arg != E.self) {
-                  await machine.fire(
-                    arg.arg,
-                    arg: arg.context,
-                    external: false,
-                  );
-                }
-              }
             },
           ),
         ),

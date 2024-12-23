@@ -227,9 +227,3 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     return machine;
   }
 }
-
-class OldCtxArg {
-  OldCtxArg(this.context, [this.arg]);
-  BuildContext context;
-  dynamic arg;
-}
