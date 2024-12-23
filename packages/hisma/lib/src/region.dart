@@ -40,7 +40,6 @@ class Region<S, E, T, SS> {
   /// to find the corresponding event that is connected to the child's
   /// exitPointId.
   Future<void> _processMachineNotification(
-    // ExitNotificationFromMachine<SS> notification,
     Message notification,
   ) async {
     if (notification is ExitNotificationFromMachine) {

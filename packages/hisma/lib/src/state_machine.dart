@@ -213,10 +213,9 @@ class StateMachine<S, E, T> {
     );
     _log.info('FIRE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     _log.fine(
-      () => '''
-Changed: $changed
-  monitors: $_monitors
-  external: $external''',
+      () => 'Changed: $changed '
+          'monitors: $_monitors '
+          'external: $external',
     );
     if (changed && external) {
       // Notify parent that active state of
@@ -654,7 +653,6 @@ Changed: $changed
     } else if (notification is StateChangeNotification) {
       _log.fine(() => '$name  _processNotification: StateChangeNotification');
       notifyMonitors();
-      // await notifyParentAboutMyStateChange?.call();
       await notifyRegion?.call(StateChangeNotification());
     }
   }

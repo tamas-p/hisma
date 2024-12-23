@@ -75,11 +75,6 @@ class State<E, T, S> extends RegularState<E, T, S> {
   /// Processes event notification from a [Region]. It's only purpose
   /// is to pass it upwards to the enclosing parent state machine.
   Future<void> _processRegionNotification(Message notification) async {
-    // for (final region in regions ?? []) {
-    //   if (region.machine.activeStateId == null) return;
-    //   await region.machine.stop();
-    // }
-
     await notifyMachine?.call(notification);
   }
 }
