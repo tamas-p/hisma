@@ -72,10 +72,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       'a state that is not present in the stack (the path is not forming a '
       'circle). Check your mapping in your corresponding HismaRouterGenerator.',
     );
-    if (!external) {
-      // Why? test: ? external_fire
-      return;
-    }
     if (originalStateId == activeStateId) {
       // No change -> No UI change.
       // test: no_state_change
