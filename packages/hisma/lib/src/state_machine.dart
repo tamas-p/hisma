@@ -7,7 +7,7 @@ import 'transition.dart';
 import 'trigger.dart';
 
 typedef StateMap<S, E, T> = Map<S, BaseState<E, T, S>>;
-typedef TransitionMap<T, S> = Map<T, Edge>;
+typedef TransitionMap<T, S> = Map<T, Edge<S>>;
 typedef MonitorGenerator = Monitor Function(
   StateMachine<dynamic, dynamic, dynamic>,
 );
@@ -247,7 +247,7 @@ class StateMachine<S, E, T> {
   }
 
   Future<bool> _executeTransition({
-    required _TransitionWithId<T>? transitionWithId,
+    required _TransitionWithId<T, S>? transitionWithId,
     E? eventId,
     required dynamic arg,
   }) async {
@@ -535,7 +535,7 @@ class StateMachine<S, E, T> {
   }
 
   /// Calculates which transition shall be used for the eventId parameter.
-  Future<_TransitionWithId<T>?> _getTransitionByEvent(
+  Future<_TransitionWithId<T, S>?> _getTransitionByEvent(
     E eventId,
     dynamic arg,
   ) async {
@@ -564,11 +564,11 @@ class StateMachine<S, E, T> {
   /// Calculates which transition shall be used from the list of transitions
   /// by looping though them and selecting the one with highest priority whose
   /// guard condition (or lack of it) allows it.
-  Future<_TransitionWithId<T>?> _selectTransition(
+  Future<_TransitionWithId<T, S>?> _selectTransition(
     List<T> transitionIds,
     dynamic arg,
   ) async {
-    _TransitionWithId<T>? selectedTransitionWithId;
+    _TransitionWithId<T, S>? selectedTransitionWithId;
     for (final transitionId in transitionIds) {
       final transition = transitions[transitionId];
       assert(
@@ -681,13 +681,13 @@ class StateMachine<S, E, T> {
 
 /// Helper class to allow return both Transition and its ID from
 /// the [_getTransitionByEvent] method.
-class _TransitionWithId<T> {
+class _TransitionWithId<T, S> {
   _TransitionWithId({
     required this.edge,
     required this.id,
   });
 
-  Edge edge;
+  Edge<S> edge;
   T id;
 }
 

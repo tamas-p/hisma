@@ -4,7 +4,7 @@ import 'action.dart';
 import 'guard.dart';
 import 'state_machine.dart';
 
-abstract class Edge {
+abstract class Edge<S> {
   Edge({
     this.guard,
     this.priority = 0,
@@ -21,7 +21,7 @@ abstract class Edge {
   DateTime? lastTime;
 }
 
-class InternalTransition extends Edge {
+class InternalTransition<S> extends Edge<S> {
   InternalTransition({
     Guard? guard,
     int priority = 0,
@@ -40,7 +40,7 @@ class InternalTransition extends Edge {
 /// Represents a transition including the corresponding guard and priority
 /// to this target and the action that happens at the transition.
 /// [S] State identifier type.
-class Transition<S> extends Edge {
+class Transition<S> extends Edge<S> {
   /// Creates the object that represents a transition.
   /// * [to] Target state of the transition.
   /// * [guard] The guard function that only returns true if transition allowed.

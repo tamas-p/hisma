@@ -341,7 +341,7 @@ class MachineConverter {
   String _getInternalTransitionLabel({
     required dynamic stateId,
     required dynamic transitionId,
-    required InternalTransition transition,
+    required InternalTransition<dynamic> transition,
     required dynamic eventId,
   }) {
     final sb = StringBuffer();
