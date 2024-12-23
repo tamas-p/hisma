@@ -51,10 +51,8 @@ abstract class Message
 class StateChangeNotification
 class ExitNotificationFromRegion<E>
 class ExitNotificationFromMachine<E>
-class GetName
 
 Message <|-- StateChangeNotification
 Message <|-- ExitNotificationFromRegion
 Message <|-- ExitNotificationFromMachine
-Message <|-- GetName
 @enduml
