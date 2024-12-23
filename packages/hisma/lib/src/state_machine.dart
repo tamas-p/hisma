@@ -394,6 +394,9 @@ class StateMachine<S, E, T> {
   StateMachine<S1, E1, T1> find<S1, E1, T1>(String name) {
     final machine = _findIt(name);
     if (machine is! StateMachine<S1, E1, T1>) {
+      // We throw exception and not returning null to optimize for the usual
+      // case when machine is found. This way user of find does not to worry
+      // about null checking.
       throw HismaMachineNotFoundException(
         machine == null
             ? '$name machine is not found in ${this.name} hierarchy. '

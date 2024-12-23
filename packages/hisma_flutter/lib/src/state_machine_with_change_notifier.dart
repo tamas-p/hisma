@@ -221,8 +221,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   StateMachineWithChangeNotifier<S1, E1, T1> find<S1, E1, T1>(String name) {
     final machine = super.find<S1, E1, T1>(name);
     if (machine is! StateMachineWithChangeNotifier<S1, E1, T1>) {
-      // TODO: isn't it simpler/better simply return null?
-      throw Exception('Machine $name is ${machine.runtimeType}.');
+      throw HismaMachineNotFoundException(
+        'Machine $name is ${machine.runtimeType}.',
+      );
     }
     return machine;
   }
