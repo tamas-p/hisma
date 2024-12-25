@@ -61,7 +61,7 @@ Future<void> checkMachine(
   StateMachineWithChangeNotifier<S, E, T> machine,
   Map<S, Presentation> mapping,
 ) async {
-  final c = Checker(
+  final c = Checker<S, E, T>(
     tester: tester,
     act: act,
     machine: machine,

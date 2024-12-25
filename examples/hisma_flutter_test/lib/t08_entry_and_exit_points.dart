@@ -12,7 +12,7 @@ Future<void> main(List<String> args) async {
   final machine = createMachine();
   await machine.start();
 
-  runApp(EntryExitApp(machine: machine, rootNavigator: false));
+  runApp(EntryExitApp(machine: machine, rootNavigator: true));
 }
 
 class EntryExitApp extends StatelessWidget {
@@ -83,8 +83,11 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
         SC.b: MaterialPageCreator<EC, void>(
           widget: Screen(machine, SC.b),
         ),
-        SC.c: MaterialPageCreator<EC, void>(
-          widget: Screen(machine, SC.c),
+        SC.c: PagelessCreator<EC, void>(
+          present: showTestDialog,
+          rootNavigator: rootNavigator,
+          machine: machine,
+          event: EC.back,
         ),
       },
     );
@@ -95,11 +98,12 @@ enum E { forward, fwd1, fwd2, back }
 
 enum T { toA, toB, toC, toD }
 
+const parentMachineName = 'parentMachine';
 const childMachineName = 'childMachine';
 
 StateMachineWithChangeNotifier<S, E, T> createMachine() =>
     StateMachineWithChangeNotifier(
-      name: 'parentMachine',
+      name: parentMachineName,
       events: E.values,
       initialStateId: S.a,
       states: {
@@ -176,6 +180,7 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
         ),
         SC.c: h.State(
           etm: {
+            EC.back: [TC.toB],
             EC.forward: [TC.toA],
             EC.exit1: [TC.toEx1],
             EC.exit2: [TC.toEx2],

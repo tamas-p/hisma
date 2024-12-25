@@ -48,18 +48,18 @@ Future<void> pageBack(WidgetTester tester) async {
   });
 }
 
-List<StateMachine<S, E, T>> getActiveMachines<S, E, T>(
-  StateMachine<S, E, T> machine,
+List<StateMachine<dynamic, dynamic, dynamic>> getActiveMachines(
+  StateMachine<dynamic, dynamic, dynamic> machine,
 ) {
-  final list = <StateMachine<S, E, T>>[];
+  final list = <StateMachine<dynamic, dynamic, dynamic>>[];
   if (machine.activeStateId != null) {
     list.add(machine);
     final st = machine.states[machine.activeStateId];
-    if (st != null && st is State<E, T, S>) {
+    if (st != null && st is State<dynamic, dynamic, dynamic>) {
       if (st.regions.isNotEmpty) {
         assert(st.regions.length == 1);
         list.addAll(
-          getActiveMachines(st.regions.first.machine as StateMachine<S, E, T>),
+          getActiveMachines(st.regions.first.machine),
         );
       }
     }
@@ -152,10 +152,12 @@ class Checker<S, E, T> {
     await action(machine, tester, event, act: act ?? this.act);
     final ns = machine.activeStateId;
     expect(ns, expected);
-    final childMachine = _getChildMachine(machine);
-    if (!_seen.contains(ns) && childMachine != null && checkMachine != null) {
+    final StateMachineWithChangeNotifier<S, E, T>? childMachine;
+    if (checkMachine != null &&
+        !_seen.contains(ns) &&
+        (childMachine = _getChildMachine(machine)) != null) {
       _seen.add(ns);
-      await checkMachine!(tester, act ?? this.act, childMachine, mapping);
+      await checkMachine!(tester, act ?? this.act, childMachine!, mapping);
     } else if (titleToBeChecked) {
       checkTitle(machine);
     }
