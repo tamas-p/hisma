@@ -1,18 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hisma/hisma.dart';
-import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/t08_entry_and_exit_points.dart';
-import 'package:hisma_flutter_test/ui.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 import '../aux/aux.dart';
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
-    // (m) => ConsoleMonitor(m),
-  ];
+  // StateMachine.monitorCreators = [
+  //   (m) => VisualMonitor(m, host: '192.168.122.1'),
+  //   (m) => ConsoleMonitor(m),
+  // ];
   // auxInitLogging();
 
   testWidgets(
