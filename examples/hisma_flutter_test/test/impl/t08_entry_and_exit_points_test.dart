@@ -11,11 +11,12 @@ import '../aux/aux.dart';
 Future<void> main() async {
   StateMachine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
-    (m) => ConsoleMonitor(m),
+    // (m) => ConsoleMonitor(m),
   ];
   // auxInitLogging();
+
   testWidgets(
-    'Modeless test',
+    'Entry and exit points',
     (tester) async {
       final machine = createMachine();
       await machine.start();
@@ -25,73 +26,84 @@ Future<void> main() async {
       expect(machine.activeStateId, machine.initialStateId);
       checkTitle(machine);
 
-      final cp = Checker(
+      final checker = Checker(
         tester: tester,
-        act: Act.tap,
-        machine: machine,
-        mapping: app.gen.mapping,
+        parentMachine: machine,
+        childMachine: machine.find<SC, EC, TC>(childMachineName),
       );
 
-      final cc = Checker(
-        tester: tester,
-        act: Act.tap,
-        machine: machine.find<SC, EC, TC>(childMachineName),
-        mapping: app.gen.mapping,
-      );
+      // exit1
+      //----------------------------------------------
 
-      await cp.check(E.forward);
+      await checker.checkParent(E.forward, S.b, SC.a);
+      await checker.checkChild(EC.forward, S.b, SC.b);
+      await checker.checkChild(EC.forward, S.b, SC.c);
+      await checker.checkChild(EC.exit1, S.c, null);
+      await checker.checkParent(E.forward, S.a, null);
 
-      await cc.check(EC.forward);
-      await cc.check(EC.forward);
-      await cc.check(EC.forward);
-      await cc.check(EC.forward);
       // TODO: When hot reload when machine is on PagelessCreator it throws
       // LateError (LateInitializationError: Field '_previousPages@95086382'
       // has not been initialized.)
-      await cc.check(EC.forward);
-      // print('Finished');
-    },
-    skip: false,
-  );
+      await checker.checkParent(E.fwd1, S.b, SC.a);
+      await checker.checkChild(EC.forward, S.b, SC.b);
+      await checker.checkChild(EC.forward, S.b, SC.c);
+      await checker.checkChild(EC.exit1, S.c, null);
+      await checker.checkParent(E.forward, S.a, null);
 
-  testWidgets(
-    'Modeless test 2',
-    (tester) async {
-      final machine = createMachine();
-      await machine.start();
-      final app = EntryExitApp(machine: machine, rootNavigator: false);
+      await checker.checkParent(E.fwd2, S.b, SC.b);
+      await checker.checkChild(EC.forward, S.b, SC.c);
+      await checker.checkChild(EC.exit1, S.c, null);
+      await checker.checkParent(E.forward, S.a, null);
 
-      await tester.pumpWidget(app);
-      expect(machine.activeStateId, machine.initialStateId);
-      checkTitle(machine);
+      // exit2
+      //----------------------------------------------
 
-      await check(tester, machine, machine, E.forward, S.b);
+      await checker.checkParent(E.forward, S.b, SC.a);
+      await checker.checkChild(EC.forward, S.b, SC.b);
+      await checker.checkChild(EC.forward, S.b, SC.c);
+      await checker.checkChild(EC.exit2, S.d, null);
+      await checker.checkParent(E.forward, S.a, null);
 
-      final childMachine = machine.find<SC, EC, TC>(childMachineName);
-      await check(tester, machine, childMachine, EC.forward, SC.b);
-      await check(tester, machine, childMachine, EC.forward, SC.c);
-      await check(tester, machine, childMachine, EC.exit1, null);
+      await checker.checkParent(E.fwd1, S.b, SC.a);
+      await checker.checkChild(EC.forward, S.b, SC.b);
+      await checker.checkChild(EC.forward, S.b, SC.c);
+      await checker.checkChild(EC.exit2, S.d, null);
+      await checker.checkParent(E.forward, S.a, null);
 
-      await check(tester, machine, machine, E.forward, S.a);
-      await check(tester, machine, machine, E.fwd1, S.b);
-      await check(tester, machine, childMachine, EC.forward, SC.b);
-      await check(tester, machine, childMachine, EC.forward, SC.c);
-      await check(tester, machine, childMachine, EC.exit1, null);
-
-      await check(tester, machine, machine, E.forward, S.a);
+      await checker.checkParent(E.fwd2, S.b, SC.b);
+      await checker.checkChild(EC.forward, S.b, SC.c);
+      await checker.checkChild(EC.exit2, S.d, null);
+      await checker.checkParent(E.forward, S.a, null);
     },
     skip: false,
   );
 }
 
-Future<void> check<S, E, T>(
-  WidgetTester tester,
-  StateMachineWithChangeNotifier<S, E, T> parentMachine,
-  StateMachineWithChangeNotifier<S, E, T> machine,
-  E event,
-  S? after,
-) async {
-  await action(machine, tester, event);
-  expect(machine.activeStateId, after);
-  checkTitle(parentMachine);
+class Checker {
+  Checker({
+    required this.tester,
+    required this.parentMachine,
+    required this.childMachine,
+  });
+
+  final WidgetTester tester;
+  final StateMachineWithChangeNotifier<S, E, T> parentMachine;
+  final StateMachineWithChangeNotifier<SC, EC, TC> childMachine;
+
+  Future<void> checkParent(E event, S? parent, SC? child) =>
+      _check(parentMachine, event, parent, child);
+  Future<void> checkChild(EC event, S? parent, SC? child) =>
+      _check(childMachine, event, parent, child);
+
+  Future<void> _check<S, E, T>(
+    StateMachineWithChangeNotifier<S, E, T> machine,
+    E event,
+    S? parent,
+    SC? child,
+  ) async {
+    await action(machine, tester, event);
+    expect(parentMachine.activeStateId, parent);
+    expect(childMachine.activeStateId, child);
+    checkTitle(parentMachine);
+  }
 }
