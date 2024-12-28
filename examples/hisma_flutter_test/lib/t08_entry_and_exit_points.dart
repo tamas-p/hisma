@@ -67,6 +67,9 @@ HismaRouterGenerator<S, E> createParentGenerator({
         S.d: MaterialPageCreator<E, void>(
           widget: Screen(machine, S.d),
         ),
+        S.e: MaterialPageCreator<E, void>(
+          widget: Screen(machine, S.e),
+        ),
       },
     );
 
@@ -92,11 +95,11 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
       },
     );
 
-enum S { a, b, c, d }
+enum S { a, b, c, d, e }
 
-enum E { forward, fwd1, fwd2, back }
+enum E { forward, fwd1, fwd2, fwd3, back }
 
-enum T { toA, toB, toC, toD }
+enum T { toA, toB, toC, toD, toE }
 
 const parentMachineName = 'parentMachine';
 const childMachineName = 'childMachine';
@@ -112,12 +115,14 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
             E.forward: [T.toB],
             E.fwd1: [T.toB],
             E.fwd2: [T.toB],
+            E.fwd3: [T.toB],
           },
         ),
         S.b: h.State(
           etm: {
             E.fwd1: [T.toC],
             E.fwd2: [T.toD],
+            E.fwd3: [T.toE],
           },
           regions: [
             h.Region<S, E, T, SC>(
@@ -127,10 +132,13 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
                     SC.en1,
                 h.Trigger(source: S.a, event: E.fwd2, transition: T.toB):
                     SC.en2,
+                h.Trigger(source: S.a, event: E.fwd3, transition: T.toB):
+                    SC.en3,
               },
               exitConnectors: {
                 SC.ex1: E.fwd1,
                 SC.ex2: E.fwd2,
+                SC.ex3: E.fwd3,
               },
             ),
           ],
@@ -145,20 +153,26 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
             E.forward: [T.toA],
           },
         ),
+        S.e: h.State(
+          etm: {
+            E.forward: [T.toA],
+          },
+        ),
       },
       transitions: {
         T.toA: h.Transition(to: S.a),
         T.toB: h.Transition(to: S.b),
         T.toC: h.Transition(to: S.c),
         T.toD: h.Transition(to: S.d),
+        T.toE: h.Transition(to: S.e),
       },
     );
 
-enum SC { a, b, c, en1, en2, ex1, ex2 }
+enum SC { a, b, c, en1, en2, en3, ex1, ex2, ex3 }
 
 enum EC { forward, back, exit1, exit2 }
 
-enum TC { toA, toB, toC, toEx1, toEx2 }
+enum TC { toA, toB, toC, toEx1, toEx2, toEx3 }
 
 StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
     StateMachineWithChangeNotifier<SC, EC, TC>(
@@ -168,6 +182,7 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
       states: {
         SC.en1: h.EntryPoint([TC.toA]),
         SC.en2: h.EntryPoint([TC.toB]),
+        SC.en3: h.EntryPoint([TC.toEx3]),
         SC.a: h.State(
           etm: {
             EC.forward: [TC.toB],
@@ -188,6 +203,7 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
         ),
         SC.ex1: h.ExitPoint(),
         SC.ex2: h.ExitPoint(),
+        SC.ex3: h.ExitPoint(),
       },
       transitions: {
         TC.toA: h.Transition(to: SC.a),
@@ -195,5 +211,6 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
         TC.toC: h.Transition(to: SC.c),
         TC.toEx1: h.Transition(to: SC.ex1),
         TC.toEx2: h.Transition(to: SC.ex2),
+        TC.toEx3: h.Transition(to: SC.ex3),
       },
     );
