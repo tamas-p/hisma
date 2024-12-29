@@ -92,13 +92,6 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
         // Being in a different state indicates that there ended up here
         // as a result a previous fire (that moved to another state) hence
         // we shall not trigger another fire.
-
-        // TODO: Instead of assert event could be required.
-        final pres = mapping[machine.activeStateId];
-        assert(
-          pres is Creator<E> && pres.event != null,
-          'For $pres event shall not be null when its overlay is true.',
-        );
         _fire(result);
       }
     }
@@ -107,15 +100,17 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
 
   void _fire(dynamic result) {
     final presentation = mapping[machine.activeStateId];
+    assert(presentation is Creator<E>, '$presentation is not a Creator<$E>.');
     if (presentation is Creator<E>) {
       final event = presentation.event;
+      // TODO: Instead of assert event could be required.
+      assert(
+          event != null,
+          '$presentation defined for ${machine.activeStateId}'
+          ' shall have its event set.');
       if (event != null) {
         machine.fire(event, arg: result);
-      } else {
-        _log.info('No event defined.');
       }
-    } else {
-      throw Exception('NOK');
     }
   }
 
