@@ -84,7 +84,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   bool _onPopPage(Route<dynamic> route, dynamic result) {
     final didPop = route.didPop(result);
     if (didPop) {
-      stack.removeByStr(route.settings.name);
+      stack.remove(route.settings.name);
       final activeKey = getKey(machine.name, machine.activeStateId);
       if (route.settings.name == activeKey) {
         // We only fire if we are in the same state when the route
@@ -109,7 +109,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
           '$presentation defined for ${machine.activeStateId}'
           ' shall have its event set.');
       if (event != null) {
-        machine.fire(event, arg: result);
+        machine.fire(event, arg: result, uiClosed: true);
       }
     }
   }

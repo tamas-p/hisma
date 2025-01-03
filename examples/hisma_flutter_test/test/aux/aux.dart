@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as m;
 import 'package:flutter_test/flutter_test.dart';
@@ -162,4 +164,36 @@ class Checker<S, E, T> {
       checkTitle(machine);
     }
   }
+}
+
+/// This auxiliary function is required to expect errors or exceptions
+/// during an operation that was initiated inside a Future.
+Future<void> expectThrowInFuture<T>(
+  Future<void> Function() function, {
+  String? assertText,
+}) async {
+  Object? capturedError;
+  await runZonedGuarded(() async {
+    await function();
+  }, (error, stack) {
+    capturedError = error;
+  });
+  expect(capturedError, isA<T>());
+  if (assertText != null) {
+    expect(capturedError.toString(), contains(assertText));
+  }
+}
+
+/// This auxiliary function is required to expect errors or exceptions
+/// during an operation that was initiated by tapping on the UI hence
+/// being decoupled from the original call chain.
+Future<void> expectThrow<T>(Future<void> Function() function) async {
+  Object? capturedError;
+  final save = m.FlutterError.onError;
+  m.FlutterError.onError = (m.FlutterErrorDetails details) {
+    capturedError = details.exception;
+    m.FlutterError.onError = save;
+  };
+  await function();
+  expect(capturedError, isA<T>());
 }

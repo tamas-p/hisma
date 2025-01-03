@@ -34,14 +34,9 @@ class StateStack {
     printIt('ADD($key)');
   }
 
-  void remove(String key) {
+  void remove(String? key) {
     _stack.remove(key);
     printIt('REMOVE($key)');
-  }
-
-  void removeByStr(String? key) {
-    _stack.removeWhere((element, p) => element == key);
-    printIt('REMOVE_BY_STR($key)');
   }
 
   void cleanUpCircle(String key) {

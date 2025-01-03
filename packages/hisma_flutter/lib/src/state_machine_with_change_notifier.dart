@@ -49,13 +49,11 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     BuildContext? context,
     dynamic arg,
     bool external = true,
+    bool uiClosed = false,
   }) async {
-    final navigatorState = context != null
-        ? Navigator.of(context)
-        : _routerDelegate.navigatorKey.currentState;
+    // We get the navigator state from the context before async gap (fire).
+    final ns = context != null ? Navigator.of(context) : null;
     final originalStateId = activeStateId;
-    final isOriginalStateIdInStack =
-        _routerDelegate.stack.contains(getKey(name, originalStateId));
     await super.fire(eventId, arg: arg, external: external);
     final newStateId = activeStateId;
     if (newStateId == null) {
@@ -66,8 +64,8 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     final isNewStateIdInStack =
         _routerDelegate.stack.contains(getKey(name, activeStateId));
     assert(
-      // test: ? assert_on_no_circle
-      isOriginalStateIdInStack || isNewStateIdInStack,
+      // test: assert_on_no_circle
+      !uiClosed || isNewStateIdInStack,
       'UI element was closed but the event defined in its creator led to '
       'a state that is not present in the stack (the path is not forming a '
       'circle). Check your mapping in your corresponding HismaRouterGenerator.',
@@ -87,6 +85,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
       return;
     }
     assert(newPres is PageCreator || newPres is ImperativeCreator);
+    final navigatorState = ns ?? _routerDelegate.navigatorKey.currentState;
     if (isNewStateIdInStack) {
       // Circle
       if (newPres is ImperativeCreator) {
@@ -147,7 +146,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
               'For imperative creator $newPres event shall not be null.',
             );
             if (event != null && activeStateId == oldStateId) {
-              fire(event, arg: result, external: external);
+              fire(event, arg: result, external: external, uiClosed: true);
             }
           }),
         );

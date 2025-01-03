@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
@@ -36,6 +37,59 @@ Future<void> main() async {
           await testAllStates(tester, act: Act.tap, rootNavigator: true);
         },
       );
+    });
+  });
+
+  group('Assertion tests', () {
+    testWidgets('Assertion tests, UiClosedNoCircle, BackButton',
+        (tester) async {
+      final machine = createLongerMachine();
+      await machine.start();
+      final app = ImperativeApp(machine: machine, rootNavigator: false);
+      await tester.pumpWidget(app);
+      expect(machine.activeStateId, machine.initialStateId);
+      checkTitle(machine);
+      final c = Checker<S, E, T>(
+        tester: tester,
+        act: Act.tap,
+        machine: machine,
+        mapping: app.gen.mapping,
+      );
+
+      await c.check(E.back);
+      final backButton = find.byType(BackButton);
+      await expectThrowInFuture<AssertionError>(
+        () async {
+          // test: assert_on_no_circle
+          await tester.tap(backButton);
+          await tester.pumpAndSettle();
+        },
+        assertText: 'the path is not forming a circle',
+      );
+    });
+
+    testWidgets('Assertion tests, UiClosedNoCircle, click away dialog',
+        (tester) async {
+      final machine = createLongerMachine();
+      await machine.start();
+      final app = ImperativeApp(machine: machine, rootNavigator: false);
+      await tester.pumpWidget(app);
+      expect(machine.activeStateId, machine.initialStateId);
+      checkTitle(machine);
+      final c = Checker<S, E, T>(
+        tester: tester,
+        act: Act.tap,
+        machine: machine,
+        mapping: app.gen.mapping,
+      );
+
+      await c.check(E.back);
+      await expectThrowInFuture<AssertionError>(() async {
+        // test: assert_on_no_circle
+        await c.check(E.back); // THIS is where assert will come from.
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pump();
+      });
     });
   });
 }
