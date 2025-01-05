@@ -297,12 +297,13 @@ List<Widget> createButtonsFromState<S, E, T>(
   }
 
   final parent = machine.parent;
-  if (parent != null && parent is StateMachineWithChangeNotifier<S, E, T>) {
+  if (parent != null &&
+      parent is StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>) {
     // print('parent name: ${parent.name}');
     buttons.add(const Divider());
     buttons.add(Text('from ${parent.name}'));
     buttons.addAll(
-      createButtonsFromState(parent),
+      createButtonsFromState<dynamic, dynamic, dynamic>(parent),
     );
   }
 
