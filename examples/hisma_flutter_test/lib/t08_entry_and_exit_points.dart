@@ -92,6 +92,36 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
           machine: machine,
           event: EC.back,
         ),
+        SC.d: MaterialPageCreator<EC, void>(
+          widget: Router<SGC>(
+            routerDelegate: createGrandChildGenerator(
+              machine: machine.find(grandChildMachineName),
+              rootNavigator: rootNavigator,
+            ).routerDelegate,
+          ),
+        ),
+      },
+    );
+
+HismaRouterGenerator<SGC, EGC> createGrandChildGenerator({
+  required StateMachineWithChangeNotifier<SGC, EGC, TGC> machine,
+  required bool rootNavigator,
+}) =>
+    HismaRouterGenerator(
+      machine: machine,
+      mapping: {
+        SGC.a: MaterialPageCreator<EGC, void>(
+          widget: Screen(machine, SGC.a),
+        ),
+        SGC.b: MaterialPageCreator<EGC, void>(
+          widget: Screen(machine, SGC.b),
+        ),
+        SGC.c: PagelessCreator<EGC, void>(
+          present: showTestDialog,
+          rootNavigator: rootNavigator,
+          machine: machine,
+          event: EGC.forward,
+        ),
       },
     );
 
@@ -103,6 +133,7 @@ enum T { toA, toB, toC, toD, toE }
 
 const parentMachineName = 'parentMachine';
 const childMachineName = 'childMachine';
+const grandChildMachineName = 'grandChildMachine';
 
 StateMachineWithChangeNotifier<S, E, T> createMachine() =>
     StateMachineWithChangeNotifier(
@@ -170,7 +201,7 @@ StateMachineWithChangeNotifier<S, E, T> createMachine() =>
 
 enum SC { a, b, c, d, en1, en2, en3, ex1, ex2, ex3 }
 
-enum EC { forward, back, exit1, exit2 }
+enum EC { forward, fwd1, fwd2, fwdToError, back, exit1, exit2 }
 
 enum TC { toA, toB, toC, toD, toEx1, toEx2, toEx3 }
 
@@ -186,11 +217,15 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
         SC.a: h.State(
           etm: {
             EC.forward: [TC.toB],
+            EC.fwd1: [TC.toD],
+            EC.fwd2: [TC.toD],
+            EC.fwdToError: [TC.toD],
           },
         ),
         SC.b: h.State(
           etm: {
             EC.forward: [TC.toC],
+            EC.fwd1: [TC.toD],
           },
         ),
         SC.c: h.State(
@@ -203,7 +238,9 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
         ),
         SC.d: h.State(
           etm: {
-            EC.forward: [TC.toEx3]
+            EC.forward: [TC.toEx3],
+            EC.back: [TC.toB],
+            EC.fwd1: [TC.toC],
           },
           regions: [
             h.Region<SC, EC, TC, SGC>(
@@ -214,9 +251,25 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
                   event: null,
                   transition: TC.toD,
                 ): SGC.en1,
+                h.Trigger(
+                  source: SC.a,
+                  event: EC.fwd1,
+                  transition: TC.toD,
+                ): SGC.enA,
+                h.Trigger(
+                  source: SC.a,
+                  event: EC.fwd2,
+                  transition: TC.toD,
+                ): SGC.enB,
+                h.Trigger(
+                  source: SC.a,
+                  event: EC.fwdToError,
+                  transition: TC.toD,
+                ): SGC.enC,
               },
               exitConnectors: {
                 SGC.ex1: EC.forward,
+                SGC.exAll: EC.fwd1,
               },
             ),
           ],
@@ -236,22 +289,45 @@ StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
       },
     );
 
-enum SGC { en1, ex1 }
+enum SGC { a, b, c, en1, ex1, enA, enB, enC, exAll }
 
 enum EGC { forward }
 
-enum TGC { toEx1 }
+enum TGC { toA, toB, toC, toExAll, toEx1 }
 
 StateMachineWithChangeNotifier<SGC, EGC, TGC> createGrandChildMachine() =>
     StateMachineWithChangeNotifier<SGC, EGC, TGC>(
-      name: 'grandChildMachine',
+      name: grandChildMachineName,
       events: EGC.values,
-      initialStateId: SGC.en1,
+      initialStateId: SGC.a,
       states: {
         SGC.en1: h.EntryPoint([TGC.toEx1]),
+        SGC.enA: h.EntryPoint([TGC.toA]),
+        SGC.enB: h.EntryPoint([TGC.toB]),
+        SGC.enC: h.EntryPoint([TGC.toC]),
         SGC.ex1: h.ExitPoint(),
+        SGC.exAll: h.ExitPoint(),
+        SGC.a: h.State(
+          etm: {
+            EGC.forward: [TGC.toB],
+          },
+        ),
+        SGC.b: h.State(
+          etm: {
+            EGC.forward: [TGC.toC],
+          },
+        ),
+        SGC.c: h.State(
+          etm: {
+            EGC.forward: [TGC.toExAll],
+          },
+        ),
       },
       transitions: {
         TGC.toEx1: h.Transition(to: SGC.ex1),
+        TGC.toA: h.Transition(to: SGC.a),
+        TGC.toB: h.Transition(to: SGC.b),
+        TGC.toC: h.Transition(to: SGC.c),
+        TGC.toExAll: h.Transition(to: SGC.exAll),
       },
     );

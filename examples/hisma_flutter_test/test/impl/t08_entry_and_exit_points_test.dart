@@ -73,6 +73,52 @@ Future<void> main() async {
     },
     skip: false,
   );
+
+  testWidgets('Passthrough child and grandchild.', (tester) async {
+    final parentMachine = createMachine();
+    await parentMachine.start();
+    final app = EntryExitApp(machine: parentMachine, rootNavigator: false);
+
+    await tester.pumpWidget(app);
+    expect(parentMachine.activeStateId, parentMachine.initialStateId);
+    checkTitle(parentMachine);
+
+    final childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
+
+    final checker = Checker(
+      tester: tester,
+      parentMachine: parentMachine,
+      childMachine: childMachine,
+    );
+
+    await checker.checkParent(E.fwd3, S.e, null);
+  });
+
+  testWidgets('Assert on empty _previousPages', (tester) async {
+    final parentMachine = createMachine();
+    await parentMachine.start();
+    final app = EntryExitApp(machine: parentMachine, rootNavigator: false);
+
+    await tester.pumpWidget(app);
+    expect(parentMachine.activeStateId, parentMachine.initialStateId);
+    checkTitle(parentMachine);
+
+    final childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
+
+    final checker = Checker(
+      tester: tester,
+      parentMachine: parentMachine,
+      childMachine: childMachine,
+    );
+
+    await checker.checkParent(E.forward, S.b, SC.a);
+    await expectThrow<AssertionError>(
+      () async {
+        await action(childMachine, tester, EC.fwdToError);
+      },
+      assertText: 'No previous pages.',
+    );
+  });
 }
 
 class Checker {
