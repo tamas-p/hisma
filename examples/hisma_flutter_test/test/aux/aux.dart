@@ -187,7 +187,10 @@ Future<void> expectThrowInFuture<T>(
 /// This auxiliary function is required to expect errors or exceptions
 /// during an operation that was initiated by tapping on the UI hence
 /// being decoupled from the original call chain.
-Future<void> expectThrow<T>(Future<void> Function() function) async {
+Future<void> expectThrow<T>(
+  Future<void> Function() function, {
+  String? assertText,
+}) async {
   Object? capturedError;
   final save = m.FlutterError.onError;
   m.FlutterError.onError = (m.FlutterErrorDetails details) {
@@ -196,4 +199,7 @@ Future<void> expectThrow<T>(Future<void> Function() function) async {
   };
   await function();
   expect(capturedError, isA<T>());
+  if (assertText != null) {
+    expect(capturedError.toString(), contains(assertText));
+  }
 }
