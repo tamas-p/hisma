@@ -116,7 +116,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
 
   final stack = StateStack();
 
-  late List<Page<dynamic>> _previousPages;
+  var _previousPages = <Page<dynamic>>[];
   List<Page<dynamic>> _createPages() {
     final presentation = mapping[machine.activeStateId];
     final activeStateId = machine.activeStateId;
@@ -124,6 +124,11 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     // PageCreator. In other cases we simply return the previously created
     // pages list.
     if (activeStateId == null || presentation is! PageCreator) {
+      assert(
+        _previousPages.isNotEmpty,
+        'No previous pages. Active state: $activeStateId, '
+        'presentation: $presentation',
+      );
       return _previousPages;
     } else {
       // We only process the state if it is not leading us back to a previous
