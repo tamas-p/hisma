@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t04_imperative_simple.dart';
+import 'package:hisma_flutter_test/ui.dart';
 
 import '../../test/aux/aux.dart';
 
@@ -91,6 +92,32 @@ Future<void> main() async {
         await tester.pump();
       });
     });
+
+    testWidgets('Assertion tests, missing_presentation', (tester) async {
+      final machine = createLongerMachine();
+      await machine.start();
+      final app = ImperativeApp(machine: machine, rootNavigator: false);
+      await tester.pumpWidget(app);
+      expect(machine.activeStateId, machine.initialStateId);
+      checkTitle(machine);
+      final c = Checker<S, E, T>(
+        tester: tester,
+        act: Act.tap,
+        machine: machine,
+        mapping: app.gen.mapping,
+      );
+
+      await c.check(E.back);
+      await c.check(E.jumpP);
+      await c.check(E.self);
+      await expectThrowInFuture<AssertionError>(
+        () async {
+          // test: missing_presentation
+          await action(machine, tester, E.fwdToException);
+        },
+        assertText: 'Presentation is not handled for',
+      );
+    });
   });
 }
 
@@ -142,12 +169,18 @@ Future<void> checkMachine(
   await c.check(E.forward);
   await c.check(E.forward);
 
+  // test: no_state_change
+  await c.check(E.self);
+
   // test: new_presentation_page_notify_overlay
   await c.check(E.forward);
 
   // test: circle_to_page_has_no_imperatives
   // test: imperative_closed
   await c.check(E.forward);
+
+  // test: no_state_change
+  await c.check(E.self);
 
   //------
 
@@ -224,6 +257,9 @@ Future<void> checkMachine(
   await c.check(E.forward);
   await c.check(E.forward);
 
+  // test: no_state_change
+  await c.check(E.self);
+
   // test: new_presentation_page_notify_overlay
   await c.check(E.forward);
 
@@ -235,16 +271,12 @@ Future<void> checkMachine(
 
   // test: new_presentation_page_notify
   await c.check(E.jumpP);
+  final title = getTitle(machine, machine.activeStateId);
 
   // test: no_ui_change
-  // await c.check(E.forward, titleToBeChecked: false);
+  await c.check(E.forward, titleToBeChecked: title);
 
+  await action(machine, tester, E.back, act: Act.fire);
   // test: no_state_change
-  // await c.check(E.self, titleToBeChecked: false);
-
-  // test: missing_presentation
-  // expect(
-  //   c.check(E.forward),
-  //   throwsA(isA<AssertionError>()),
-  // );
+  await c.check(E.self, titleToBeChecked: title);
 }

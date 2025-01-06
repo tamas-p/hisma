@@ -138,7 +138,7 @@ class Checker<S, E, T> {
   Future<void> check(
     E event, {
     Act? act,
-    bool titleToBeChecked = true,
+    String? titleToBeChecked,
   }) async {
     S whereTo(S s, E e) {
       final state = machine.states[s] as State<E, T, S>?;
@@ -160,8 +160,12 @@ class Checker<S, E, T> {
         (childMachine = _getChildMachine(machine)) != null) {
       _seen.add(ns);
       await checkMachine!(tester, act ?? this.act, childMachine!, mapping);
-    } else if (titleToBeChecked) {
-      checkTitle(machine);
+    } else {
+      if (titleToBeChecked == null) {
+        checkTitle(machine);
+      } else {
+        expect(find.text(titleToBeChecked), findsOneWidget);
+      }
     }
   }
 }

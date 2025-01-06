@@ -5,7 +5,7 @@ import 'ui.dart';
 
 enum S { a, b, c, d, e, f, g, h, i, j, k, l, m, n }
 
-enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP }
+enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP, fwdToException }
 
 enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL, toM, toN }
 
@@ -125,21 +125,21 @@ StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
         S.l: State(
           etm: {
             E.forward: [T.toM],
+            E.fwdToException: [T.toN],
             E.back: [T.toK],
             E.self: [T.toL],
           },
         ),
         S.m: State(
           etm: {
-            E.forward: [T.toN],
             E.back: [T.toL],
             E.self: [T.toM],
           },
         ),
         S.n: State(
           etm: {
-            E.back: [T.toM],
-            E.self: [T.toM],
+            E.back: [T.toL],
+            E.self: [T.toN],
           },
         ),
       },

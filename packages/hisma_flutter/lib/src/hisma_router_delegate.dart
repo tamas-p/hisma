@@ -168,7 +168,6 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   void _addState(S stateId) {
     _log.fine('_addState($stateId)');
     final presentation = mapping[stateId];
-    // TODO: Create unit test to check this assertion.
     assert(presentation != null, missingPresentationMsg(stateId, machine.name));
     assert(presentation is PageCreator);
 
