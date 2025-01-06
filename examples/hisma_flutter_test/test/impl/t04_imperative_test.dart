@@ -42,17 +42,20 @@ Future<void> main() async {
   });
 
   group('Assertion tests', () {
-    testWidgets('Assertion tests, UiClosedNoCircle, BackButton',
-        (tester) async {
+    Future<void> testUiClosedNoCircleBackButton({
+      required WidgetTester tester,
+      required bool rootNavigator,
+      required Act act,
+    }) async {
       final machine = createLongerMachine();
       await machine.start();
-      final app = ImperativeApp(machine: machine, rootNavigator: false);
+      final app = ImperativeApp(machine: machine, rootNavigator: rootNavigator);
       await tester.pumpWidget(app);
       expect(machine.activeStateId, machine.initialStateId);
       checkTitle(machine);
       final c = Checker<S, E, T>(
         tester: tester,
-        act: Act.tap,
+        act: act,
         machine: machine,
         mapping: app.gen.mapping,
       );
@@ -67,56 +70,188 @@ Future<void> main() async {
         },
         assertText: 'the path is not forming a circle',
       );
-    });
+    }
 
-    testWidgets('Assertion tests, UiClosedNoCircle, click away dialog',
-        (tester) async {
-      final machine = createLongerMachine();
-      await machine.start();
-      final app = ImperativeApp(machine: machine, rootNavigator: false);
-      await tester.pumpWidget(app);
-      expect(machine.activeStateId, machine.initialStateId);
-      checkTitle(machine);
-      final c = Checker<S, E, T>(
-        tester: tester,
-        act: Act.tap,
-        machine: machine,
-        mapping: app.gen.mapping,
-      );
-
-      await c.check(E.back);
-      await expectThrowInFuture<AssertionError>(() async {
-        // test: assert_on_no_circle
-        await c.check(E.back); // THIS is where assert will come from.
-        await tester.tapAt(const Offset(10, 10));
-        await tester.pump();
+    group('Assertion tests, UiClosedNoCircle, BackButton', () {
+      testWidgets(
+          'Assertion tests, UiClosedNoCircle, BackButton, '
+          'rootNavigator: false, act: fire', (tester) async {
+        await testUiClosedNoCircleBackButton(
+          tester: tester,
+          rootNavigator: false,
+          act: Act.fire,
+        );
+      });
+      testWidgets(
+          'Assertion tests, UiClosedNoCircle, BackButton, '
+          'rootNavigator: true, act: fire', (tester) async {
+        await testUiClosedNoCircleBackButton(
+          tester: tester,
+          rootNavigator: true,
+          act: Act.fire,
+        );
+      });
+      testWidgets(
+          'Assertion tests, UiClosedNoCircle, BackButton, '
+          'rootNavigator: false, act: tap', (tester) async {
+        await testUiClosedNoCircleBackButton(
+          tester: tester,
+          rootNavigator: false,
+          act: Act.tap,
+        );
+      });
+      testWidgets(
+          'Assertion tests, UiClosedNoCircle, BackButton, '
+          'rootNavigator: true, act: tap', (tester) async {
+        await testUiClosedNoCircleBackButton(
+          tester: tester,
+          rootNavigator: true,
+          act: Act.tap,
+        );
       });
     });
 
-    testWidgets('Assertion tests, missing_presentation', (tester) async {
-      final machine = createLongerMachine();
-      await machine.start();
-      final app = ImperativeApp(machine: machine, rootNavigator: false);
-      await tester.pumpWidget(app);
-      expect(machine.activeStateId, machine.initialStateId);
-      checkTitle(machine);
-      final c = Checker<S, E, T>(
-        tester: tester,
-        act: Act.tap,
-        machine: machine,
-        mapping: app.gen.mapping,
-      );
+    group('Assertion tests, UiClosedNoCircle, click away dialog', () {
+      Future<void> testUiClosedNoCircleClickAway({
+        required WidgetTester tester,
+        required bool rootNavigator,
+        required Act act,
+      }) async {
+        final machine = createLongerMachine();
+        await machine.start();
+        final app = ImperativeApp(machine: machine, rootNavigator: false);
+        await tester.pumpWidget(app);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+        final c = Checker<S, E, T>(
+          tester: tester,
+          act: Act.tap,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
 
-      await c.check(E.back);
-      await c.check(E.jumpP);
-      await c.check(E.self);
-      await expectThrowInFuture<AssertionError>(
-        () async {
-          // test: missing_presentation
-          await action(machine, tester, E.fwdToException);
+        await c.check(E.back);
+        await expectThrowInFuture<AssertionError>(() async {
+          // test: assert_on_no_circle
+          await c.check(E.back); // THIS is where assert will come from.
+          await tester.tapAt(const Offset(10, 10));
+          await tester.pump();
+        });
+      }
+
+      testWidgets(
+        'Assertion tests, UiClosedNoCircle, click away dialog '
+        'rootNavigator: false, act: fire',
+        (tester) async {
+          await testUiClosedNoCircleClickAway(
+            tester: tester,
+            rootNavigator: false,
+            act: Act.fire,
+          );
         },
-        assertText: 'Presentation is not handled for',
       );
+      testWidgets(
+        'Assertion tests, UiClosedNoCircle, click away dialog '
+        'rootNavigator: true, act: fire',
+        (tester) async {
+          await testUiClosedNoCircleClickAway(
+            tester: tester,
+            rootNavigator: true,
+            act: Act.fire,
+          );
+        },
+      );
+      testWidgets(
+        'Assertion tests, UiClosedNoCircle, click away dialog '
+        'rootNavigator: false, act: tap',
+        (tester) async {
+          await testUiClosedNoCircleClickAway(
+            tester: tester,
+            rootNavigator: false,
+            act: Act.tap,
+          );
+        },
+      );
+      testWidgets(
+        'Assertion tests, UiClosedNoCircle, click away dialog '
+        'rootNavigator: true, act: tap',
+        (tester) async {
+          await testUiClosedNoCircleClickAway(
+            tester: tester,
+            rootNavigator: true,
+            act: Act.tap,
+          );
+        },
+      );
+    });
+
+    group('Assertion tests, missing_presentation', () {
+      Future<void> testMissingPresentation({
+        required WidgetTester tester,
+        required bool rootNavigator,
+        required Act act,
+      }) async {
+        final machine = createLongerMachine();
+        await machine.start();
+        final app = ImperativeApp(machine: machine, rootNavigator: false);
+        await tester.pumpWidget(app);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+        final c = Checker<S, E, T>(
+          tester: tester,
+          act: Act.tap,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
+
+        await c.check(E.back);
+        await c.check(E.jumpP);
+        await c.check(E.self);
+        await expectThrowInFuture<AssertionError>(
+          () async {
+            // test: missing_presentation
+            await action(machine, tester, E.fwdToException);
+          },
+          assertText: 'Presentation is not handled for',
+        );
+      }
+
+      testWidgets(
+          'Assertion tests, missing_presentation '
+          'rootNavigator: false, act: fire', (tester) async {
+        await testMissingPresentation(
+          tester: tester,
+          rootNavigator: false,
+          act: Act.fire,
+        );
+      });
+      testWidgets(
+          'Assertion tests, missing_presentation '
+          'rootNavigator: true, act: fire', (tester) async {
+        await testMissingPresentation(
+          tester: tester,
+          rootNavigator: true,
+          act: Act.fire,
+        );
+      });
+      testWidgets(
+          'Assertion tests, missing_presentation '
+          'rootNavigator: false, act: tap', (tester) async {
+        await testMissingPresentation(
+          tester: tester,
+          rootNavigator: false,
+          act: Act.tap,
+        );
+      });
+      testWidgets(
+          'Assertion tests, missing_presentation '
+          'rootNavigator: true, act: tap', (tester) async {
+        await testMissingPresentation(
+          tester: tester,
+          rootNavigator: true,
+          act: Act.tap,
+        );
+      });
     });
   });
 }
