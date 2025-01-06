@@ -25,7 +25,6 @@ Future<void> main() async {
       final checker = Checker(
         tester: tester,
         parentMachine: machine,
-        childMachine: machine.find<SC, EC, TC>(childMachineName),
       );
 
       // exit1
@@ -34,8 +33,8 @@ Future<void> main() async {
       await checker.checkParent(E.forward, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
-      await checker.checkChild(EC.exit1, S.c, null);
-      await checker.checkParent(E.forward, S.a, null);
+      await checker.checkChild(EC.exit1, S.c);
+      await checker.checkParent(E.forward, S.a);
 
       // TODO: When hot reload when machine is on PagelessCreator it throws
       // LateError (LateInitializationError: Field '_previousPages@95086382'
@@ -43,13 +42,13 @@ Future<void> main() async {
       await checker.checkParent(E.fwd1, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
-      await checker.checkChild(EC.exit1, S.c, null);
-      await checker.checkParent(E.forward, S.a, null);
+      await checker.checkChild(EC.exit1, S.c);
+      await checker.checkParent(E.forward, S.a);
 
       await checker.checkParent(E.fwd2, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
-      await checker.checkChild(EC.exit1, S.c, null);
-      await checker.checkParent(E.forward, S.a, null);
+      await checker.checkChild(EC.exit1, S.c);
+      await checker.checkParent(E.forward, S.a);
 
       // exit2
       //----------------------------------------------
@@ -57,19 +56,19 @@ Future<void> main() async {
       await checker.checkParent(E.forward, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
-      await checker.checkChild(EC.exit2, S.d, null);
-      await checker.checkParent(E.forward, S.a, null);
+      await checker.checkChild(EC.exit2, S.d);
+      await checker.checkParent(E.forward, S.a);
 
       await checker.checkParent(E.fwd1, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
-      await checker.checkChild(EC.exit2, S.d, null);
-      await checker.checkParent(E.forward, S.a, null);
+      await checker.checkChild(EC.exit2, S.d);
+      await checker.checkParent(E.forward, S.a);
 
       await checker.checkParent(E.fwd2, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
-      await checker.checkChild(EC.exit2, S.d, null);
-      await checker.checkParent(E.forward, S.a, null);
+      await checker.checkChild(EC.exit2, S.d);
+      await checker.checkParent(E.forward, S.a);
     },
     skip: false,
   );
@@ -83,15 +82,50 @@ Future<void> main() async {
     expect(parentMachine.activeStateId, parentMachine.initialStateId);
     checkTitle(parentMachine);
 
-    final childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
+    final checker = Checker(
+      tester: tester,
+      parentMachine: parentMachine,
+    );
+
+    await checker.checkParent(E.fwd3, S.e);
+  });
+
+  testWidgets('Walk through grandchild.', (tester) async {
+    final parentMachine = createMachine();
+    await parentMachine.start();
+    final app = EntryExitApp(machine: parentMachine, rootNavigator: false);
+
+    await tester.pumpWidget(app);
+    expect(parentMachine.activeStateId, parentMachine.initialStateId);
+    checkTitle(parentMachine);
 
     final checker = Checker(
       tester: tester,
       parentMachine: parentMachine,
-      childMachine: childMachine,
     );
 
-    await checker.checkParent(E.fwd3, S.e, null);
+    await checker.checkParent(E.forward, S.b, SC.a);
+
+    // Through forward
+    await checker.checkChild(EC.forward, S.b, SC.b);
+    await checker.checkChild(EC.fwd1, S.b, SC.d, SGC.a);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.d, SGC.b);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.d, SGC.c);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.c);
+    await checker.checkChild(EC.forward, S.b, SC.a);
+
+    // Through fwd1
+    await checker.checkChild(EC.fwd1, S.b, SC.d, SGC.a);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.d, SGC.b);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.d, SGC.c);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.c);
+    await checker.checkChild(EC.forward, S.b, SC.a);
+
+    // Through fwd2
+    await checker.checkChild(EC.fwd2, S.b, SC.d, SGC.b);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.d, SGC.c);
+    await checker.checkGrandChild(EGC.forward, S.b, SC.c);
+    await checker.checkChild(EC.forward, S.b, SC.a);
   });
 
   testWidgets('Assert on empty _previousPages', (tester) async {
@@ -103,18 +137,15 @@ Future<void> main() async {
     expect(parentMachine.activeStateId, parentMachine.initialStateId);
     checkTitle(parentMachine);
 
-    final childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
-
     final checker = Checker(
       tester: tester,
       parentMachine: parentMachine,
-      childMachine: childMachine,
     );
 
     await checker.checkParent(E.forward, S.b, SC.a);
     await expectThrow<AssertionError>(
       () async {
-        await action(childMachine, tester, EC.fwdToError);
+        await action(checker.childMachine, tester, EC.fwdToError);
       },
       assertText: 'No previous pages.',
     );
@@ -125,27 +156,33 @@ class Checker {
   Checker({
     required this.tester,
     required this.parentMachine,
-    required this.childMachine,
-  });
+  })  : grandChildMachine =
+            parentMachine.find<SGC, EGC, TGC>(grandChildMachineName),
+        childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
 
   final WidgetTester tester;
   final StateMachineWithChangeNotifier<S, E, T> parentMachine;
   final StateMachineWithChangeNotifier<SC, EC, TC> childMachine;
+  final StateMachineWithChangeNotifier<SGC, EGC, TGC> grandChildMachine;
 
-  Future<void> checkParent(E event, S? parent, SC? child) =>
-      _check(parentMachine, event, parent, child);
-  Future<void> checkChild(EC event, S? parent, SC? child) =>
-      _check(childMachine, event, parent, child);
+  Future<void> checkParent(E event, S? parent, [SC? child, SGC? gc]) =>
+      _check(parentMachine, event, parent, child, gc);
+  Future<void> checkChild(EC event, S? parent, [SC? child, SGC? gc]) =>
+      _check(childMachine, event, parent, child, gc);
+  Future<void> checkGrandChild(EGC event, S? parent, [SC? child, SGC? gc]) =>
+      _check(grandChildMachine, event, parent, child, gc);
 
   Future<void> _check<S, E, T>(
     StateMachineWithChangeNotifier<S, E, T> machine,
     E event,
-    S? parent,
+    S? parent, [
     SC? child,
-  ) async {
+    SGC? gc,
+  ]) async {
     await action(machine, tester, event);
     expect(parentMachine.activeStateId, parent);
     expect(childMachine.activeStateId, child);
+    expect(grandChildMachine.activeStateId, gc);
     checkTitle(parentMachine);
   }
 }
