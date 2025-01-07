@@ -309,3 +309,31 @@ List<Widget> createButtonsFromState<S, E, T>(
 
   return buttons;
 }
+
+class RouterWithDelegate<T> extends StatefulWidget {
+  const RouterWithDelegate(this.createDelegate, {super.key});
+  final RouterDelegate<T> Function() createDelegate;
+
+  @override
+  State<RouterWithDelegate<T>> createState() => _RouterWithDelegateState<T>();
+}
+
+class _RouterWithDelegateState<RDS> extends State<RouterWithDelegate<RDS>> {
+  late final RouterDelegate<RDS> rd;
+  @override
+  void initState() {
+    super.initState();
+    rd = widget.createDelegate();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Router<RDS>(
+      routerDelegate: rd,
+      backButtonDispatcher: Router.of(context)
+          .backButtonDispatcher!
+          .createChildBackButtonDispatcher()
+        ..takePriority(),
+    );
+  }
+}

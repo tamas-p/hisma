@@ -48,15 +48,12 @@ HismaRouterGenerator<S, E> createParentGenerator({
         S.b: MaterialPageCreator<E, void>(
           widget: Builder(
             builder: (context) {
-              return Router<SC>(
-                routerDelegate: createChildGenerator(
+              return RouterWithDelegate<SC>(
+                () => createChildGenerator(
                   machine: machine.find(childMachineName),
                   rootNavigator: rootNavigator,
                 ).routerDelegate,
-                backButtonDispatcher: Router.of(context)
-                    .backButtonDispatcher!
-                    .createChildBackButtonDispatcher()
-                  ..takePriority(),
+                key: const ValueKey(S.b),
               );
             },
           ),
@@ -93,11 +90,12 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
           event: EC.back,
         ),
         SC.d: MaterialPageCreator<EC, void>(
-          widget: Router<SGC>(
-            routerDelegate: createGrandChildGenerator(
+          widget: RouterWithDelegate<SGC>(
+            () => createGrandChildGenerator(
               machine: machine.find(grandChildMachineName),
               rootNavigator: rootNavigator,
             ).routerDelegate,
+            key: const ValueKey(SC.d),
           ),
         ),
       },
