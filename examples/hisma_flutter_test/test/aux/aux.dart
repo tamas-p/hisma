@@ -70,15 +70,9 @@ List<StateMachine<dynamic, dynamic, dynamic>> getActiveMachines(
 }
 
 void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
-  // TODO: Use [] representation of hierarchic states.
-  // expect(machine.activeStateId, stateId);
-
   final activeMachines = getActiveMachines(machine);
   final lm = activeMachines.last;
   final path = getTitle(lm, lm.activeStateId);
-  // final path = getTitle(machine, machine.activeStateId);
-
-  // expect(find.text(path), findsOneWidget);
   expect(find.text(path), findsWidgets);
 }
 
