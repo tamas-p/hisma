@@ -33,6 +33,7 @@ Future<void> main() async {
       await checker.checkParent(E.forward, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
+      // test: stopped_machine
       await checker.checkChild(EC.exit1, S.c);
       await checker.checkParent(E.forward, S.a);
 
@@ -42,11 +43,13 @@ Future<void> main() async {
       await checker.checkParent(E.fwd1, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
+      // test: stopped_machine
       await checker.checkChild(EC.exit1, S.c);
       await checker.checkParent(E.forward, S.a);
 
       await checker.checkParent(E.fwd2, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
+      // test: stopped_machine
       await checker.checkChild(EC.exit1, S.c);
       await checker.checkParent(E.forward, S.a);
 
@@ -56,17 +59,20 @@ Future<void> main() async {
       await checker.checkParent(E.forward, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
+      // test: stopped_machine
       await checker.checkChild(EC.exit2, S.d);
       await checker.checkParent(E.forward, S.a);
 
       await checker.checkParent(E.fwd1, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
+      // test: stopped_machine
       await checker.checkChild(EC.exit2, S.d);
       await checker.checkParent(E.forward, S.a);
 
       await checker.checkParent(E.fwd2, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
+      // test: stopped_machine
       await checker.checkChild(EC.exit2, S.d);
       await checker.checkParent(E.forward, S.a);
     },

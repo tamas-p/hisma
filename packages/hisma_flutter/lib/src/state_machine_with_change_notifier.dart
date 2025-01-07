@@ -58,7 +58,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
     final newStateId = activeStateId;
     if (newStateId == null) {
       // Machine stopped, no need to update UI.
-      // test: ? stopped_machine
+      // test: stopped_machine
       return;
     }
     final isNewStateIdInStack =
