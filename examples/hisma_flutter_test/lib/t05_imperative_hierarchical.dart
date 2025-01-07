@@ -23,8 +23,10 @@ class HierarchicalImperativeApp extends StatelessWidget {
     super.key,
   });
   final bool rootNavigator;
-  late final generators = Generators(rootNavigator: rootNavigator);
-  late final gen = generators.createHierarchicalImpGenerator(machine);
+  late final gen = createHierarchicalImpGenerator(
+    machine: machine,
+    rootNavigator: rootNavigator,
+  );
 
   final StateMachineWithChangeNotifier<S, E, T> machine;
   @override
@@ -36,142 +38,118 @@ class HierarchicalImperativeApp extends StatelessWidget {
   }
 }
 
-class Generators {
-  Generators({required this.rootNavigator});
-  bool rootNavigator;
-  // This map is needed to support hot reload as child Routers will
-  // be rebuilt and loose their HismaRouterDelegate state but the corresponding
-  // machine active state is preserved.
-  // TODO: it might be better with a similar approach as Widgets finds their
-  // elements and state. Then we would not need to explicitly manage this.
-  final generators = <String, HismaRouterGenerator<S, E>>{};
-  HismaRouterGenerator<S, E> createHierarchicalImpGenerator(
-    StateMachineWithChangeNotifier<S, E, T> machine,
-  ) {
-    final generator = HismaRouterGenerator<S, E>(
-      machine: machine,
-      mapping: {
-        S.a: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.a),
-          event: E.back,
-        ),
-        S.b: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.b),
-          overlay: true,
-          event: E.back,
-        ),
-        S.c: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.c),
-          overlay: true,
-          event: E.back,
-        ),
-        S.d: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: rootNavigator,
-          machine: machine,
-          event: E.back,
-        ),
-        S.e: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: rootNavigator,
-          machine: machine,
-          event: E.back,
-        ),
-        S.f: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: rootNavigator,
-          machine: machine,
-          event: E.back,
-        ),
-        S.g: machine.name.split('/').length < 3
-            ? MaterialPageCreator<E, void>(
-                // TODO: Create utility router class that creates
-                // BackButtonDispatcher.
-                widget: Builder(
-                  builder: (context) {
-                    return Router(
-                      routerDelegate: (generators.putIfAbsent(
-                        getMachineName(machine.name, S.g),
-                        () => createHierarchicalImpGenerator(
-                          machine.find<S, E, T>(
-                            getMachineName(machine.name, S.g),
-                          ),
-                        ),
-                      )).routerDelegate,
-                      backButtonDispatcher: Router.of(context)
-                          .backButtonDispatcher!
-                          .createChildBackButtonDispatcher()
-                        ..takePriority(),
-                    );
-                  },
-                ),
-                event: E.back,
-                overlay: true,
-              )
-            : MaterialPageCreator<E, void>(
-                widget: Screen(machine, S.g),
-                event: E.back,
-                overlay: true,
+HismaRouterGenerator<S, E> createHierarchicalImpGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool rootNavigator,
+}) {
+  final generator = HismaRouterGenerator<S, E>(
+    machine: machine,
+    mapping: {
+      S.a: MaterialPageCreator<E, void>(
+        widget: Screen(machine, S.a),
+        event: E.back,
+      ),
+      S.b: MaterialPageCreator<E, void>(
+        widget: Screen(machine, S.b),
+        overlay: true,
+        event: E.back,
+      ),
+      S.c: MaterialPageCreator<E, void>(
+        widget: Screen(machine, S.c),
+        overlay: true,
+        event: E.back,
+      ),
+      S.d: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: rootNavigator,
+        machine: machine,
+        event: E.back,
+      ),
+      S.e: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: rootNavigator,
+        machine: machine,
+        event: E.back,
+      ),
+      S.f: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: rootNavigator,
+        machine: machine,
+        event: E.back,
+      ),
+      S.g: machine.name.split('/').length < 3
+          ? MaterialPageCreator<E, void>(
+              widget: Builder(
+                builder: (context) {
+                  return RouterWithDelegate<S>(
+                    () => createHierarchicalImpGenerator(
+                      machine: machine
+                          .find<S, E, T>(getMachineName(machine.name, S.g)),
+                      rootNavigator: rootNavigator,
+                    ).routerDelegate,
+                    key: const ValueKey(S.g),
+                  );
+                },
               ),
-        S.h: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: rootNavigator,
-          machine: machine,
-          event: E.back,
-        ),
-        S.i: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: rootNavigator,
-          machine: machine,
-          event: E.back,
-        ),
-        S.j: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: rootNavigator,
-          machine: machine,
-          event: E.back,
-        ),
-        S.k: machine.name.split('/').length < 3
-            ? MaterialPageCreator<E, void>(
-                // TODO: Create utility router class that creates
-                // BackButtonDispatcher.
-                widget: Builder(
-                  builder: (context) {
-                    return Router(
-                      routerDelegate: generators
-                          .putIfAbsent(
-                            getMachineName(machine.name, S.k),
-                            () => createHierarchicalImpGenerator(
-                              machine.find<S, E, T>(
-                                getMachineName(machine.name, S.k),
-                              ),
-                            ),
-                          )
-                          .routerDelegate,
-                      backButtonDispatcher: Router.of(context)
-                          .backButtonDispatcher!
-                          .createChildBackButtonDispatcher()
-                        ..takePriority(),
-                    );
-                  },
-                ),
-                event: E.back,
-                overlay: true,
-              )
-            : MaterialPageCreator<E, void>(
-                widget: Screen(machine, S.k),
-                event: E.back,
-                overlay: true,
+              event: E.back,
+              overlay: true,
+            )
+          : MaterialPageCreator<E, void>(
+              widget: Screen(machine, S.g),
+              event: E.back,
+              overlay: true,
+            ),
+      S.h: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: rootNavigator,
+        machine: machine,
+        event: E.back,
+      ),
+      S.i: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: rootNavigator,
+        machine: machine,
+        event: E.back,
+      ),
+      S.j: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: rootNavigator,
+        machine: machine,
+        event: E.back,
+      ),
+      S.k: machine.name.split('/').length < 3
+          ? MaterialPageCreator<E, void>(
+              // TODO: Create utility router class that creates
+              // BackButtonDispatcher.
+              widget: Builder(
+                builder: (context) {
+                  return RouterWithDelegate<S>(
+                    () => createHierarchicalImpGenerator(
+                      machine: machine.find<S, E, T>(
+                        getMachineName(machine.name, S.k),
+                      ),
+                      rootNavigator: rootNavigator,
+                    ).routerDelegate,
+                    key: const ValueKey(S.k),
+                  );
+                },
               ),
-        S.l: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.l),
-          event: E.back,
-          overlay: true,
-        ),
-        S.m: NoUIChange(),
-      },
-    );
+              event: E.back,
+              overlay: true,
+            )
+          : MaterialPageCreator<E, void>(
+              widget: Screen(machine, S.k),
+              event: E.back,
+              overlay: true,
+            ),
+      S.l: MaterialPageCreator<E, void>(
+        widget: Screen(machine, S.l),
+        event: E.back,
+        overlay: true,
+      ),
+      S.m: NoUIChange(),
+    },
+  );
 
-    return generator;
-  }
+  return generator;
 }

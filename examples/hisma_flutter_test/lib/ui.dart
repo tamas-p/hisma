@@ -310,6 +310,10 @@ List<Widget> createButtonsFromState<S, E, T>(
   return buttons;
 }
 
+// This class is needed to support hot reload as child Routers will
+// be rebuilt and lose their HismaRouterDelegate state but the corresponding
+// machine active state is preserved. This stateless widget will preserve
+// the HismaRouterDelegate.
 class RouterWithDelegate<T> extends StatefulWidget {
   const RouterWithDelegate(this.createDelegate, {super.key});
   final RouterDelegate<T> Function() createDelegate;
