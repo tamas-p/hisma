@@ -43,7 +43,7 @@ HismaRouterGenerator<S, E> createParentGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.a),
+          widget: Screen(machine),
         ),
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
@@ -70,12 +70,12 @@ HismaRouterGenerator<S, E> createParentGenerator({
           overlay: true,
         ),
         S.e: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.e),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
         S.f: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.f),
+          widget: Screen(machine),
           // overlay: true,
           event: E.back,
         ),
@@ -90,10 +90,10 @@ HismaRouterGenerator<S, E> createChildGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.a),
+          widget: Screen(machine),
         ),
         S.b: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.b),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
@@ -110,17 +110,17 @@ HismaRouterGenerator<S, E> createChildGenerator({
           event: E.back,
         ),
         S.e: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.e),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
         S.f: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.f),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
         S.g: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.g),
+          widget: Screen(machine),
           event: E.back,
         ),
       },

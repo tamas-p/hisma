@@ -21,12 +21,23 @@ String getButtonTitle<S, E, T>(
 ) =>
     '${machine.name}@${machine.activeStateId}#$event';
 
-class Screen<S, E, T> extends StatelessWidget {
-  const Screen(this.machine, this.stateId, {super.key});
-  // final Logger _log = Logger('$Screen');
-
+class Screen<S, E, T> extends StatefulWidget {
+  Screen(this.machine) : super(key: ValueKey(machine.activeStateId));
   final StateMachineWithChangeNotifier<S, E, T> machine;
-  final S stateId;
+
+  @override
+  State<Screen<S, E, T>> createState() => _ScreenState<S, E, T>();
+}
+
+class _ScreenState<S, E, T> extends State<Screen<S, E, T>> {
+  late final List<Widget> _buttons;
+  late final String _title;
+  @override
+  void initState() {
+    super.initState();
+    _buttons = createButtonsFromState(widget.machine);
+    _title = getTitle(widget.machine, widget.machine.activeStateId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +45,10 @@ class Screen<S, E, T> extends StatelessWidget {
       builder: (context) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(getTitle(machine, stateId)),
+            title: Text(_title),
           ),
           body: Center(
-            child: Column(
-              children: createButtonsFromState(machine),
-            ),
+            child: Column(children: _buttons),
           ),
         );
       },
@@ -275,22 +284,17 @@ List<Widget> createButtonsFromState<S, E, T>(
     for (final eventId in state.etm.keys) {
       // assert(machine == state.machine);
       buttons.add(
-        Builder(
-          builder: (context) {
-            return TextButton(
-              onPressed: () async {
-                log.info(
-                  () =>
-                      'Screen: state.machine.fire($eventId) - ${machine.name}',
-                );
-                await machine.fire(
-                  eventId,
-                  // arg: context,
-                );
-              },
-              child: Text(getButtonTitle(machine, eventId)),
+        TextButton(
+          onPressed: () async {
+            log.info(
+              () => 'Screen: state.machine.fire($eventId) - ${machine.name}',
+            );
+            await machine.fire(
+              eventId,
+              // arg: context,
             );
           },
+          child: Text(getButtonTitle(machine, eventId)),
         ),
       );
     }

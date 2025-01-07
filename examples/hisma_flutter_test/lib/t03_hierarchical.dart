@@ -38,16 +38,16 @@ HismaRouterGenerator<S, E> createHierarchicalGenerator(
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.a),
+          widget: Screen(machine),
           event: E.back,
         ),
         S.b: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.b),
+          widget: Screen(machine),
           event: E.back,
           overlay: true,
         ),
         S.c: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.c),
+          widget: Screen(machine),
           event: E.back,
           overlay: true,
         ),
@@ -72,7 +72,7 @@ HismaRouterGenerator<S, E> createHierarchicalGenerator(
                 event: E.back,
               )
             : MaterialPageCreator<E, void>(
-                widget: Screen(machine, S.d),
+                widget: Screen(machine),
                 event: E.back,
               ),
       },

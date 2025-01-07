@@ -43,16 +43,16 @@ HismaRouterGenerator<S, E> createImperativeGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.a),
+          widget: Screen(machine),
           event: E.back,
         ),
         S.b: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.b),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
         S.c: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.c),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
@@ -75,7 +75,7 @@ HismaRouterGenerator<S, E> createImperativeGenerator({
           event: E.back,
         ),
         S.g: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.g),
+          widget: Screen(machine),
           event: E.back,
           overlay: true,
         ),
@@ -98,12 +98,12 @@ HismaRouterGenerator<S, E> createImperativeGenerator({
           event: E.back,
         ),
         S.k: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.k),
+          widget: Screen(machine),
           event: E.back,
           overlay: true,
         ),
         S.l: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.l),
+          widget: Screen(machine),
           event: E.back,
         ),
         S.m: NoUIChange(),

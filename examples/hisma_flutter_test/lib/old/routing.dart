@@ -15,13 +15,13 @@ class Generators {
     return HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
+        S.a: MaterialPageCreator<E, void>(widget: Screen(machine)),
         S.b: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.b),
+          widget: Screen(machine),
           event: E.back,
         ),
         S.c: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.c),
+          widget: Screen(machine),
           event: E.back,
           // TODO: When E.self, we shall have get back to Screen S.c here.
           // Right now Flutter pops the Screen S.c and we see Screen S.b and
@@ -51,7 +51,7 @@ class Generators {
         ),
         // S.f: MaterialPageCreator<E, void>(widget: Screen(machine, S.f)),
         S.g: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.g),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
@@ -63,12 +63,12 @@ class Generators {
         ),
         // S.h: MaterialPageCreator<E, void>(widget: Screen(machine, S.h)),
         S.i: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.i),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
         S.j: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.j),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),
@@ -96,7 +96,7 @@ class Generators {
           )
         else
           S.k: MaterialPageCreator<E, void>(
-            widget: Screen(machine, S.k),
+            widget: Screen(machine),
             overlay: true,
             event: E.back,
           ),
@@ -138,7 +138,7 @@ class Generators {
         ),
         // S.m: MaterialPageCreator<E, void>(widget: Screen(machine, S.m)),
         S.n: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.n),
+          widget: Screen(machine),
           overlay: true,
           event: E.back,
         ),

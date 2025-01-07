@@ -90,7 +90,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
     HismaRouterGenerator<S, E>(
       machine: machine,
       mapping: {
-        S.a: MaterialPageCreator<E, void>(widget: Screen(machine, S.a)),
+        S.a: MaterialPageCreator<E, void>(widget: Screen(machine)),
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: useRootNavigator,
@@ -109,7 +109,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
           machine: machine,
           event: E.forward,
         ),
-        S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
+        S.e: MaterialPageCreator<E, void>(widget: Screen(machine)),
         S.f: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: useRootNavigator,

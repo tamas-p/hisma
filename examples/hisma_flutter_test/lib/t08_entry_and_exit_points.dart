@@ -43,7 +43,7 @@ HismaRouterGenerator<S, E> createParentGenerator({
       machine: machine,
       mapping: {
         S.a: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.a),
+          widget: Screen(machine),
         ),
         S.b: MaterialPageCreator<E, void>(
           widget: Builder(
@@ -59,13 +59,13 @@ HismaRouterGenerator<S, E> createParentGenerator({
           ),
         ),
         S.c: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.c),
+          widget: Screen(machine),
         ),
         S.d: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.d),
+          widget: Screen(machine),
         ),
         S.e: MaterialPageCreator<E, void>(
-          widget: Screen(machine, S.e),
+          widget: Screen(machine),
         ),
       },
     );
@@ -78,10 +78,10 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
       machine: machine,
       mapping: {
         SC.a: MaterialPageCreator<EC, void>(
-          widget: Screen(machine, SC.a),
+          widget: Screen(machine),
         ),
         SC.b: MaterialPageCreator<EC, void>(
-          widget: Screen(machine, SC.b),
+          widget: Screen(machine),
         ),
         SC.c: PagelessCreator<EC, void>(
           present: showTestDialog,
@@ -109,10 +109,10 @@ HismaRouterGenerator<SGC, EGC> createGrandChildGenerator({
       machine: machine,
       mapping: {
         SGC.a: MaterialPageCreator<EGC, void>(
-          widget: Screen(machine, SGC.a),
+          widget: Screen(machine),
         ),
         SGC.b: MaterialPageCreator<EGC, void>(
-          widget: Screen(machine, SGC.b),
+          widget: Screen(machine),
         ),
         SGC.c: PagelessCreator<EGC, void>(
           present: showTestDialog,
