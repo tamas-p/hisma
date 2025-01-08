@@ -128,7 +128,6 @@ class ScreenB extends StatelessWidget {
 Future<bool?> b1({
   required BuildContext context,
   required bool rootNavigator,
-  required NavigatorState navigatorState,
   required Close<DateTime> close,
   required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 }) =>
@@ -172,7 +171,6 @@ class ScreenC extends StatelessWidget {
 Future<DateTime?> c1({
   required BuildContext context,
   required bool rootNavigator,
-  required NavigatorState navigatorState,
   required Close<DateTime> close,
   required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 }) =>

@@ -8,7 +8,6 @@ import '../../../../../../layers/ui/util/ui_util.dart';
 Future<void> profileLoadFailed({
   required BuildContext context,
   required bool rootNavigator,
-  required NavigatorState navigatorState,
   required Close<DateTime> close,
   required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 }) =>

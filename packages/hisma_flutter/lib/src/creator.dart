@@ -152,7 +152,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     required BuildContext context,
     required bool rootNavigator,
     // TODO: probably we do not need navigatorState and close to be passed.
-    required NavigatorState navigatorState,
     required Close<R> close,
     required StateMachineWithChangeNotifier<dynamic, E, dynamic> machine,
   }) present;
@@ -190,7 +189,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     final result = await present(
       context: context ?? _navigatorState.context,
       rootNavigator: rootNavigator,
-      navigatorState: _navigatorState,
       close: close,
       machine: machine,
     );

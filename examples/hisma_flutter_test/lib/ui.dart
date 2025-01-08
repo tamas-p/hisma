@@ -101,7 +101,6 @@ class _MyDialogState extends State<MyDialog> {
 Future<void> showTestDialog({
   required BuildContext context,
   required bool rootNavigator,
-  required NavigatorState navigatorState,
   required Close<void> close,
   required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 }) =>
@@ -133,7 +132,6 @@ Future<void> showTestDialogMini(
 Future<DateTime?> showTestDatePicker({
   required BuildContext context,
   required bool rootNavigator,
-  required NavigatorState navigatorState,
   required Close<DateTime> close,
   required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
 }) =>

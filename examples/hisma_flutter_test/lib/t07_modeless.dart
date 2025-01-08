@@ -143,7 +143,6 @@ HismaRouterGenerator<S, E> createGenerator({
           present: ({
             required context,
             required rootNavigator,
-            required navigatorState,
             required close,
             required machine,
           }) =>
