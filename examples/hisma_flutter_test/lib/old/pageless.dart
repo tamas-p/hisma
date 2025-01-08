@@ -64,8 +64,6 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
         ),
       },
       transitions: {
-        // TODO: of by mistake Transition(to: T.toB) is used instead of
-        // Transition(to: S.b) there is not type check -> error prone.
         T.toA: h.Transition(to: S.a),
         T.toB: h.Transition(to: S.b),
         T.toC: h.Transition(to: S.c),
