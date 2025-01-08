@@ -114,8 +114,6 @@ void main() {
     checker(l2, 1, 5);
     checker(l3, 1, 3);
 
-    // TODO: Shall we optimize l1 level to have only one notification and
-    // l2 to have no notification?
     await m.find<S, E, T>(l1).fire(E.exit);
     checker(l0, 1, 8);
     checker(l1, 1, 8); // S.a -> S.b, S.b -> S.c
