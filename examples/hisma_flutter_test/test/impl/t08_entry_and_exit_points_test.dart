@@ -37,9 +37,6 @@ Future<void> main() async {
       await checker.checkChild(EC.exit1, S.c);
       await checker.checkParent(E.forward, S.a);
 
-      // TODO: When hot reload when machine is on PagelessCreator it throws
-      // LateError (LateInitializationError: Field '_previousPages@95086382'
-      // has not been initialized.)
       await checker.checkParent(E.fwd1, S.b, SC.a);
       await checker.checkChild(EC.forward, S.b, SC.b);
       await checker.checkChild(EC.forward, S.b, SC.c);
