@@ -192,8 +192,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   @override
   Future<void> stop({dynamic arg}) async {
     await super.stop(arg: arg);
-    // TODO: do we need this notify here?
-    // notifyListeners();
     if (_initialized && parent != null) {
       _routerDelegate.stack.windBackAll((presentation) {
         if (presentation is PagelessCreator) {
