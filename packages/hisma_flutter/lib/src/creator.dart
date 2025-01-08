@@ -97,11 +97,6 @@ Page<R> _createPage<R>({
 }) {
   return MaterialPage<R>(
     child: widget,
-
-    // TODO: consider using path as defined in state machine hierarchy.
-    // OR simply use S stateId as the ValueKey only has to be unique for
-    // one machine as there is a 1-1 relation between machines and navigator
-    // states.
     key: ValueKey(name),
     name: name,
   );
