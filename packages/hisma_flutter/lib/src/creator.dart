@@ -83,7 +83,7 @@ class MaterialPageCreator<E, R> extends PageCreator<E, R> {
   // TODO: should the event be required here if overlay = true?
   // YES, it should be mandatory, otherwise when Flutter pops when
   // user clicks on AppBar BackButton the ui changes, but state remain
-  // resulting inconsistent UI.
+  // resulting inconsistent UI. Right now we handle it with an assert.
   MaterialPageCreator({
     required super.widget,
     super.overlay,
