@@ -276,7 +276,6 @@ class StateMachine<S, E, T> {
       // From here we know active state will change.
 
       if (targetState is FinalState) {
-        // TODO maybe combine with ExitPoint.
         // First we stop this state machine.
         await stop(arg: arg);
       } else if (targetState is ExitPoint) {
