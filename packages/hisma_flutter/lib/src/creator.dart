@@ -151,7 +151,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   Future<R?> Function({
     required BuildContext context,
     required bool rootNavigator,
-    // TODO: probably we do not need navigatorState and close to be passed.
     required Close<R> close,
     required StateMachineWithChangeNotifier<dynamic, E, dynamic> machine,
   }) present;
