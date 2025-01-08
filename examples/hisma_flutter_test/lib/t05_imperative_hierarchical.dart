@@ -119,8 +119,6 @@ HismaRouterGenerator<S, E> createHierarchicalImpGenerator({
       ),
       S.k: machine.name.split('/').length < 3
           ? MaterialPageCreator<E, void>(
-              // TODO: Create utility router class that creates
-              // BackButtonDispatcher.
               widget: Builder(
                 builder: (context) {
                   return RouterWithDelegate<S>(
