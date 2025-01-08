@@ -23,10 +23,6 @@ class Generators {
         S.c: MaterialPageCreator<E, void>(
           widget: Screen(machine),
           event: E.back,
-          // TODO: When E.self, we shall have get back to Screen S.c here.
-          // Right now Flutter pops the Screen S.c and we see Screen S.b and
-          // we are NOT taken back/shown Screen S.c.
-          // event: E.self,
           overlay: true,
         ),
         S.d: PagelessCreator<E, void>(
