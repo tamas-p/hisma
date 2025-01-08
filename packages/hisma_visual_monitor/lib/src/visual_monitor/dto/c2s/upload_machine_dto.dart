@@ -16,8 +16,6 @@ class UploadMachineDTO implements Message {
   });
 
   factory UploadMachineDTO.fromMap(Map<String, dynamic> map) {
-    // Using ! as better to see early if something is not OK with
-    // with the conversion.
     return UploadMachineDTO(
       hostname: map[_hostname] as String,
       domain: map[_domain] as String,
