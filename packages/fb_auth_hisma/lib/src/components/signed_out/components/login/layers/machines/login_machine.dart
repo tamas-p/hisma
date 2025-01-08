@@ -65,8 +65,6 @@ Action _createEmailSignInAction() => Action(
             email: uCredentials.email,
             password: uCredentials.password,
           );
-          // TODO: not needed as sign-in status is detected.
-          // machine.fire(E.success);
         } on FirebaseAuthException catch (e) {
           switch (e.code) {
             case 'invalid-email':
