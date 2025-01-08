@@ -27,13 +27,12 @@ class MyApp extends StatelessWidget {
     required bool useRootNavigator,
     super.key,
   }) {
-    _routerGenerator = _generators.createHismaRouterGenerator(
+    _routerGenerator = createHismaRouterGenerator(
       machine: machine,
       useRootNavigator: useRootNavigator,
     );
   }
 
-  final _generators = Generators();
   late final HismaRouterGenerator<S, E> _routerGenerator;
 
   @override

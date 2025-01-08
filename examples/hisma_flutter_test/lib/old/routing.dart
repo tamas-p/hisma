@@ -5,143 +5,126 @@ import '../ui.dart';
 import 'machine.dart';
 import 'states_events_transitions.dart';
 
-class Generators {
-  final generators = <String, HismaRouterGenerator<S, E>>{};
-
-  HismaRouterGenerator<S, E> createHismaRouterGenerator({
-    required StateMachineWithChangeNotifier<S, E, T> machine,
-    required bool useRootNavigator,
-  }) {
-    return HismaRouterGenerator<S, E>(
-      machine: machine,
-      mapping: {
-        S.a: MaterialPageCreator<E, void>(widget: Screen(machine)),
-        S.b: MaterialPageCreator<E, void>(
-          widget: Screen(machine),
-          event: E.back,
-        ),
-        S.c: MaterialPageCreator<E, void>(
-          widget: Screen(machine),
-          event: E.back,
-          overlay: true,
-        ),
-        S.d: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: useRootNavigator,
-          machine: machine,
-          event: E.self,
-        ),
-        // S.d: MaterialPageCreator<E, void>(widget: Screen(machine, S.d)),
-        S.e: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: useRootNavigator,
-          machine: machine,
-          event: E.self,
-        ),
-        // S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
-        S.f: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: useRootNavigator,
-          machine: machine,
-          event: E.self,
-        ),
-        // S.f: MaterialPageCreator<E, void>(widget: Screen(machine, S.f)),
-        S.g: MaterialPageCreator<E, void>(
-          widget: Screen(machine),
-          overlay: true,
-          event: E.back,
-        ),
-        S.h: PagelessCreator<E, void>(
-          present: showTestDialog,
-          rootNavigator: useRootNavigator,
-          machine: machine,
-          event: E.self,
-        ),
-        // S.h: MaterialPageCreator<E, void>(widget: Screen(machine, S.h)),
-        S.i: MaterialPageCreator<E, void>(
-          widget: Screen(machine),
-          overlay: true,
-          event: E.back,
-        ),
-        S.j: MaterialPageCreator<E, void>(
-          widget: Screen(machine),
-          overlay: true,
-          event: E.back,
-        ),
-        if (machine.name.split('/').length < hierarchyDepth + 1)
-          S.k: MaterialPageCreator<E, void>(
-            widget: Builder(
-              builder: (context) {
-                return Router(
-                  routerDelegate: (generators.putIfAbsent(
+HismaRouterGenerator<S, E> createHismaRouterGenerator({
+  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required bool useRootNavigator,
+}) {
+  return HismaRouterGenerator<S, E>(
+    machine: machine,
+    mapping: {
+      S.a: MaterialPageCreator<E, void>(widget: Screen(machine)),
+      S.b: MaterialPageCreator<E, void>(
+        widget: Screen(machine),
+        event: E.back,
+      ),
+      S.c: MaterialPageCreator<E, void>(
+        widget: Screen(machine),
+        event: E.back,
+        overlay: true,
+      ),
+      S.d: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: useRootNavigator,
+        machine: machine,
+        event: E.self,
+      ),
+      // S.d: MaterialPageCreator<E, void>(widget: Screen(machine, S.d)),
+      S.e: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: useRootNavigator,
+        machine: machine,
+        event: E.self,
+      ),
+      // S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
+      S.f: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: useRootNavigator,
+        machine: machine,
+        event: E.self,
+      ),
+      // S.f: MaterialPageCreator<E, void>(widget: Screen(machine, S.f)),
+      S.g: MaterialPageCreator<E, void>(
+        widget: Screen(machine),
+        overlay: true,
+        event: E.back,
+      ),
+      S.h: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: useRootNavigator,
+        machine: machine,
+        event: E.self,
+      ),
+      // S.h: MaterialPageCreator<E, void>(widget: Screen(machine, S.h)),
+      S.i: MaterialPageCreator<E, void>(
+        widget: Screen(machine),
+        overlay: true,
+        event: E.back,
+      ),
+      S.j: MaterialPageCreator<E, void>(
+        widget: Screen(machine),
+        overlay: true,
+        event: E.back,
+      ),
+      if (machine.name.split('/').length < hierarchyDepth + 1)
+        S.k: MaterialPageCreator<E, void>(
+          widget: Builder(
+            builder: (context) {
+              return RouterWithDelegate<S>(
+                () => createHismaRouterGenerator(
+                  machine: machine.find<S, E, T>(
                     getMachineName(machine.name, S.k),
-                    () => createHismaRouterGenerator(
-                      machine: machine.find<S, E, T>(
-                        getMachineName(machine.name, S.k),
-                      ),
-                      useRootNavigator: useRootNavigator,
-                    ),
-                  )).routerDelegate,
-                  backButtonDispatcher: Router.of(context)
-                      .backButtonDispatcher
-                      ?.createChildBackButtonDispatcher()
-                    ?..takePriority(),
-                );
-              },
-            ),
-          )
-        else
-          S.k: MaterialPageCreator<E, void>(
-            widget: Screen(machine),
-            overlay: true,
-            event: E.back,
+                  ),
+                  useRootNavigator: useRootNavigator,
+                ).routerDelegate,
+              );
+            },
           ),
-        if (machine.name.split('/').length < hierarchyDepth + 1)
-          S.l: MaterialPageCreator<E, void>(
-            widget: Builder(
-              builder: (context) {
-                return Router(
-                  routerDelegate: (generators.putIfAbsent(
+        )
+      else
+        S.k: MaterialPageCreator<E, void>(
+          widget: Screen(machine),
+          overlay: true,
+          event: E.back,
+        ),
+      if (machine.name.split('/').length < hierarchyDepth + 1)
+        S.l: MaterialPageCreator<E, void>(
+          widget: Builder(
+            builder: (context) {
+              return RouterWithDelegate(
+                () => createHismaRouterGenerator(
+                  machine: machine.find<S, E, T>(
                     getMachineName(machine.name, S.l),
-                    () => createHismaRouterGenerator(
-                      machine: machine.find<S, E, T>(
-                        getMachineName(machine.name, S.l),
-                      ),
-                      useRootNavigator: useRootNavigator,
-                    ),
-                  )).routerDelegate,
-                  backButtonDispatcher: Router.of(context)
-                      .backButtonDispatcher
-                      ?.createChildBackButtonDispatcher()
-                    ?..takePriority(),
-                );
-              },
-            ),
-          )
-        else
-          S.l: PagelessCreator<E, void>(
-            present: showTestDialog,
-            rootNavigator: useRootNavigator,
-            machine: machine,
-            event: E.self,
+                  ),
+                  useRootNavigator: useRootNavigator,
+                ).routerDelegate,
+              );
+            },
           ),
-        // S.l: MaterialPageCreator<E, void>(widget: Screen(machine, S.l)),
-        S.m: PagelessCreator<E, void>(
+        )
+      else
+        S.l: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: useRootNavigator,
           machine: machine,
           event: E.self,
         ),
-        // S.m: MaterialPageCreator<E, void>(widget: Screen(machine, S.m)),
-        S.n: MaterialPageCreator<E, void>(
-          widget: Screen(machine),
-          overlay: true,
-          event: E.back,
-        ),
-      },
-    );
-  }
+      // S.l: MaterialPageCreator<E, void>(widget: Screen(machine, S.l)),
+      S.m: PagelessCreator<E, void>(
+        present: showTestDialog,
+        rootNavigator: useRootNavigator,
+        machine: machine,
+        event: E.self,
+      ),
+      // S.m: MaterialPageCreator<E, void>(widget: Screen(machine, S.m)),
+      S.n: MaterialPageCreator<E, void>(
+        widget: Screen(machine),
+        overlay: true,
+        event: E.back,
+      ),
+    },
+  );
 }
+
 
 /*
 class HismaRouterGeneratorManager {
