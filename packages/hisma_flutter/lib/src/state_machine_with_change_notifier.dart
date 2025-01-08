@@ -140,7 +140,6 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
             }
 
             final event = newPres.event;
-            // TODO: Instead of assert event could be required.
             assert(
               event != null,
               'For imperative creator $newPres event shall not be null.',
