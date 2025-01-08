@@ -103,7 +103,6 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     assert(presentation is Creator<E>, '$presentation is not a Creator<$E>.');
     if (presentation is Creator<E>) {
       final event = presentation.event;
-      // TODO: Instead of assert event could be required.
       assert(
           event != null,
           '$presentation defined for ${machine.activeStateId}'
