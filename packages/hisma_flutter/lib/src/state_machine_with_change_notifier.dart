@@ -156,7 +156,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         // have one such page in the beginning of a path and you only return
         // there (a circle) and then windup would happen as handling circle.
         if (!newPres.overlay && parent != null) {
-          _routerDelegate.stack.windBackAll((presentation) {
+          _routerDelegate.stack.windBackAll((_, presentation) {
             if (presentation is PagelessCreator && presentation.rootNavigator) {
               // test: page_in_path
               presentation.close();
@@ -193,7 +193,7 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   Future<void> stop({dynamic arg}) async {
     await super.stop(arg: arg);
     if (_initialized && parent != null) {
-      _routerDelegate.stack.windBackAll((presentation) {
+      _routerDelegate.stack.windBackAll((key, presentation) {
         if (presentation is PagelessCreator) {
           if (presentation.rootNavigator) {
             // We can safely close the dialog in the root navigator as we know
@@ -204,9 +204,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
             // We only need to set closed as the pageless will be removed by
             // the framework, but it does not complete its creator function
             // so we have to do it here explicitly.
-            // TODO: use stack.remove instead of setClosed().
             // test: leave_state_in_parent
             presentation.setClosed();
+            _routerDelegate.stack.remove(key);
           }
         }
       });

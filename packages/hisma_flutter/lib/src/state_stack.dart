@@ -73,13 +73,13 @@ class StateStack {
     }
   }
 
-  void windBackAll(void Function(Presentation) processor) {
+  void windBackAll(void Function(String, Presentation) processor) {
     // Avoid concurrent mod. exception.
     final cpy = LinkedHashMap<String, Presentation>.from(
       _stack,
     );
     for (final current in cpy.entries.toList().reversed) {
-      processor(current.value);
+      processor(current.key, current.value);
     }
   }
 
