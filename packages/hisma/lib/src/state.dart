@@ -69,7 +69,6 @@ class State<E, T, S> extends RegularState<E, T, S> {
 
   /// Notifies parent state machine about an event to be processed as
   /// a result of child machine exit.
-  /// TODO: it was final before and late.
   Future<void> Function(Message)? notifyMachine;
 
   /// Processes event notification from a [Region]. It's only purpose
