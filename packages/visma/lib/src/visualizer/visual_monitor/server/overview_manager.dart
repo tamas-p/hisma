@@ -31,9 +31,7 @@ class StateMachines {
 
 class OverviewManager with BrowserNotifier {
   Theme theme = Theme.dark();
-
-  // TODO: Why Hosts.from? Why not simple <Hostname, Domains>{}?
-  final _hosts = Hosts.from(<Hostname, Domains>{});
+  final _hosts = <Hostname, Domains>{};
 
   void add({
     required StateMachineId uniqueSmId,
