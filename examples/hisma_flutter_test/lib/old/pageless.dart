@@ -8,7 +8,7 @@ import 'states_events_transitions.dart';
 
 Future<void> main() async {
   // initLogging();
-  h.StateMachine.monitorCreators = [
+  h.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),
   ];
@@ -18,10 +18,10 @@ Future<void> main() async {
   runApp(PagelessApp(machine: machine, useRootNavigator: true));
 }
 
-StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
+NavigationMachine<S, E, T> createPagelessMachine({
   required String name,
 }) =>
-    StateMachineWithChangeNotifier<S, E, T>(
+    NavigationMachine<S, E, T>(
       name: name,
       events: E.values,
       initialStateId: S.a,
@@ -82,7 +82,7 @@ StateMachineWithChangeNotifier<S, E, T> createPagelessMachine({
     );
 
 HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool useRootNavigator,
 }) =>
     HismaRouterGenerator<S, E>(
@@ -119,7 +119,7 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
 
 class PagelessApp extends StatelessWidget {
   PagelessApp({
-    required StateMachineWithChangeNotifier<S, E, T> machine,
+    required NavigationMachine<S, E, T> machine,
     required bool useRootNavigator,
     super.key,
   }) : _routerGenerator = createPagelessHismaRouterGenerator(

@@ -640,7 +640,7 @@ Testing that pageless routes are managed well in case of a child machine.
 }
 
 Future<void> checkAll(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
   WidgetTester tester,
   S previous,
   S current,
@@ -661,7 +661,7 @@ Future<void> checkAll(
 }
 
 Future<void> testIt({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required WidgetTester tester,
   required Act act,
 }) async {
@@ -686,7 +686,7 @@ class MachineTester {
   MachineTester(this.tester, this.machine);
 
   final WidgetTester tester;
-  final StateMachine<S, E, T> machine;
+  final Machine<S, E, T> machine;
 
   Future<void> fire(E eventId, String machineName) async {
     _log.info('${machine.getActiveStateRecursive()} <fire> $eventId');
@@ -737,7 +737,7 @@ Future<void> multiplier(
   // await tc(historyLevel: HistoryLevel.deep, useRootNavigator: true);
 }
 
-Future<StateMachineWithChangeNotifier<S, E, T>> getMachine({
+Future<NavigationMachine<S, E, T>> getMachine({
   required HistoryLevel? historyLevel,
   required bool useRootNavigator,
   required WidgetTester tester,
@@ -755,7 +755,7 @@ Future<StateMachineWithChangeNotifier<S, E, T>> getMachine({
   return machine;
 }
 
-Future<StateMachineWithChangeNotifier<S, E, T>> getChainMachine({
+Future<NavigationMachine<S, E, T>> getChainMachine({
   required HistoryLevel? historyLevel,
   required bool useRootNavigator,
   required WidgetTester tester,

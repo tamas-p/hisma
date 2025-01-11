@@ -7,7 +7,7 @@ import 'package:logging/logging.dart';
 
 Future<void> main() async {
   testWidgets('hisma_flutter test1', (tester) async {});
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     // (m) => VisualMonitor(m),
     // (m) => ConsoleMonitor(m),
   ];
@@ -43,8 +43,7 @@ enum T { toA, toB }
 
 const simpleName = 'simple';
 
-StateMachineWithChangeNotifier<S, E, T> createSimpleMachine() =>
-    StateMachineWithChangeNotifier(
+NavigationMachine<S, E, T> createSimpleMachine() => NavigationMachine(
       events: E.values,
       name: simpleName,
       initialStateId: S.a,
@@ -93,7 +92,7 @@ class ScreenB extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createHismaRouterGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
 ) =>
     HismaRouterGenerator(
       machine: machine,
@@ -104,7 +103,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator(
     );
 
 class MyApp extends StatelessWidget {
-  MyApp(StateMachineWithChangeNotifier<S, E, T> machine, {super.key})
+  MyApp(NavigationMachine<S, E, T> machine, {super.key})
       : _routerGenerator = createHismaRouterGenerator(machine);
 
   final HismaRouterGenerator<S, E> _routerGenerator;

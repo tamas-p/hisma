@@ -8,7 +8,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'utils.dart';
 
 Future<void> main() async {
-  hisma.StateMachine.monitorCreators = [
+  hisma.Machine.monitorCreators = [
     (m) => VisualMonitor(m),
   ];
 
@@ -24,7 +24,7 @@ enum E { forward, backward }
 
 enum T { toA, toB, toC }
 
-final machine = StateMachineWithChangeNotifier<S, E, T>(
+final machine = NavigationMachine<S, E, T>(
   events: E.values,
   initialStateId: S.a,
   name: 'machine',

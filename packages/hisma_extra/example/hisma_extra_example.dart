@@ -3,7 +3,7 @@ import 'package:hisma_extra/hisma_extra.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 void main(List<String> args) {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
   ];
 

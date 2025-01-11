@@ -71,8 +71,7 @@ class ScreenA extends StatelessWidget {
 
 enum S { a }
 
-hf.StateMachineWithChangeNotifier<S, void, void> createMachine() =>
-    hf.StateMachineWithChangeNotifier(
+hf.NavigationMachine<S, void, void> createMachine() => hf.NavigationMachine(
       name: 'simple',
       initialStateId: S.a,
       states: {
@@ -82,7 +81,7 @@ hf.StateMachineWithChangeNotifier<S, void, void> createMachine() =>
     );
 
 hf.HismaRouterGenerator<S, void> createRouterGenerator(
-  hf.StateMachineWithChangeNotifier<S, void, void> machine,
+  hf.NavigationMachine<S, void, void> machine,
 ) =>
     hf.HismaRouterGenerator<S, void>(
       machine: machine,

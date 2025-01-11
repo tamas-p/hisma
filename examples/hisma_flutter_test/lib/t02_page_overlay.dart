@@ -9,7 +9,7 @@ import 'utility.dart';
 
 void main(List<String> args) {
   initLogging();
-  hm.StateMachine.monitorCreators = [
+  hm.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
   runApp(OverlayApp(createSimpleMachine()..start()));
@@ -21,7 +21,7 @@ class OverlayApp extends StatelessWidget {
 
   final HismaRouterGenerator<S, E> generator;
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -31,7 +31,7 @@ class OverlayApp extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createOverlayGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
 ) =>
     HismaRouterGenerator<S, E>(
       machine: machine,

@@ -2,7 +2,7 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 void main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     // (machine) => ActiveStateMonitor(machine),
   ];
@@ -110,7 +110,7 @@ enum SSEN {
 
 //------------------------
 
-final sm = StateMachine<S, E, T>(
+final sm = Machine<S, E, T>(
   events: E.values,
   name: 'm1',
   initialStateId: S.s1,
@@ -138,7 +138,7 @@ final sm = StateMachine<S, E, T>(
       },
       regions: [
         Region(
-          machine: StateMachine<SS, SE, ST>(
+          machine: Machine<SS, SE, ST>(
             events: SE.values,
             name: 'sm1',
             initialStateId: SS.ss2,
@@ -158,7 +158,7 @@ final sm = StateMachine<S, E, T>(
                 },
                 regions: [
                   Region<SS, SE, ST, SSS>(
-                    machine: StateMachine<SSS, SSE, SST>(
+                    machine: Machine<SSS, SSE, SST>(
                       events: SSE.values,
                       name: 'ssm1',
                       initialStateId: SSS.sss2,

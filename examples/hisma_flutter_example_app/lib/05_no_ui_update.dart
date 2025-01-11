@@ -8,7 +8,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'utils.dart';
 
 Future<void> main() async {
-  hisma.StateMachine.monitorCreators = [
+  hisma.Machine.monitorCreators = [
     (m) => VisualMonitor(m),
   ];
 
@@ -24,7 +24,7 @@ enum E { forward, show, fetch, backward }
 
 enum T { toA, toB, toB1, toB2, toBFromB2, toC, toC1 }
 
-final machine = StateMachineWithChangeNotifier<S, E, T>(
+final machine = NavigationMachine<S, E, T>(
   events: E.values,
   initialStateId: S.a,
   name: 'machine',
@@ -129,7 +129,7 @@ Future<bool?> b1({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
-  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
 }) =>
     showDialog<bool>(
       context: context,
@@ -172,7 +172,7 @@ Future<DateTime?> c1({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
-  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
 }) =>
     showDatePicker(
       useRootNavigator: rootNavigator,

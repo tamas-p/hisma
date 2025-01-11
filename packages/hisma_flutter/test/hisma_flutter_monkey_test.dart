@@ -26,7 +26,7 @@ void main() {
       testWidgets(
         'No History monkey, useRootNavigator: false',
         (tester) async {
-          StateMachine.monitorCreators = [
+          Machine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
           ];
 
@@ -41,7 +41,7 @@ void main() {
       testWidgets(
         'No History monkey, useRootNavigator: true',
         (tester) async {
-          StateMachine.monitorCreators = [
+          Machine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
           ];
 
@@ -56,7 +56,7 @@ void main() {
       testWidgets(
         'Shallow history monkey, useRootNavigator: false',
         (tester) async {
-          StateMachine.monitorCreators = [
+          Machine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
           ];
 
@@ -72,7 +72,7 @@ void main() {
       testWidgets(
         'Shallow history monkey, useRootNavigator: true',
         (tester) async {
-          StateMachine.monitorCreators = [
+          Machine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
           ];
 
@@ -88,7 +88,7 @@ void main() {
       testWidgets(
         'Deep history monkey, useRootNavigator: false',
         (tester) async {
-          StateMachine.monitorCreators = [
+          Machine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
           ];
 
@@ -104,7 +104,7 @@ void main() {
       testWidgets(
         'Deep history monkey, useRootNavigator: true',
         (tester) async {
-          StateMachine.monitorCreators = [
+          Machine.monitorCreators = [
             // (m) => VisualMonitor(m, host: '192.168.122.1'),
           ];
 
@@ -123,7 +123,7 @@ void main() {
 
 Future<void> monkey({
   required WidgetTester tester,
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool useRootNavigator,
 }) async {
   await machine.start();

@@ -4,7 +4,7 @@ import 'package:hisma/hisma.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 Future<void> main(List<String> args) async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
   ];
 
@@ -13,7 +13,7 @@ Future<void> main(List<String> args) async {
   await guardsMachine.start();
 }
 
-final emptyMachine = StateMachine(
+final emptyMachine = Machine(
   name: 'empty',
   initialStateId: null,
   states: {},
@@ -26,7 +26,7 @@ enum E { go }
 
 enum T { toFinish, toWork }
 
-final minimalMachine = StateMachine<S, E, T>(
+final minimalMachine = Machine<S, E, T>(
   events: E.values,
   name: 'onActions',
   initialStateId: S.work,
@@ -51,7 +51,7 @@ final minimalMachine = StateMachine<S, E, T>(
   },
 );
 
-final guardsMachine = StateMachine<S, E, T>(
+final guardsMachine = Machine<S, E, T>(
   events: E.values,
   name: 'guards',
   initialStateId: S.work,

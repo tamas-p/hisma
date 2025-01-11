@@ -59,8 +59,7 @@ final appRouterProvider = Provider(
           required BuildContext context,
           required bool rootNavigator,
           required Close<DateTime> close,
-          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
-              machine,
+          required NavigationMachine<dynamic, dynamic, dynamic> machine,
         }) =>
             generateDialog<E, void>(
           context: context,
@@ -87,8 +86,7 @@ final appRouterProvider = Provider(
           required BuildContext context,
           required bool rootNavigator,
           required Close<DateTime> close,
-          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
-              machine,
+          required NavigationMachine<dynamic, dynamic, dynamic> machine,
         }) =>
             generateDatePicker<E>(
           context: context,
@@ -103,8 +101,7 @@ final appRouterProvider = Provider(
           required BuildContext context,
           required bool rootNavigator,
           required Close<DateTime> close,
-          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
-              machine,
+          required NavigationMachine<dynamic, dynamic, dynamic> machine,
         }) =>
             generateDialog<E, void>(
           context: context,

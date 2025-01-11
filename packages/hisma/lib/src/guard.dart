@@ -3,7 +3,7 @@ import 'dart:async';
 import '../hisma.dart';
 
 typedef GuardFunction = FutureOr<bool> Function(
-  StateMachine<dynamic, dynamic, dynamic> machine,
+  Machine<dynamic, dynamic, dynamic> machine,
   dynamic arg,
 );
 

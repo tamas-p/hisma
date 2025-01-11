@@ -7,7 +7,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 void main(List<String> args) {
   initLogging();
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -21,7 +21,7 @@ enum E { on, off }
 
 enum T { toOn, toOff }
 
-final sm = StateMachine<S, E, T>(
+final sm = Machine<S, E, T>(
   name: 'l1',
   events: E.values,
   initialStateId: S.off,
@@ -37,7 +37,7 @@ final sm = StateMachine<S, E, T>(
       },
       regions: [
         Region(
-          machine: StateMachine<S, E, T>(
+          machine: Machine<S, E, T>(
             history: HistoryLevel.deep,
             name: 'l2',
             events: E.values,
@@ -54,7 +54,7 @@ final sm = StateMachine<S, E, T>(
                 },
                 regions: [
                   Region(
-                    machine: StateMachine<S, E, T>(
+                    machine: Machine<S, E, T>(
                       name: 'l3',
                       events: E.values,
                       initialStateId: S.off,
@@ -70,7 +70,7 @@ final sm = StateMachine<S, E, T>(
                           },
                           regions: [
                             Region(
-                              machine: StateMachine<S, E, T>(
+                              machine: Machine<S, E, T>(
                                 name: 'l4',
                                 events: E.values,
                                 initialStateId: S.off,

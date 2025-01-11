@@ -9,7 +9,7 @@ enum E { forward, backward }
 enum T { toA, toB, toC }
 
 final compFMachineProvider = Provider(
-  (ref) => StateMachineWithChangeNotifier<S, E, T>(
+  (ref) => NavigationMachine<S, E, T>(
     events: E.values,
     name: 'fCompMachine',
     history: HistoryLevel.shallow,

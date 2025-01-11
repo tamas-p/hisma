@@ -246,7 +246,7 @@ class ES {
 
 class MachineTester {
   MachineTester(this.root);
-  final StateMachine<S, E, T> root;
+  final Machine<S, E, T> root;
 
   Future<void> startCheck(S expected) async {
     await root.start();

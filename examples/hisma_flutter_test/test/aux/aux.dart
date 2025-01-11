@@ -50,10 +50,10 @@ Future<void> pageBack(WidgetTester tester) async {
   });
 }
 
-List<StateMachine<dynamic, dynamic, dynamic>> getActiveMachines(
-  StateMachine<dynamic, dynamic, dynamic> machine,
+List<Machine<dynamic, dynamic, dynamic>> getActiveMachines(
+  Machine<dynamic, dynamic, dynamic> machine,
 ) {
-  final list = <StateMachine<dynamic, dynamic, dynamic>>[];
+  final list = <Machine<dynamic, dynamic, dynamic>>[];
   if (machine.activeStateId != null) {
     list.add(machine);
     final st = machine.states[machine.activeStateId];
@@ -69,7 +69,7 @@ List<StateMachine<dynamic, dynamic, dynamic>> getActiveMachines(
   return list;
 }
 
-void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
+void checkTitle<S, E, T>(Machine<S, E, T> machine, [S? stateId]) {
   final activeMachines = getActiveMachines(machine);
   final lm = activeMachines.last;
   final path = getTitle(lm, lm.activeStateId);
@@ -79,7 +79,7 @@ void checkTitle<S, E, T>(StateMachine<S, E, T> machine, [S? stateId]) {
 enum Act { fire, tap, back }
 
 Future<void> action<S, E, T>(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
   WidgetTester tester,
   E? event, {
   Act act = Act.tap,
@@ -97,12 +97,12 @@ Future<void> action<S, E, T>(
   await tester.pumpAndSettle();
 }
 
-StateMachineWithChangeNotifier<S, E, T>? _getChildMachine<S, E, T>(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+NavigationMachine<S, E, T>? _getChildMachine<S, E, T>(
+  NavigationMachine<S, E, T> machine,
 ) {
   final state = machine.states[machine.activeStateId];
   if (state is State<E, T, S> && state.regions.isNotEmpty) {
-    return state.regions[0].machine as StateMachineWithChangeNotifier<S, E, T>;
+    return state.regions[0].machine as NavigationMachine<S, E, T>;
   } else {
     return null;
   }
@@ -119,12 +119,12 @@ class Checker<S, E, T> {
 
   final WidgetTester tester;
   final Act act;
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   final Map<S, Presentation> mapping;
   final Future<void> Function(
     WidgetTester tester,
     Act act,
-    StateMachineWithChangeNotifier<S, E, T> machine,
+    NavigationMachine<S, E, T> machine,
     Map<S, Presentation> mapping,
   )? checkMachine;
   final _seen = <S?>{};
@@ -148,7 +148,7 @@ class Checker<S, E, T> {
     await action(machine, tester, event, act: act ?? this.act);
     final ns = machine.activeStateId;
     expect(ns, expected);
-    final StateMachineWithChangeNotifier<S, E, T>? childMachine;
+    final NavigationMachine<S, E, T>? childMachine;
     if (checkMachine != null &&
         !_seen.contains(ns) &&
         (childMachine = _getChildMachine(machine)) != null) {

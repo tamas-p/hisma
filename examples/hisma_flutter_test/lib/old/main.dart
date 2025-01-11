@@ -9,7 +9,7 @@ import 'routing.dart';
 import 'states_events_transitions.dart';
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),
   ];
@@ -23,7 +23,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({
-    required StateMachineWithChangeNotifier<S, E, T> machine,
+    required NavigationMachine<S, E, T> machine,
     required bool useRootNavigator,
     super.key,
   }) {

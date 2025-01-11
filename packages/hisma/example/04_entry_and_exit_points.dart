@@ -9,7 +9,7 @@ import '03_compound_multiple_regions.dart' as cm;
 
 Future<void> main() async {
   // initLogging();
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -26,7 +26,7 @@ enum T { toGrid, toBattery, toDown }
 
 const powerMachineName = 'powerMachine';
 
-StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
+Machine<S, E, T> createPowerMachine() => Machine<S, E, T>(
       name: powerMachineName,
       events: E.values,
       initialStateId: S.grid,
@@ -68,10 +68,10 @@ enum LME { turnOnGrid, turnOff, turnOnBattery }
 
 enum LMT { toOn, toOff }
 
-StateMachine<LMS, LME, LMT> createLightMachine({
+Machine<LMS, LME, LMT> createLightMachine({
   RegionList<LMS, LME, LMT>? regions,
 }) =>
-    StateMachine<LMS, LME, LMT>(
+    Machine<LMS, LME, LMT>(
       name: 'lightMachine',
       events: LME.values,
       initialStateId: LMS.off,

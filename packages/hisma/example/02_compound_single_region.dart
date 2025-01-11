@@ -7,7 +7,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import '01_simple.dart' as lm;
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
   ];
 
@@ -23,10 +23,10 @@ enum T { toHalf, toFull }
 
 const brightnessMachineName = 'brightnessMachine';
 
-StateMachine<S, E, T> createBrightnessMachine({
+Machine<S, E, T> createBrightnessMachine({
   RegionList<S, E, T>? regions,
 }) =>
-    StateMachine<S, E, T>(
+    Machine<S, E, T>(
       name: brightnessMachineName,
       events: E.values,
       initialStateId: S.half,

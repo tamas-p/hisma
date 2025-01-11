@@ -9,7 +9,7 @@ import 'app/layers/router/app_router_provider.dart';
 
 Future<void> main() async {
   initLogging();
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),
   ];

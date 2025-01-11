@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Guard', () {
-    late StateMachine<S, E, T> machine;
+    late Machine<S, E, T> machine;
     setUp(() async {
       machine = createMachine();
     });
@@ -104,7 +104,7 @@ enum T { syncToBex, asyncToBex, syncToBonError, asyncToBonError, back }
 
 typedef AsyncFunction = Future<int> Function();
 
-StateMachine<S, E, T> createMachine() => StateMachine<S, E, T>(
+Machine<S, E, T> createMachine() => Machine<S, E, T>(
       name: 'guard',
       data: false,
       initialStateId: S.a,

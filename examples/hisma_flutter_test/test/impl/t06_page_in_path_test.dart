@@ -171,7 +171,7 @@ Future<void> main() async {
 class Checker {
   Checker({required this.tester, required this.machine, required this.act});
   WidgetTester tester;
-  StateMachineWithChangeNotifier<S, E, T> machine;
+  NavigationMachine<S, E, T> machine;
   Act act;
 
   Future<void> check(E event, S expected) async {

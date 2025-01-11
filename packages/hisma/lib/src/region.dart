@@ -29,7 +29,7 @@ class Region<S, E, T, SS> {
 
   // We use dynamic here indicating that it will only be defined by the
   // constructor 'machine' parameter.
-  final StateMachine<SS, dynamic, dynamic> machine;
+  final Machine<SS, dynamic, dynamic> machine;
 
   /// Notifies enclosing state about an event to be processed as
   /// a result of child machine exit.

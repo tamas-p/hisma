@@ -9,7 +9,7 @@ import 'states_events_transitions.dart';
 
 Future<void> main() async {
   initLogging();
-  h.StateMachine.monitorCreators = [
+  h.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),
   ];
@@ -19,8 +19,7 @@ Future<void> main() async {
   runApp(DoubleApp(machine: machine));
 }
 
-StateMachineWithChangeNotifier<S, E, T> createConcurrentMachine() =>
-    StateMachineWithChangeNotifier(
+NavigationMachine<S, E, T> createConcurrentMachine() => NavigationMachine(
       events: E.values,
       name: 'concurrentMachine',
       initialStateId: S.a,
@@ -59,7 +58,7 @@ StateMachineWithChangeNotifier<S, E, T> createConcurrentMachine() =>
       },
     );
 HismaRouterGenerator<S, E> createConcurrentHismaRouterGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
 }) =>
     HismaRouterGenerator<S, E>(
       machine: machine,
@@ -84,7 +83,7 @@ HismaRouterGenerator<S, E> createConcurrentHismaRouterGenerator({
 
 class DoubleScreen extends StatelessWidget {
   const DoubleScreen({super.key, required this.machine});
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +168,7 @@ Future<void> showMyBottomSheet(
 
 class DoubleApp extends StatelessWidget {
   DoubleApp({
-    required StateMachineWithChangeNotifier<S, E, T> machine,
+    required NavigationMachine<S, E, T> machine,
     super.key,
   }) : _routerGenerator = createConcurrentHismaRouterGenerator(
           machine: machine,

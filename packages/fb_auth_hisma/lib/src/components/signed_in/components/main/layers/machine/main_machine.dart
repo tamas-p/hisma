@@ -11,8 +11,8 @@ enum EMM { emailNotVerified, emailVerified, resendEmail, reload, error, back }
 
 enum TMM { toEmailNotVerified, reload, toApp, resendEmail, toError, back }
 
-StateMachineWithChangeNotifier<SMM, EMM, TMM> createMainMachine() =>
-    StateMachineWithChangeNotifier<SMM, EMM, TMM>(
+NavigationMachine<SMM, EMM, TMM> createMainMachine() =>
+    NavigationMachine<SMM, EMM, TMM>(
       name: mainMachineName,
       events: EMM.values,
       initialStateId: SMM.check,

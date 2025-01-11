@@ -2,7 +2,7 @@ import 'package:hisma/hisma.dart';
 
 import 'active_state_visualizer.dart';
 
-/// When configured for [StateMachine] it reports active states of
+/// When configured for [Machine] it reports active states of
 /// the hierarchical state machine.
 class ConsoleMonitor implements Monitor {
   /// Test
@@ -16,7 +16,7 @@ class ConsoleMonitor implements Monitor {
     this.printer = _simplePrint,
   });
 
-  final StateMachine<dynamic, dynamic, dynamic> stateMachine;
+  final Machine<dynamic, dynamic, dynamic> stateMachine;
   final void Function(String) printer;
 
   static void _simplePrint(String str) {

@@ -7,7 +7,7 @@ import 'machine_longer.dart';
 import 'ui.dart';
 
 Future<void> main(List<String> args) async {
-  hm.StateMachine.monitorCreators = [
+  hm.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
   final machine = createLongerMachine(hierarchical: true);
@@ -28,7 +28,7 @@ class HierarchicalImperativeApp extends StatelessWidget {
     rootNavigator: rootNavigator,
   );
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -39,7 +39,7 @@ class HierarchicalImperativeApp extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createHierarchicalImpGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool rootNavigator,
 }) {
   final generator = HismaRouterGenerator<S, E>(

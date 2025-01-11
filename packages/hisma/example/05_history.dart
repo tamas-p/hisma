@@ -7,7 +7,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 void main(List<String> args) {
   initLogging();
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -23,12 +23,12 @@ enum E { on, off }
 
 enum T { toOn, toOff }
 
-StateMachine<S, E, T> createMachine({
+Machine<S, E, T> createMachine({
   required String name,
   HistoryLevel? history,
-  StateMachine<S, E, T>? sm,
+  Machine<S, E, T>? sm,
 }) =>
-    StateMachine<S, E, T>(
+    Machine<S, E, T>(
       name: name,
       history: history,
       events: E.values,

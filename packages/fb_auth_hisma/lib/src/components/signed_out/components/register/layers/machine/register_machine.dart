@@ -16,8 +16,8 @@ enum ERM { back, register, fail, ok }
 
 enum TRM { register, toFailed, toRegistration, toExBack }
 
-StateMachineWithChangeNotifier<SRM, ERM, TRM> createRegisterMachine() =>
-    StateMachineWithChangeNotifier<SRM, ERM, TRM>(
+NavigationMachine<SRM, ERM, TRM> createRegisterMachine() =>
+    NavigationMachine<SRM, ERM, TRM>(
       events: ERM.values,
       name: registerMachineName,
       initialStateId: SRM.registration,

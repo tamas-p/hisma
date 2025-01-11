@@ -3,7 +3,7 @@ import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 Future<void> main(List<String> args) async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -25,7 +25,7 @@ enum E { e1, e2 }
 
 enum T { t1, t2, t3 }
 
-final sm = StateMachine<S, E, T>(
+final sm = Machine<S, E, T>(
   events: E.values,
   name: 'm1',
   initialStateId: S.s1,
@@ -70,7 +70,7 @@ enum SE { e1, e2, e3 }
 
 enum ST { t0, t1, t2, t3 }
 
-final ssm = StateMachine<SS, SE, ST>(
+final ssm = Machine<SS, SE, ST>(
   events: SE.values,
   name: 'cm1',
   initialStateId: SS.s1,
@@ -100,7 +100,7 @@ final ssm = StateMachine<SS, SE, ST>(
 
 //------------------------------------------------------------------------------
 
-final sm1 = StateMachine<String, String, String>(
+final sm1 = Machine<String, String, String>(
   name: 'm2',
   states: {
     's1': State(),

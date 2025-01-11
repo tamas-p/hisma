@@ -9,7 +9,7 @@ import '02_compound_single_region.dart' as bm;
 
 Future<void> main() async {
   // initLogging();
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -28,7 +28,7 @@ enum T { toBlue, toRed }
 
 const colorMachineName = 'colorMachine';
 
-StateMachine<S, E, T> createColorMachine() => StateMachine<S, E, T>(
+Machine<S, E, T> createColorMachine() => Machine<S, E, T>(
       name: colorMachineName,
       events: E.values,
       initialStateId: S.blue,

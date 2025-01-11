@@ -8,7 +8,7 @@ Future<void> signOutConfirmationDialog({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
-  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
 }) {
   final signedInMachine =
       authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);

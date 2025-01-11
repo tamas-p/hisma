@@ -12,8 +12,8 @@ enum ESoM { register, back }
 
 enum TSoM { toRegistration, toLogin }
 
-StateMachineWithChangeNotifier<SSoM, ESoM, TSoM> createSignedOutMachine() =>
-    StateMachineWithChangeNotifier<SSoM, ESoM, TSoM>(
+NavigationMachine<SSoM, ESoM, TSoM> createSignedOutMachine() =>
+    NavigationMachine<SSoM, ESoM, TSoM>(
       events: ESoM.values,
       name: signedOutMachineName,
       initialStateId: SSoM.login,

@@ -159,7 +159,7 @@ enum L3FT {
 
 //------
 
-StateMachine<L3AS, L3AE, L3AT> smL3A() => StateMachine<L3AS, L3AE, L3AT>(
+Machine<L3AS, L3AE, L3AT> smL3A() => Machine<L3AS, L3AE, L3AT>(
       name: 'smL3A',
       initialStateId: L3AS.s1,
       states: {
@@ -180,7 +180,7 @@ StateMachine<L3AS, L3AE, L3AT> smL3A() => StateMachine<L3AS, L3AE, L3AT>(
       },
     );
 
-StateMachine<L3BS, L3BE, L3BT> smL3B() => StateMachine<L3BS, L3BE, L3BT>(
+Machine<L3BS, L3BE, L3BT> smL3B() => Machine<L3BS, L3BE, L3BT>(
       name: 'smL3B',
       initialStateId: L3BS.s1,
       states: {
@@ -201,7 +201,7 @@ StateMachine<L3BS, L3BE, L3BT> smL3B() => StateMachine<L3BS, L3BE, L3BT>(
       },
     );
 
-StateMachine<L3CS, L3CE, L3CT> smL3C() => StateMachine<L3CS, L3CE, L3CT>(
+Machine<L3CS, L3CE, L3CT> smL3C() => Machine<L3CS, L3CE, L3CT>(
       name: 'smL3C',
       initialStateId: L3CS.s1,
       states: {
@@ -222,7 +222,7 @@ StateMachine<L3CS, L3CE, L3CT> smL3C() => StateMachine<L3CS, L3CE, L3CT>(
       },
     );
 
-StateMachine<L3DS, L3DE, L3DT> smL3D() => StateMachine<L3DS, L3DE, L3DT>(
+Machine<L3DS, L3DE, L3DT> smL3D() => Machine<L3DS, L3DE, L3DT>(
       name: 'smL3D',
       initialStateId: L3DS.s1,
       states: {
@@ -243,7 +243,7 @@ StateMachine<L3DS, L3DE, L3DT> smL3D() => StateMachine<L3DS, L3DE, L3DT>(
       },
     );
 
-StateMachine<L3ES, L3EE, L3ET> smL3E() => StateMachine<L3ES, L3EE, L3ET>(
+Machine<L3ES, L3EE, L3ET> smL3E() => Machine<L3ES, L3EE, L3ET>(
       name: 'smL3E',
       initialStateId: L3ES.s1,
       states: {
@@ -264,7 +264,7 @@ StateMachine<L3ES, L3EE, L3ET> smL3E() => StateMachine<L3ES, L3EE, L3ET>(
       },
     );
 
-StateMachine<L3FS, L3FE, L3FT> smL3F() => StateMachine<L3FS, L3FE, L3FT>(
+Machine<L3FS, L3FE, L3FT> smL3F() => Machine<L3FS, L3FE, L3FT>(
       name: 'smL3F',
       initialStateId: L3FS.s1,
       states: {
@@ -285,11 +285,11 @@ StateMachine<L3FS, L3FE, L3FT> smL3F() => StateMachine<L3FS, L3FE, L3FT>(
       },
     );
 
-StateMachine<L2AS, L2AE, L2AT> smL2A(
-  StateMachine<L3AS, L3AE, L3AT> smL3A,
-  StateMachine<L3BS, L3BE, L3BT> smL3B,
+Machine<L2AS, L2AE, L2AT> smL2A(
+  Machine<L3AS, L3AE, L3AT> smL3A,
+  Machine<L3BS, L3BE, L3BT> smL3B,
 ) =>
-    StateMachine<L2AS, L2AE, L2AT>(
+    Machine<L2AS, L2AE, L2AT>(
       name: 'smL2A',
       initialStateId: L2AS.s1,
       states: {
@@ -314,11 +314,11 @@ StateMachine<L2AS, L2AE, L2AT> smL2A(
       },
     );
 
-StateMachine<L2BS, L2BE, L2BT> smL2B(
-  StateMachine<L3CS, L3CE, L3CT> smL3C,
-  StateMachine<L3DS, L3DE, L3DT> smL3D,
+Machine<L2BS, L2BE, L2BT> smL2B(
+  Machine<L3CS, L3CE, L3CT> smL3C,
+  Machine<L3DS, L3DE, L3DT> smL3D,
 ) =>
-    StateMachine<L2BS, L2BE, L2BT>(
+    Machine<L2BS, L2BE, L2BT>(
       name: 'smL2B',
       initialStateId: L2BS.s1,
       states: {
@@ -343,11 +343,11 @@ StateMachine<L2BS, L2BE, L2BT> smL2B(
       },
     );
 
-StateMachine<L2CS, L2CE, L2CT> smL2C(
-  StateMachine<L3ES, L3EE, L3ET> smL3E,
-  StateMachine<L3FS, L3FE, L3FT> smL3F,
+Machine<L2CS, L2CE, L2CT> smL2C(
+  Machine<L3ES, L3EE, L3ET> smL3E,
+  Machine<L3FS, L3FE, L3FT> smL3F,
 ) =>
-    StateMachine<L2CS, L2CE, L2CT>(
+    Machine<L2CS, L2CE, L2CT>(
       name: 'smL2C',
       initialStateId: L2CS.s1,
       states: {
@@ -372,12 +372,12 @@ StateMachine<L2CS, L2CE, L2CT> smL2C(
       },
     );
 
-StateMachine<L1S, L1E, L1T> smL1(
-  StateMachine<L2AS, L2AE, L2AT> smL2A,
-  StateMachine<L2BS, L2BE, L2BT> smL2B,
-  StateMachine<L2CS, L2CE, L2CT> smL3C,
+Machine<L1S, L1E, L1T> smL1(
+  Machine<L2AS, L2AE, L2AT> smL2A,
+  Machine<L2BS, L2BE, L2BT> smL2B,
+  Machine<L2CS, L2CE, L2CT> smL3C,
 ) =>
-    StateMachine<L1S, L1E, L1T>(
+    Machine<L1S, L1E, L1T>(
       name: 'smL1',
       initialStateId: L1S.s1,
       states: {
@@ -404,7 +404,7 @@ StateMachine<L1S, L1E, L1T> smL1(
     );
 
 Future<void> fireAndCheck(
-  StateMachine<L1S, L1E, L1T> sm,
+  Machine<L1S, L1E, L1T> sm,
   L1E event,
   List<dynamic> expectedState,
 ) async {

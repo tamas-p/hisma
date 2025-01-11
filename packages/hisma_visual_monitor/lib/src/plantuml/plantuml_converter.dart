@@ -32,7 +32,7 @@ class PlantUMLConverter {
   // only the open '(+)' sign shown indicating that this state has regions.
   final Set<String> expandedItems;
 
-  StateMachine<dynamic, dynamic, dynamic> stateMachine;
+  Machine<dynamic, dynamic, dynamic> stateMachine;
   final Theme _theme;
 
   final _sb = StringBuffer('@startuml StateMachine\n');
@@ -104,7 +104,7 @@ class MachineConverter {
   final bool isRoot;
 
   Theme theme;
-  StateMachine<dynamic, dynamic, dynamic> machine;
+  Machine<dynamic, dynamic, dynamic> machine;
 
   /// Contains all state identifiers whose regions has to be shown.
   final Set<String> expandedItems;
@@ -930,7 +930,7 @@ enum Ev { e1, e2, e3 }
 
 enum Tr { t1, t2, t3 }
 
-final sm = StateMachine<St, Ev, Tr>(
+final sm = Machine<St, Ev, Tr>(
   events: Ev.values,
   name: 'm1',
   initialStateId: St.s1,
@@ -981,7 +981,7 @@ enum SE1 { e1, e2, e3 }
 
 enum ST1 { t0, t1, t2, t3 }
 
-final ssm1 = StateMachine<SS1, SE1, ST1>(
+final ssm1 = Machine<SS1, SE1, ST1>(
   events: SE1.values,
   name: 'cm1',
   initialStateId: SS1.s1,
@@ -1015,7 +1015,7 @@ enum SE2 { e1, e2, e3 }
 
 enum ST2 { t0, t1, t2, t3 }
 
-final ssm2 = StateMachine<SS2, SE2, ST2>(
+final ssm2 = Machine<SS2, SE2, ST2>(
   events: SE2.values,
   name: 'cm2',
   initialStateId: SS2.s1,

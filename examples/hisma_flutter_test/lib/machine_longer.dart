@@ -9,12 +9,12 @@ enum E { forward, back, self, jumpP, jumpOP, jumpI, jumpBP, fwdToException }
 
 enum T { toA, toB, toC, toD, toE, toF, toG, toH, toI, toJ, toK, toL, toM, toN }
 
-StateMachineWithChangeNotifier<S, E, T> createLongerMachine({
+NavigationMachine<S, E, T> createLongerMachine({
   String name = 'root',
   bool hierarchical = false,
   int level = 0,
 }) =>
-    StateMachineWithChangeNotifier<S, E, T>(
+    NavigationMachine<S, E, T>(
       name: name,
       events: E.values,
       initialStateId: S.a,

@@ -135,7 +135,7 @@ typedef Close<T> = void Function([T? result]);
 
 abstract class ImperativeCreator<E, R> extends Creator<E> {
   ImperativeCreator({super.event, required this.machine});
-  StateMachineWithChangeNotifier<dynamic, E, dynamic> machine;
+  NavigationMachine<dynamic, E, dynamic> machine;
   bool _opened = false;
   Future<R?> open(BuildContext? context);
   void close([R? result]);
@@ -152,7 +152,7 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<R> close,
-    required StateMachineWithChangeNotifier<dynamic, E, dynamic> machine,
+    required NavigationMachine<dynamic, E, dynamic> machine,
   }) present;
   bool rootNavigator;
 

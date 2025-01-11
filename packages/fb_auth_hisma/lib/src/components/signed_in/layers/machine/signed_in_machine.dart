@@ -13,8 +13,8 @@ enum ESiM { intentSignOut, initiateSignOut, profile, cancel, back, error }
 
 enum TSiM { toConfirmSignOut, initiateSignOut, toProfile, toMain }
 
-StateMachineWithChangeNotifier<SSiM, ESiM, TSiM> createSignedInMachine() =>
-    StateMachineWithChangeNotifier<SSiM, ESiM, TSiM>(
+NavigationMachine<SSiM, ESiM, TSiM> createSignedInMachine() =>
+    NavigationMachine<SSiM, ESiM, TSiM>(
       events: ESiM.values,
       name: signedInMachineName,
       initialStateId: SSiM.main,

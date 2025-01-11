@@ -65,7 +65,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   final navigatorKey = GlobalKey<NavigatorState>();
 
   /// Machine that this router delegate represents.
-  final StateMachineWithChangeNotifier<S, E, dynamic> machine;
+  final NavigationMachine<S, E, dynamic> machine;
 
   /// Mapping machine states to a presentation.
   final Map<S, Presentation> mapping;

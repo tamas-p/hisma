@@ -8,11 +8,11 @@ enum E { forward, back, self }
 enum T { toA, toB, toC, toD }
 
 const testMachineName = 'testMachine';
-StateMachineWithChangeNotifier<S, E, T> createSimpleMachine({
+NavigationMachine<S, E, T> createSimpleMachine({
   bool hierarchical = false,
   int level = 0,
 }) =>
-    StateMachineWithChangeNotifier<S, E, T>(
+    NavigationMachine<S, E, T>(
       name: '$testMachineName$level',
       events: E.values,
       initialStateId: S.a,

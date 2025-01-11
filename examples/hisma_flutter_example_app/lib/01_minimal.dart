@@ -6,7 +6,7 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 Future<void> main() async {
-  hisma.StateMachine.monitorCreators = [
+  hisma.Machine.monitorCreators = [
     (m) => VisualMonitor(m),
   ];
 
@@ -22,7 +22,7 @@ enum E { e1 }
 
 enum T { t1 }
 
-final machine = StateMachineWithChangeNotifier<S, E, T>(
+final machine = NavigationMachine<S, E, T>(
   initialStateId: S.a,
   name: 'machine',
   states: {

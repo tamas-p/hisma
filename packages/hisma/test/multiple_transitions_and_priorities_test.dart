@@ -38,7 +38,7 @@ const cb = 'condition-b';
 const cc = 'condition-c';
 const cd = 'condition-d';
 
-StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
+Machine<S, E, T> createSimpleMachine(String name) => Machine<S, E, T>(
       name: name,
       initialStateId: S.a,
       states: {
@@ -105,7 +105,7 @@ StateMachine<S, E, T> createSimpleMachine(String name) => StateMachine<S, E, T>(
 class Checker {
   Checker(this.machine);
 
-  final StateMachine<S, E, T> machine;
+  final Machine<S, E, T> machine;
 
   Future<void> call(Map<String, bool> guards, S expected) async {
     expect(machine.activeStateId, equals(S.a));

@@ -6,7 +6,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'ui.dart';
 
 Future<void> main(List<String> args) async {
-  h.StateMachine.monitorCreators = [
+  h.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
   final machine = createMachine();
@@ -25,7 +25,7 @@ class EntryExitApp extends StatelessWidget {
   late final gen =
       createParentGenerator(machine: machine, rootNavigator: rootNavigator);
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -36,7 +36,7 @@ class EntryExitApp extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createParentGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool rootNavigator,
 }) =>
     HismaRouterGenerator(
@@ -71,7 +71,7 @@ HismaRouterGenerator<S, E> createParentGenerator({
     );
 
 HismaRouterGenerator<SC, EC> createChildGenerator({
-  required StateMachineWithChangeNotifier<SC, EC, TC> machine,
+  required NavigationMachine<SC, EC, TC> machine,
   required bool rootNavigator,
 }) =>
     HismaRouterGenerator(
@@ -102,7 +102,7 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
     );
 
 HismaRouterGenerator<SGC, EGC> createGrandChildGenerator({
-  required StateMachineWithChangeNotifier<SGC, EGC, TGC> machine,
+  required NavigationMachine<SGC, EGC, TGC> machine,
   required bool rootNavigator,
 }) =>
     HismaRouterGenerator(
@@ -133,8 +133,7 @@ const parentMachineName = 'parentMachine';
 const childMachineName = 'childMachine';
 const grandChildMachineName = 'grandChildMachine';
 
-StateMachineWithChangeNotifier<S, E, T> createMachine() =>
-    StateMachineWithChangeNotifier(
+NavigationMachine<S, E, T> createMachine() => NavigationMachine(
       name: parentMachineName,
       events: E.values,
       initialStateId: S.a,
@@ -203,8 +202,8 @@ enum EC { forward, fwd1, fwd2, fwdToError, back, exit1, exit2 }
 
 enum TC { toA, toB, toC, toD, toEx1, toEx2, toEx3 }
 
-StateMachineWithChangeNotifier<SC, EC, TC> createChildMachine(String name) =>
-    StateMachineWithChangeNotifier<SC, EC, TC>(
+NavigationMachine<SC, EC, TC> createChildMachine(String name) =>
+    NavigationMachine<SC, EC, TC>(
       name: name,
       events: EC.values,
       initialStateId: SC.a,
@@ -293,8 +292,8 @@ enum EGC { forward }
 
 enum TGC { toA, toB, toC, toExAll, toEx1 }
 
-StateMachineWithChangeNotifier<SGC, EGC, TGC> createGrandChildMachine() =>
-    StateMachineWithChangeNotifier<SGC, EGC, TGC>(
+NavigationMachine<SGC, EGC, TGC> createGrandChildMachine() =>
+    NavigationMachine<SGC, EGC, TGC>(
       name: grandChildMachineName,
       events: EGC.values,
       initialStateId: SGC.a,

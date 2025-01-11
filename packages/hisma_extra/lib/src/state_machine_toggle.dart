@@ -17,7 +17,7 @@ enum ToggleTransition {
 /// PLaying around with the concept of state machine helpers to create
 /// frequently used state machines with minimal lines of code.
 class ToggleStateMachine
-    extends StateMachine<ToggleState, ToggleEvent, ToggleTransition> {
+    extends Machine<ToggleState, ToggleEvent, ToggleTransition> {
   ToggleStateMachine({
     required super.name,
     ToggleState initialId = ToggleState.off,

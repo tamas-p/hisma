@@ -7,7 +7,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 Future<void> main() async {
   VisualMonitor.hostname = 'tam we/\\// %#@&(as';
   VisualMonitor.domain = 'some/ ~!!%&thing';
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     // (machine) => VisualMonitor(
     //       machine,
     //       showRegions: {
@@ -127,7 +127,7 @@ enum E { e1, e2, e3, e4, e5, e6 }
 enum T { t1, t2, t3, t4, t5, t6 }
 
 const m1name = 'm1 machine 机器 機械 기계 машина something &&% #^';
-final m1 = StateMachine<S, E, T>(
+final m1 = Machine<S, E, T>(
   events: E.values,
   name: m1name,
   initialStateId: S.s1,
@@ -231,7 +231,7 @@ enum SE { e1, e2, e3, e4, e5 }
 enum ST { t1, t2, t3, t4, t5 }
 
 const m1s1name = 'm1s1';
-final m1s1 = StateMachine<SS, SE, ST>(
+final m1s1 = Machine<SS, SE, ST>(
   events: SE.values,
   name: m1s1name,
   initialStateId: SS.s1,
@@ -286,7 +286,7 @@ enum SE2 { e1, e2, e3, e4, e5, e6 }
 enum ST2 { t1, t2, t3, t4, t5, t6 }
 
 const m1s2name = 'm1s2';
-final m1s2 = StateMachine<SS2, SE2, ST2>(
+final m1s2 = Machine<SS2, SE2, ST2>(
   events: SE2.values,
   name: m1s2name,
   initialStateId: SS2.s1,
@@ -360,7 +360,7 @@ enum SSE0 { e1, e2, e3, e4 }
 enum SST0 { t1, t2, t3, t4, t5, t6 }
 
 const m1s1s1name = 'm1s1s1';
-final m1s1s1 = StateMachine<SSS0, SSE0, SST0>(
+final m1s1s1 = Machine<SSS0, SSE0, SST0>(
   events: SSE0.values,
   name: m1s1s1name,
   initialStateId: SSS0.s3,
@@ -406,7 +406,7 @@ enum SSE1 { e1, e2, e3, e4, e5 }
 enum SST1 { t1, t2, t3, t4, t5 }
 
 const m1s2s1name = 'm1s2s1';
-final m1s2s1 = StateMachine<SSS1, SSE1, SST1>(
+final m1s2s1 = Machine<SSS1, SSE1, SST1>(
   events: SSE1.values,
   name: m1s2s1name,
   initialStateId: SSS1.s1,
@@ -449,7 +449,7 @@ enum SSE2 { e1, e2, e3, e4, e5 }
 enum SST2 { t1, t2, t3, t4, t5 }
 
 const m1s2s2name = 'm1s2s2';
-final m1s2s2 = StateMachine<SSS2, SSE2, SST2>(
+final m1s2s2 = Machine<SSS2, SSE2, SST2>(
   events: SSE2.values,
   name: m1s2s2name,
   initialStateId: SSS2.s1,
@@ -494,7 +494,7 @@ enum SSE3 { e1, e2, e3, e4, e5 }
 enum SST3 { t1, t2, t3, t4, t5, t6 }
 
 const m1s2s3name = 'm1s2s3';
-final m1s2s3 = StateMachine<SSS3, SSE3, SST3>(
+final m1s2s3 = Machine<SSS3, SSE3, SST3>(
   events: SSE3.values,
   name: m1s2s3name,
   initialStateId: SSS3.s1,

@@ -12,9 +12,9 @@ enum EID { e1, e2 }
 enum TID { t1, t2 }
 
 void main() {
-  late StateMachine<SID, EID, TID> sm;
+  late Machine<SID, EID, TID> sm;
   setUp(() {
-    sm = StateMachine<SID, EID, TID>(
+    sm = Machine<SID, EID, TID>(
       name: 'sm1',
       initialStateId: SID.s1,
       states: {

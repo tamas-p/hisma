@@ -9,18 +9,18 @@ import 'trigger.dart';
 typedef StateMap<S, E, T> = Map<S, BaseState<E, T, S>>;
 typedef TransitionMap<T, S> = Map<T, Edge<S>>;
 typedef MonitorGenerator = Monitor Function(
-  StateMachine<dynamic, dynamic, dynamic>,
+  Machine<dynamic, dynamic, dynamic>,
 );
 
 /// State machine engine
 /// [S] State identifier type for the machine.
 /// [E] State transition identifier type.
 /// [T] Transition identifier type.
-/// [strict] enables or disables strict mode. See [StateMachine.strict] for more
+/// [strict] enables or disables strict mode. See [Machine.strict] for more
 /// details.
-class StateMachine<S, E, T> {
+class Machine<S, E, T> {
   // Map storing all state objects indexed by their state ids.
-  StateMachine({
+  Machine({
     required this.name,
     required this.initialStateId,
     required this.states,
@@ -30,11 +30,11 @@ class StateMachine<S, E, T> {
     this.data,
     bool? strict,
   }) {
-    _strict = strict ?? StateMachine.strict;
+    _strict = strict ?? Machine.strict;
     _setIt();
   }
 
-  static final _log = getLogger('$StateMachine');
+  static final _log = getLogger('$Machine');
 
   void _setIt() {
     states.forEach((_, state) async {
@@ -67,7 +67,7 @@ class StateMachine<S, E, T> {
   final String name;
 
   /// Parent machine.
-  StateMachine<dynamic, dynamic, dynamic>? parent;
+  Machine<dynamic, dynamic, dynamic>? parent;
 
   /// Returns name of the parent state machine if that exist, null otherwise.
   /// It can be used e.g. by state machine monitors that implement [Monitor]
@@ -390,9 +390,9 @@ class StateMachine<S, E, T> {
     return result;
   }
 
-  StateMachine<S1, E1, T1> find<S1, E1, T1>(String name) {
+  Machine<S1, E1, T1> find<S1, E1, T1>(String name) {
     final machine = _findIt(name);
-    if (machine is! StateMachine<S1, E1, T1>) {
+    if (machine is! Machine<S1, E1, T1>) {
       // We throw exception and not returning null to optimize for the usual
       // case when machine is found. This way user of find does not to worry
       // about null checking.
@@ -405,7 +405,7 @@ class StateMachine<S, E, T> {
     return machine;
   }
 
-  StateMachine<dynamic, dynamic, dynamic>? _findIt(String name) {
+  Machine<dynamic, dynamic, dynamic>? _findIt(String name) {
     if (this.name == name) {
       return this;
     } else {

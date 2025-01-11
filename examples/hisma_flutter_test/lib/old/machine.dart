@@ -14,7 +14,7 @@ State<E, T, S> createState(
   T forward,
   T self,
   T jump, [
-  StateMachineWithChangeNotifier<S, E, T>? machine,
+  NavigationMachine<S, E, T>? machine,
 ]) =>
     State(
       etm: {
@@ -30,12 +30,12 @@ State<E, T, S> createState(
       ],
     );
 
-StateMachineWithChangeNotifier<S, E, T> createMachine({
+NavigationMachine<S, E, T> createMachine({
   required String name,
   HistoryLevel? historyLevel,
   int level = 0,
 }) =>
-    StateMachineWithChangeNotifier(
+    NavigationMachine(
       events: E.values,
       name: name,
       initialStateId: S.a,

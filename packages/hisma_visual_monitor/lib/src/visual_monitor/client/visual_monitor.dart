@@ -30,7 +30,7 @@ class VisualMonitor implements Monitor {
 
   // TODO: implement naming override for state machine naming collisions.
   // static final smIds = <StateMachine<dynamic, dynamic, dynamic>, String>{};
-  final StateMachine<dynamic, dynamic, dynamic> stateMachine;
+  final Machine<dynamic, dynamic, dynamic> stateMachine;
 
   final String host;
   final int port;

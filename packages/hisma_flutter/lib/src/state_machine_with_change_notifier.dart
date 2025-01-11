@@ -11,9 +11,8 @@ String getKey(String machineName, dynamic stateId) => '$machineName@$stateId';
 
 // TODO: find better name for this class.
 // TODO: Introduce unique ID for machines besides of the String name.
-class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
-    with ChangeNotifier {
-  StateMachineWithChangeNotifier({
+class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
+  NavigationMachine({
     super.events = const [],
     required super.name,
     super.history,
@@ -112,12 +111,10 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
         final newIsImperativeInRoot =
             newPres is PagelessCreator<E, dynamic> && newPres.rootNavigator;
         if (newIsImperativeInRoot) {
-          var p = parent
-              as StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>?;
+          var p = parent as NavigationMachine<dynamic, dynamic, dynamic>?;
           while (p != null) {
             p._routerDelegate.stack.add(getKey(name, newStateId), newPres);
-            p = p.parent
-                as StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>?;
+            p = p.parent as NavigationMachine<dynamic, dynamic, dynamic>?;
           }
         }
 
@@ -130,12 +127,10 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
             // Signal that imp. was closed shall be removed.
             _routerDelegate.stack.remove(getKey(name, newStateId));
             if (newIsImperativeInRoot) {
-              var p = parent
-                  as StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>?;
+              var p = parent as NavigationMachine<dynamic, dynamic, dynamic>?;
               while (p != null) {
                 p._routerDelegate.stack.remove(getKey(name, newStateId));
-                p = p.parent as StateMachineWithChangeNotifier<dynamic, dynamic,
-                    dynamic>?;
+                p = p.parent as NavigationMachine<dynamic, dynamic, dynamic>?;
               }
             }
 
@@ -214,9 +209,9 @@ class StateMachineWithChangeNotifier<S, E, T> extends StateMachine<S, E, T>
   }
 
   @override
-  StateMachineWithChangeNotifier<S1, E1, T1> find<S1, E1, T1>(String name) {
+  NavigationMachine<S1, E1, T1> find<S1, E1, T1>(String name) {
     final machine = super.find<S1, E1, T1>(name);
-    if (machine is! StateMachineWithChangeNotifier<S1, E1, T1>) {
+    if (machine is! NavigationMachine<S1, E1, T1>) {
       throw HismaMachineNotFoundException(
         'Machine $name is ${machine.runtimeType}.',
       );

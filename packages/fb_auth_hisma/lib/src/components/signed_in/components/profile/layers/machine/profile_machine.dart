@@ -12,8 +12,8 @@ enum EPM { load, error, update, back }
 
 enum TPM { load, toError, toProfile, update }
 
-StateMachineWithChangeNotifier<SPM, EPM, TPM> createProfileMachine() =>
-    StateMachineWithChangeNotifier<SPM, EPM, TPM>(
+NavigationMachine<SPM, EPM, TPM> createProfileMachine() =>
+    NavigationMachine<SPM, EPM, TPM>(
       events: EPM.values,
       initialStateId: SPM.profile,
       name: profileMachineName,

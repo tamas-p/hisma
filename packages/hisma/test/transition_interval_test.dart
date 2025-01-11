@@ -117,8 +117,8 @@ enum E { changeException, changeOnError, finish }
 
 enum T { toA, toBThrow, toBOnError, toEnd }
 
-StateMachine<S, E, T> createSimpleMachine(String name, int value) =>
-    StateMachine<S, E, T>(
+Machine<S, E, T> createSimpleMachine(String name, int value) =>
+    Machine<S, E, T>(
       data: value,
       name: name,
       initialStateId: S.a,

@@ -6,7 +6,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'ui.dart';
 
 Future<void> main(List<String> args) async {
-  h.StateMachine.monitorCreators = [
+  h.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
   final machine = createParentMachine();
@@ -25,7 +25,7 @@ class PageInPathApp extends StatelessWidget {
   late final gen =
       createParentGenerator(machine: machine, rootNavigator: rootNavigator);
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -36,7 +36,7 @@ class PageInPathApp extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createParentGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool rootNavigator,
 }) =>
     HismaRouterGenerator(
@@ -83,7 +83,7 @@ HismaRouterGenerator<S, E> createParentGenerator({
     );
 
 HismaRouterGenerator<S, E> createChildGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool rootNavigator,
 }) =>
     HismaRouterGenerator(
@@ -133,8 +133,7 @@ enum E { forward, fwdC, fwdD, back, self, restart, stop }
 enum T { toA, toB, toC, toD, toE, toF, toG, restart, stop }
 
 const parent = 'parent';
-StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
-    StateMachineWithChangeNotifier(
+NavigationMachine<S, E, T> createParentMachine() => NavigationMachine(
       name: parent,
       events: E.values,
       initialStateId: S.a,
@@ -220,8 +219,7 @@ StateMachineWithChangeNotifier<S, E, T> createParentMachine() =>
     );
 
 const String child1 = 'child1';
-StateMachineWithChangeNotifier<S, E, T> createChild1Machine() =>
-    StateMachineWithChangeNotifier(
+NavigationMachine<S, E, T> createChild1Machine() => NavigationMachine(
       name: child1,
       events: E.values,
       initialStateId: S.a,
@@ -280,8 +278,7 @@ StateMachineWithChangeNotifier<S, E, T> createChild1Machine() =>
     );
 
 const String child2 = 'child2';
-StateMachineWithChangeNotifier<S, E, T> createChild2Machine() =>
-    StateMachineWithChangeNotifier(
+NavigationMachine<S, E, T> createChild2Machine() => NavigationMachine(
       name: child2,
       events: E.values,
       initialStateId: S.a,

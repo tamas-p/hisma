@@ -17,8 +17,7 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
         required BuildContext context,
         required bool rootNavigator,
         required Close<DateTime> close,
-        required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
-            machine,
+        required NavigationMachine<dynamic, dynamic, dynamic> machine,
       }) =>
           showDialog(
         useRootNavigator: rootNavigator,

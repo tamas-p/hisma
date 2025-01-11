@@ -21,7 +21,7 @@ void main() async {
 
   initLogging();
 
-  hisma.StateMachine.monitorCreators = [
+  hisma.Machine.monitorCreators = [
     (machine) => VisualMonitor(machine, host: '192.168.122.1'),
     // (machine) => ActiveStateMonitor(machine, printer: log.info),
     (machine) => ConsoleMonitor(machine),

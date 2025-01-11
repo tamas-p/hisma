@@ -7,7 +7,7 @@ import 'machine_simple.dart';
 import 'ui.dart';
 
 Future<void> main(List<String> args) async {
-  hm.StateMachine.monitorCreators = [
+  hm.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
   final machine = createSimpleMachine();
@@ -19,7 +19,7 @@ class NoOverlayApp extends StatelessWidget {
   NoOverlayApp(this.machine, {super.key});
   late final gen = createNoOverlayGenerator(machine);
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -30,7 +30,7 @@ class NoOverlayApp extends StatelessWidget {
 }
 
 HismaRouterGenerator<S, E> createNoOverlayGenerator(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
 ) =>
     HismaRouterGenerator<S, E>(
       machine: machine,

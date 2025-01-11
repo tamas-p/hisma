@@ -10,7 +10,7 @@ class HismaRouterGenerator<S, E> {
     required this.machine,
     required this.mapping,
   });
-  final StateMachineWithChangeNotifier<S, E, dynamic> machine;
+  final NavigationMachine<S, E, dynamic> machine;
   final Map<S, Presentation> mapping;
 
   late final RouteInformationParser<S> _routeInformationParser =

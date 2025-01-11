@@ -274,7 +274,7 @@ Future<void> testAllStates(
 Future<void> checkMachine(
   WidgetTester tester,
   Act act,
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
   Map<S, Presentation> mapping,
 ) async {
   final c = Checker<S, E, T>(

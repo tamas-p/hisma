@@ -12,7 +12,7 @@ enum E { forward, backward, jump, bigJump }
 enum T { toA, toA1, toB, toB1, toC, toD, toE, toF }
 
 final appMachineProvider = Provider((ref) {
-  final sm = StateMachineWithChangeNotifier<S, E, T>(
+  final sm = NavigationMachine<S, E, T>(
     events: E.values,
     name: 'app',
     initialStateId: S.a,

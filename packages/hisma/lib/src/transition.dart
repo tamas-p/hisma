@@ -94,7 +94,7 @@ class OnErrorData {
 }
 
 typedef OnErrorActionFunction = FutureOr<void> Function(
-  StateMachine<dynamic, dynamic, dynamic> machine,
+  Machine<dynamic, dynamic, dynamic> machine,
   OnErrorData data,
 );
 

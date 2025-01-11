@@ -29,7 +29,7 @@ enum E { change, finish }
 
 enum T { toA, toB, toF }
 
-final m1 = StateMachine<S, E, T>(
+final m1 = Machine<S, E, T>(
   name: 'm1',
   initialStateId: S.a,
   states: {

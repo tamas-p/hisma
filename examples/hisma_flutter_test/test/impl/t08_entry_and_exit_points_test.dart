@@ -164,9 +164,9 @@ class Checker {
         childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
 
   final WidgetTester tester;
-  final StateMachineWithChangeNotifier<S, E, T> parentMachine;
-  final StateMachineWithChangeNotifier<SC, EC, TC> childMachine;
-  final StateMachineWithChangeNotifier<SGC, EGC, TGC> grandChildMachine;
+  final NavigationMachine<S, E, T> parentMachine;
+  final NavigationMachine<SC, EC, TC> childMachine;
+  final NavigationMachine<SGC, EGC, TGC> grandChildMachine;
 
   Future<void> checkParent(E event, S? parent, [SC? child, SGC? gc]) =>
       _check(parentMachine, event, parent, child, gc);
@@ -176,7 +176,7 @@ class Checker {
       _check(grandChildMachine, event, parent, child, gc);
 
   Future<void> _check<S, E, T>(
-    StateMachineWithChangeNotifier<S, E, T> machine,
+    NavigationMachine<S, E, T> machine,
     E event,
     S? parent, [
     SC? child,

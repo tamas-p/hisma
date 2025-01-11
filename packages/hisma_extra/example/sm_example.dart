@@ -18,12 +18,12 @@ enum EventIDs {
 enum TransitionIDs { t1 }
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
 
-  final sm1 = StateMachine<StateIDs, EventIDs, TransitionIDs>(
+  final sm1 = Machine<StateIDs, EventIDs, TransitionIDs>(
     name: 'SM1',
     states: {
       StateIDs.s1: State(),
@@ -32,7 +32,7 @@ Future<void> main() async {
     initialStateId: StateIDs.s1,
   );
 
-  final sm2 = StateMachine<StateIDs, EventIDs, TransitionIDs>(
+  final sm2 = Machine<StateIDs, EventIDs, TransitionIDs>(
     name: 'SM2',
     states: {
       StateIDs.s1: State(),

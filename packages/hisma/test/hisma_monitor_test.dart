@@ -11,7 +11,7 @@ void main() {
       'Test 1',
       () async {
         final checker = Checker();
-        StateMachine.monitorCreators = [
+        Machine.monitorCreators = [
           (machine) => TestMonitor(machine, checker),
         ];
 
@@ -40,7 +40,7 @@ void main() {
 
   test('Monitor compound', () async {
     final checker = Checker();
-    StateMachine.monitorCreators = [
+    Machine.monitorCreators = [
       (machine) => TestMonitor(machine, checker),
     ];
 
@@ -221,8 +221,7 @@ enum E1 { change, finish }
 
 enum T1 { toA, toB, toEnd }
 
-StateMachine<S1, E1, T1> createSimpleMachine(String name) =>
-    StateMachine<S1, E1, T1>(
+Machine<S1, E1, T1> createSimpleMachine(String name) => Machine<S1, E1, T1>(
       name: name,
       initialStateId: S1.a,
       states: {
@@ -248,7 +247,7 @@ StateMachine<S1, E1, T1> createSimpleMachine(String name) =>
 
 class TestMonitor implements Monitor {
   TestMonitor(this.machine, this._checker);
-  final StateMachine<dynamic, dynamic, dynamic> machine;
+  final Machine<dynamic, dynamic, dynamic> machine;
   final Checker _checker;
 
   @override

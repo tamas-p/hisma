@@ -9,7 +9,7 @@ Future<void> failedSignInDialog({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
-  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
 }) =>
     createDialog(
       context: context,

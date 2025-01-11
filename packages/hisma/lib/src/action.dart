@@ -4,7 +4,7 @@ import 'state_machine.dart';
 
 // TODO: shall we clone a Function??
 typedef ActionFunction = FutureOr<void> Function(
-  StateMachine<dynamic, dynamic, dynamic> machine,
+  Machine<dynamic, dynamic, dynamic> machine,
   dynamic arg,
 );
 

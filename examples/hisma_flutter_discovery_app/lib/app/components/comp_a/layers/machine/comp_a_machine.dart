@@ -12,7 +12,7 @@ enum E { jump, run, forward, backward, done1, done2, done3, int1 }
 enum T { toCA, toCA1, toCA2, toCB, toCC, toFs1, toFs2, toFs3, int1 }
 
 final compAMachineProvider = Provider(
-  (ref) => StateMachineWithChangeNotifier<S, E, T>(
+  (ref) => NavigationMachine<S, E, T>(
     events: E.values,
     name: 'aCompMachine',
     history: HistoryLevel.deep,

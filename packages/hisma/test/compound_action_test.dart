@@ -118,12 +118,12 @@ enum E { next, inside, finish, exit, deep, done }
 
 enum T { toA, toB, toC, toFs, toEx }
 
-StateMachine<S, E, T> createMachine({
+Machine<S, E, T> createMachine({
   required String name,
-  StateMachine<S, E, T>? child,
+  Machine<S, E, T>? child,
   dynamic data,
 }) =>
-    StateMachine(
+    Machine(
       events: E.values,
       name: name,
       data: data,
@@ -259,14 +259,14 @@ const l1 = 'l1';
 const l2 = 'l2';
 const l3 = 'l3';
 
-void checkState(StateMachine<S, E, T> m, List<dynamic> id) {
+void checkState(Machine<S, E, T> m, List<dynamic> id) {
   expect(m.find<S, E, T>(l0).activeStateId, equals(id[0]));
   expect(m.find<S, E, T>(l1).activeStateId, equals(id[1]));
   expect(m.find<S, E, T>(l2).activeStateId, equals(id[2]));
   expect(m.find<S, E, T>(l3).activeStateId, equals(id[3]));
 }
 
-void checkData(StateMachine<S, E, T> m, List<int> data) {
+void checkData(Machine<S, E, T> m, List<int> data) {
   expect(m.find<S, E, T>(l0).data, equals(data[0]));
   expect(m.find<S, E, T>(l1).data, equals(data[1]));
   expect(m.find<S, E, T>(l2).data, equals(data[2]));

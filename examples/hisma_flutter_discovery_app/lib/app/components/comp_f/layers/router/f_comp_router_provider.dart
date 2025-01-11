@@ -19,8 +19,7 @@ final fRouterProvider = Provider(
           required BuildContext context,
           required bool rootNavigator,
           required Close<DateTime> close,
-          required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>
-              machine,
+          required NavigationMachine<dynamic, dynamic, dynamic> machine,
         }) =>
             generateDialog<void, E>(
           context: context,

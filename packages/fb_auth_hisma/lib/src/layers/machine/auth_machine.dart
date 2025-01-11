@@ -17,8 +17,8 @@ enum EAM { signIn, signOut }
 
 enum TAM { toSignedOut, toSignedIn }
 
-StateMachineWithChangeNotifier<SAM, EAM, TAM> createAuthMachine() =>
-    StateMachineWithChangeNotifier<SAM, EAM, TAM>(
+NavigationMachine<SAM, EAM, TAM> createAuthMachine() =>
+    NavigationMachine<SAM, EAM, TAM>(
       events: EAM.values,
       name: authMachineName,
       initialStateId: SAM.init,

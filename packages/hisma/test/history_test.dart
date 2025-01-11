@@ -54,7 +54,7 @@ class Checker {
     required this.ml3,
   });
 
-  final StateMachine<S, E, T> machine;
+  final Machine<S, E, T> machine;
   final String ml1;
   final String ml2;
   final String ml3;

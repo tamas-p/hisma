@@ -10,8 +10,8 @@ const _testName = 'compound_state_test';
 final _log = getLogger(_testName);
 
 void main() {
-  late StateMachine<L1S, L1E, L1T> mL1;
-  late StateMachine<L2AS, L2AE, L2AT> mL2A;
+  late Machine<L1S, L1E, L1T> mL1;
+  late Machine<L2AS, L2AE, L2AT> mL2A;
 
   setUp(() {
     mL2A = smL2A(

@@ -15,8 +15,8 @@ enum ELiM { emailSignIn, fail, ok }
 
 enum TLiM { toLogin, emailSigningIn, toFailed }
 
-StateMachineWithChangeNotifier<SLiM, ELiM, TLiM> createLoginMachine() =>
-    StateMachineWithChangeNotifier<SLiM, ELiM, TLiM>(
+NavigationMachine<SLiM, ELiM, TLiM> createLoginMachine() =>
+    NavigationMachine<SLiM, ELiM, TLiM>(
       events: ELiM.values,
       name: loginMachineName,
       initialStateId: SLiM.login,

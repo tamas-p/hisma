@@ -83,7 +83,7 @@ enum E { inc, dec }
 
 enum T { toA, toB }
 
-StateMachine<S, E, T> createMachine([dynamic data]) => StateMachine<S, E, T>(
+Machine<S, E, T> createMachine([dynamic data]) => Machine<S, E, T>(
       name: 'm1',
       data: data,
       initialStateId: S.a,

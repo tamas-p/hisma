@@ -11,7 +11,7 @@ enum T { toL2A, toL2A1, toL2B, toL2C, toL2O }
 const aL2CompMachineName = 'aL2CompMachine';
 
 final compL2AMachineProvider = ChangeNotifierProvider(
-  (ref) => StateMachineWithChangeNotifier<S, E, T>(
+  (ref) => NavigationMachine<S, E, T>(
     events: E.values,
     name: aL2CompMachineName,
     // history: HistoryLevel.deep,

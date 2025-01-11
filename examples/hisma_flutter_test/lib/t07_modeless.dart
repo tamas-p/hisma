@@ -4,7 +4,7 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 Future<void> main(List<String> args) async {
-  h.StateMachine.monitorCreators = [
+  h.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
   ];
   final machine = createMachine();
@@ -23,7 +23,7 @@ class BottomSheetApp extends StatelessWidget {
   late final gen =
       createGenerator(machine: machine, rootNavigator: rootNavigator);
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -38,7 +38,7 @@ const mainAppScreenTitle = 'Modeless Test App';
 class MainScreen extends StatelessWidget {
   const MainScreen({required this.machine, super.key});
 
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class MainScreen extends StatelessWidget {
 
 class MyButton extends StatelessWidget {
   const MyButton({required this.machine, super.key});
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -93,7 +93,7 @@ const snackBarText = 'A SnackBar has been shown.';
 const closeButtonTitle = 'Close this widget';
 
 HismaRouterGenerator<S, E> createGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool rootNavigator,
 }) =>
     HismaRouterGenerator(
@@ -194,8 +194,7 @@ enum E { fwdB, fwdC, fwdD, back }
 
 enum T { toA, toB, toC, toD }
 
-StateMachineWithChangeNotifier<S, E, T> createMachine() =>
-    StateMachineWithChangeNotifier<S, E, T>(
+NavigationMachine<S, E, T> createMachine() => NavigationMachine<S, E, T>(
       initialStateId: S.a,
       events: E.values,
       name: 'bottomSheetMachine',

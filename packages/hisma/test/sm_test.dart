@@ -11,9 +11,9 @@ const smTestName = 'sm_test';
 final _log = getLogger(smTestName);
 
 void main() {
-  late StateMachine<L1S, L1E, L1T> sm;
+  late Machine<L1S, L1E, L1T> sm;
   setUp(() {
-    sm = StateMachine<L1S, L1E, L1T>(
+    sm = Machine<L1S, L1E, L1T>(
       name: 'sm1',
       initialStateId: L1S.s1,
       states: {

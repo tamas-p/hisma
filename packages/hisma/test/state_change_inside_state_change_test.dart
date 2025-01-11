@@ -78,7 +78,7 @@ enum E { a, b, c, f }
 
 enum T { a, b, c, f }
 
-StateMachine<S, E, T> createMachine1() => StateMachine<S, E, T>(
+Machine<S, E, T> createMachine1() => Machine<S, E, T>(
       data: 0,
       events: E.values,
       name: 'm1',
@@ -144,7 +144,7 @@ Action addAction(String name) => Action(
       },
     );
 
-StateMachine<S, E, T> createMachine2() => StateMachine<S, E, T>(
+Machine<S, E, T> createMachine2() => Machine<S, E, T>(
       data: 0,
       events: E.values,
       name: 'm1',

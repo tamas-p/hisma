@@ -10,20 +10,20 @@ import 'package:logging/logging.dart';
 String getMachineName<S>(String current, S stateId) => '$current/$stateId';
 
 String getTitle(
-  hisma.StateMachine<dynamic, dynamic, dynamic> machine,
+  hisma.Machine<dynamic, dynamic, dynamic> machine,
   dynamic stateId,
 ) =>
     '${machine.name} - $stateId';
 
 String getButtonTitle<S, E, T>(
-  hisma.StateMachine<S, E, T> machine,
+  hisma.Machine<S, E, T> machine,
   dynamic event,
 ) =>
     '${machine.name}@${machine.activeStateId}#$event';
 
 class Screen<S, E, T> extends StatefulWidget {
   Screen(this.machine) : super(key: ValueKey(machine.activeStateId));
-  final StateMachineWithChangeNotifier<S, E, T> machine;
+  final NavigationMachine<S, E, T> machine;
 
   @override
   State<Screen<S, E, T>> createState() => _ScreenState<S, E, T>();
@@ -60,7 +60,7 @@ class _ScreenState<S, E, T> extends State<Screen<S, E, T>> {
 
 class MyDialog extends StatefulWidget {
   const MyDialog({super.key, required this.machine});
-  final StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine;
+  final NavigationMachine<dynamic, dynamic, dynamic> machine;
 
   @override
   State<MyDialog> createState() => _MyDialogState();
@@ -102,7 +102,7 @@ Future<void> showTestDialog({
   required BuildContext context,
   required bool rootNavigator,
   required Close<void> close,
-  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
 }) =>
     showDialog<void>(
       context: context,
@@ -119,7 +119,7 @@ Future<void> showTestDialogMini(
   BuildContext context,
   NavigatorState _,
   Close<void> close,
-  StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  NavigationMachine<dynamic, dynamic, dynamic> machine,
 ) =>
     showDialog<void>(
       context: context,
@@ -133,7 +133,7 @@ Future<DateTime?> showTestDatePicker({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
-  required StateMachineWithChangeNotifier<dynamic, dynamic, dynamic> machine,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
 }) =>
     showDatePicker(
       useRootNavigator: rootNavigator,
@@ -273,7 +273,7 @@ class SnackbarPagelessRouteManager<S, E, T>
 }
 */
 List<Widget> createButtonsFromState<S, E, T>(
-  StateMachineWithChangeNotifier<S, E, T> machine,
+  NavigationMachine<S, E, T> machine,
 ) {
   final log = Logger('createButtonsFromState');
   final state = machine.states[machine.activeStateId];
@@ -300,7 +300,7 @@ List<Widget> createButtonsFromState<S, E, T>(
 
   final parent = machine.parent;
   if (parent != null &&
-      parent is StateMachineWithChangeNotifier<dynamic, dynamic, dynamic>) {
+      parent is NavigationMachine<dynamic, dynamic, dynamic>) {
     // print('parent name: ${parent.name}');
     buttons.add(const Divider());
     buttons.add(Text('from ${parent.name}'));

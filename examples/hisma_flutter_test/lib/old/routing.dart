@@ -6,7 +6,7 @@ import 'machine.dart';
 import 'states_events_transitions.dart';
 
 HismaRouterGenerator<S, E> createHismaRouterGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool useRootNavigator,
 }) {
   return HismaRouterGenerator<S, E>(

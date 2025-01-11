@@ -9,7 +9,7 @@ import 'states_events_transitions.dart';
 
 Future<void> main() async {
   initLogging();
-  h.StateMachine.monitorCreators = [
+  h.Machine.monitorCreators = [
     (m) => VisualMonitor(m, host: '192.168.122.1'),
     // (m) => ConsoleMonitor(m),
   ];
@@ -22,11 +22,11 @@ Future<void> main() async {
   runApp(ChainApp(machine: machine, useRootNavigator: true));
 }
 
-StateMachineWithChangeNotifier<S, E, T> createParentChainMachine({
+NavigationMachine<S, E, T> createParentChainMachine({
   required String name,
   required h.HistoryLevel? historyLevel,
 }) =>
-    StateMachineWithChangeNotifier(
+    NavigationMachine(
       name: name,
       initialStateId: S.a,
       events: E.values,
@@ -54,11 +54,11 @@ StateMachineWithChangeNotifier<S, E, T> createParentChainMachine({
       },
     );
 
-StateMachineWithChangeNotifier<S, E, T> createChildMachine({
+NavigationMachine<S, E, T> createChildMachine({
   required String name,
   h.HistoryLevel? historyLevel,
 }) =>
-    StateMachineWithChangeNotifier(
+    NavigationMachine(
       name: name,
       initialStateId: S.a,
       events: E.values,
@@ -110,7 +110,7 @@ StateMachineWithChangeNotifier<S, E, T> createChildMachine({
     );
 
 HismaRouterGenerator<S, E> createParentHismaRouterGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool useRootNavigator,
 }) =>
     HismaRouterGenerator<S, E>(
@@ -129,7 +129,7 @@ HismaRouterGenerator<S, E> createParentHismaRouterGenerator({
     );
 
 HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
-  required StateMachineWithChangeNotifier<S, E, T> machine,
+  required NavigationMachine<S, E, T> machine,
   required bool useRootNavigator,
 }) =>
     HismaRouterGenerator<S, E>(
@@ -169,7 +169,7 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
 
 class ChainApp extends StatelessWidget {
   ChainApp({
-    required StateMachineWithChangeNotifier<S, E, T> machine,
+    required NavigationMachine<S, E, T> machine,
     required bool useRootNavigator,
     super.key,
   }) : _routerGenerator = createParentHismaRouterGenerator(

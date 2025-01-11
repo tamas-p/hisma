@@ -40,7 +40,7 @@ enum E { forward, backward }
 
 enum T { toA, toB, toC }
 
-StateMachine<S, E, T> createMachine({bool? strict}) => StateMachine<S, E, T>(
+Machine<S, E, T> createMachine({bool? strict}) => Machine<S, E, T>(
       name: 'testMachine',
       strict: strict,
       initialStateId: S.a,
@@ -68,7 +68,7 @@ Future<void> testFireOnInactive({
   Object? matcher,
 }) async {
   test('Fire event on an inactive machine.', () async {
-    if (cStrict != null) StateMachine.strict = cStrict;
+    if (cStrict != null) Machine.strict = cStrict;
     final m = createMachine(strict: oStrict);
     // First fire on the inactive (not yet started) machine.
     final logOutput = captureLogOutput();
@@ -96,7 +96,7 @@ Future<void> testStartAnAlreadyStarted({
   Object? matcher,
 }) async {
   test('Start an already started machine.', () async {
-    if (cStrict != null) StateMachine.strict = cStrict;
+    if (cStrict != null) Machine.strict = cStrict;
     final m = createMachine(strict: oStrict);
     // Start the machine.
     await m.start();
@@ -123,7 +123,7 @@ Future<void> testFireNotHandledEvent({
   Object? matcher,
 }) async {
   test('Fire an event not handled in current state.', () async {
-    if (cStrict != null) StateMachine.strict = cStrict;
+    if (cStrict != null) Machine.strict = cStrict;
     final m = createMachine(strict: oStrict);
     await m.start();
     // Fire an event that is handled in the initial state.

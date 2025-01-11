@@ -5,7 +5,7 @@ import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
     (machine) => ConsoleMonitor(machine),
   ];
@@ -20,10 +20,10 @@ enum E { turnOn, turnOff, stop, setTimer }
 
 enum T { toOn, toOff, toStop, timedOff, timedOn }
 
-StateMachine<S, E, T> createLightMachine({
+Machine<S, E, T> createLightMachine({
   RegionList<S, E, T>? regions,
 }) =>
-    StateMachine<S, E, T>(
+    Machine<S, E, T>(
       name: 'lightMachine',
       events: E.values,
       initialStateId: S.off,
