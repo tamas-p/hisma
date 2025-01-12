@@ -62,7 +62,7 @@ NavigationMachine<S, E, T> createChildMachine({
       name: name,
       initialStateId: S.a,
       events: E.values,
-      history: historyLevel,
+      // history: historyLevel,
       states: {
         S.a: h.State(
           etm: {

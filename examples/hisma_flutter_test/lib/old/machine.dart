@@ -39,7 +39,7 @@ NavigationMachine<S, E, T> createMachine({
       events: E.values,
       name: name,
       initialStateId: S.a,
-      history: historyLevel,
+      // history: historyLevel,
       states: {
         S.a: createState(T.toN, T.toB, T.toA, T.toL),
         S.b: createState(T.toA, T.toC, T.toB, T.toM),

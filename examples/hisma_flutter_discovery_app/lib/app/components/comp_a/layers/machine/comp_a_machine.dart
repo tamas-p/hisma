@@ -15,7 +15,7 @@ final compAMachineProvider = Provider(
   (ref) => NavigationMachine<S, E, T>(
     events: E.values,
     name: 'aCompMachine',
-    history: HistoryLevel.deep,
+    // history: HistoryLevel.deep,
     initialStateId: S.ca,
     states: {
       S.cen1: HistoryEntryPoint(HistoryLevel.shallow),

@@ -14,7 +14,10 @@ class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
   NavigationMachine({
     super.events = const [],
     required super.name,
-    super.history,
+    // history is disabled for now. It's usefulness is to be justified in
+    // navigation context then need to be prototyped. Also see assert in
+    // HismaRouterDelegate constructor.
+    // super.history,
     required super.initialStateId,
     required super.states,
     required super.transitions,

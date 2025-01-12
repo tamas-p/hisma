@@ -12,7 +12,7 @@ final compFMachineProvider = Provider(
   (ref) => NavigationMachine<S, E, T>(
     events: E.values,
     name: 'fCompMachine',
-    history: HistoryLevel.shallow,
+    // history: HistoryLevel.shallow,
     initialStateId: S.fa,
     states: {
       S.fa: State(
