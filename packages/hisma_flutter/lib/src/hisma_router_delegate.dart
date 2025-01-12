@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'assistance.dart';
 import 'creator.dart';
-import 'state_machine_with_change_notifier.dart';
+import 'navigation_machine.dart';
 import 'state_stack.dart';
 
 class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {

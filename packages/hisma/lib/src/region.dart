@@ -1,5 +1,5 @@
+import 'machine.dart';
 import 'notification.dart';
-import 'state_machine.dart';
 import 'trigger.dart';
 
 /// Region represents one child machine (sub-machine) of the enclosing state

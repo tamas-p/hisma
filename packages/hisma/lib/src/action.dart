@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'state_machine.dart';
+import 'machine.dart';
 
 // TODO: shall we clone a Function??
 typedef ActionFunction = FutureOr<void> Function(

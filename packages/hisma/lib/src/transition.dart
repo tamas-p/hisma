@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'action.dart';
 import 'guard.dart';
-import 'state_machine.dart';
+import 'machine.dart';
 
 abstract class Edge<S> {
   Edge({

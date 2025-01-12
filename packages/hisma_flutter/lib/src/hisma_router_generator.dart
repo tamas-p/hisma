@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'creator.dart';
 import 'hisma_route_information_parser.dart';
 import 'hisma_router_delegate.dart';
-import 'state_machine_with_change_notifier.dart';
+import 'navigation_machine.dart';
 
 class HismaRouterGenerator<S, E> {
   HismaRouterGenerator({

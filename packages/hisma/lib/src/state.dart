@@ -1,8 +1,8 @@
 // Represents a state
 import 'action.dart';
+import 'machine.dart';
 import 'notification.dart';
 import 'region.dart';
-import 'state_machine.dart';
 
 typedef EventTransitionMap<E, T> = Map<E, List<T>>;
 typedef RegionList<S, E, T> = List<Region<S, E, T, dynamic>>;

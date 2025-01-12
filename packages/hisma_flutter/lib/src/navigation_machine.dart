@@ -9,7 +9,6 @@ import 'hisma_router_delegate.dart';
 
 String getKey(String machineName, dynamic stateId) => '$machineName@$stateId';
 
-// TODO: find better name for this class.
 // TODO: Introduce unique ID for machines besides of the String name.
 class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
   NavigationMachine({
