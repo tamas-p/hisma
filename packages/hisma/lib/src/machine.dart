@@ -103,7 +103,7 @@ class Machine<S, E, T> {
   /// state machine to fire with this event.
   Future<void> Function(Message)? notifyRegion;
 
-  void notifyMonitors() {
+  void _notifyMonitors() {
     _log.fine(() => 'Notify from $name');
     for (final ms in _monitors) {
       // Before notifying a monitor we make sure that its initialization
@@ -462,7 +462,7 @@ class Machine<S, E, T> {
     _log.fine(() => '$name  stop, state:$activeStateId, arg:$arg');
     await _exitState(arg: arg);
     _activeStateId = null;
-    notifyMonitors();
+    _notifyMonitors();
   }
 
   /// Enters state machine to the given state, executes onEntry() and
@@ -508,7 +508,7 @@ class Machine<S, E, T> {
     );
 
     _log.fine(() => '< $name  _enterState');
-    notifyMonitors();
+    _notifyMonitors();
   }
 
   /// For each region of [state] the state machine of a specific region is
@@ -648,7 +648,7 @@ class Machine<S, E, T> {
       await fire(notification.event, arg: notification.arg, external: false);
     } else if (notification is StateChangeNotification) {
       _log.fine(() => '$name  _processNotification: StateChangeNotification');
-      notifyMonitors();
+      _notifyMonitors();
       await notifyRegion?.call(StateChangeNotification());
     }
   }
@@ -688,7 +688,7 @@ class _TransitionWithId<T, S> {
 }
 
 /// Helper class to hold both the monitor and the returned Future value of its
-/// notifyCreation method. It is used in [notifyMonitors] to send
+/// notifyCreation method. It is used in [_notifyMonitors] to send
 /// state change notification only after the notifyCreation was completed.
 class MonitorAndStatus {
   MonitorAndStatus({
