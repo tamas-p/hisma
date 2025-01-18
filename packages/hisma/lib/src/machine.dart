@@ -69,12 +69,6 @@ class Machine<S, E, T> {
   /// Parent machine.
   Machine<dynamic, dynamic, dynamic>? parent;
 
-  /// Returns name of the parent state machine if that exist, null otherwise.
-  /// It can be used e.g. by state machine monitors that implement [Monitor]
-  /// interface to display parent related actions for a state machine (e.g. in
-  /// PlantUmlConverter in hisma_visual_monitor).
-  String? get parentName => parent?.name;
-
   final S initialStateId;
   final StateMap<S, E, T> states;
   final TransitionMap<T, S> transitions;

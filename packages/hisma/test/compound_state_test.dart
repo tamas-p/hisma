@@ -76,7 +76,7 @@ void main() {
     });
   });
 
-  test('Test getParentName', () async {
+  test('Test parent?.name', () async {
     const l0 = 'l0';
     const l1 = 'l1';
     const l2 = 'l2';
@@ -100,10 +100,10 @@ void main() {
     expect(m.find<S, E, T>(l2).activeStateId, equals(null));
     expect(m.find<S, E, T>(l3).activeStateId, equals(null));
 
-    expect(m.find<S, E, T>(l0).parentName, equals(null));
-    expect(m.find<S, E, T>(l1).parentName, equals(l0));
-    expect(m.find<S, E, T>(l2).parentName, equals(l1));
-    expect(m.find<S, E, T>(l3).parentName, equals(l2));
+    expect(m.find<S, E, T>(l0).parent?.name, equals(null));
+    expect(m.find<S, E, T>(l1).parent?.name, equals(l0));
+    expect(m.find<S, E, T>(l2).parent?.name, equals(l1));
+    expect(m.find<S, E, T>(l3).parent?.name, equals(l2));
 
     await m.start();
     expect(m.find<S, E, T>(l0).activeStateId, equals(S.a));
@@ -111,10 +111,10 @@ void main() {
     expect(m.find<S, E, T>(l2).activeStateId, equals(null));
     expect(m.find<S, E, T>(l3).activeStateId, equals(null));
 
-    expect(m.find<S, E, T>(l0).parentName, equals(null));
-    expect(m.find<S, E, T>(l1).parentName, equals(l0));
-    expect(m.find<S, E, T>(l2).parentName, equals(l1));
-    expect(m.find<S, E, T>(l3).parentName, equals(l2));
+    expect(m.find<S, E, T>(l0).parent?.name, equals(null));
+    expect(m.find<S, E, T>(l1).parent?.name, equals(l0));
+    expect(m.find<S, E, T>(l2).parent?.name, equals(l1));
+    expect(m.find<S, E, T>(l3).parent?.name, equals(l2));
 
     await m.fire(E.deep);
     expect(m.find<S, E, T>(l0).activeStateId, equals(S.b));
@@ -122,18 +122,22 @@ void main() {
     expect(m.find<S, E, T>(l2).activeStateId, equals(S.b));
     expect(m.find<S, E, T>(l3).activeStateId, equals(S.b));
 
-    expect(m.find<S, E, T>(l0).parentName, equals(null));
-    expect(m.find<S, E, T>(l1).parentName, equals(l0));
-    expect(m.find<S, E, T>(l2).parentName, equals(l1));
-    expect(m.find<S, E, T>(l3).parentName, equals(l2));
+    expect(m.find<S, E, T>(l0).parent?.name, equals(null));
+    expect(m.find<S, E, T>(l1).parent?.name, equals(l0));
+    expect(m.find<S, E, T>(l2).parent?.name, equals(l1));
+    expect(m.find<S, E, T>(l3).parent?.name, equals(l2));
 
     expect(
       m
           .find<S, E, T>(
-            m.find<S, E, T>(m.find<S, E, T>(l3).parentName ?? '').parentName ??
+            m
+                    .find<S, E, T>(m.find<S, E, T>(l3).parent?.name ?? '')
+                    .parent
+                    ?.name ??
                 '',
           )
-          .parentName,
+          .parent
+          ?.name,
       equals(l0),
     );
   });

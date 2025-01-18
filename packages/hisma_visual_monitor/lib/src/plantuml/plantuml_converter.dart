@@ -147,7 +147,7 @@ class MachineConverter {
     var goUp = '';
     var expandOnClick = '';
     if (isRoot) {
-      final parentName = machine.parentName;
+      final parentName = machine.parent?.name;
       if (parentName != null) {
         final uriEncodedParentName = Uri.encodeComponent(parentName);
         goUp = '[[$_linkPrefix$uriEncodedParentName $_up]] ';
