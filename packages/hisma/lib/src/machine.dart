@@ -13,9 +13,11 @@ typedef MonitorGenerator = Monitor Function(
 );
 
 /// State machine engine
+///
 /// [S] State identifier type for the machine.
 /// [E] State transition identifier type.
 /// [T] Transition identifier type.
+///
 /// [strict] enables or disables strict mode. See [Machine.strict] for more
 /// details.
 class Machine<S, E, T> {
@@ -91,6 +93,8 @@ class Machine<S, E, T> {
   /// Stores that identifier of the active state or null if state machine has
   /// not been started.
   S? _activeStateId;
+
+  /// Stores last active state.
   S? _historyStateId;
 
   //----------------------------------------------------------------------------
@@ -661,6 +665,7 @@ class Machine<S, E, T> {
   /// being created.
   static bool strict = true;
   late bool _strict;
+
   // ignore: avoid_positional_boolean_parameters
   void cAssert(bool assertResult, String message) {
     if (!assertResult) {
@@ -695,7 +700,8 @@ class MonitorAndStatus {
   Future<void> completed;
 }
 
-/// Indicates if caller was internal.
+/// Indicates if caller was internal. This saves us from having an only
+/// internally used bool argument on the public API.
 /// Internal fire invocations from Machine will use it
 /// to avoid notifying parent state machines about a state change as
 /// the original external fire will do that and this way we avoid sending
