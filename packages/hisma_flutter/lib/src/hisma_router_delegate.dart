@@ -108,7 +108,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
           '$presentation defined for ${machine.activeStateId}'
           ' shall have its event set.');
       if (event != null) {
-        machine.fire(event, arg: result, uiClosed: true);
+        machine.fire(event, arg: UiClosed(result));
       }
     }
   }

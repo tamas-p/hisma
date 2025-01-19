@@ -189,29 +189,24 @@ class Machine<S, E, T> {
     }
   }
 
-  /// [external] indicates if caller was external to this class. Defaults to
-  /// true. Mainly (only?) internal invocations from StateMachine will set it
-  /// to false to avoid notifying parent state machines about a state change as
-  /// the original external fire will do that and this way we avoid sending
-  /// multiple notifications for parent state machine about a state change.
-  Future<void> fire(E eventId, {dynamic arg, bool external = true}) async {
+  Future<void> fire(E eventId, {dynamic arg}) async {
     _log.info('FIRE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     _log.info(
       () =>
-          'FIRE >>> machine: $name, state: $_activeStateId, event: $eventId, arg: $arg, external: $external',
+          'FIRE >>> machine: $name, state: $_activeStateId, event: $eventId, arg: $arg, external: ${arg is _Internal}',
     );
-    final changed = await _fire(eventId, arg: arg);
+    final changed = await _fire(eventId, arg: arg is _Internal ? arg.arg : arg);
     _log.info(
       () =>
-          'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: $external',
+          'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: ${arg is _Internal}',
     );
     _log.info('FIRE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     _log.fine(
       () => 'Changed: $changed '
           'monitors: $_monitors '
-          'external: $external',
+          'external: ${arg is _Internal}',
     );
-    if (changed && external) {
+    if (changed && arg is! _Internal) {
       // Notify parent that active state of
       // this state machine was changed.
       _log.fine(
@@ -645,7 +640,7 @@ class Machine<S, E, T> {
             '$name _processNotification: Notification event=${notification.event} '
             'arg=${notification.arg}',
       );
-      await fire(notification.event, arg: notification.arg, external: false);
+      await fire(notification.event, arg: _Internal(notification.arg));
     } else if (notification is StateChangeNotification) {
       _log.fine(() => '$name  _processNotification: StateChangeNotification');
       _notifyMonitors();
@@ -698,4 +693,14 @@ class MonitorAndStatus {
 
   Monitor monitor;
   Future<void> completed;
+}
+
+/// Indicates if caller was internal.
+/// Internal fire invocations from Machine will use it
+/// to avoid notifying parent state machines about a state change as
+/// the original external fire will do that and this way we avoid sending
+/// multiple notifications for parent machine about a state change.
+class _Internal {
+  _Internal(this.arg);
+  dynamic arg;
 }
