@@ -15,5 +15,3 @@ export 'src/region.dart';
 export 'src/state.dart';
 export 'src/transition.dart';
 export 'src/trigger.dart';
-
-// TODO: Export any libraries intended for clients of this package.
