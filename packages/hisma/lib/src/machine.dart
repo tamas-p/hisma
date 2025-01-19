@@ -126,8 +126,9 @@ class Machine<S, E, T> {
     bool historyFlowDown = false,
   }) async {
     _log.fine(
-      () =>
-          'start: machine:$name, state:$activeStateId, entryPointId:$entryPointId, arg:$arg, historyFlowDown:$historyFlowDown',
+      () => 'start: machine:$name, state:$activeStateId, '
+          'entryPointId:$entryPointId, arg:$arg, '
+          'historyFlowDown:$historyFlowDown',
     );
     cAssert(_activeStateId == null, 'Machine ($name) is already started.');
     if (_activeStateId != null) return;
@@ -194,17 +195,16 @@ class Machine<S, E, T> {
   }
 
   Future<void> fire(E eventId, {dynamic arg}) async {
-    _log.info('FIRE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     _log.info(
       () =>
-          'FIRE >>> machine: $name, state: $_activeStateId, event: $eventId, arg: $arg, external: ${arg is _Internal}',
+          'fire start: machine: $name, state: $_activeStateId, event: $eventId, '
+          'arg: $arg, external: ${arg is _Internal}',
     );
     final changed = await _fire(eventId, arg: arg is _Internal ? arg.arg : arg);
     _log.info(
-      () =>
-          'FIRE <<< machine: $name, event: $eventId, arg: $arg, external: ${arg is _Internal}',
+      () => 'fire stop: machine: $name, event: $eventId, arg: $arg, '
+          'external: ${arg is _Internal}',
     );
-    _log.info('FIRE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
     _log.fine(
       () => 'Changed: $changed '
           'monitors: $_monitors '
