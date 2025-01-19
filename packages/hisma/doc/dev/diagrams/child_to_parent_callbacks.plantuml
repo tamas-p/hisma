@@ -1,12 +1,12 @@
 @startuml sm_object diagram
 title SMObjectDiagram for visualization
 
-object "parentSM : StateMachine" as parentSM
+object "parentMachine : Machine" as parent
 object "state : State" as state
 object "region : Region" as region
-object "childSM : StateMachine" as child
+object "childMachine : Machine" as child
 
-parentSM "states" *-- "0..*" state
+parent "states" *-- "0..*" state
 state "regions" *-- "0..*" region
 region "machine" *-- "1" child
 
@@ -18,10 +18,26 @@ title Class diagram showing how child machine can communicate with its parent ma
 !$notify = Red
 !$notifyStyle = '#red,thickness=1'
 
-object "parentSM : StateMachine" as parentSM
-object "state : State" as state
-object "region : Region" as region
-object "childSM : StateMachine" as child
+note as N1
+Region translates from ExitNotificationFromMachine
+to ExitNotificationFromRegion. This is practically
+translation from exitId from child machine to event
+defined in the region.
+end note
+
+object "parent : Machine" as parent {
+    +Future<void> _processStateNotification(Message notification)
+}
+object "state : State" as state {
+    +Future<void> _processRegionNotification(Message notification)
+}
+object "region : Region" as region {
+    +Future<void> _processMachineNotification(Message notification)
+}
+object "child : Machine" as child {
+
+}
+
 
 object "event : Event" as event
 region "exitConnectors" o- event : \t\t\t
@@ -34,25 +50,24 @@ object "entryPointId : Enum" as entryPointId
 entryPointId -o "entryConnectors" region : \t\t
 trigger .. (region, entryPointId)
 
-object "_processMachineNotification : void Function(Message message)" as _processMachineNotification 
-region *-- _processMachineNotification 
-_processMachineNotification <-[$notifyStyle]- "notifyRegion" child
-object "_processRegionNotification : void Function(Message message)" as _processRegionNotification
-state *-- _processRegionNotification
-_processRegionNotification <-[$notifyStyle]-- "notifyState" region
+' object "_processMachineNotification : void Function(Message message)" as _processMachineNotification 
+' region *-- _processMachineNotification 
+region <-[$notifyStyle]- "notifyRegion(ExitNotificationFromMachine)" child
 
-object "_processStateNotification : void Function(Message message)" as _processStateNotification
-parentSM *-- _processStateNotification : \t\t
-_processStateNotification <-[$notifyStyle]- "notifyMachine" state
+' object "_processRegionNotification : void Function(Message message)" as _processRegionNotification
+' state *-- _processRegionNotification
+state <-[$notifyStyle]-- "notifyState(ExitNotificationFromRegion)" region
+
+' object "_processStateNotification : void Function(Message message)" as _processStateNotification
+' parent *-- _processStateNotification : \t\t
+parent <-[$notifyStyle]- "notifyMachine(Message)" state
 @enduml
 
 @startuml messages
 abstract class Message
-class StateChangeNotification
 class ExitNotificationFromRegion<E>
 class ExitNotificationFromMachine<E>
 
-Message <|-- StateChangeNotification
 Message <|-- ExitNotificationFromRegion
 Message <|-- ExitNotificationFromMachine
 @enduml

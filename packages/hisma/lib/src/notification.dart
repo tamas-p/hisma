@@ -1,7 +1,5 @@
 abstract class Message {}
 
-class StateChangeNotification extends Message {}
-
 class ExitNotificationFromRegion<E> extends Message {
   ExitNotificationFromRegion({
     required this.event,

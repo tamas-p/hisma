@@ -211,12 +211,9 @@ class Machine<S, E, T> {
           'external: ${arg is _Internal}',
     );
     if (changed && arg is! _Internal) {
-      // Notify parent that active state of
-      // this state machine was changed.
-      _log.fine(
-        () => '$name sending notifyRegion?.call(StateChangeNotification())',
-      );
-      await notifyRegion?.call(StateChangeNotification());
+      // Notify parent that active state of this machine was changed.
+      _log.fine(() => '$name call _processMachineNotification');
+      await parent?._processMachineNotification();
     }
   }
 
@@ -638,6 +635,7 @@ class Machine<S, E, T> {
   }
 
   Future<void> _processStateNotification(Message notification) async {
+    assert(notification is ExitNotificationFromRegion);
     if (notification is ExitNotificationFromRegion<E>) {
       _log.info(
         () =>
@@ -645,11 +643,13 @@ class Machine<S, E, T> {
             'arg=${notification.arg}',
       );
       await fire(notification.event, arg: _Internal(notification.arg));
-    } else if (notification is StateChangeNotification) {
-      _log.fine(() => '$name  _processNotification: StateChangeNotification');
-      _notifyMonitors();
-      await notifyRegion?.call(StateChangeNotification());
     }
+  }
+
+  Future<void> _processMachineNotification() async {
+    _log.fine(() => '$name  call _processMachineNotification');
+    _notifyMonitors();
+    await parent?._processMachineNotification();
   }
 
   /// StateMachine operations can throw [AssertionError] exceptions as a result

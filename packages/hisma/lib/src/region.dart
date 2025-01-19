@@ -39,9 +39,7 @@ class Region<S, E, T, SS> {
   /// state machine will invoke it with [exitPointId] which this method uses
   /// to find the corresponding event that is connected to the child's
   /// exitPointId.
-  Future<void> _processMachineNotification(
-    Message notification,
-  ) async {
+  Future<void> _processMachineNotification(Message notification) async {
     if (notification is ExitNotificationFromMachine) {
       final event = exitConnectors?[notification.exitPointId];
       assert(
