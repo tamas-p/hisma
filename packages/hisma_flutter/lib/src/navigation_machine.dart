@@ -7,8 +7,6 @@ import 'assistance.dart';
 import 'creator.dart';
 import 'hisma_router_delegate.dart';
 
-String getKey(String machineName, dynamic stateId) => '$machineName@$stateId';
-
 /// State machine managing navigation
 class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
   NavigationMachine({
