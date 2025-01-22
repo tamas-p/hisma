@@ -19,7 +19,7 @@ enum E { turnOn, turnOff }
 enum T { toOn, toOff }
 
 Machine<S, E, T> createLightMachine({
-  RegionList<S, E, T>? regions,
+  List<Region<S, E, T, dynamic>>? regions,
 }) =>
     Machine<S, E, T>(
       name: 'lightMachine',

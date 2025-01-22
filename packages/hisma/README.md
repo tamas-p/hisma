@@ -22,18 +22,19 @@ Hisma provides a declarative hierarchical state machine implementation for [Dart
 | [hisma_console_monitor](https://pub.dev/packages/hisma_console_monitor) | [repo](../hisma_console_monitor/) | Monitors state machine status on console.                                                          |
 | [hisma_visual_monitor](https://pub.dev/packages/hisma_visual_monitor)   | [repo](../hisma_visual_monitor/)  | Reports state machine status to visma.                                                             |
 | [visma](https://pub.dev/packages/visma)                                 | [repo](../visma/)                 | Tool that visualizes state machine status reported by hisma_visual_monitor.                        |
-| [hisma_flutter](https://pub.dev/packages/hisma_flutter)                 | [repo](../hisma_flutter/)         | Router generator that turns a state machine into a Flutter routing engine.                         |
-| [fb_auth_hisma](https://pub.dev/packages/fb_auth_hisma)                 | [repo](../fb_auth_hisma/)         | Firebase authentication state machine with hisma                                                   |
+| [hisma_flutter](https://pub.dev/packages/hisma_flutter)                 | [repo](../hisma_flutter/)         | Flutter navigation driven by state machines.                         |
+| [fb_auth_hisma](https://pub.dev/packages/fb_auth_hisma)                 | [repo](../fb_auth_hisma/)         | Firebase authentication state machine with hisma.                                                   |
 
 ## Features
 
-See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_auth_hisma_example/)) in action that is using `hisma` state machine defined in [fb_auth_hisma](../fb_auth_hisma/) for the user management workflow, [hisma_flutter](../hisma_flutter/) for Flutter routing based on the state machine and [visma](../visma/) to monitor and visualize the state machine:
+See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_auth_hisma_example/)) in action that is using `hisma` state machine defined in [fb_auth_hisma](../fb_auth_hisma/) for the user management workflow, [hisma_flutter](../hisma_flutter/) for Flutter navigation based on the state machine and [visma](../visma/) to monitor and visualize the state machine:
 
 ![fb_auth_hisma_example.gif](../../examples/fb_auth_hisma_example/doc/resources/fb_auth_hisma_example.gif)
 
 ### Feature overview
 
 - Basics
+  - Machines
   - States
     - OnEntry and OnExit actions
   - Transactions
@@ -57,7 +58,7 @@ See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_au
 
 ## Getting started
 
-You can start using the package without prerequisites.
+Using the Hisma package does not have any prerequisites.
 
 ## Usage
 
@@ -65,10 +66,10 @@ You can start using the package without prerequisites.
 
 Let's try first the smallest step possible: Create a state machine that has only its name defined.
 
-> **_NOTE:_** If you try using this minimalist state machine in debug mode you will fail on some asserts. It is only presented here to demonstrate the minimal state machine declaration possible.
+> **Note:** If you try using this minimalist state machine in debug mode you will fail on some asserts. It is only presented here to demonstrate the minimal state machine declaration possible.
 
 ```dart
-final machine = StateMachine(
+final machine = Machine(
   name: 'minimal',
   initialStateId: null,
   states: {},
@@ -94,14 +95,14 @@ enum E { turnOn, turnOff }
 enum T { toOn, toOff }
 ```
 
-It is best practice to use enums to define these.
+It is a best practice to use enums to define these.
 Next we define a function that create a machine for us (we will use this function later to create more complex hierarchical state machines) and then use this function to create our lightMachine:
 
 ```dart
-StateMachine<S, E, T> createLightMachine({
-  RegionList<S, E, T>? regions,
+Machine<S, E, T> createLightMachine({
+  List<Region<S, E, T, dynamic>>? regions,
 }) =>
-    StateMachine<S, E, T>(
+    Machine<S, E, T>(
       name: 'lightMachine',
       events: E.values,
       initialStateId: S.off,
@@ -135,9 +136,11 @@ StateMachine<S, E, T> createLightMachine({
 final lightMachine = createLightMachine();
 ```
 
-StateMachine includes two very important attributes: `states` and `transitions`. Both are maps from their id to the actual state or transition objects. Inside a State we see the event to transition map (`etm`) that as name suggest defines which transition to execute if a certain event occurs. Since not one but a list of transitions are defined for a certain event, one transition will be selected based on the minInterval, guard and priority attributes of these transitions.
+> **Note:** `events: E.values` is only required for [visma](https://pub.dev/packages/visma) monitoring when events are triggered from visma (and strings needs to be translated - in this case - to enums) .
 
-Also note, that states and transitions can have Action attributes. A State can have onEntry and onExit Action attributes while a transition can have an onAction Action attribute. In our example as we saw we used the onEntry Actions to print out the state name our machine just entered.
+Machine includes two very important attributes: `states` and `transitions`. Both are maps from their id to the actual state or transition objects. Inside a State we see the event to transition map (`etm`) that as name suggest defines which transition to execute if a certain event occurs. Since not one but a list of transitions are defined for a certain event, one transition will be selected based on the minInterval, guard and priority attributes of these transitions (see [More on transitions](#more-on-transitions) for their description).
+
+Also note, that states and transitions can have Action attributes. An Action is an object consisting a closure (the actual action executed) and its description. A State can have onEntry and onExit Action attributes while a transition can have an onAction Action attribute. In our example as we saw we used the onEntry Actions to print out the state name our machine just entered.
 
 If we start this machine it will be visualized by `visma` as
 
@@ -158,11 +161,11 @@ Future<void> play() async {
 }
 ```
 
-and finally the main function where we start the machine and invoke our play function. Also we init here StateMachine.monitorCreators with a creator function of VisualMonitor (doing the communication with [visma](../visma/), our state machine visualizer server):
+and finally the main function where we start the machine and invoke our play function. Also we init here Machine.monitorCreators with a creator function of VisualMonitor (doing the communication with [visma](../visma/), our state machine visualizer server):
 
 ```dart
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
   ];
 
@@ -215,7 +218,7 @@ This label includes all attributes of the transition we defined above:
 
 - Mandatory items
   - **Event Identifier**<br>
-    Clickable to trigger the event in the machine when corresponding state is active. This is for debugging purposes.
+    Clickable to trigger the event in the machine when corresponding state is active. It can be used for debugging purposes.
   - **Transition Identifier**<br>
     Transition id as it is in the transition map of the state machine.
 - Optional items (In our example they are defined, but they are optional attributes.)
@@ -225,7 +228,7 @@ This label includes all attributes of the transition we defined above:
     Description of [Guard] whose action must return `true` to execute transition. If returned value
     is false then a HismaGuardException is thrown if onError is not defined. If onError is defined then its action will be called and no exception is thrown.
   - **Priority**<br>
-    If not otherwise selected priority can be used to select the transition from the transition list by this priority.
+    If not otherwise selected priority can be used to select the transition from the transition list by this priority. Higher integer value means higher priority.
   - **onAction Action description**<br>
     Description of the Action that is executed when this transition occurs.
   - **onError OnErrorAction description**<br>
@@ -274,7 +277,7 @@ See the complete example in [01_simple.dart](example/01_simple.dart). When the u
 
 ### Compound state machine - single region
 
-In our next example we build a simple compound state machine where the parent machine will include a single child machine (a region). Practically this is our first hierarchical state machine. Hierarchical state machines gives us the power of abstraction and reusability:
+In our next example, [02_compound_single_region.dart](example/02_compound_single_region.dart), we build a simple compound state machine where the parent machine will include a single child machine (a region). Practically this is our first hierarchical state machine. Hierarchical state machines gives us the power of abstraction and reusability:
 
 - Abstraction, as we can capture the high level essence of our operation at higher levels while detailing out behavior at lower level state machines.
 - Reusability, as you can create a state machine that will be reused in different high level state machines.
@@ -296,10 +299,10 @@ Next we define the machine (again with he help of a creator function that will b
 ```dart
 const brightnessMachineName = 'brightnessMachine';
 
-StateMachine<S, E, T> createBrightnessMachine({
-  RegionList<S, E, T>? regions,
+Machine<S, E, T> createBrightnessMachine({
+  List<Region<S, E, T, dynamic>>? regions,
 }) =>
-    StateMachine<S, E, T>(
+    Machine<S, E, T>(
       name: brightnessMachineName,
       events: E.values,
       initialStateId: S.half,
@@ -330,7 +333,7 @@ StateMachine<S, E, T> createBrightnessMachine({
     );
 ```
 
-Next step is the new thing, we will add this new machine to a region of one state inside the parent lightMachine. State has the regions attribute that allows us declaring the list of regions where each Region has one machine, and as we will see in a later example, and connectors to this machine.
+Next step is the new thing, we will add this machine to a region of one state inside the parent lightMachine. State has the regions attribute that allows us declaring the list of regions where each Region has one machine, and connectors (as we will see in the [Entry and exit points](#entry-and-exit-points) section) to this machine.
 
 ```dart
 State(regions: [Region(machine: machine)])
@@ -369,7 +372,7 @@ The main functions is exactly the same as in previous cases with the registratio
 
 ```dart
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => VisualMonitor(machine),
   ];
 
@@ -382,7 +385,7 @@ If we run this example this is what we see in the console:
 
 ![hisma_compound_debug.gif](doc/resources/hisma_compound_debug.gif)
 
-and this is what we see in the visual monitor, visma in the web browser (if we open both the `S.on` state and the enclosed `brightnessMachine` inside its only region in the interactive state machine diagram rendered by visma):
+and this is what we see in the visual monitor, visma in the web browser (if we click open both the `S.on` state and the enclosed `brightnessMachine` inside its only region in the interactive state machine diagram rendered by visma):
 
 ![hisma_compound.gif](doc/resources/hisma_compound.gif)
 
@@ -403,20 +406,18 @@ Let's summarize what we achieved so far:
 
 What if, in certain cases, instead of activating the state defined by the initialStateId of these machines, we want another state to be activated? Also, what if, from inside these machines, we want some events to trigger events in the parent machine? Entry and exit points are there to help with these use cases. We optionally declare them for the Region as mappings between the parent and the child machines as we will see them in detail.
 
-> **Note**
+> **Note:**
 > Entry and exit points can also be viewed as the **interface** for the state machine
-> as they can be connected to triggers and event in the parent machine.
+> as they can be connected to triggers and events in the parent machine.
 
 #### Entry connector and EntryPoint
 
-Entry connector mapping define that for a certain trigger (defined as source state id, transition id and event id trio of the parent state machine) which EntryPoint (that is a also a kind of state: an entry point pseudo state) in the state machine of the region (child machine) needs to be used.
+Entry connector mapping define that for a certain trigger ([Trigger] consists source state id, transition id and event id trio of the parent state machine) which EntryPoint (also a kind of state: an entry point pseudo state) in the state machine of the region (child machine) needs to be used.
 When this EntryPoint is selected the child state machine will be in this state momentarily to select the transition to be used from a defined list of Transition objects of the EntryPoint.
 
 When we design our state machine we define these Transition objects in the constructor of the EntryPoint objects. These Transition objects then can take the machine to
 
 - a regular state
-  - which in turn can also be used to map to an EntryPoint of a Region of this state
-    (its child) if this is what we want.
 - an ExitPoint
 - a Final State
 
@@ -432,7 +433,7 @@ Optionally you can give multiple transitions in the list and in that case the sa
 EntryPoint([T.toB, T.toC]),
 ```
 
-Later when we integrate this (child) state machine into a (parent) state machine we can define that what Trigger in the parent machine is triggering activation of this entry point we defined in the child state machine. We do this inside the `entryConnectors` attribute of the Region enclosing our child machine:
+Later when we integrate this (child) state machine into a (parent) state machine we can define that what [Trigger] in the parent machine is triggering activation of this entry point we defined in the child state machine. We do this inside the `entryConnectors` attribute of the Region enclosing our child machine:
 
 ```dart
 Region(
@@ -445,20 +446,20 @@ Region(
 
 where SP, EP and TP are defined for the parent state machine and SC is defined for the child state machine.
 
-> **Note**
+> **Note:**
 > Currently all three of the Trigger must be defined. In future versions it might be optional to define all three.
 
 #### Exit connector and ExitPoint
 
-Exit connector mapping define that when a certain ExitPoint reached in the child machine what event shall be triggered in the parent machine.
+Exit connector mapping defines what event shall be triggered in the parent machine when a certain ExitPoint reached in the child machine.
 
-It is simply defined without any arguments to its constructor:
+Inside the child machine, the ExitPoint itself is simply defined without any arguments to its constructor:
 
 ```dart
 ExitPoint(),
 ```
 
-Later when we integrate this (child) state machine into a (parent) state machine we can define that when child machine reaches this exit point which event shall be triggered in the parent machine:
+Later when we integrate this (child) state machine into a (parent) state machine we can define which event shall be triggered in the parent machine when the child machine reaches this exit point:
 
 ```dart
 Region(
@@ -492,7 +493,7 @@ enum T { toGrid, toBattery, toDown }
 
 const powerMachineName = 'powerMachine';
 
-StateMachine<S, E, T> createPowerMachine() => StateMachine<S, E, T>(
+Machine<S, E, T> createPowerMachine() => Machine<S, E, T>(
       name: powerMachineName,
       events: E.values,
       initialStateId: S.grid,
@@ -538,10 +539,10 @@ enum LME { turnOnGrid, turnOff, turnOnBattery }
 
 enum LMT { toOn, toOff }
 
-StateMachine<LMS, LME, LMT> createLightMachine({
-  RegionList<LMS, LME, LMT>? regions,
+Machine<LMS, LME, LMT> createLightMachine({
+  List<Region<LMS, LME, LMT dynamic>>? regions,
 }) =>
-    StateMachine<LMS, LME, LMT>(
+    Machine<LMS, LME, LMT>(
       name: 'lightMachine',
       events: LME.values,
       initialStateId: LMS.off,
@@ -652,22 +653,19 @@ You can also watch a short video about executing the above described sequence in
 
 ### Disclaimer
 
-As the package version indicates this is an experimental package, not ready for prime use. API changes are expected and test coverage is low.
+As the package version indicates this is an experimental package. On the other hand, it is now considered feature complete with high auto-test coverage and after a curation period it is expected to reach 1.0.  
 
 ### Next steps
 
-- Finalize API.
-- Increase test coverage.
 - Improve documentation.
-- More helper classes in hisma_extra.
+- Process feedback.
+- Release 1.0.
 
 ### Help appreciated
 
-- Feedback, especially about things you would like to change.
+- Feedback.
 - Finding bugs either in code or in documentation are always welcomed.
   - Providing a failing test to demonstrate the bug is even better.
-- Creating tests.
-- Creating documentation.
 
 ### Contact
 

@@ -24,7 +24,7 @@ enum T { toHalf, toFull }
 const brightnessMachineName = 'brightnessMachine';
 
 Machine<S, E, T> createBrightnessMachine({
-  RegionList<S, E, T>? regions,
+  List<Region<S, E, T, dynamic>>? regions,
 }) =>
     Machine<S, E, T>(
       name: brightnessMachineName,

@@ -69,7 +69,7 @@ enum LME { turnOnGrid, turnOff, turnOnBattery }
 enum LMT { toOn, toOff }
 
 Machine<LMS, LME, LMT> createLightMachine({
-  RegionList<LMS, LME, LMT>? regions,
+  List<Region<LMS, LME, LMT, dynamic>>? regions,
 }) =>
     Machine<LMS, LME, LMT>(
       name: 'lightMachine',
