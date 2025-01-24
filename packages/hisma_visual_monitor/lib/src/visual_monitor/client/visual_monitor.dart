@@ -183,8 +183,8 @@ class VisualMonitor implements Monitor {
         _log.info('FireMessageDTO received: $fireMessageDTO');
         assert(
           stateMachine.events.isNotEmpty,
-          'You must add "events" argument to StateMachine '
-          '"${stateMachine.name}" constructor.',
+          'If you fire events from visma ui you must add "events" argument to '
+          'the constructor of the state machine named "${stateMachine.name}".',
         );
         final em = {for (final i in stateMachine.events) i.toString(): i};
         _log.fine('em=$em');
@@ -194,7 +194,7 @@ class VisualMonitor implements Monitor {
           '"events" argument for StateMachine "${stateMachine.name}" '
           'does not include mapping for ${fireMessageDTO.event}',
         );
-        stateMachine.fire(em[fireMessageDTO.event]);
+        stateMachine.fire(event);
         break;
       case ToggleExpandDTO:
         // Asserting that this client has been registered.
