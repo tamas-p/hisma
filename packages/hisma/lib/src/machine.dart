@@ -144,7 +144,11 @@ class Machine<S, E, T> {
       // HistoryEntryPoint) to process. They have preference over
       // machine history and normal initial state.
       final state = states[entryPointId];
-      assert(state != null);
+      assert(
+        state is EntryPoint,
+        'State "$entryPointId" of machine named "$name" '
+        'shall be an EntryPoint.',
+      );
       if (state == null) return;
       if (state is HistoryEntryPoint<E, T, S>) {
         if (_historyStateId != null) {
