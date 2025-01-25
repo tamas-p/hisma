@@ -77,7 +77,6 @@ final guardsMachine = Machine<S, E, T>(
           }
         },
       ),
-      onError: OnErrorAction.noAction(),
     ),
     T.toFinish: Transition(
       to: S.finish,
@@ -92,7 +91,6 @@ final guardsMachine = Machine<S, E, T>(
           }
         },
       ),
-      onError: OnErrorAction.noAction(),
     ),
   },
 );

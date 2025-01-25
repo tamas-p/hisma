@@ -594,10 +594,6 @@ class Machine<S, E, T> {
             ),
           );
           continue;
-        } else {
-          _log.info(() => 'Throwing HismaIntervalException($message).');
-          // TODO: Shall we drop or simply continue (selecting the transition)?
-          throw HismaIntervalException(message);
         }
       }
 
@@ -618,15 +614,9 @@ class Machine<S, E, T> {
               arg: arg,
             ),
           );
-        } else {
-          _log.info(() => 'Throwing HismaGuardException($message).');
-          // TODO: Shall we drop or simply continue (selecting the transition)?
-          throw HismaGuardException(message);
         }
         continue;
       }
-
-      transition.lastTime = now;
 
       if (selectedTransitionWithId == null ||
           selectedTransitionWithId.edge.priority < transition.priority) {
@@ -635,6 +625,7 @@ class Machine<S, E, T> {
       }
     }
 
+    selectedTransitionWithId?.edge.lastTime = DateTime.now();
     return selectedTransitionWithId;
   }
 

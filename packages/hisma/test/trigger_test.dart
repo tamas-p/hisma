@@ -8,12 +8,12 @@ void main() async {
     (machine) => VisualMonitor(machine),
     // (machine) => ConsoleMonitor(machine),
   ];
-  return;
+  // return;
   print('started');
   final parentMachine = createParentMachine();
   await parentMachine.start();
 
-  await parentMachine.fire(EP.fwd1, arg: true);
+  // await parentMachine.fire(EP.fwd1, arg: true);
 
   // await Future<void>.delayed(const Duration(seconds: 1000));
   print('done');

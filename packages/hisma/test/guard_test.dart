@@ -7,29 +7,6 @@ void main() {
     setUp(() async {
       machine = createMachine();
     });
-    test('Guard synchronous - Exception', () async {
-      await machine.start();
-      expect(machine.data as bool, false);
-      expect(machine.activeStateId, S.a);
-
-      expect(
-        machine.fire(E.syncEx),
-        throwsA(const TypeMatcher<HismaGuardException>()),
-      );
-      expect(machine.activeStateId, S.a);
-      expect(machine.data as bool, false);
-
-      expect(
-        machine.fire(E.syncEx, arg: 10),
-        throwsA(const TypeMatcher<HismaGuardException>()),
-      );
-      expect(machine.activeStateId, S.a);
-      expect(machine.data as bool, false);
-
-      await machine.fire(E.sync, arg: 11);
-      expect(machine.activeStateId, S.b);
-      expect(machine.data as bool, false);
-    });
 
     test('Guard synchronous - onError', () async {
       await machine.start();
@@ -50,29 +27,7 @@ void main() {
       expect(machine.activeStateId, S.b);
       expect(machine.data as bool, false);
     });
-    test('Guard asynchronous - Exception', () async {
-      await machine.start();
-      expect(machine.activeStateId, S.a);
-      expect(machine.data as bool, false);
 
-      expect(
-        machine.fire(E.asyncEx),
-        throwsA(const TypeMatcher<HismaGuardException>()),
-      );
-      expect(machine.activeStateId, S.a);
-      expect(machine.data as bool, false);
-
-      expect(
-        machine.fire(E.asyncEx, arg: () => Future.value(10)),
-        throwsA(const TypeMatcher<HismaGuardException>()),
-      );
-      expect(machine.activeStateId, S.a);
-      expect(machine.data as bool, false);
-
-      await machine.fire(E.asyncEx, arg: () => Future.value(11));
-      expect(machine.activeStateId, S.b);
-      expect(machine.data as bool, false);
-    });
     test('Guard asynchronous - onError', () async {
       await machine.start();
       expect(machine.activeStateId, S.a);

@@ -75,7 +75,6 @@ Machine<S, E, T> createSimpleMachine(String name) => Machine<S, E, T>(
               return arg is! Map<String, bool> || (arg[cb] ?? false);
             },
           ),
-          onError: OnErrorAction.noAction(),
         ),
         T.toC: Transition(
           to: S.c,
@@ -86,7 +85,6 @@ Machine<S, E, T> createSimpleMachine(String name) => Machine<S, E, T>(
               return arg is! Map<String, bool> || (arg[cc] ?? false);
             },
           ),
-          onError: OnErrorAction.noAction(),
         ),
         T.toD: Transition(
           to: S.d,
@@ -97,7 +95,6 @@ Machine<S, E, T> createSimpleMachine(String name) => Machine<S, E, T>(
               return arg is! Map<String, bool> || (arg[cd] ?? false);
             },
           ),
-          onError: OnErrorAction.noAction(),
         ),
       },
     );

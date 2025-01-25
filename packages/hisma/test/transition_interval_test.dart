@@ -3,31 +3,34 @@ import 'package:test/test.dart';
 
 void main() {
   group('Transition interval test', () {
-    test('Interval test positive - throw', () async {
-      var value = 100;
-      final m1 = createSimpleMachine('m1', value);
-      expect(m1.activeStateId, null);
-      expect(m1.data as int, value);
+    test(
+      'Interval test positive',
+      () async {
+        var value = 100;
+        final m1 = createSimpleMachine('m1', value);
+        expect(m1.activeStateId, null);
+        expect(m1.data as int, value);
 
-      await m1.start();
-      expect(m1.activeStateId, S.a);
-      expect(m1.data as int, value);
+        await m1.start();
+        expect(m1.activeStateId, S.a);
+        expect(m1.data as int, value);
 
-      await m1.fire(E.changeException);
-      value = value * 2;
-      expect(m1.activeStateId, S.b);
-      expect(m1.data as int, value);
+        await m1.fire(E.changeException);
+        value = value * 2;
+        expect(m1.activeStateId, S.b);
+        expect(m1.data as int, value);
 
-      await m1.fire(E.changeException);
-      expect(m1.activeStateId, S.a);
-      expect(m1.data as int, value);
+        await m1.fire(E.changeException);
+        expect(m1.activeStateId, S.a);
+        expect(m1.data as int, value);
 
-      await Future<void>.delayed(const Duration(milliseconds: 101));
-      await m1.fire(E.changeException);
-      value = value * 2;
-      expect(m1.activeStateId, S.b);
-      expect(m1.data as int, value);
-    });
+        await Future<void>.delayed(const Duration(milliseconds: 101));
+        await m1.fire(E.changeException);
+        value = value * 2;
+        expect(m1.activeStateId, S.b);
+        expect(m1.data as int, value);
+      },
+    );
 
     test('Interval test positive - onError', () async {
       var value = 100;
@@ -52,34 +55,6 @@ void main() {
       await m1.fire(E.changeOnError);
       value = value * 2;
       expect(m1.activeStateId, S.b);
-      expect(m1.data as int, value);
-    });
-
-    test('Interval test negative - throw', () async {
-      var value = 100;
-      final m1 = createSimpleMachine('m1', value);
-      expect(m1.activeStateId, null);
-      expect(m1.data as int, value);
-
-      await m1.start();
-      expect(m1.activeStateId, S.a);
-      expect(m1.data as int, value);
-
-      await m1.fire(E.changeException);
-      value *= 2;
-      expect(m1.activeStateId, S.b);
-      expect(m1.data as int, value);
-
-      await m1.fire(E.changeException);
-      expect(m1.activeStateId, S.a);
-      expect(m1.data as int, value);
-
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-      expect(
-        m1.fire(E.changeException),
-        throwsA(const TypeMatcher<HismaIntervalException>()),
-      );
-      expect(m1.activeStateId, S.a);
       expect(m1.data as int, value);
     });
 
