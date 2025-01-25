@@ -686,6 +686,11 @@ class MachineConverter {
           connectorIds.add(connectorId);
 
           // Draw connection from connector to targeted entry point.
+          assert(
+            region?.machine.states[toEntryPointId] is EntryPoint,
+            'State "$toEntryPointId" of machine named "${region?.machine.name}" '
+            'shall be an EntryPoint.',
+          );
           final to = _getPrefixedId(
             prefix: prefix,
             parentId: transition.to,
