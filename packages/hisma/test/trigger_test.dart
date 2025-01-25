@@ -1,22 +1,20 @@
 import 'package:hisma/hisma.dart';
-import 'package:hisma/src/assistance.dart';
-import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
+import 'package:test/test.dart';
 
 void main() async {
-  initLogging();
-  Machine.monitorCreators = [
-    (machine) => VisualMonitor(machine),
-    // (machine) => ConsoleMonitor(machine),
-  ];
-  // return;
-  print('started');
-  final parentMachine = createParentMachine();
-  await parentMachine.start();
+  // initLogging();
+  group('Trigger tests', () {
+    test('test 1', () async {
+      final parentMachine = createParentMachine();
+      await parentMachine.start();
+      expect(parentMachine.activeStateId, SP.a);
+      final childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
 
-  // await parentMachine.fire(EP.fwd1, arg: true);
-
-  // await Future<void>.delayed(const Duration(seconds: 1000));
-  print('done');
+      await parentMachine.fire(EP.fwd1, arg: true);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s1);
+    });
+  });
 }
 
 enum SP { a, b, c }
