@@ -1,27 +1,76 @@
 import 'package:hisma/hisma.dart';
+import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 import 'package:test/test.dart';
 
 void main() async {
   // initLogging();
-  group('Trigger tests', () {
-    test('test 1', () async {
-      final parentMachine = createParentMachine();
-      await parentMachine.start();
-      expect(parentMachine.activeStateId, SP.a);
-      final childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
+  Machine.monitorCreators = [(m) => VisualMonitor(m)];
 
+  late Machine<SP, EP, TP> parentMachine;
+  late Machine<SC, EC, TC> childMachine;
+
+  setUp(() async {
+    parentMachine = createParentMachine();
+    await parentMachine.start();
+    expect(parentMachine.activeStateId, SP.a);
+    childMachine = parentMachine.find<SC, EC, TC>(childMachineName);
+  });
+  group('Trigger tests, source SP.a', () {
+    test('test 1: (SP.a, EP.fwd1, TP.toC1)', () async {
       await parentMachine.fire(EP.fwd1, arg: true);
       expect(parentMachine.activeStateId, SP.c);
       expect(childMachine.activeStateId, SC.s1);
+    });
+    test('test 2: (SP.a, EP.fwd1, TP.toC2)', () async {
+      await parentMachine.fire(EP.fwd1, arg: false);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s2);
+    });
+    test('test 3: (SP.a, EP.fwd2, TP.toC1)', () async {
+      await parentMachine.fire(EP.fwd2, arg: true);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s3);
+    });
+    test('test 4: (SP.a, EP.fwd2, TP.toC2)', () async {
+      await parentMachine.fire(EP.fwd2, arg: false);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s4);
+    });
+  });
+
+  group('Trigger tests, source SP.b', () {
+    setUp(() async {
+      await parentMachine.fire(EP.go);
+      expect(parentMachine.activeStateId, SP.b);
+    });
+    test('test 1: (SP.b, EP.fwd1, TP.toC1)', () async {
+      await parentMachine.fire(EP.fwd1, arg: true);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s5);
+    });
+    test('test 2: (SP.b, EP.fwd1, TP.toC2)', () async {
+      await parentMachine.fire(EP.fwd1, arg: false);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s6);
+    });
+    test('test 3: (SP.b, EP.fwd2, TP.toC1)', () async {
+      await parentMachine.fire(EP.fwd2, arg: true);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s7);
+    });
+    test('test 4: (SP.b, EP.fwd2, TP.toC2)', () async {
+      await parentMachine.fire(EP.fwd2, arg: false);
+      expect(parentMachine.activeStateId, SP.c);
+      expect(childMachine.activeStateId, SC.s8);
     });
   });
 }
 
 enum SP { a, b, c }
 
-enum EP { fwd1, fwd2 }
+enum EP { fwd1, fwd2, go }
 
-enum TP { toC1, toC2 }
+enum TP { toC1, toC2, toB }
 
 Machine<SP, EP, TP> createParentMachine() => Machine<SP, EP, TP>(
       events: EP.values,
@@ -30,6 +79,7 @@ Machine<SP, EP, TP> createParentMachine() => Machine<SP, EP, TP>(
       states: {
         SP.a: State(
           etm: {
+            EP.go: [TP.toB],
             EP.fwd1: [TP.toC1, TP.toC2],
             EP.fwd2: [TP.toC1, TP.toC2],
           },
@@ -47,6 +97,20 @@ Machine<SP, EP, TP> createParentMachine() => Machine<SP, EP, TP>(
               entryConnectors: {
                 Trigger(source: SP.a, event: EP.fwd1, transition: TP.toC1):
                     SC.ep1,
+                Trigger(source: SP.a, event: EP.fwd1, transition: TP.toC2):
+                    SC.ep2,
+                Trigger(source: SP.a, event: EP.fwd2, transition: TP.toC1):
+                    SC.ep3,
+                Trigger(source: SP.a, event: EP.fwd2, transition: TP.toC2):
+                    SC.ep4,
+                Trigger(source: SP.b, event: EP.fwd1, transition: TP.toC1):
+                    SC.ep5,
+                Trigger(source: SP.b, event: EP.fwd1, transition: TP.toC2):
+                    SC.ep6,
+                Trigger(source: SP.b, event: EP.fwd2, transition: TP.toC1):
+                    SC.ep7,
+                Trigger(source: SP.b, event: EP.fwd2, transition: TP.toC2):
+                    SC.ep8,
               },
             ),
           ],
@@ -67,6 +131,7 @@ Machine<SP, EP, TP> createParentMachine() => Machine<SP, EP, TP>(
             description: 'enabled',
           ),
         ),
+        TP.toB: Transition(to: SP.b),
       },
     );
 
