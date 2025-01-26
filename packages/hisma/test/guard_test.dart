@@ -106,11 +106,11 @@ Machine<S, E, T> createMachine() => Machine<S, E, T>(
               return data is int && data > 10;
             },
           ),
-          onError: OnErrorAction(
+          onSkip: OnSkipAction(
             description: 'Set data to true.',
             action: (machine, data) async {
               await Future<void>.delayed(Duration.zero);
-              expect(data.source, OnErrorSource.guard);
+              expect(data.source, SkipSource.guard);
               machine.data = true;
             },
           ),
@@ -123,10 +123,10 @@ Machine<S, E, T> createMachine() => Machine<S, E, T>(
               return data is AsyncFunction && await data() > 10;
             },
           ),
-          onError: OnErrorAction(
+          onSkip: OnSkipAction(
             description: 'Set data to true.',
             action: (machine, data) {
-              expect(data.source, OnErrorSource.guard);
+              expect(data.source, SkipSource.guard);
               machine.data = true;
             },
           ),

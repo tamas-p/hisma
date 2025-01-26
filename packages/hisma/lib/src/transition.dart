@@ -9,14 +9,14 @@ abstract class Edge<S> {
     this.guard,
     this.priority = 0,
     this.onAction,
-    this.onError,
+    this.onSkip,
     this.minInterval,
     this.lastTime,
   });
   final Guard? guard;
   final int priority;
   final Action? onAction;
-  final OnErrorAction? onError;
+  final OnSkipAction? onSkip;
   final Duration? minInterval;
   DateTime? lastTime;
 }
@@ -26,13 +26,13 @@ class InternalTransition<S> extends Edge<S> {
     Guard? guard,
     int priority = 0,
     required Action onAction,
-    OnErrorAction? onError,
+    OnSkipAction? onSkip,
     Duration? minInterval,
   }) : super(
           guard: guard,
           priority: priority,
           onAction: onAction,
-          onError: onError,
+          onSkip: onSkip,
           minInterval: minInterval,
         );
 }
@@ -55,13 +55,13 @@ class Transition<S> extends Edge<S> {
     Guard? guard,
     int priority = 0,
     Action? onAction,
-    OnErrorAction? onError,
+    OnSkipAction? onSkip,
     Duration? minInterval,
   }) : super(
           guard: guard,
           priority: priority,
           onAction: onAction,
-          onError: onError,
+          onSkip: onSkip,
           minInterval: minInterval,
         );
 
@@ -84,23 +84,23 @@ class Transition<S> extends Edge<S> {
   }
 }
 
-enum OnErrorSource { guard, maxInterval }
+enum SkipSource { guard, maxInterval }
 
-class OnErrorData {
-  OnErrorData({required this.source, required this.message, required this.arg});
-  OnErrorSource source;
+class OnSkipData {
+  OnSkipData(this.source, this.message, this.arg);
+  SkipSource source;
   String? message;
   dynamic arg;
 }
 
-typedef OnErrorActionFunction = FutureOr<void> Function(
+typedef OnSkipActionFunction = FutureOr<void> Function(
   Machine<dynamic, dynamic, dynamic> machine,
-  OnErrorData data,
+  OnSkipData data,
 );
 
-class OnErrorAction {
-  OnErrorAction({required this.description, required this.action});
+class OnSkipAction {
+  OnSkipAction({required this.description, required this.action});
 
   String description;
-  OnErrorActionFunction action;
+  OnSkipActionFunction action;
 }

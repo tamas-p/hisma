@@ -375,7 +375,7 @@ class MachineConverter {
     final onAction = transition.onAction;
     if (onAction != null) sb.write(' ${onAction.description}');
 
-    final onError = transition.onError;
+    final onError = transition.onSkip;
     if (onError != null) sb.write(' || ${onError.description}');
 
     return sb.toString();
@@ -603,7 +603,7 @@ class MachineConverter {
     final onAction = transition.onAction;
     if (onAction != null) sb.write('\\n${onAction.description}');
 
-    final onError = transition.onError;
+    final onError = transition.onSkip;
     if (onError != null) sb.write(' || ${onError.description}');
 
     return sb.toString();

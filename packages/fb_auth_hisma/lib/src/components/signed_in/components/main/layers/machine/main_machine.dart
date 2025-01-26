@@ -72,7 +72,7 @@ NavigationMachine<SMM, EMM, TMM> createMainMachine() =>
               await sendEmailVerification();
             },
           ),
-          onError: OnErrorAction(
+          onSkip: OnSkipAction(
             description: 'Fire EMM.error.',
             action: (machine, onErrorData) async {
               log.info(onErrorData.message);

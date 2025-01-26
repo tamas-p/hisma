@@ -134,10 +134,10 @@ Machine<S, E, T> createSimpleMachine(String name, int value) =>
               machine.data = (machine.data as int) * 2;
             },
           ),
-          onError: OnErrorAction(
+          onSkip: OnSkipAction(
             description: 'divide',
             action: (machine, onErrorData) {
-              expect(onErrorData.source, OnErrorSource.maxInterval);
+              expect(onErrorData.source, SkipSource.maxInterval);
               machine.data = (machine.data as int) ~/ 2;
             },
           ),

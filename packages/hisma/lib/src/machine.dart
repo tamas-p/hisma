@@ -573,26 +573,16 @@ class Machine<S, E, T> {
       );
       if (transition == null) continue;
 
-      final onError = transition.onError;
+      final onSkip = transition.onSkip;
       final now = DateTime.now();
       if (transition.minInterval != null &&
           transition.lastTime != null &&
           now.difference(transition.lastTime!) < transition.minInterval!) {
-        final message = 'Too little time passed since last transition: '
-            '${now.difference(transition.lastTime!)}';
-        if (onError != null) {
-          _log.info(
-            () =>
-                'Calling onError action for $transitionId due to failed maxInterval check.',
-          );
-          await onError.action.call(
-            this,
-            OnErrorData(
-              source: OnErrorSource.maxInterval,
-              message: message,
-              arg: arg,
-            ),
-          );
+        const message = 'Too little time passed since last transition.';
+        if (onSkip != null) {
+          _log.info(() => 'onSkip action at $transitionId: $message');
+          await onSkip.action
+              .call(this, OnSkipData(SkipSource.maxInterval, message, arg));
           continue;
         }
       }
@@ -601,19 +591,10 @@ class Machine<S, E, T> {
           await transition.guard?.condition.call(this, arg) ?? true;
       if (!guardAllows) {
         const message = 'Guard failed.';
-        if (onError != null) {
-          _log.info(
-            () =>
-                'Calling onError action for $transitionId due to failed guard.',
-          );
-          await onError.action.call(
-            this,
-            OnErrorData(
-              source: OnErrorSource.guard,
-              message: message,
-              arg: arg,
-            ),
-          );
+        if (onSkip != null) {
+          _log.info(() => 'onSkip action at $transitionId: $message');
+          await onSkip.action
+              .call(this, OnSkipData(SkipSource.guard, message, arg));
         }
         continue;
       }

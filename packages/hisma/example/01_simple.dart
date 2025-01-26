@@ -71,7 +71,7 @@ Machine<S, E, T> createLightMachine({
             description: 'Closing.',
             action: (machine, arg) async => print('Closing'),
           ),
-          onError: OnErrorAction(
+          onSkip: OnSkipAction(
             description: 'Print error message.',
             action: (machine, onErrorData) async => print(onErrorData.message),
           ),
@@ -111,7 +111,7 @@ Machine<S, E, T> createLightMachine({
               );
             },
           ),
-          onError: OnErrorAction(
+          onSkip: OnSkipAction(
             description: 'Print error message.',
             action: (machine, onErrorData) async => print(onErrorData.message),
           ),
