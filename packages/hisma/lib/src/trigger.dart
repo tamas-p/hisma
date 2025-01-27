@@ -3,9 +3,9 @@
 /// and priority selects it from the list of transitions on E.
 class Trigger<S, E, T> {
   Trigger({
-    required this.source,
-    required this.event,
-    required this.transition,
+    this.source,
+    this.event,
+    this.transition,
   });
 
   final S? source;
@@ -24,4 +24,9 @@ class Trigger<S, E, T> {
 
   @override
   int get hashCode => source.hashCode ^ event.hashCode ^ transition.hashCode;
+
+  @override
+  String toString() {
+    return '($source, $event, $transition)';
+  }
 }

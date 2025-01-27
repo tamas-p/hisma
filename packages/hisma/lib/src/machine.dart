@@ -521,13 +521,56 @@ class Machine<S, E, T> {
     required bool historyFlowDown,
   }) async {
     for (final region in state.regions) {
-      final entryPointId = region.entryConnectors?[trigger];
+      final entryPointId = _getEntryPointId(region.entryConnectors, trigger);
       await region.machine.start(
         entryPointId: entryPointId,
         arg: arg,
         historyFlowDown: historyFlowDown,
       );
     }
+  }
+
+  dynamic _getEntryPointId(
+    Map<Trigger<S, E, T>, dynamic>? entryConnectors,
+    Trigger<S, E, T>? trigger,
+  ) {
+    dynamic entryPointId;
+    if (entryConnectors != null && trigger != null) {
+      entryPointId = entryConnectors[trigger]; // Quick response if complete.
+      // return entryPointId;
+      if (entryPointId == null) {
+        var value = -1;
+        // MapEntry<Trigger<S, E, T>, dynamic>? selected;
+
+        int compare(Trigger<S, E, T> t, Trigger<S, E, T> key) {
+          if (key.source != null && key.source != t.source ||
+              key.event != null && key.event != t.event ||
+              key.transition != null && key.transition != t.transition) {
+            return -1;
+          }
+          var value = 0;
+          if (key.source == t.source) value++;
+          if (key.event == t.event) value++;
+          if (key.transition == t.transition) value++;
+          // print('Trying... value: $value');
+          return value;
+        }
+
+        for (final entry in entryConnectors.entries) {
+          final res = compare(trigger, entry.key);
+          if (res > value) {
+            value = res;
+            entryPointId = entry.value;
+            // selected = entry;
+          }
+        }
+        // if (selected != null) {
+        //   print(
+        //       'trigger: $trigger, key: ${selected.key}, entryPointId: ${selected.value} @ $value');
+        // }
+      }
+    }
+    return entryPointId;
   }
 
   /// Calculates which transition shall be used for the eventId parameter.
