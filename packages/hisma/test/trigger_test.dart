@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import '../example/06_triggers.dart';
 
 void main() async {
-  group('Trigger tests, complete key', () {
+  group('Trigger tests', () {
     group(
       '0 defined',
       () {
@@ -54,7 +54,7 @@ void main() async {
     group(
       '3 defined',
       () {
-        test('test 1: 3 defined', () async {
+        test('all 3 defined', () async {
           final c = Checker(entryConnectorsSourceEventTransition);
           await c.fir([SC.s1, SC.s2, SC.s3, SC.s4, SC.s5, SC.s6, SC.s7, SC.s8]);
         });
