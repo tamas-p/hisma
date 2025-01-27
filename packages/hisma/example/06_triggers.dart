@@ -6,7 +6,7 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 void main(List<String> args) async {
   Machine.monitorCreators = [(m) => VisualMonitor(m)];
 
-  final m = createParentMachine(entryConnectorsNone);
+  final m = createParentMachine(entryConnectorsSourceEventTransition);
   await m.start();
   await Future<void>.delayed(const Duration(hours: 1));
 }
@@ -82,7 +82,7 @@ final entryConnectorsSourceEventTransition = <Trigger<SP, EP, TP>, SC>{
 
 enum SP { a, b, c }
 
-enum EP { fwd1, fwd2, go, back }
+enum EP { forward, fwd1, fwd2, go, back }
 
 enum TP { toC1, toC2, toA, toB }
 
@@ -97,6 +97,7 @@ Machine<SP, EP, TP> createParentMachine(
         SP.a: State(
           etm: {
             EP.go: [TP.toB],
+            EP.forward: [TP.toC1],
             EP.fwd1: [TP.toC1, TP.toC2],
             EP.fwd2: [TP.toC1, TP.toC2],
           },
@@ -105,7 +106,7 @@ Machine<SP, EP, TP> createParentMachine(
           etm: {
             EP.fwd1: [TP.toC1, TP.toC2],
             EP.fwd2: [TP.toC1, TP.toC2],
-            EP.back: [TP.toA],
+            // EP.back: [TP.toA],
           },
         ),
         SP.c: State(
