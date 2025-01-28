@@ -6,9 +6,17 @@ import 'package:hisma_visual_monitor/hisma_visual_monitor.dart';
 void main(List<String> args) async {
   Machine.monitorCreators = [(m) => VisualMonitor(m)];
 
-  final m = createParentMachine(entryConnectorsSourceEventTransition);
-  await m.start();
-  await Future<void>.delayed(const Duration(hours: 1));
+  await createParentMachine(entryConnectorsNone).start();
+
+  await createParentMachine(entryConnectorsSource).start();
+  await createParentMachine(entryConnectorsEvent).start();
+  await createParentMachine(entryConnectorsTransition).start();
+
+  await createParentMachine(entryConnectorsSourceEvent).start();
+  await createParentMachine(entryConnectorsSourceTransition).start();
+  await createParentMachine(entryConnectorsEventTransition).start();
+
+  await createParentMachine(entryConnectorsSourceEventTransition).start();
 }
 
 //------------------------------------------------------------------------------
@@ -84,20 +92,24 @@ enum SP { a, b, c }
 
 enum EP { forward, fwd1, fwd2, go, back }
 
-enum TP { toC1, toC2, toA, toB }
+enum TP { toC1, toC2, toA, toB, toC }
 
 Machine<SP, EP, TP> createParentMachine(
   Map<Trigger<SP, EP, TP>, SC> entryConnectors,
 ) =>
     Machine<SP, EP, TP>(
       events: EP.values,
-      name: 'parentMachine',
+      // name: 'parentMachine-${(log(entryConnectors.length) / log(2)).round()}',
+      name: 'parentMachine-('
+          '${entryConnectors.keys.first.source != null ? 'source' : ''}, '
+          '${entryConnectors.keys.first.event != null ? 'event' : ''},'
+          '${entryConnectors.keys.first.transition != null ? 'transition' : ''})',
       initialStateId: SP.a,
       states: {
         SP.a: State(
           etm: {
             EP.go: [TP.toB],
-            EP.forward: [TP.toC1],
+            EP.forward: [TP.toC],
             EP.fwd1: [TP.toC1, TP.toC2],
             EP.fwd2: [TP.toC1, TP.toC2],
           },
@@ -115,8 +127,22 @@ Machine<SP, EP, TP> createParentMachine(
           },
           regions: [
             Region<SP, EP, TP, SC>(
-              machine: createChildMachine(),
+              machine: createChildMachine(childMachineName),
               entryConnectors: entryConnectors,
+            ),
+            Region<SP, EP, TP, SC>(
+              machine: createChildMachine('$childMachineName-2'),
+              entryConnectors: Map.fromEntries(
+                entryConnectors.entries.map(
+                  (e) => MapEntry(
+                    e.key,
+                    entryConnectors.values
+                        .toList()
+                        .reversed
+                        .toList()[entryConnectors.keys.toList().indexOf(e.key)],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -138,6 +164,7 @@ Machine<SP, EP, TP> createParentMachine(
         ),
         TP.toA: Transition(to: SP.a),
         TP.toB: Transition(to: SP.b),
+        TP.toC: Transition(to: SP.c),
       },
     );
 
@@ -166,9 +193,9 @@ enum EC { forward }
 enum TC { toA, toS1, toS2, toS3, toS4, toS5, toS6, toS7, toS8 }
 
 const childMachineName = 'childMachine';
-Machine<SC, EC, TC> createChildMachine() => Machine<SC, EC, TC>(
+Machine<SC, EC, TC> createChildMachine(String name) => Machine<SC, EC, TC>(
       events: EC.values,
-      name: childMachineName,
+      name: name,
       initialStateId: SC.a,
       states: {
         SC.ep1: EntryPoint([TC.toS1]),

@@ -234,8 +234,9 @@ class MachineConverter {
     // states defined before we define transitions between them.
     _writeln();
     _cWriteln("'Transitions");
+    final entryPoints = <String>{};
     machine.states.forEach((stateId, state) {
-      if (state is State) _writeTransitions(stateId, state);
+      if (state is State) _writeTransitions(stateId, state, entryPoints);
     });
   }
 
@@ -612,6 +613,7 @@ class MachineConverter {
   void _writeTransitions(
     dynamic stateId,
     State<dynamic, dynamic, dynamic> state,
+    Set<String> entryPoints,
   ) {
     state.etm.forEach((eventId, transitionIds) {
       for (final transitionId in transitionIds) {
@@ -637,6 +639,7 @@ class MachineConverter {
             eventId: eventId,
             transitionId: transitionId,
             transition: transition,
+            entryPoints: entryPoints,
           );
         }
       }
@@ -649,6 +652,7 @@ class MachineConverter {
     required dynamic eventId,
     required dynamic transitionId,
     required Transition<dynamic> transition,
+    required Set<String> entryPoints,
   }) {
     var handled = false;
 
@@ -673,12 +677,15 @@ class MachineConverter {
       final connectorIds = <String>{};
       for (var i = 0; i < (toState?.regions.length ?? 0); i++) {
         final region = toState?.regions[i];
-        final toEntryPointId = region?.entryConnectors?[trigger];
-        if (toEntryPointId != null) {
+        // final toEntryPointId = region?.entryConnectors?[trigger];
+        final selected = getEntryPointId(region?.entryConnectors, trigger);
+        final toEntryPointId = selected?.value;
+        final connectorTrigger = selected?.key;
+        if (toEntryPointId != null && connectorTrigger != null) {
           handled = true;
           final connectorId = _getEntryConnectorId(
             statePrefix: '$prefix.${transition.to}',
-            trigger: trigger,
+            trigger: connectorTrigger,
           );
 
           // We only collects connectorIds here in a set as we need to
@@ -697,7 +704,10 @@ class MachineConverter {
             regionNumber: i,
             childId: toEntryPointId,
           );
-          _cWriteln('$connectorId -[${theme.connectorStyle}]-> $to');
+          if (!entryPoints.contains(to)) {
+            _cWriteln('$connectorId -[${theme.connectorStyle}]-> $to');
+            entryPoints.add(to);
+          }
         }
       }
 
