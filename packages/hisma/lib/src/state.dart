@@ -22,7 +22,7 @@ BaseEntryPoint <|-- HistoryEntryPoint
 @enduml
 */
 
-// TODO: Why not S,E,T just like for StateMachine?
+// TODO: Why not S,E,T just like for Machine?
 /// Base class for all states.
 abstract class BaseState<E, T, S> {
   // TODO: seems useful, but still not used in hisma examples.

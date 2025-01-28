@@ -35,7 +35,7 @@ class PlantUMLConverter {
   Machine<dynamic, dynamic, dynamic> stateMachine;
   final Theme _theme;
 
-  final _sb = StringBuffer('@startuml StateMachine\n');
+  final _sb = StringBuffer('@startuml Machine\n');
 
   String get diagram {
     _writePrefix();

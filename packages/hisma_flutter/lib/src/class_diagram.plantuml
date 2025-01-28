@@ -5,7 +5,7 @@
 
 
 class Application #$app
-class StateMachineWithChangeNotifier<S, E, T> #$app
+class NavigationMachine<S, E, T> #$app
 class HismaRouterDelegate<S, E> #$hisma_flutter
 class HismaRouterGenerator<S, E> #$hisma_flutter
 class Map<S, Presentation> #$app
@@ -13,12 +13,12 @@ class MaterialApp #$flutter
 class StateStack #$hisma_flutter
 
 Application -- MaterialApp : build
-StateMachineWithChangeNotifier -* Application
+NavigationMachine -* Application
 Application *-- HismaRouterGenerator
 
 MaterialApp o-- HismaRouterDelegate
 
-StateMachineWithChangeNotifier o--o HismaRouterDelegate
+NavigationMachine o--o HismaRouterDelegate
 
 HismaRouterDelegate -* HismaRouterGenerator
 

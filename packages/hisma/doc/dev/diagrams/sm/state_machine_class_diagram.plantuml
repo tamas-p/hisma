@@ -16,7 +16,7 @@ Region <<parent>>
 Trigger <<parent>>
 EventID <<<<parent>>
 
-StateMachine <<child>>
+Machine <<child>>
 Transition <<child>>
 SubEventID <<child>>
 StateID <<child>>
@@ -31,32 +31,32 @@ Region "exitConnectors" o- EventID
 
 State "regions" *-- Region
 ' (State, Region) .. RegionID
-Region o-- StateMachine
-' (State, StateMachine) .. MachineID
+Region o-- Machine
+' (State, Machine) .. MachineID
 
-' StateMachine "1" -- "10..*" State
-' (StateMachine , State) .. StateID
+' Machine "1" -- "10..*" State
+' (Machine , State) .. StateID
 
-StateMachine "transitions" *-- Transition
-StateMachine "states" *-- BaseState
-(StateMachine, BaseState) .. EntryPointID
+Machine "transitions" *-- Transition
+Machine "states" *-- BaseState
+(Machine, BaseState) .. EntryPointID
 BaseState <|-- EntryPoint
-(StateMachine, Transition) .. SubEventID
+(Machine, Transition) .. SubEventID
 ' List "1" -- "0..*" Transition
 
-StateMachine "exitPoints" *- ExitPointID
-(StateMachine, ExitPointID) .. StateID
+Machine "exitPoints" *- ExitPointID
+(Machine, ExitPointID) .. StateID
 Transition "to" - StateID
 
 
-' (StateMachine, Transition) .. ExitEvent 
-' Transition "0..*" -- "1" StateMachine
-' (StateMachine, Transition) .. ExitEvent 
+' (Machine, Transition) .. ExitEvent 
+' Transition "0..*" -- "1" Machine
+' (Machine, Transition) .. ExitEvent 
 
 note top of State: (1)\tParent machine visits\n\tall Region entry connectors\n\tafter moved to this state and\n\tafter its onEntry() executed.
 note left of Trigger: (2)\tIncoming to state\n\tidentified uniquely as Trigger\n\t(source state + source event + Transition)\n\tin parent SM.
 note left of EntryPointID: (3)\tBased on that trigger parent SM tries to find\n\tentry point for a certain child machine\n\tin the registered entryConnectors.
-note left of StateMachine: (4)\tParent invokes the given child\n\tmachine with EntryPointID.
+note left of Machine: (4)\tParent invokes the given child\n\tmachine with EntryPointID.
 note left of Transition: (5)\tRegion machine executes one of the transitions\n\tfrom the list selected by EntryPointID or the initial\n\ttransition of the machine if none received.
 
 note left of SubEventID: (a)\tEvent\n\tin child.

@@ -8,7 +8,7 @@ import '../aux/aux.dart';
 // import '../../test/aux/aux.dart';
 
 void main() {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   // ];
   // auxInitLogging();

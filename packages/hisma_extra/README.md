@@ -17,7 +17,7 @@ This package intended to contain all classes that is built on top of [hisma](../
 
 ## Features
 
-- toggle state machine ([ToggleStateMachine])
+- toggle state machine ([ToggleMachine])
 
 ![hisma_extra_01.gif](doc/resources/hisma_extra_01.gif)
 
@@ -27,12 +27,12 @@ Install [hisma](../hisma/), hisma_extra and optionally any monitors (e.g. [hisma
 
 ## Usage
 
-Currently the single extra that is available for Hisma is the [ToggleStateMachine] class that creates a simle two states (`on` and `off`) state machine.
+Currently the single extra that is available for Hisma is the [ToggleMachine] class that creates a simle two states (`on` and `off`) state machine.
 
 Create the machine:
 
 ```dart
-final machine = ToggleStateMachine(name: 'toggleMachine');
+final machine = ToggleMachine(name: 'toggleMachine');
 ```
 
 Use the machine:

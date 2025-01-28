@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter_test/t07_modeless.dart';
 
 Future<void> main() async {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   //   (m) => ConsoleMonitor(m),
   // ];

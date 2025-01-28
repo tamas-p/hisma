@@ -1,5 +1,5 @@
 @startmindmap State machine hierarchy diagram
-title Object hierarchy diagram created to help designing StateMachine.copyWith() 
+title Object hierarchy diagram created to help designing Machine.copyWith() 
 <style>
 mindmapDiagram {
     .simple { 
@@ -20,7 +20,7 @@ mindmapDiagram {
 ** collection <<iterate>>
 *** complex <<complex>>
 **** simple <<simple>>
-* machine : StateMachine <<recurse>>
+* machine : Machine <<recurse>>
 ** name : String <<simple>>
 ** initialStateId : Enum <<simple>>
 ** history : Enum <<simple>>
@@ -53,7 +53,7 @@ mindmapDiagram {
 ****** transitionId : Enum <<simple>>
 **** regions : List <<iterate>>
 ***** region : Region <<complex>>
-****** machine : StateMachine <<recurse>>
+****** machine : Machine <<recurse>>
 ****** entryConnectors : Map <<iterate>>
 ******* k = trigger : Trigger <<complex>>
 ******** source : Enum <<simple>>

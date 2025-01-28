@@ -5,7 +5,7 @@ import 'package:hisma_flutter_test/t01_page_no_overlay.dart';
 import '../aux/aux.dart';
 
 void main() {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   // ];
   // auxInitLogging();

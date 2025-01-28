@@ -16,7 +16,7 @@ final Logger _log = Logger(_loggerName);
 
 void main() {
   // auxInitLogging();
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   //   (m) => ConsoleMonitor(m),
   // ];

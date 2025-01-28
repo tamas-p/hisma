@@ -15,7 +15,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // final hf.StateMachineWithChangeNotifier<S, void, void> machine;
+  // final hf.MachineWithChangeNotifier<S, void, void> machine;
 
   @override
   Widget build(BuildContext context) {

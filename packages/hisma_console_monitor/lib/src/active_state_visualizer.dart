@@ -1,4 +1,4 @@
-/// Convert [StateMachine] active state representation to a human readable
+/// Convert [Machine] active state representation to a human readable
 /// string. An uml state machine can be a hierarchy of state machine due
 /// to implementing compound state regions with child state machines, the active
 /// state of the machine is not represented by a single state identifier but a

@@ -5,7 +5,7 @@ import 'package:hisma_flutter_test/t06_page_in_path.dart';
 import '../../test/aux/aux.dart';
 
 Future<void> main() async {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   //   (m) => ConsoleMonitor(m),
   // ];

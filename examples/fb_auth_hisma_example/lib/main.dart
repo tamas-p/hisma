@@ -39,7 +39,7 @@ void initLogging() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger(fbAuthHismaExample).level = Level.ALL;
   Logger.root.onRecord.listen((record) {
-    // if (record.loggerName == hisma.StateMachine.loggerName) {
+    // if (record.loggerName == hisma.Machine.loggerName) {
     // ignore: avoid_print
     print(
       '${record.level.name}: '

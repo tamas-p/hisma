@@ -354,8 +354,8 @@ class Machine<S, E, T> {
   ///   ]
   /// ];
   ///
-  /// TODO: Add StateMachine.name to the activeStateId. - added, but
-  /// TODO: add unit test to StateMachine.name and use withName=true for
+  /// TODO: Add Machine.name to the activeStateId. - added, but
+  /// TODO: add unit test to Machine.name and use withName=true for
   /// prettyPrint.
   List<dynamic> getActiveStateRecursive({bool withName = false}) {
     final result = <dynamic>[];
@@ -393,7 +393,7 @@ class Machine<S, E, T> {
       throw HismaMachineNotFoundException(
         machine == null
             ? '$name machine is not found in ${this.name} hierarchy. '
-            : '$name machine is not a StateMachine<$S1, $E1, $T1>.',
+            : '$name machine is not a Machine<$S1, $E1, $T1>.',
       );
     }
     return machine;
@@ -629,7 +629,7 @@ class Machine<S, E, T> {
     await parent?._processMachineNotification();
   }
 
-  /// StateMachine operations can throw [AssertionError] exceptions as a result
+  /// Machine operations can throw [AssertionError] exceptions as a result
   /// of failed assertions if we either
   /// * try starting an already started machine,
   /// * fire an event on an inactive machine or
@@ -637,8 +637,8 @@ class Machine<S, E, T> {
   ///
   /// We can enable or disable this behavior both at class level
   /// ([strict] class variable), impacting all subsequent
-  /// StateMachine object creations or at object level in the
-  /// constructor ([StateMachine.new]), impacting only the StateMachine object
+  /// Machine object creations or at object level in the
+  /// constructor ([Machine.new]), impacting only the Machine object
   /// being created.
   static bool strict = true;
   late bool _strict;

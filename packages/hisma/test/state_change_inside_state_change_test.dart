@@ -9,7 +9,7 @@ final _log = getLogger(_testName);
 
 Future<void> main() async {
   // initLogging();
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (machine) => ConsoleMonitor(machine),
   // ];
 

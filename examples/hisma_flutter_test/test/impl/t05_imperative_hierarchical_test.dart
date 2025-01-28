@@ -7,7 +7,7 @@ import '../../test/aux/aux.dart';
 import 't04_imperative_test.dart';
 
 Future<void> main() async {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   //   (m) => ConsoleMonitor(m),
   // ];

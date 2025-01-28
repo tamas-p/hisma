@@ -11,7 +11,7 @@ void main(List<String> args) {
   play();
 }
 
-final machine = ToggleStateMachine(name: 'toggleMachine');
+final machine = ToggleMachine(name: 'toggleMachine');
 
 Future<void> play() async {
   while (true) {

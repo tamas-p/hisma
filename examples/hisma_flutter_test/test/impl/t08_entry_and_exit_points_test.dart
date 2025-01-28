@@ -5,7 +5,7 @@ import 'package:hisma_flutter_test/t08_entry_and_exit_points.dart';
 import '../aux/aux.dart';
 
 Future<void> main() async {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   //   (m) => ConsoleMonitor(m),
   // ];

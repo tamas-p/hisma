@@ -170,7 +170,7 @@ class TestDialogCreator<S, E, T> extends OldDialogCreator<E, OldCtxArg> {
           ),
         );
 
-  final hisma.StateMachine<S, E, T> machine;
+  final hisma.Machine<S, E, T> machine;
   final S stateId;
 
   List<Widget> createButtonsFromState(BuildContext context) {

@@ -129,7 +129,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
 /*
 class HismaRouterGeneratorManager {
   factory HismaRouterGeneratorManager(
-    StateMachineWithChangeNotifier<S, E, T> machine,
+    MachineWithChangeNotifier<S, E, T> machine,
   ) {
     // If _instance was already set we replace it now.
     return _instance = HismaRouterGeneratorManager._internal(machine);
@@ -139,7 +139,7 @@ class HismaRouterGeneratorManager {
   static late HismaRouterGeneratorManager _instance;
   static HismaRouterGeneratorManager get instance => _instance;
 
-  final StateMachineWithChangeNotifier<S, E, T> _machine;
+  final MachineWithChangeNotifier<S, E, T> _machine;
   final Map<String, HismaRouterGenerator<S, E>> _map = {};
 
   HismaRouterGenerator<S, E> getRG({

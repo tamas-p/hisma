@@ -47,7 +47,7 @@ enum E { e1 }
 
 enum T { t1 }
 
-final machine = StateMachineWithChangeNotifier<S, E, T>(
+final machine = NavigationMachine<S, E, T>(
   initialStateId: S.a,
   name: 'machine',
   states: {
@@ -102,7 +102,7 @@ Don't forget to start the state machine before you invoke [runApp]:
 
 ```dart
 Future<void> main() async {
-  hisma.StateMachine.monitorCreators = [
+  hisma.Machine.monitorCreators = [
     (m) => VisualMonitor(m),
   ];
 
@@ -130,7 +130,7 @@ enum E { forward, backward }
 
 enum T { toA, toB, toC }
 
-final machine = StateMachineWithChangeNotifier<S, E, T>(
+final machine = NavigationMachine<S, E, T>(
   events: E.values,
   initialStateId: S.a,
   name: 'machine',
@@ -267,7 +267,7 @@ enum E { forward, show, backward }
 
 enum T { toA, toB, toB1, toC, toC1 }
 
-final machine = StateMachineWithChangeNotifier<S, E, T>(
+final machine = NavigationMachine<S, E, T>(
   events: E.values,
   initialStateId: S.a,
   name: 'machine',
@@ -473,7 +473,7 @@ enum AE { signIn, signOut }
 
 enum AT { toSignedIn, toSignedOut }
 
-final authMachine = StateMachineWithChangeNotifier<AS, AE, AT>(
+final authMachine = NavigationMachine<AS, AE, AT>(
   events: AE.values,
   name: 'authMachine',
   initialStateId: AS.signedOut,

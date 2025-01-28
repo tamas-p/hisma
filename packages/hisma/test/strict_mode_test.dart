@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('StateMachine assertions.', () {
+  group('Machine assertions.', () {
     group('Default strict mode.', () {
       testAll(matcher: isA<AssertionError>());
     });

@@ -70,7 +70,7 @@ void main() {
     await m.start();
 
     // Only to ensure that the event loop processed the ongoing notifications.
-    // This is needed since StateMachine do not wait the notifyStateChange.
+    // This is needed since Machine do not wait the notifyStateChange.
     await Future<void>.delayed(Duration.zero);
 
     checker(l0, 1, 1);

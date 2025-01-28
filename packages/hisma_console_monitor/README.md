@@ -29,7 +29,7 @@ You can enable [ConsoleMonitor] by adding a creator function that returns Consol
 
 ```dart
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => ConsoleMonitor(machine),
   ];
 
@@ -45,7 +45,7 @@ In the following example we add an extra separator line before each output of ac
 
 ```dart
 Future<void> main() async {
-  StateMachine.monitorCreators = [
+  Machine.monitorCreators = [
     (machine) => ConsoleMonitor(
           machine,
           printer: (str) {

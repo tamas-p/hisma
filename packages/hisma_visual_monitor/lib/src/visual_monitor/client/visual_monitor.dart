@@ -29,7 +29,7 @@ class VisualMonitor implements Monitor {
   static String domain = 'domain';
 
   // TODO: implement naming override for state machine naming collisions.
-  // static final smIds = <StateMachine<dynamic, dynamic, dynamic>, String>{};
+  // static final smIds = <Machine<dynamic, dynamic, dynamic>, String>{};
   final Machine<dynamic, dynamic, dynamic> stateMachine;
 
   final String host;
@@ -191,7 +191,7 @@ class VisualMonitor implements Monitor {
         final event = em[fireMessageDTO.event];
         assert(
           event != null,
-          '"events" argument for StateMachine "${stateMachine.name}" '
+          '"events" argument for Machine "${stateMachine.name}" '
           'does not include mapping for ${fireMessageDTO.event}',
         );
         stateMachine.fire(event);

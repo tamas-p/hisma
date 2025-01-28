@@ -41,7 +41,7 @@ Future<void> main() async {
     initialStateId: StateIDs.s1,
   );
 
-  final tsm = ToggleStateMachine(
+  final tsm = ToggleMachine(
     name: 'toggleMachine',
     initialId: ToggleState.on,
   );

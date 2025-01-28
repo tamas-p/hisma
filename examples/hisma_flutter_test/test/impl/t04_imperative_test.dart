@@ -8,7 +8,7 @@ import 'package:hisma_flutter_test/ui.dart';
 import '../../test/aux/aux.dart';
 
 Future<void> main() async {
-  // StateMachine.monitorCreators = [
+  // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
   // ];
   // auxInitLogging();

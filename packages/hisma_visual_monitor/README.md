@@ -29,10 +29,10 @@ Create your `hisma` state machines that you want to monitor.
 
 ## Usage
 
-Practically right at the beginning of your program in the main function set visual monitor creator for the [StateMachine]:
+Practically right at the beginning of your program in the main function set visual monitor creator for the [Machine]:
 
 ```dart
-StateMachine.monitorCreators = [
+Machine.monitorCreators = [
   (machine) => VisualMonitor(machine),
 ];
 ```
@@ -53,7 +53,7 @@ This [VisualMonitor] will connect to [visma](../visma/) listening at the localho
 You can also connect to a [visma](../visma/) instance listening on a different port or even at a remote host:
 
 ```dart
-StateMachine.monitorCreators = [
+Machine.monitorCreators = [
     (machine) => VisualMonitor(
           machine,
           host: '192.168.1.2',

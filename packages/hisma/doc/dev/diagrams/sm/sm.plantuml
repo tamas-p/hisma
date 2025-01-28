@@ -27,7 +27,7 @@ class "Trigger" {
   +bool ==()
 }
 
-class "StateMachine" {
+class "Machine" {
   +S initialStateId
   +Map<S, BaseState<E, T, S>> states
   +Map<T, Transition<S>> transitions
@@ -58,7 +58,7 @@ class "Transition" {
 class "Region" {
   +Map<Trigger<S, E, T>, SS>? entryConnectors
   +Map<SS, E>? exitConnectors
-  +StateMachine<dynamic, dynamic, dynamic> machine
+  +Machine<dynamic, dynamic, dynamic> machine
   +void Function(E?)? notifyParent
   +void processChildNotification()
 }
