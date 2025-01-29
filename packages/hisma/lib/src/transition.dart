@@ -84,6 +84,8 @@ class Transition<S> extends Edge<S> {
   }
 }
 
+/// In case of a transition is skipped, this data is also passed to the onSkip
+/// action indicating what was the cause of the skip.
 enum SkipSource { guard, maxInterval }
 
 class OnSkipData {
