@@ -252,7 +252,11 @@ final m1s1 = Machine<SS, SE, ST>(
         Region<SS, SE, ST, SSS0>(
           machine: m1s1s1,
           entryConnectors: {
-            Trigger(source: SS.en1, event: null, transition: ST.t1): SSS0.en1,
+            Trigger(
+              source: SS.en1,
+              // event: null,
+              transition: ST.t1,
+            ): SSS0.en1,
           },
           exitConnectors: {
             SSS0.ex1: SE.e5,

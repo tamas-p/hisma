@@ -194,7 +194,7 @@ Machine<S, E, T> createMachine({
                       ): S.ep2,
                       Trigger(
                         source: S.ep2,
-                        event: null,
+                        // event: null,
                         transition: T.toB,
                         // transition: null,
                       ): S.ep2,

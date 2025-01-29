@@ -245,7 +245,7 @@ NavigationMachine<SC, EC, TC> createChildMachine(String name) =>
               entryConnectors: {
                 h.Trigger(
                   source: SC.en3,
-                  event: null,
+                  // event: null,
                   transition: TC.toD,
                 ): SGC.en1,
                 h.Trigger(

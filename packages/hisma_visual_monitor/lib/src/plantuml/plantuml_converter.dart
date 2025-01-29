@@ -829,7 +829,7 @@ class MachineConverter {
     final toState = machine.stateAt(transition.to);
     final trigger = Trigger<dynamic, dynamic, dynamic>(
       source: sourceStateId,
-      event: null,
+      // event: null,
       transition: transitionId,
     );
     var handled = false;
