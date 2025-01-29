@@ -11,8 +11,18 @@ typedef RegionList<S, E, T> = List<Region<S, E, T, dynamic>>;
 /*
 @startuml
 title "hisma State Classes"
+abstract class BaseState<E, T, S>
+abstract class RegularState<E, T, S>
 BaseState <|-- RegularState
 RegularState <|-- State
+class State<E, T, S>
+abstract class PseudoState<E, T, S>
+abstract class BaseEntryPoint<E, T, S>
+class EntryPoint<E, T, S>
+class ExitPoint<E, T, S>
+class HistoryEntryPoint<E, T, S>
+class FinalState<E, T, S>
+
 BaseState <|-- PseudoState
 PseudoState <|-- BaseEntryPoint
 PseudoState <|-- ExitPoint
@@ -99,9 +109,9 @@ class ExitPoint<E, T, S> extends PseudoState<E, T, S> {}
 
 enum HistoryLevel { shallow, deep }
 
-class HistoryEntryPoint<S, E, T> extends BaseEntryPoint<S, E, T> {
+class HistoryEntryPoint<E, T, S> extends BaseEntryPoint<E, T, S> {
   HistoryEntryPoint(this.level);
   final HistoryLevel level;
 }
 
-class FinalState<S, E, T> extends PseudoState<S, E, T> {}
+class FinalState<E, T, S> extends PseudoState<E, T, S> {}
