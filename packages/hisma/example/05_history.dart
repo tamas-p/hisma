@@ -15,11 +15,12 @@ void main(List<String> args) {
   smNoHistory.start();
   smShallow.start();
   smDeep.start();
+  smHistoryEndpoints.start();
 }
 
-enum S { on, off }
+enum S { on, off, deep, shallow }
 
-enum E { on, off }
+enum E { on, off, deep, shallow }
 
 enum T { toOn, toOff }
 
@@ -27,6 +28,8 @@ Machine<S, E, T> createMachine({
   required String name,
   HistoryLevel? history,
   Machine<S, E, T>? sm,
+  bool historyEPs = false,
+  bool historyEVs = false,
 }) =>
     Machine<S, E, T>(
       name: name,
@@ -34,16 +37,29 @@ Machine<S, E, T> createMachine({
       events: E.values,
       initialStateId: S.off,
       states: {
+        if (historyEPs) S.shallow: HistoryEntryPoint(HistoryLevel.shallow),
+        if (historyEPs) S.deep: HistoryEntryPoint(HistoryLevel.deep),
         S.off: State(
           etm: {
             E.on: [T.toOn],
+            if (historyEVs) E.deep: [T.toOn],
+            if (historyEVs) E.shallow: [T.toOn],
           },
         ),
         S.on: State(
           etm: {
             E.off: [T.toOff],
           },
-          regions: [if (sm != null) Region(machine: sm)],
+          regions: [
+            if (sm != null)
+              Region(
+                machine: sm,
+                entryConnectors: {
+                  if (historyEVs) Trigger(event: E.deep): S.deep,
+                  if (historyEVs) Trigger(event: E.shallow): S.shallow,
+                },
+              )
+          ],
         ),
       },
       transitions: {
@@ -92,6 +108,24 @@ final smDeep = createMachine(
     history: HistoryLevel.deep,
     sm: createMachine(
       name: dhl3,
+    ),
+  ),
+);
+
+const hel1 = 'historyEndpoints-l1';
+const hel2 = 'historyEndpoints-l2';
+const hel3 = 'historyEndpoints-l3';
+
+final smHistoryEndpoints = createMachine(
+  historyEVs: true,
+  name: hel1,
+  sm: createMachine(
+    historyEPs: true,
+    historyEVs: true,
+    name: hel2,
+    sm: createMachine(
+      historyEPs: true,
+      name: hel3,
     ),
   ),
 );

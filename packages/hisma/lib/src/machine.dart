@@ -145,7 +145,7 @@ class Machine<S, E, T> {
       // machine history and normal initial state.
       final state = states[entryPointId];
       assert(
-        state is EntryPoint,
+        state is BaseEntryPoint,
         'State "$entryPointId" of machine named "$name" '
         'shall be an EntryPoint.',
       );

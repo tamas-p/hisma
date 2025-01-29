@@ -694,7 +694,7 @@ class MachineConverter {
 
           // Draw connection from connector to targeted entry point.
           assert(
-            region?.machine.states[toEntryPointId] is EntryPoint,
+            region?.machine.states[toEntryPointId] is BaseEntryPoint,
             'State "$toEntryPointId" of machine named "${region?.machine.name}" '
             'shall be an EntryPoint.',
           );
