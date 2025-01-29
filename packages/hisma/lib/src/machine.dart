@@ -130,7 +130,7 @@ class Machine<S, E, T> {
           'entryPointId:$entryPointId, arg:$arg, '
           'historyFlowDown:$historyFlowDown',
     );
-    cAssert(_activeStateId == null, 'Machine ($name) is already started.');
+    _cAssert(_activeStateId == null, 'Machine ($name) is already started.');
     if (_activeStateId != null) return;
 
     if (historyFlowDown) {
@@ -229,7 +229,7 @@ class Machine<S, E, T> {
   /// It returns true if state change occurred, false otherwise.
   Future<bool> _fire(E eventId, {required dynamic arg}) async {
     _log.fine('START _internalFire');
-    cAssert(_activeStateId != null, 'Machine "$name" has not been started.');
+    _cAssert(_activeStateId != null, 'Machine "$name" has not been started.');
     if (_activeStateId == null) return false;
 
     final transitionWithId = await _getTransitionByEvent(eventId, arg);
@@ -544,7 +544,7 @@ class Machine<S, E, T> {
     if (state is! State<E, T, S>) return null;
 
     final transitionIds = state.etm[eventId];
-    cAssert(
+    _cAssert(
       transitionIds != null,
       'Could not find transition ID list by "$eventId" for state "$activeStateId"',
     );
@@ -644,7 +644,7 @@ class Machine<S, E, T> {
   late bool _strict;
 
   // ignore: avoid_positional_boolean_parameters
-  void cAssert(bool assertResult, String message) {
+  void _cAssert(bool assertResult, String message) {
     if (!assertResult) {
       _log.fine(message);
       if (_strict) assert(assertResult, message);
