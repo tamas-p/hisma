@@ -12,10 +12,10 @@ void main(List<String> args) {
     (machine) => ConsoleMonitor(machine),
   ];
 
-  smNoHistory.start();
-  smShallow.start();
-  smDeep.start();
-  smHistoryEndpoints.start();
+  smNoHistory().start();
+  smShallow().start();
+  smDeep().start();
+  smHistoryEPs().start();
 }
 
 enum S { on, off, deep, shallow }
@@ -72,60 +72,60 @@ const nhl1 = 'noHistory-l1';
 const nhl2 = 'noHistory-l2';
 const nhl3 = 'noHistory-l3';
 
-final smNoHistory = createMachine(
-  name: nhl1,
-  sm: createMachine(
-    name: nhl2,
-    sm: createMachine(
-      name: nhl3,
-    ),
-  ),
-);
+Machine<S, E, T> smNoHistory() => createMachine(
+      name: nhl1,
+      sm: createMachine(
+        name: nhl2,
+        sm: createMachine(
+          name: nhl3,
+        ),
+      ),
+    );
 
 const shl1 = 'shallow-l1';
 const shl2 = 'shallow-l2';
 const shl3 = 'shallow-l3';
 
-final smShallow = createMachine(
-  name: shl1,
-  sm: createMachine(
-    name: shl2,
-    history: HistoryLevel.shallow,
-    sm: createMachine(
-      name: shl3,
-    ),
-  ),
-);
+Machine<S, E, T> smShallow() => createMachine(
+      name: shl1,
+      sm: createMachine(
+        name: shl2,
+        history: HistoryLevel.shallow,
+        sm: createMachine(
+          name: shl3,
+        ),
+      ),
+    );
 
 const dhl1 = 'deep-l1';
 const dhl2 = 'deep-l2';
 const dhl3 = 'deep-l3';
 
-final smDeep = createMachine(
-  name: dhl1,
-  sm: createMachine(
-    name: dhl2,
-    history: HistoryLevel.deep,
-    sm: createMachine(
-      name: dhl3,
-    ),
-  ),
-);
+Machine<S, E, T> smDeep() => createMachine(
+      name: dhl1,
+      sm: createMachine(
+        name: dhl2,
+        history: HistoryLevel.deep,
+        sm: createMachine(
+          name: dhl3,
+        ),
+      ),
+    );
 
 const hel1 = 'historyEndpoints-l1';
 const hel2 = 'historyEndpoints-l2';
 const hel3 = 'historyEndpoints-l3';
 
-final smHistoryEndpoints = createMachine(
-  historyEVs: true,
-  name: hel1,
-  sm: createMachine(
-    historyEPs: true,
-    historyEVs: true,
-    name: hel2,
-    sm: createMachine(
-      historyEPs: true,
-      name: hel3,
-    ),
-  ),
-);
+Machine<S, E, T> smHistoryEPs() => createMachine(
+      historyEVs: true,
+      name: hel1,
+      sm: createMachine(
+        historyEPs: true,
+        historyEVs: true,
+        name: hel2,
+        sm: createMachine(
+          historyEPs: true,
+          name: hel3,
+        ),
+      ),
+    );

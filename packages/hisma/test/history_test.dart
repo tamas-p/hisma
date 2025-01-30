@@ -7,7 +7,7 @@ void main() {
   group('History tests', () {
     test('No history', () async {
       final checker =
-          Checker(machine: smNoHistory, ml1: nhl1, ml2: nhl2, ml3: nhl3);
+          Checker(machine: smNoHistory(), ml1: nhl1, ml2: nhl2, ml3: nhl3);
 
       await checker.startAndTurnOnAll();
       checker(l1: S.on, l2: S.on, l3: S.on);
@@ -20,7 +20,7 @@ void main() {
     });
     test('Shallow history', () async {
       final checker =
-          Checker(machine: smShallow, ml1: shl1, ml2: shl2, ml3: shl3);
+          Checker(machine: smShallow(), ml1: shl1, ml2: shl2, ml3: shl3);
 
       await checker.startAndTurnOnAll();
       checker(l1: S.on, l2: S.on, l3: S.on);
@@ -32,7 +32,8 @@ void main() {
       checker(l1: S.on, l2: S.on, l3: S.off);
     });
     test('Deep history', () async {
-      final checker = Checker(machine: smDeep, ml1: dhl1, ml2: dhl2, ml3: dhl3);
+      final checker =
+          Checker(machine: smDeep(), ml1: dhl1, ml2: dhl2, ml3: dhl3);
 
       await checker.startAndTurnOnAll();
       checker(l1: S.on, l2: S.on, l3: S.on);
@@ -42,6 +43,52 @@ void main() {
 
       await checker.turnL1On();
       checker(l1: S.on, l2: S.on, l3: S.on);
+    });
+
+    group('History endpoints', () {
+      test('No HistoryEndpoint used', () async {
+        final checker =
+            Checker(machine: smHistoryEPs(), ml1: hel1, ml2: hel2, ml3: hel3);
+
+        await checker.startAndTurnOnAll();
+        checker(l1: S.on, l2: S.on, l3: S.on);
+
+        await checker.turnL1Off();
+        checker(l1: S.off, l2: null, l3: null);
+
+        await checker.turnL1On();
+        checker(l1: S.on, l2: S.off, l3: null);
+      });
+      test('Shallow HistoryEndpoint used', () async {
+        final checker =
+            Checker(machine: smHistoryEPs(), ml1: hel1, ml2: hel2, ml3: hel3);
+
+        await checker.startAndTurnOnAll();
+        checker(l1: S.on, l2: S.on, l3: S.on);
+
+        await checker.turnL1Off();
+        checker(l1: S.off, l2: null, l3: null);
+
+        await checker.turnL1Shallow();
+        checker(l1: S.on, l2: S.on, l3: S.off);
+      });
+      test('Deep HistoryEndpoint used', () async {
+        final checker = Checker(
+          machine: smHistoryEPs(),
+          ml1: hel1,
+          ml2: hel2,
+          ml3: hel3,
+        );
+
+        await checker.startAndTurnOnAll();
+        checker(l1: S.on, l2: S.on, l3: S.on);
+
+        await checker.turnL1Off();
+        checker(l1: S.off, l2: null, l3: null);
+
+        await checker.turnL1Deep();
+        checker(l1: S.on, l2: S.on, l3: S.on);
+      });
     });
   });
 }
@@ -65,6 +112,14 @@ class Checker {
 
   Future<void> turnL1On() async {
     await machine.fire(E.on);
+  }
+
+  Future<void> turnL1Shallow() async {
+    await machine.fire(E.shallow);
+  }
+
+  Future<void> turnL1Deep() async {
+    await machine.fire(E.deep);
   }
 
   Future<void> startAndTurnOnAll() async {
