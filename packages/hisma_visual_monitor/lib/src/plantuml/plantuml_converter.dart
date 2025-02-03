@@ -696,7 +696,7 @@ class MachineConverter {
           assert(
             region?.machine.states[toEntryPointId] is BaseEntryPoint,
             'State "$toEntryPointId" of machine named "${region?.machine.name}" '
-            'shall be an EntryPoint.',
+            'shall be a BaseEntryPoint.',
           );
           final to = _getPrefixedId(
             prefix: prefix,

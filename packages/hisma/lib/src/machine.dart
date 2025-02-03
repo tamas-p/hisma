@@ -147,7 +147,7 @@ class Machine<S, E, T> {
       assert(
         state is BaseEntryPoint,
         'State "$entryPointId" of machine named "$name" '
-        'shall be an EntryPoint.',
+        'is an $state, but it should be a BaseEntryPoint.',
       );
       if (state == null) return;
       if (state is HistoryEntryPoint<E, T, S>) {
