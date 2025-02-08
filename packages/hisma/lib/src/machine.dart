@@ -123,20 +123,19 @@ class Machine<S, E, T> {
   Future<void> start({
     S? entryPointId,
     dynamic arg,
-    bool historyFlowDown = false,
   }) async {
     _log.fine(
       () => 'start: machine:$name, state:$activeStateId, '
           'entryPointId:$entryPointId, arg:$arg, '
-          'historyFlowDown:$historyFlowDown',
+          'historyFlowDown:${arg is _HistoryFlowDown}',
     );
     _cAssert(_activeStateId == null, 'Machine ($name) is already started.');
     if (_activeStateId != null) return;
 
-    if (historyFlowDown) {
+    if (arg is _HistoryFlowDown) {
       await _enterState(
         stateId: _historyStateId ?? initialStateId,
-        arg: arg,
+        arg: arg.arg,
         historyFlowDown: true,
       );
     } else if (entryPointId != null) {
@@ -186,7 +185,7 @@ class Machine<S, E, T> {
       await _enterState(
         stateId: _historyStateId ?? initialStateId,
         arg: arg,
-        historyFlowDown: history == HistoryLevel.deep || historyFlowDown,
+        historyFlowDown: history == HistoryLevel.deep,
       );
     } else {
       // As the last resort we start the machine with the initial state.
@@ -525,8 +524,7 @@ class Machine<S, E, T> {
           getEntryPointId(region.entryConnectors, trigger)?.value;
       await region.machine.start(
         entryPointId: entryPointId,
-        arg: arg,
-        historyFlowDown: historyFlowDown,
+        arg: historyFlowDown ? _HistoryFlowDown(arg) : arg,
       );
     }
   }
@@ -685,6 +683,13 @@ class MonitorAndStatus {
 /// multiple notifications for parent machine about a state change.
 class _Internal {
   _Internal(this.arg);
+  dynamic arg;
+}
+
+/// Indicates that history flow down is needed. This saves us from having an
+/// only internally used bool argument on the public API.
+class _HistoryFlowDown {
+  _HistoryFlowDown(this.arg);
   dynamic arg;
 }
 

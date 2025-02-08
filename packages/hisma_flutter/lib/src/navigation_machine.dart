@@ -171,12 +171,10 @@ class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
   Future<void> start({
     S? entryPointId,
     dynamic arg,
-    bool historyFlowDown = false,
   }) async {
     await super.start(
       entryPointId: entryPointId,
       arg: arg,
-      historyFlowDown: historyFlowDown,
     );
 
     notifyListeners();
