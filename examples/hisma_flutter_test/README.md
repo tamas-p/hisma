@@ -1,16 +1,11 @@
 # hisma_flutter_test
 
-A new Flutter project.
+Flutter test applications for [hisma_flutter](../../packages/hisma_flutter/).
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+lib folder includes test applications that are used in the unit (and integration) tests of the [hisma_flutter](../../packages/hisma_flutter/) package. This way it is also possible to manually test, play with these test applications besides executing the tests from the [hisma_flutter](../../packages/hisma_flutter/) package.
 
-A few resources to get you started if this is your first Flutter project:
+## Additional information
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+If you have any questions, comments please go to [Hisma GitHub Discussions](https://github.com/tamas-p/hisma/discussions) to start or join discussions.

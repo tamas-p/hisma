@@ -1,6 +1,6 @@
 # hisma_flutter_example_app
 
-Example applications for hisma_flutter package.
+Example applications for [hisma_flutter](../../packages/hisma_flutter/) package.
 
 ## Getting Started
 
