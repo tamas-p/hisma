@@ -150,19 +150,12 @@ class Machine<S, E, T> {
       );
       if (state == null) return;
       if (state is HistoryEntryPoint<E, T, S>) {
-        if (_historyStateId != null) {
-          await _enterState(
-            stateId: _historyStateId as S,
-            arg: arg,
-            historyFlowDown: state.level == HistoryLevel.deep,
-          );
-        } else {
-          await _enterState(
-            stateId: initialStateId,
-            arg: arg,
-            historyFlowDown: false,
-          );
-        }
+        await _enterState(
+          stateId: _historyStateId ?? initialStateId,
+          arg: arg,
+          historyFlowDown:
+              _historyStateId != null && state.level == HistoryLevel.deep,
+        );
       } else if (state is EntryPoint<E, T, S>) {
         final transitionWithId =
             await _selectTransition(state.transitionIds, arg);
