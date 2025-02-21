@@ -17,7 +17,7 @@ Hisma provides a declarative hierarchical state machine implementation for [Dart
 
 | Package on pub.dev                                                      | GitHub                            | Description                                                                                        |
 | ----------------------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- |
-| hisma                                                                   | [repo](.)                         | This package. It is the core package of Hisma. You can create hierarchical state machines with it. |
+| hisma                                                                   | [repo](.)                         | This package. It is the core package of Hisma. You can create and use hierarchical state machines with its help. |
 | [hisma_extra](https://pub.dev/packages/hisma_extra)                     | [repo](../hisma_extra/)           | Extra classes on top of Hisma to simplify Hisma usage.                                             |
 | [hisma_console_monitor](https://pub.dev/packages/hisma_console_monitor) | [repo](../hisma_console_monitor/) | Monitors state machine status on console.                                                          |
 | [hisma_visual_monitor](https://pub.dev/packages/hisma_visual_monitor)   | [repo](../hisma_visual_monitor/)  | Reports state machine status to visma.                                                             |
@@ -77,7 +77,7 @@ final machine = Machine(
 );
 ```
 
-This is for no other use than show you how it will be visualized if you use the hisma_visual_monitor. The dashed line means that it is a state machine:
+It has no other use than show you how it will be visualized if you use the [hisma_visual_monitor](https://pub.dev/packages/hisma_visual_monitor). The dashed line means that it is a state machine:
 
 ![minimal state machine](doc/resources/hisma_minimal.png)
 
@@ -138,15 +138,15 @@ final lightMachine = createLightMachine();
 
 > **Note:** `events: E.values` is only required for [visma](https://pub.dev/packages/visma) monitoring when events are triggered from visma (and strings needs to be translated - in this case - to enums) .
 
-Machine includes two very important attributes: `states` and `transitions`. Both are maps from their id to the actual state or transition objects. Inside a State we see the event to transition map (`etm`) that as name suggest defines which transition to execute if a certain event occurs. Since not one but a list of transitions are defined for a certain event, one transition will be selected based on the minInterval, guard and priority attributes of these transitions (see [More on transitions](#more-on-transitions) for their description).
+Machine includes two very important attributes: `states` and `transitions`. Both are maps from their id to the actual state or transition objects. Inside a State we see the event to transition map (`etm`) that, as its name suggests, defines which transition to execute if a certain event occurs. Since not one but a list of transitions are defined for a certain event, one transition will be selected based on the minInterval, guard and priority attributes of these transitions (see [More on transitions](#more-on-transitions) for their description).
 
-Also note, that states and transitions can have Action attributes. An Action is an object consisting a closure (the actual action executed) and its description. A State can have onEntry and onExit Action attributes while a transition can have an onAction Action attribute. In our example as we saw we used the onEntry Actions to print out the state name our machine just entered.
+Also note, that states and transitions can have Action attributes. An Action is an object consisting a closure (the actual action executed) and its description (used when [visma](https://pub.dev/packages/visma) visualizes the machine). A State can have onEntry and onExit Action attributes while a transition can have an onAction Action attribute. In our example as we saw we used the onEntry Actions to print out the state name our machine just entered.
 
 If we start this machine it will be visualized by `visma` as
 
 ![hisma_light_machine](doc/resources/hisma_light_machine.png)
 
-We see that we have one machine and its name is lightMachine. The machine is active as indicated by the red dashed line of the state machine. We see the active state is S.off (indicated by its red color) and that E.turnOn event is valid (indicated by the light blue event name) from this state (that leads us to the S.on state). In the visma user interface in the web browser you can click on this event to trigger it.
+We see that we have one machine and its name is *lightMachine*. The machine is active as indicated by the red color of the dashed line of the state machine. We see the active state is S.off (again, indicated by its red color) and that E.turnOn event is valid (indicated by the light blue event name) from this state (that leads us to the S.on state). In the visma user interface in the web browser you can click on this event to trigger it.
 
 Now let's create a play function to play around with our newly created state machine. It will turn on and off the machine with one sec interval between operations:
 
