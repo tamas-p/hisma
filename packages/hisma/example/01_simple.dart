@@ -73,7 +73,7 @@ Machine<S, E, T> createLightMachine({
           ),
           onSkip: OnSkipAction(
             description: 'Print error message.',
-            action: (machine, onErrorData) async => print(onErrorData.message),
+            action: (machine, onSkipData) async => print(onSkipData.message),
           ),
         ),
         T.timedOn: InternalTransition(

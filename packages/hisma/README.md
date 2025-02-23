@@ -43,7 +43,7 @@ See an example Flutter application ([fb_auth_hisma_example](../../examples/fb_au
     - Guards
     - Priority
     - onAction actions
-    - onError actions
+    - onSkip actions
 - Hierarchy
   - Regions
 - Connecting state machines through hierarchy
@@ -203,9 +203,9 @@ T.toStop: Transition(
     description: 'Closing.',
     action: (machine, arg) async => print('Closing'),
   ),
-  onError: OnErrorAction(
+  onSkip: OnSkipAction(
     description: 'Print error message.',
-    action: (machine, onErrorData) async => print(onErrorData.message),
+    action: (machine, onSkipData) async => print(onSkipData.message),
   ),
 ),
 ```
@@ -223,20 +223,20 @@ This label includes all attributes of the transition we defined above:
     Transition id as it is in the transition map of the state machine.
 - Optional items (In our example they are defined, but they are optional attributes.)
   - **minInterval**<br>
-    Minimum Duration that shall passed from last time this transition happened. If interval is shorter then a HismaIntervalException is thrown if onError is not defined. If onError is defined then its action will be called and no exception is thrown.
+    Minimum Duration that shall passed from last time this transition happened. If interval is shorter this transition is skipped. If onSkip is defined then its action will be called.
   - **Guard description**<br>
     Description of [Guard] whose action must return `true` to execute transition. If returned value
-    is false then a HismaGuardException is thrown if onError is not defined. If onError is defined then its action will be called and no exception is thrown.
+    is false this transition is skipped. If onSkip is defined then its action will be called.
   - **Priority**<br>
     If not otherwise selected priority can be used to select the transition from the transition list by this priority. Higher integer value means higher priority.
   - **onAction Action description**<br>
     Description of the Action that is executed when this transition occurs.
-  - **onError OnErrorAction description**<br>
-    Description of the OnErrorAction that is executed when minInterval or Guard blocked execution of this transition. In the label his section is in the same line as the onAction description and the two are divided by the `||` sign.
+  - **onSkip OnSkipAction description**<br>
+    Description of the OnSkipAction that is executed when minInterval or Guard made the execution of this transition skipped. In the label this section is in the same line as the onAction description and the two are divided by the `||` sign.
 
 #### Internal transitions
 
-In many cases in response to an event you do not want to change state, even further you do not want onExit and onEntry actions to be executed: you simple want an action to be executed. For such cases one can use an [InternalTransition].
+In many cases in response to an event you do not want to change state, and even further, you do not want onExit and onEntry actions to be executed: you simple want an action to be executed. For such cases one can use an [InternalTransition].
 
 ```dart
 T.timedOn: InternalTransition(
@@ -262,7 +262,7 @@ When this internal transition is visualized by [visma](../visma/) it looks like:
 
 As seen, label shows the same information just like for external transitions we reviewed above with the slight differences of having a `=` sign after the transition id and that it is in one line versus the multiline rendering of the external transition label.
 
-The only difference compared to definition of an external transition that it does not include the `to` parameter as internal transition is only about executing an Action and not about changing states. All other attributes that we learned for external transitions - minInterval, Guard, priority, onAction, onError - has the same meaning for internal transitions as well.
+The only difference compared to definition of an external transition that it does not include the `to` parameter as internal transition is only about executing an Action and not about changing state. All other attributes that we learned for external transitions - minInterval, Guard, priority, onAction, onSkip - has the same meaning for internal transitions as well.
 
 #### Extend lightMachine with internal transitions
 
@@ -412,7 +412,7 @@ What if, in certain cases, instead of activating the state defined by the initia
 
 #### Entry connector and EntryPoint
 
-Entry connector mapping define that for a certain trigger ([Trigger] consists source state id, transition id and event id trio of the parent state machine) which EntryPoint (also a kind of state: an entry point pseudo state) in the state machine of the region (child machine) needs to be used.
+Entry connector mapping define that for a certain trigger ([Trigger] that optionally consists source state id, transition id and event id of the parent state machine) which EntryPoint (a kind of state: an entry point pseudo state) in the state machine of the region (child machine) needs to be used.
 When this EntryPoint is selected the child state machine will be in this state momentarily to select the transition to be used from a defined list of Transition objects of the EntryPoint.
 
 When we design our state machine we define these Transition objects in the constructor of the EntryPoint objects. These Transition objects then can take the machine to
@@ -446,17 +446,40 @@ Region(
 
 where SP, EP and TP are defined for the parent state machine and SC is defined for the child state machine.
 
-> **Note:**
-> Currently all three of the Trigger must be defined. In future versions it might be optional to define all three.
+All Trigger constructor parameters are optional. Using no attributes to the Trigger constructor means that any transition that was by triggered by any event, coming from any source state will trigger the selection of the corresponding EntryPoint. Using arguments in Trigger constructor will filter the triggering according to the given arguments. Some examples:
+
+```dart
+// This will trigger SC.ep1 in case of any transitions,
+// triggered by any events and from any source state.
+Trigger(): SC.ep1,
+```
+
+```dart
+// This will trigger SC.ep1 in case of any transitions,
+// triggered by any events when source state is SP.first.
+Trigger(source: SP.first): SC.ep1,
+```
+
+```dart
+// This will trigger SC.ep1 in case of any transitions,
+// triggered by EP.e1 event when source state is SP.first.
+Trigger(source: SP.first, event: EP.e1): SC.ep1,
+```
+
+```dart
+// This will trigger SC.ep1 in case of any events, any source states
+// when transition is TP.toSecond.
+Trigger(transition: TP.toSecond): SC.ep1,
+```
 
 #### Exit connector and ExitPoint
 
 Exit connector mapping defines what event shall be triggered in the parent machine when a certain ExitPoint reached in the child machine.
 
-Inside the child machine, the ExitPoint itself is simply defined without any arguments to its constructor:
+Inside the child machine, the ExitPoint itself is simply declared among the states without any arguments to its constructor:
 
 ```dart
-ExitPoint(),
+SC.exit: ExitPoint(),
 ```
 
 Later when we integrate this (child) state machine into a (parent) state machine we can define which event shall be triggered in the parent machine when the child machine reaches this exit point:
@@ -474,8 +497,8 @@ where `SC.exit` is an ExitPoint in the child machine and `EP.turnOff` is an even
 
 Let's create a new machine that will "power" our lightMachine: the powerMachine. This new machine has two states:
 
-- `S.grid` indicating that the power is coming from the grid.
-- `S.battery` indicating that we are on battery power.
+- `S.grid` is indicating that the power is coming from the grid.
+- `S.battery` is indicating that we are on battery power.
 
 The power machine can alter between these states on the `E.change` event, but even more importantly for our example, it is also prepared for customized integration into a parent state machine:
 
@@ -602,21 +625,27 @@ final lightMachine = createLightMachine(
 
 If we monitor this lightMachine we just have created in `visma` it looks similar to the image bellow. Pay attention to that our
 
-- Entry connector definitions are indicated with an empty square on the state that has the region inside.
-- Round icons are indicating the entry points to the child machine.
-- Exit connector definitions are indicated with filled squares on on the state that has the region inside.
-- Round icon with X in it indicates the exit point of the child machine
+- Entry connector definitions are indicated with an empty square at the (upper) edge of the state that has the region inside.
+- Round icons at the (upper) edge of the child machine are indicating the entry points to the child machine.
+- Round icon with X in it at the (lower) edge of the child machine indicates the exit point of the child machine.
+- Exit connector definitions are indicated with filled squares at the (lower) edge of the state that has the region inside.
 - Yellow curves are indicating the entry and exit connectors that are mapping between
   - parent Triggers and child entry points
   - child exit points and parent events
 
 ![hisma_entry_exit_points.png](doc/resources/hisma_entry_exit_points.png)
 
-Complete example can be found in [04_entry_and_exit_points.dart](example/04_entry_and_exit_points.dart). Check it out and play around with your machines either from code or from the `visma` ui.
+Complete example can be found in [04_entry_and_exit_points.dart](example/04_entry_and_exit_points.dart). Check it out and play around with those machines either from code or from the `visma` ui.
 
 ### History
 
-Let's imagine a three layered hierarchical state machine: l1, l2 and l3. Each machine has an `off` and an `on` state and the initial state is `off` for all three machines. It is always the `on` state that incorporates the lower (l3 is lower than l2 is lower than l1) layer state machine.
+A history pseudo state is used within a state machine to represent the "memory" of a state machine. It's used to record the last active state before the machine stopped, so that the state machine can "remember" its previous state when this machine started again.
+
+We distinguish shallow and deep history pseudo states. In case of shallow history pseudo state only the state machine in question will "remember" its last active state and the potentially existing child machine hierarchy of this machine will not. In case of deep history pseudo state both the state machine in question and the potentially existing child machine hierarchy of this machine will "remember" their last active states. 
+
+#### History pseudo states example
+
+In order to see these history pseudo states in action let's imagine a three layered hierarchical state machine: l1, l2 and l3. Each machine has an `off` and an `on` state and the initial state is `off` for all three machines. It is always the `on` state that incorporates the lower (l3 is lower than l2 and l2 is lower than l1) layer state machine as child machine.
 
 The [05_history.dart](example/05_history.dart) example declares such a state machine and it is named as `noHistory-l1`. If we visualize it with `visma` it looks like this:
 
@@ -626,7 +655,7 @@ Let's assume we active all three `S.on` states in the three state machines. Now 
 
 We can change this and set the starting machines active states based on their history (the last active state they had been in before they were stopped).
 
-There are two types of history that we can set for a state machine:
+As we learned earlier, there are two types of history pseudo states that we can set for a state machine:
 
 - shallow history, indicated as `(H)` on diagrams
 - deep history, indicated as `(H*)` on diagrams
@@ -645,7 +674,7 @@ The l1 machines were just **returned** to the `S.on` states - check the differen
 
 ![hisma history](doc/resources/hisma_history.png)
 
-You can also watch a short video about executing the above described sequence in these three different machines side-by-side:
+You can also watch a short video about executing the above described sequence in these three different machines side-by-side (closed captions available):
 
 [![hisma history example on YouTube](doc/resources/hisma_history_youtube.png)](https://youtu.be/f17P9PbJ6UI?cc_load_policy=1)
 
