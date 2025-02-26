@@ -11,32 +11,26 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-Flutter navigation with [Hisma](../hisma/) hierarchical state machines.
+## Flutter navigation with [Hisma](../hisma/) hierarchical state machines.
 
-Hierarchical state machines can perfectly describe your workflow, roaming from screens to screens or dialogs. This package gives you a router generator that can do this for your [hisma](../hisma/) state machines. Under the hood `hisma_flutter` is using Flutter's Navigator 2.0 API.
+State machines can very well describe your workflow, roaming from screens to screens and dialogs as the active state of the machine changes. Furthermore a hierarchical state machine can even describe interconnected workflows defined in child state machines. This package provides the functionality of this, mapping [hisma](../hisma/) state machine states to ui elements such as screens and dialogs.
 
 ## Features
 
-- Mapping screen creators to states
-- Mapping overlay screen creators to states
-- Mapping dialog creators to states
-- Mapping utility creators ([NoUIChange]) to states
+- Mapping screens to states
+- Mapping overlay screens to states
+- Mapping dialogs (or any imperatively created ui elements) to states
 - Hierarchy support - nested navigation
 
 See it in action in the [fb_auth_hisma_example](../../examples/fb_auth_hisma_example/) app that maps screens and dialogs to a `hisma` hierarchical state machine which implements authentication, user management workflows with Firebase Authentication:
 
 ![fb_auth_hisma_example.gif](../../examples/fb_auth_hisma_example/doc/resources/fb_auth_hisma_example.gif)
 
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
 ## Usage
 
 ### Minimal app with a single page ([01_minimal.dart](../../examples/hisma_flutter_example_app/lib/01_minimal.dart))
 
-Let's create the most basic single screen hisma_flutter application possible: Single stat machine with a single state declared and a single screen mapped to this state.
+Let's create the most basic single screen hisma_flutter application possible: Single state machine with a single state declared and a single screen mapped to this state.
 
 First declare the state machine:
 
@@ -75,9 +69,9 @@ class Screen extends StatelessWidget {
 Map this screen to the above declared state (stateId to be precise):
 
 ```dart
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
-  creators: {S.a: MaterialPageCreator<S>(widget: const Screen())},
+  mapping: {S.a: MaterialPageCreator<E, void>(widget: const Screen())},
 );
 ```
 
@@ -111,7 +105,7 @@ Future<void> main() async {
 }
 ```
 
-If you start this application you will see that the above declared Screen is shown. If you use `visma` to visualize your state machine you will see that the state machine is started and its in its initial (and also single) state.
+If you start this application you will see that the above declared Screen is shown. If you use `visma` to visualize your state machine you will see that the state machine is started and that its initial (and single) state is active.
 
 `visma` and app side by side:
 
@@ -203,12 +197,12 @@ class ScreenC extends StatelessWidget {
 Finally mapping screens to states:
 
 ```dart
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
-  creators: {
-    S.a: MaterialPageCreator<S>(widget: const ScreenA()),
-    S.b: MaterialPageCreator<S>(widget: const ScreenB()),
-    S.c: MaterialPageCreator<S>(widget: const ScreenC()),
+  mapping: {
+    S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<E, void>(widget: const ScreenB()),
+    S.c: MaterialPageCreator<E, void>(widget: const ScreenC()),
   },
 );
 ```
@@ -218,6 +212,8 @@ Since the MyApp widget and the main function are exactly the same as in the prev
 Run the app and if you use `visma` too you will see something similar:
 
 ![hisma_flutter_02.gif](../../examples/hisma_flutter_example_app/doc/resources/hisma_flutter_02.gif)
+
+As we see in the animation above, firing events will result state changes and state changes will result navigating from screen to screen in the application.
 
 ### Using overlay pages ([03_overlay.dart](../../examples/hisma_flutter_example_app/lib/03_overlay.dart))
 
