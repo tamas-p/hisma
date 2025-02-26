@@ -217,34 +217,38 @@ As we see in the animation above, firing events will result state changes and st
 
 ### Using overlay pages ([03_overlay.dart](../../examples/hisma_flutter_example_app/lib/03_overlay.dart))
 
-In the previous example the pages were not stacked on each other, contrary, they replaced each other in Navigator pages. In this section we simply use a different creator class when mapping out screens to stack ScreenC on ScreenB and ScreenB on ScreenA. As we will see this stacking also result that the AppBar will automatically have a back button in the top left corner.
+In the previous example the pages were not stacked on each other, contrary, they replaced each other in Navigator pages. In this section we simply use a different creator class when mapping out screens to stack ScreenC on ScreenB and ScreenB on ScreenA. As we will see this stacking also result that the AppBar will automatically have a back button in the top left corner as courtesy of the Flutter framework.
 
 Highlight here only the difference compared to our previous example, the mapping of screens to states:
 
 ```dart
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
-  creators: {
-    S.a: MaterialPageCreator<S>(widget: const ScreenA()),
-    S.b: OverlayMaterialPageCreator<S, E>(
+  mapping: {
+    S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<E, void>(
       widget: const ScreenB(),
+      overlay: true,
       event: E.backward,
     ),
-    S.c: OverlayMaterialPageCreator<S, E>(
+    S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
+      overlay: true,
       event: E.backward,
     ),
   },
 );
 ```
 
-In the previous example we only used the simple MaterialPageCreator that only had one argument, the screen we mapped to the state. The here used OverlayMaterialPageCreator is more complex than that by one argument: passing the event id that we want to be triggered if the user presses the framework generated back button in the AppBar.
+In the previous example we used the MaterialPageCreator constructor with only one argument: the screen we mapped to the state. In this example we use again the same MaterialPageCreator but this time with two additional arguments: the first one is `overlay: true` indicating that we want the new page to be on top of the previous one while the second is the event id (`event: E.backward`) that we want to be triggered if the user presses the framework generated back button in the AppBar.
 
 > **_NOTE:_** Overlay pages, as name suggest, must be stacked over a normal page. Always make sure that your mapping includes at least one normal page mapping for the state that is first activated in the state machine. If you forget to do so in debug mode an assert will fail.
 
 Run the app and if you also use `visma` you will see something similar:
 
 ![hisma_flutter_03.gif](../../examples/hisma_flutter_example_app/doc/resources/hisma_flutter_03.gif)
+
+Compared to our previous example the only difference we notice is the appearance of the back arrow in the [AppBar] when we are at an overlay page. It is automatically added by the Flutter framework when it detects that a page is an overlay page. Since we added the `E.backward` event as the default event for the two overlay pages, when user clicks the back arrow (which in turn pops the page), we will fire this event.
 
 ### Dialogs ([04_pageless.dart](../../examples/hisma_flutter_example_app/lib/04_pageless.dart))
 

@@ -99,10 +99,12 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
     S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
     S.b: MaterialPageCreator<E, void>(
       widget: const ScreenB(),
+      overlay: true,
       event: E.backward,
     ),
     S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
+      overlay: true,
       event: E.backward,
     ),
   },
