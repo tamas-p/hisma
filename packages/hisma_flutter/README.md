@@ -252,11 +252,9 @@ Compared to our previous example the only difference we notice is the appearance
 
 ### Dialogs ([04_pageless.dart](../../examples/hisma_flutter_example_app/lib/04_pageless.dart))
 
-Flutter distinguishes pageful and pageless routes. Pageful routes we saw in our examples so far represent changing the whole visual representation of the application - a page. Pageless routes on the other side show visuals on top a pageful route. Just to name two such examples: dialogs, snackbars.
+Flutter distinguishes pageful and pageless routes. Pageful routes we saw in our examples so far represent changing the whole visual representation of the application. Pageless routes on the other side show visuals on top a pageful route. Just to name two such examples: dialogs, snackbars.
 
-> **Comment** Mapping states to ui with Navigator 2.0 would be easy if there was no pageless routes. Handling those pageless routes declaratively requires workarounds. I hope Flutter will introduce a unified strategy (all declarative including dialogs etc.) at some point in the future and workarounds could be removed from [HismaRouterDelegate].
-
-In this section we will extend the state machine we used so far with two states: b1 is going to represent a AboutDialog and c1 is going to represent a [DatePicker].
+In this section we will extend the state machine we used so far with two states. Both are going to be mapped to pageless routes: b1 is going to represent an AboutDialog and c1 is going to represent a [DatePicker].
 
 First let's declare this new state machine:
 
@@ -315,21 +313,26 @@ final machine = NavigationMachine<S, E, T>(
 );
 
 hisma.Action getAction() => hisma.Action(
-      description: 'Print out argument passed.',
-      action: (machine, dynamic arg) async =>
-          print('Arg passed: $arg'),
+      description: 'Print out data passed.',
+      action: (machine, dynamic arg) async => print('Arg passed: $arg'),
     );
-
 ```
 
 As we see we introduced the new b1 and c1 states, added a new `show` event that we will use to move to these new states and of course we added the required transitions.
 
-Action objects are added to b and c states as `onEntry` actions. This is to print out the argument passed as return values from the AboutDialog or the DatePicker.
+Action objects are added to `b` and `c` states as `onEntry` actions. This is to print out the argument passed as return values from the AboutDialog or the DatePicker.
 
 Our screens remain the same as before. We add two new functions that are responsible to create the two dialogs, first the AboutDialog:
 
 ```dart
-Future<bool?> b1(BuildContext context) => showDialog<bool>(
+Future<bool?> b1({
+  required BuildContext context,
+  required bool rootNavigator,
+  required Close<DateTime> close,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
+}) =>
+    showDialog<bool>(
+      useRootNavigator: rootNavigator,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -351,41 +354,59 @@ Future<bool?> b1(BuildContext context) => showDialog<bool>(
 then the DatePicker:
 
 ```dart
-Future<DateTime?> c1(BuildContext context) => showDatePicker(
+Future<DateTime?> c1({
+  required BuildContext context,
+  required bool rootNavigator,
+  required Close<DateTime> close,
+  required NavigationMachine<dynamic, dynamic, dynamic> machine,
+}) =>
+    showDatePicker(
+      useRootNavigator: rootNavigator,
       context: context,
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
       currentDate: DateTime.now(),
-      lastDate: DateTime(2028),
+      lastDate: DateTime(2118),
     );
 ```
 
 and finally we extend our ui to state mapping:
 
 ```dart
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
-  creators: {
-    S.a: MaterialPageCreator<S>(widget: const ScreenA()),
-    S.b: OverlayMaterialPageCreator<S, E>(
+  mapping: {
+    S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<E, void>(
       widget: const ScreenB(),
       event: E.backward,
     ),
-    S.b1: PagelessCreator(show: b1, event: E.backward),
-    S.c: OverlayMaterialPageCreator<S, E>(
-      widget: const ScreenC(),
+    S.b1: PagelessCreator<E, void>(
+      present: b1,
+      rootNavigator: true,
       event: E.backward,
     ),
-    S.c1: PagelessCreator(show: c1, event: E.backward),
+    S.c: MaterialPageCreator<E, void>(
+      widget: const ScreenC(),
+      event: E.backward,
+      overlay: true,
+    ),
+    S.c1: PagelessCreator(
+      present: c1,
+      rootNavigator: true,
+      event: E.backward,
+    ),
   },
 );
 ```
 
-We are using a new creator, the [PagelessCreator]. It expects a show function and an event that will be used in case of the pageless route is popped.
+We are using a new creator, the [PagelessCreator]. It expects a *present* function and an *event* that will be fired in case of the pageless route is popped alongside with the return value of the function as the *arg* argument. 
 
 Run the app and if you also use `visma` you will see something similar:
 
 ![hisma_flutter_04.gif](../../examples/hisma_flutter_example_app/doc/resources/hisma_flutter_04.gif)
+
+If you pay attention to the debug console you see that the arg passed to *fire* is set to true when you press 'OK' on the dialog and to a DateTime when you press 'OK' on the DatePicker.   
 
 ### Utility states ([05_no_ui_update.dart](../../examples/hisma_flutter_example_app/lib/05_no_ui_update.dart))
 
