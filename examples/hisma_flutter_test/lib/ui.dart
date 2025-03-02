@@ -22,8 +22,10 @@ String getButtonTitle<S, E, T>(
     '${machine.name}@${machine.activeStateId}#$event';
 
 class Screen<S, E, T> extends StatefulWidget {
-  Screen(this.machine) : super(key: ValueKey(machine.activeStateId));
+  Screen(this.machine, {this.extra})
+      : super(key: ValueKey(machine.activeStateId));
   final NavigationMachine<S, E, T> machine;
+  final Builder? extra;
 
   @override
   State<Screen<S, E, T>> createState() => _ScreenState<S, E, T>();
@@ -48,7 +50,12 @@ class _ScreenState<S, E, T> extends State<Screen<S, E, T>> {
             title: Text(_title),
           ),
           body: Center(
-            child: Column(children: _buttons),
+            child: Column(
+              children: [
+                ..._buttons,
+                if (widget.extra != null) widget.extra!,
+              ],
+            ),
           ),
         );
       },
