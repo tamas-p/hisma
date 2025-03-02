@@ -10,15 +10,17 @@ import 'hisma_router_delegate.dart';
 /// State machine managing navigation
 class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
   NavigationMachine({
-    super.events = const [],
     required super.name,
+    required super.initialStateId,
+    required super.states,
+    required super.transitions,
+    super.events = const [],
     // history is disabled for now. It's usefulness is to be justified in
     // navigation context then need to be prototyped. Also see assert in
     // HismaRouterDelegate constructor.
     // super.history,
-    required super.initialStateId,
-    required super.states,
-    required super.transitions,
+    super.data,
+    super.strict,
   });
 
   late HismaRouterDelegate<S, E> _routerDelegate;
@@ -122,7 +124,7 @@ class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
         // We want open to be executed async to the fire.
         unawaited(
           newPres
-              .open(context ?? navigatorState?.context)
+              .open(context ?? navigatorState?.context, this)
               .then((dynamic result) {
             // test: imperative_closed
             // Signal that imp. was closed shall be removed.
@@ -141,7 +143,7 @@ class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
               'For imperative creator $newPres event shall not be null.',
             );
             if (event != null && activeStateId == oldStateId) {
-              fire(event, arg: UiClosed(arg));
+              fire(event, arg: UiClosed(result));
             }
           }),
         );
