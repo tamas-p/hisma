@@ -119,7 +119,7 @@ Future<bool?> b1({
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               },
             ),
           ],
@@ -168,7 +168,6 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       present: b1,
       rootNavigator: true,
       event: E.backward,
-      machine: machine,
     ),
     S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
@@ -179,7 +178,6 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       present: c1,
       rootNavigator: true,
       event: E.backward,
-      machine: machine,
     ),
   },
 );

@@ -197,7 +197,6 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
     S.b1: PagelessCreator(
       present: b1,
       rootNavigator: true,
-      machine: machine,
       event: E.backward,
     ),
     S.b2: NoUIChange(),
@@ -208,7 +207,6 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
     S.c1: PagelessCreator(
       present: c1,
       rootNavigator: true,
-      machine: machine,
       event: E.backward,
     ),
   },

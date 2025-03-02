@@ -34,7 +34,6 @@ final aRouterProvider = Provider(
           text: 'Hello ca1.',
         ),
         rootNavigator: true,
-        machine: ref.read(compAMachineProvider),
       ),
       S.ca2: NoUIChange(),
       S.cb: MaterialPageCreator<E, void>(widget: const CompAScreenB()),

@@ -139,7 +139,6 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
         S.b: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: useRootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.c: MaterialPageCreator<E, void>(
@@ -150,7 +149,6 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
         S.d: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: useRootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.e: MaterialPageCreator<E, void>(
@@ -161,7 +159,6 @@ HismaRouterGenerator<S, E> createChildHismaRouterGenerator({
         S.f: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: useRootNavigator,
-          machine: machine,
           event: E.back,
         ),
       },

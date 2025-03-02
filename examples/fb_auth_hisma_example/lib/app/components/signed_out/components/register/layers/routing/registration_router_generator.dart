@@ -12,7 +12,6 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
         MaterialPageCreator<ERM, void>(widget: const RegistrationScreen()),
     SRM.failed: PagelessCreator<ERM, void>(
       event: ERM.ok,
-      machine: authMachine.find<SRM, ERM, TRM>(registerMachineName),
       present: ({
         required BuildContext context,
         required bool rootNavigator,

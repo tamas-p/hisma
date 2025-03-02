@@ -53,7 +53,6 @@ final appRouterProvider = Provider(
             Router(routerDelegate: ref.read(aRouterProvider).routerDelegate),
       ),
       S.a1: PagelessCreator<E, void>(
-        machine: ref.read(appMachineProvider),
         event: E.backward,
         present: ({
           required BuildContext context,
@@ -81,7 +80,6 @@ final appRouterProvider = Provider(
       ),
       S.c: PagelessCreator<E, DateTime>(
         event: E.backward,
-        machine: ref.read(appMachineProvider),
         present: ({
           required BuildContext context,
           required bool rootNavigator,
@@ -95,7 +93,6 @@ final appRouterProvider = Provider(
         rootNavigator: true,
       ),
       S.d: PagelessCreator<E, void>(
-        machine: ref.read(appMachineProvider),
         event: E.backward,
         present: ({
           required BuildContext context,

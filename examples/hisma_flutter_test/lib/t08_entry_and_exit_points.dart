@@ -86,7 +86,6 @@ HismaRouterGenerator<SC, EC> createChildGenerator({
         SC.c: PagelessCreator<EC, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: EC.back,
         ),
         SC.d: MaterialPageCreator<EC, void>(
@@ -117,7 +116,6 @@ HismaRouterGenerator<SGC, EGC> createGrandChildGenerator({
         SGC.c: PagelessCreator<EGC, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: EGC.forward,
         ),
       },

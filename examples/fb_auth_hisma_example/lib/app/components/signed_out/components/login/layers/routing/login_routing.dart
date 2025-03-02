@@ -13,7 +13,6 @@ final loginRouter = HismaRouterGenerator<SLiM, ELiM>(
       event: ELiM.ok,
       present: failedSignInDialog,
       rootNavigator: true,
-      machine: authMachine.find<SLiM, ELiM, TLiM>(loginMachineName),
     ),
   },
 );

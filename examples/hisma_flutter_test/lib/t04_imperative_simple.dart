@@ -59,19 +59,16 @@ HismaRouterGenerator<S, E> createImperativeGenerator({
         S.d: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.e: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.f: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.g: MaterialPageCreator<E, void>(
@@ -82,19 +79,16 @@ HismaRouterGenerator<S, E> createImperativeGenerator({
         S.h: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.i: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.j: PagelessCreator<E, void>(
           present: showTestDialog,
           rootNavigator: rootNavigator,
-          machine: machine,
           event: E.back,
         ),
         S.k: MaterialPageCreator<E, void>(

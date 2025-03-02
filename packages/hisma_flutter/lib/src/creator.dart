@@ -134,10 +134,12 @@ class LoggingMaterialPage<W> extends MaterialPage<W> {
 typedef Close<T> = void Function([T? result]);
 
 abstract class ImperativeCreator<E, R> extends Creator<E> {
-  ImperativeCreator({super.event, required this.machine});
-  NavigationMachine<dynamic, E, dynamic> machine;
+  ImperativeCreator({super.event});
   bool _opened = false;
-  Future<R?> open(BuildContext? context);
+  Future<R?> open(
+    BuildContext? context,
+    NavigationMachine<dynamic, E, dynamic> machine,
+  );
   void close([R? result]);
 }
 
@@ -145,7 +147,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   PagelessCreator({
     required this.present,
     required this.rootNavigator,
-    required super.machine,
     super.event,
   });
   Future<R?> Function({
@@ -173,7 +174,10 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   }
 
   @override
-  Future<R?> open(BuildContext? context) async {
+  Future<R?> open(
+    BuildContext? context,
+    NavigationMachine<dynamic, E, dynamic> machine2,
+  ) async {
     assert(
       !_opened,
       'We shall not call open on this object if it was already opened '
@@ -189,7 +193,7 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
       context: context ?? _navigatorState.context,
       rootNavigator: rootNavigator,
       close: close,
-      machine: machine,
+      machine: machine2,
     );
     _opened = false;
     return result;
@@ -203,7 +207,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
 class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
   BottomSheetCreator({
     required this.present,
-    required super.machine,
     super.event,
   });
   PersistentBottomSheetController<R> Function(
@@ -219,7 +222,10 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
   }
 
   @override
-  Future<R?> open(BuildContext? context) async {
+  Future<R?> open(
+    BuildContext? context,
+    NavigationMachine<dynamic, E, dynamic> machine,
+  ) async {
     assert(
       !_opened,
       'We shall not call open on this object if it was already opened '
@@ -239,7 +245,7 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
 /// state in a state machine (user can interact with other UI representing
 /// other state) the usefulness of this class is questionable.
 class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
-  SnackBarCreator({required this.present, required super.machine, super.event});
+  SnackBarCreator({required this.present, super.event});
 
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> Function(
     BuildContext? context,
@@ -254,7 +260,10 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
   }
 
   @override
-  Future<SnackBarClosedReason?> open(BuildContext? context) async {
+  Future<SnackBarClosedReason?> open(
+    BuildContext? context,
+    NavigationMachine<dynamic, E, dynamic> machine,
+  ) async {
     assert(
       !_opened,
       'We shall not call open on this object if it was already opened '

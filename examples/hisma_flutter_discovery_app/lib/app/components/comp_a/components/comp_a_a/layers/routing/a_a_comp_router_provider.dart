@@ -33,7 +33,6 @@ final l2aRouterProvider = Provider(
           text: 'Hello.',
         ),
         rootNavigator: true,
-        machine: ref.read(compL2AMachineProvider),
         event: E.backward,
       ),
       S.l2b: MaterialPageCreator<E, void>(widget: const CompL2AScreenB()),

@@ -134,10 +134,8 @@ HismaRouterGenerator<S, E> createGenerator({
               ),
             );
           },
-          machine: machine,
         ),
         S.c: PagelessCreator<E, int>(
-          machine: machine,
           rootNavigator: false,
           event: E.back,
           present: ({
@@ -170,7 +168,6 @@ HismaRouterGenerator<S, E> createGenerator({
           ),
         ),
         S.d: SnackBarCreator(
-          machine: machine,
           event: E.back,
           present: (context, scaffoldMessengerState, close) =>
               scaffoldMessengerState.showSnackBar(
