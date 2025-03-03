@@ -572,4 +572,22 @@ Run the app and if you also use `visma` you will see something similar as the an
 
 ## Additional information
 
+### Disclaimer
+
+As the package version indicates this is an experimental package. On the other hand, it is now considered feature complete with high auto-test coverage and after a curation period it is expected to reach 1.0.  
+
+### Next steps
+
+- Improve documentation.
+- Process feedback.
+- Release 1.0.
+
+### Help appreciated
+
+- Feedback.
+- Finding bugs either in code or in documentation are always welcomed.
+  - Providing a failing test to demonstrate the bug is even better.
+
+### Contact
+
 If you have any questions, comments please go to [Hisma GitHub Discussions](https://github.com/tamas-p/hisma/discussions) to start or join discussions.
