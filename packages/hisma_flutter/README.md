@@ -410,39 +410,42 @@ If you pay attention to the debug console you see that the arg passed to *fire* 
 
 ### Utility states ([05_no_ui_update.dart](../../examples/hisma_flutter_example_app/lib/05_no_ui_update.dart))
 
-In some cases you want your state not to be mapped to a screen or dialog (or any ui element in general). For example you want to put network fetching functionality to a utility state that will do its job then state will return to the previous state. In this case we do not want the UI to be updated and we explicitly doing it so by mapping this utility state to a special creator the [NoUIChange] creator.
 
-Let's extend our state machine further with the b1 state that will emulate fetching of weather data from the network. This will be triggered by the new fetch event.
+In some cases you might want your state not to be mapped to a screen or dialog (or any ui element in general). For example you want to put network fetching functionality to a utility state that will do its job then state will return to the previous state. In this case we do not want the UI to be updated and we explicitly doing it so by mapping this utility state to a special creator the [NoUIChange] creator.
+
+> **_NOTE:_** A simpler alternative to utility states is using the [InternalTransition] class.
+
+Let's extend our state machine further with the b2 state that will emulate fetching of weather data from the network. This will be triggered by the new fetch event.
 
 ```dart
-    S.b2: hisma.State(
-      etm: {
-        E.backward: [T.toBFromB2],
-      },
-      onEntry: hisma.Action(
-        description: 'Fetch weather report.',
-        action: (machine, dynamic arg) async {
-          Future<void>.delayed(const Duration(seconds: 1), () {
-            print('Weather data is fetched.');
-            machine.fire(E.backward, data: 'Sunny weather.');
-          });
-        },
-      ),
-    ),
+S.b2: hisma.State(
+  etm: {
+    E.backward: [T.toBFromB2],
+  },
+  onEntry: hisma.Action(
+    description: 'Fetch weather report.',
+    action: (machine, dynamic arg) async {
+      Future<void>.delayed(const Duration(seconds: 1), () {
+        print('Weather data is fetched.');
+        machine.fire(E.backward, arg: 'Sunny weather.');
+      });
+    },
+  ),
+),
 ```
 
 The onEntry action of the `b2` state will emulate the weather data fetch and when completed it prints out the weather data and then fires the backward event (with data set to the weather data) to get the state machine back to its previous state.
 
 ```dart
-    T.toBFromB2: hisma.Transition(
-      to: S.b,
-      onAction: hisma.Action(
-        description: 'Weather info received.',
-        action: (machine, dynamic arg) async {
-          print('Weather info received: $arg');
-        },
-      ),
-    ),
+T.toBFromB2: hisma.Transition(
+  to: S.b,
+  onAction: hisma.Action(
+    description: 'Weather info received.',
+    action: (machine, dynamic arg) async {
+      print('Weather info received: $arg');
+    },
+  ),
+),
 ```
 
 The toBFromB2 transition is that takes us back from the `b2` state to the `b` state. We declare an onAction action that prints out the weather data received as argument to the fire event.
@@ -450,21 +453,30 @@ The toBFromB2 transition is that takes us back from the `b2` state to the `b` st
 The state to ui mapping is now includes `b2`:
 
 ```dart
-final hismaRouterGenerator = HismaRouterGenerator<S, Widget, E>(
+final hismaRouterGenerator = HismaRouterGenerator<S, E>(
   machine: machine,
-  creators: {
-    S.a: MaterialPageCreator<S>(widget: const ScreenA()),
-    S.b: OverlayMaterialPageCreator<S, E>(
+  mapping: {
+    S.a: MaterialPageCreator<E, void>(widget: const ScreenA()),
+    S.b: MaterialPageCreator<E, void>(
       widget: const ScreenB(),
       event: E.backward,
+      overlay: true,
     ),
-    S.b1: PagelessCreator(show: b1, event: E.backward),
+    S.b1: PagelessCreator(
+      present: b1,
+      rootNavigator: true,
+      event: E.backward,
+    ),
     S.b2: NoUIChange(),
-    S.c: OverlayMaterialPageCreator<S, E>(
+    S.c: MaterialPageCreator<E, void>(
       widget: const ScreenC(),
       event: E.backward,
     ),
-    S.c1: PagelessCreator(show: c1, event: E.backward),
+    S.c1: PagelessCreator(
+      present: c1,
+      rootNavigator: true,
+      event: E.backward,
+    ),
   },
 );
 ```
@@ -478,8 +490,8 @@ Run the app and if you also use `visma` you will see something similar. Check ou
 Our state machine can be hierarchical, so does our navigation. If a state includes a region we can simply map it to a Router widget and set its routerDelegate with the help of [HismaRouterGenerator] on the state machine of the region:
 
 ```dart
-    S.compound: MaterialPageCreator<S>(
-      widget: Router(routerDelegate: hismaRouterGenerator.routerDelegate),
+    S.compound: MaterialPageCreator<S, void>(
+      widget: Router<S>(routerDelegate: hismaRouterGenerator.routerDelegate),
     ),
 ```
 
@@ -541,12 +553,12 @@ class LoginScreen extends StatelessWidget {
 As a last step we create the mapping in [HismaRouterGenerator] for the authMachine:
 
 ```dart
-final authRouterGenerator = HismaRouterGenerator<AS, Widget, AE>(
+final authRouterGenerator = HismaRouterGenerator<AS, AE>(
   machine: authMachine,
-  creators: {
-    AS.signedOut: MaterialPageCreator<AS>(widget: const LoginScreen()),
-    AS.signedIn: MaterialPageCreator<AS>(
-      widget: Router(routerDelegate: hismaRouterGenerator.routerDelegate),
+  mapping: {
+    AS.signedOut: MaterialPageCreator<AE, void>(widget: const LoginScreen()),
+    AS.signedIn: MaterialPageCreator<AE, void>(
+      widget: Router<S>(routerDelegate: hismaRouterGenerator.routerDelegate),
     ),
   },
 );
