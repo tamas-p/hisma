@@ -58,8 +58,9 @@ class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
       arg: arg is UiClosed ? arg.arg : arg,
     );
     final newStateId = activeStateId;
-    if (newStateId == null) {
-      // Machine stopped, no need to update UI.
+    if (newStateId == null || !_initialized) {
+      // If machine is stopped or _routerDelegate is not initialized we simply
+      // return here as there is no need / not possible to update UI.
       // test: stopped_machine
       return;
     }
