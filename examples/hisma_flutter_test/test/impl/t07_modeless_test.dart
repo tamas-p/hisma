@@ -17,7 +17,7 @@ Future<void> main() async {
       expect(machine.activeStateId, machine.initialStateId);
       expect(find.text(mainAppScreenTitle), findsWidgets);
 
-      await check(tester, E.fwdB, modelessBottomSheetText);
+      // await check(tester, E.fwdB, modelessBottomSheetText);
       await check(tester, E.fwdC, modalBottomSheetText);
       await check(tester, E.fwdD, snackBarText);
     },

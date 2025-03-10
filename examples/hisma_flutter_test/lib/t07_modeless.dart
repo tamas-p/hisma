@@ -108,7 +108,7 @@ HismaRouterGenerator<S, E> createGenerator({
         //   machine: machine,
         //   event: E.back,
         // ),
-        S.b: BottomSheetCreator(
+        /* S.b: BottomSheetCreator(
           event: E.back,
           present: (context, close) {
             return showBottomSheet<void>(
@@ -134,7 +134,7 @@ HismaRouterGenerator<S, E> createGenerator({
               ),
             );
           },
-        ),
+        ),*/
         S.c: PagelessCreator<E, int>(
           rootNavigator: false,
           event: E.back,

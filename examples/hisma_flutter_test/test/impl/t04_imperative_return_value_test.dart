@@ -44,7 +44,15 @@ Future<void> checkMachine(WidgetTester tester) async {
   }
 
   Future<void> backward() async {
-    await tester.tap(find.text('CANCEL'));
+    // await tester.tap(find.text('CANCEL'));
+    await tester.tap(
+      find
+          .byWidgetPredicate(
+            (widget) =>
+                widget is Text && widget.data?.toLowerCase() == 'cancel',
+          )
+          .last,
+    );
     await tester.pumpAndSettle();
     expect(machine.activeStateId, S.c);
     expect(machine.data, equals(null));

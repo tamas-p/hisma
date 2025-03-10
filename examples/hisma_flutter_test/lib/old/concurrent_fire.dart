@@ -131,7 +131,7 @@ class DoubleScreen extends StatelessWidget {
   }
 }
 
-Future<void> showMyBottomSheet(
+/*Future<void> showMyBottomSheet(
   BuildContext context,
   String str,
 ) async {
@@ -163,6 +163,7 @@ Future<void> showMyBottomSheet(
   );
   return ret.closed;
 }
+*/
 
 class DoubleApp extends StatelessWidget {
   DoubleApp({

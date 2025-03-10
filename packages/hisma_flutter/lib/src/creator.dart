@@ -200,6 +200,7 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   }
 }
 
+/*
 /// Experimental class to manage the modeless BottomSheet created by invoking
 /// showBottomSheet. Since modeless UI can not be well represented by a
 /// state in a state machine (user can interact with other UI representing
@@ -239,6 +240,7 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
     return result;
   }
 }
+*/
 
 /// Experimental class to manage the modeless SnackBar created by invoking
 /// showSnackBar. Since modeless UI can not be well represented by a
