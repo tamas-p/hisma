@@ -1,3 +1,37 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: made start() more readable.
+ - **REFACTOR**: removed historyFlowDown from start().
+ - **REFACTOR**: removed StateChangeNotification.
+ - **REFACTOR**: Making type S for Edge mandatory.
+ - **REFACTOR**: Eliminated the use of GetName message.
+ - **REFACTOR**: Removed required for arg in machine stop.
+ - **REFACTOR**: Started refactoring imperative handler.
+ - **REFACTOR**: hisma router delegate refactored.
+ - **FIX**: fixed assert on BaseEntryPoint.
+ - **FIX**: added assert on EntryPoint check.
+ - **FIX**: added assert to detect if entryConnector does not lead to EntryPoint.
+ - **FIX**: parent machine generics to dynamic.
+ - **FEAT**: plantuml converter supports entryConnectors with keys (Trigger) with optional members.
+ - **FEAT**: Added parent to machines + hierarchy test.
+ - **DOCS**: Review and correct README.md of hisma.
+ - **DOCS**: review and correct README.md.
+ - **DOCS**: added docs for SkipSource.
+ - **DOCS**: updated README.md.
+ - **DOCS**: Small docs improvements.
+ - **DOCS**: added explanation on throw.
+ - **DOCS**: Updated diagrams.
+ - **BREAKING** **REFACTOR**: renamed onError to onSkip.
+ - **BREAKING** **REFACTOR**: eliminated exceptions for transitions.
+ - **BREAKING** **REFACTOR**: Removed internal and uiClosed from fire.
+ - **BREAKING** **REFACTOR**: changed notifyMonitors to private.
+ - **BREAKING** **REFACTOR**: eliminated getParentName as redundant.
+ - **BREAKING** **REFACTOR**: renamed files for Machine and NavigationMachine.
+ - **BREAKING** **REFACTOR**: renaming StateMachineWithChangeNotifier and StateMachine.
+ - **BREAKING** **FEAT**: Trigger now has only optional attributes.
+
 ## 0.3.2+1
 
  - **FIX**: Catch only Exceptions.

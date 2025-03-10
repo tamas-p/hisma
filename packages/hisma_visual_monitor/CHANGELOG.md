@@ -1,3 +1,17 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: Making type S for Edge mandatory.
+ - **FIX**: fixed assert on BaseEntryPoint.
+ - **FIX**: added assert to detect if entryConnector does not lead to EntryPoint.
+ - **FEAT**: plantuml converter supports entryConnectors with keys (Trigger) with optional members.
+ - **DOCS**: Review and correct README.md of hisma.
+ - **DOCS**: updated README.md.
+ - **BREAKING** **REFACTOR**: renamed onError to onSkip.
+ - **BREAKING** **REFACTOR**: eliminated getParentName as redundant.
+ - **BREAKING** **REFACTOR**: renaming StateMachineWithChangeNotifier and StateMachine.
+
 ## 0.3.1+2
 
  - **FIX**: Broken rendering since PlantUML 1.2023.2.

@@ -1,3 +1,10 @@
+## 0.3.0
+
+> Note: This release has breaking changes.
+
+ - **DOCS**: updated README.md.
+ - **BREAKING** **REFACTOR**: renaming StateMachineWithChangeNotifier and StateMachine.
+
 ## 0.2.0+4
 
  - Update a dependency to the latest release.

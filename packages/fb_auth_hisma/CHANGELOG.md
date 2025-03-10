@@ -1,3 +1,11 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: removed navigatorState argument.
+ - **BREAKING** **REFACTOR**: renamed onError to onSkip.
+ - **BREAKING** **REFACTOR**: renaming StateMachineWithChangeNotifier and StateMachine.
+
 ## 0.3.0+4
 
  - Update a dependency to the latest release.

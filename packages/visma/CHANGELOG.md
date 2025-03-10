@@ -1,3 +1,7 @@
+## 0.1.2+2
+
+ - **REFACTOR**: simplified variable initialization.
+
 ## 0.1.2+1
 
  - **FIX**: Broken rendering since PlantUML 1.2023.2.
