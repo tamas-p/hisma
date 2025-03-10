@@ -1,3 +1,9 @@
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FIX**: commented out BottomSheetCreator.
+
 ## 0.3.0
 
 > Note: This release has breaking changes.
