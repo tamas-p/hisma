@@ -217,7 +217,7 @@ As we see in the animation above, firing events will result state changes and st
 
 ### Using overlay pages ([03_overlay.dart](../../examples/hisma_flutter_example_app/lib/03_overlay.dart))
 
-In the previous example the pages were not stacked on each other, contrary, they replaced each other in Navigator pages. In this section we simply use a different creator class when mapping out screens to stack ScreenC on ScreenB and ScreenB on ScreenA. As we will see this stacking also result that the AppBar will automatically have a back button in the top left corner as courtesy of the Flutter framework.
+In the previous example the pages were not stacked on each other, contrary, they replaced each other in the Navigator pages. In this section we simply add the overlay argument to the creator constructors when mapping out screens in order to stack ScreenC on ScreenB and ScreenB on ScreenA. As we will see this stacking also results that the AppBar will automatically have a back button in the top left corner as courtesy of the Flutter framework.
 
 Highlight here only the difference compared to our previous example, the mapping of screens to states:
 
