@@ -17,7 +17,7 @@ Hisma provides a declarative hierarchical state machine implementation for [Dart
 
 | Package on pub.dev                                                      | GitHub                            | Description                                                                                        |
 | ----------------------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- |
-| hisma                                                                   | [repo](.)                         | This package. It is the core package of Hisma. You can create and use hierarchical state machines with its help. |
+| [hisma](https://pub.dev/packages/hisma)                                 | [repo](.)                         | This package. It is the core package of Hisma. You can create and use hierarchical state machines with its help. |
 | [hisma_extra](https://pub.dev/packages/hisma_extra)                     | [repo](../hisma_extra/)           | Extra classes on top of Hisma to simplify Hisma usage.                                             |
 | [hisma_console_monitor](https://pub.dev/packages/hisma_console_monitor) | [repo](../hisma_console_monitor/) | Monitors state machine status on console.                                                          |
 | [hisma_visual_monitor](https://pub.dev/packages/hisma_visual_monitor)   | [repo](../hisma_visual_monitor/)  | Reports state machine status to visma.                                                             |
