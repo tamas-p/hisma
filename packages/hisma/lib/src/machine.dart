@@ -312,11 +312,12 @@ class Machine<S, E, T> {
 
   S? get activeStateId => _activeStateId;
 
-  /// Creates an array representing the active states of this and
+  /// Creates an array representing the states of this state machine and
   /// recursively all compounded state machines where an array means
   /// one state machine where 1st item is the state identifier and this
   /// array can contain zero or more sub state machines (regions) that
-  /// are again defined as an array:
+  /// are again defined as an array. By default it does not include stopped
+  /// machines or machine names:
   ///
   /// [
   ///   StateID.s2,
@@ -346,33 +347,73 @@ class Machine<S, E, T> {
   ///   ]
   /// ];
   ///
-  /// TODO: Add Machine.name to the activeStateId. - added, but
-  /// TODO: add unit test to Machine.name and use withName=true for
-  /// prettyPrint.
-  List<dynamic> getActiveStateRecursive({bool withName = false}) {
+  /// When [includeMachineName] is set true the output will include the name of
+  /// the corresponding machines. Note that when this option is used the result
+  /// array will include strings instead of the state type:
+  /// [
+  ///   'RootMachine: StateID.s2',
+  ///   [
+  ///     'SubMachineA: SubStateID.s1',
+  ///     ['SubSubMachineA: SubSubStateID.work'],
+  ///     ['SubSubMachineB: SubSubStateID.work'],
+  ///   ],
+  ///   ...
+  /// ]
+  ///
+  /// When [includeStopped] is set to true the output will include stopped
+  /// machines as well:
+  ///
+  /// [
+  ///   StateID.s2,
+  ///   [
+  ///     SubStateID.s1,
+  ///     null
+  ///     null,
+  ///     [SubSubStateID.work],
+  ///     [SubSubStateID.work],
+  ///   ],
+  ///   ...
+  /// ]
+  ///
+  /// When both [includeStopped] and [includeMachineName] is set to true the
+  /// output will include machine names and stopped machines where their stopped
+  /// status is indicated by the '-' character:
+  /// [
+  ///   'RootMachine: StateID.s2',
+  ///   [
+  ///     'SubMachineA: SubStateID.s1',
+  ///     'SubMachineB: -',
+  ///     'SubMachineC: -',
+  ///     ['SubSubMachineA: SubSubStateID.work'],
+  ///     ['SubSubMachineB: SubSubStateID.work'],
+  ///   ],
+  ///   ...
+  /// ]
+  List<dynamic> getActiveStateRecursive({
+    bool includeMachineName = false,
+    bool includeStopped = false,
+  }) {
     final result = <dynamic>[];
-
-    if (_activeStateId != null) {
-      result.add(withName ? '$name-$_activeStateId' : _activeStateId);
-      final state = states[_activeStateId];
-      assert(
-        state != null,
-        'Could not find State by activeStateId: "$_activeStateId"',
-      );
-      assert(state is State<E, T, S>, 'State $state is not State type.');
-      if (state is State<E, T, S>) {
-        final regions = <dynamic>[];
-
-        for (final region in state.regions) {
-          final as = region.machine.getActiveStateRecursive();
-          if (as.isNotEmpty) {
-            regions.add(region.machine.getActiveStateRecursive());
+    if (_activeStateId == null && !includeStopped) return [];
+    result.add(
+      includeMachineName ? '$name: ${_activeStateId ?? '-'}' : _activeStateId,
+    );
+    for (final key in states.keys) {
+      if (key == _activeStateId || includeStopped) {
+        final state = states[key];
+        if (state is State<E, T, S>) {
+          final regions = <dynamic>[];
+          for (final region in state.regions) {
+            final r = region.machine.getActiveStateRecursive(
+              includeMachineName: includeMachineName,
+              includeStopped: includeStopped,
+            );
+            if (r.isNotEmpty) regions.add(r);
           }
+          if (regions.isNotEmpty) result.addAll(regions);
         }
-        if (regions.isNotEmpty) result.addAll(regions);
       }
     }
-
     return result;
   }
 

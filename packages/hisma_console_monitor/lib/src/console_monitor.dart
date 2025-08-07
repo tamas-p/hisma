@@ -35,7 +35,10 @@ class ConsoleMonitor implements Monitor {
   }
 
   void _printActiveStates() {
-    final activeStates = stateMachine.getActiveStateRecursive();
+    final activeStates = stateMachine.getActiveStateRecursive(
+      includeMachineName: true,
+      includeStopped: true,
+    );
     printer(
       "monitor> '${stateMachine.name}' "
       "active state${activeStates.length > 1 ? 's' : ''}:\n"
