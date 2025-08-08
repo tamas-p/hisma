@@ -20,12 +20,12 @@ void main() {
       await m.start();
       print('m.fire(E.forward) ----------------------------------------------');
       await m.fire(E.forward);
-      print("m.find<S, E, T>('l1a').fire(E.forward) -------------------------");
-      await m.find<S, E, T>('l1a').fire(E.forward);
-      print("m.find<S, E, T>('l2a').fire(E.forward) -------------------------");
-      await m.find<S, E, T>('l2a').fire(E.forward);
-      print("m.find<S, E, T>('l3a').fire(E.forward) -------------------------");
-      await m.find<S, E, T>('l3a').fire(E.forward);
+      print("m.find<S, E, T>('l0.l1a').fire(E.forward) ----------------------");
+      await m.find<S, E, T>('l0.l1a').fire(E.forward);
+      print("m.find<S, E, T>('l0.l1a.l2a').fire(E.forward) ------------------");
+      await m.find<S, E, T>('l0.l1a.l2a').fire(E.forward);
+      print("m.find<S, E, T>('l0.l1a.l2a.l3a').fire(E.forward) --------------");
+      await m.find<S, E, T>('l0.l1a.l2a.l3a').fire(E.forward);
     });
   });
 }
@@ -36,12 +36,16 @@ enum E { forward }
 
 enum T { toA, toB }
 
-Machine<S, E, T> getMachine({
-  int level = 0,
-  String n = '',
-}) =>
+String cn(String? name, int level, String id) =>
+    '${name == null ? '' : '$name.'}l$level$id';
+
+Machine<S, E, T> getMachine([
+  int l = 0,
+  String? parent,
+  String id = '',
+]) =>
     Machine(
-      name: 'l$level$n',
+      name: cn(parent, l, id),
       initialStateId: S.a,
       states: {
         S.a: State(
@@ -54,10 +58,14 @@ Machine<S, E, T> getMachine({
             E.forward: [T.toA],
           },
           regions: [
-            if (level < 3)
-              Region<S, E, T, S>(machine: getMachine(level: level + 1, n: 'a')),
-            if (level < 3)
-              Region<S, E, T, S>(machine: getMachine(level: level + 1, n: 'b'))
+            if (l < 3)
+              Region<S, E, T, S>(
+                machine: getMachine(l + 1, cn(parent, l, id), 'a'),
+              ),
+            if (l < 3)
+              Region<S, E, T, S>(
+                machine: getMachine(l + 1, cn(parent, l, id), 'b'),
+              ),
           ],
         ),
       },
