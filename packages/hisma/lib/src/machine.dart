@@ -107,12 +107,12 @@ class Machine<S, E, T> {
   /// state machine to fire with this event.
   Future<void> Function(Message)? notifyRegion;
 
-  void _notifyMonitors() {
+  Future<void> _notifyMonitors() async {
     _log.fine(() => 'Notify from $name');
     for (final ms in _monitors) {
       // Before notifying a monitor we make sure that its initialization
       // (notifyCreation) has completed.
-      ms.completed.then((value) {
+      await ms.completed.then((value) {
         ms.monitor.notifyStateChange();
       });
     }
@@ -312,12 +312,11 @@ class Machine<S, E, T> {
 
   S? get activeStateId => _activeStateId;
 
-  /// Creates an array representing the states of this state machine and
+  /// Creates an array representing the active states of this state machine and
   /// recursively all compounded state machines where an array means
-  /// one state machine where 1st item is the state identifier and this
+  /// one state machine where the 1st item is the state identifier and this
   /// array can contain zero or more sub state machines (regions) that
-  /// are again defined as an array. By default it does not include stopped
-  /// machines or machine names:
+  /// are again defined as an array.
   ///
   /// [
   ///   StateID.s2,
@@ -347,71 +346,76 @@ class Machine<S, E, T> {
   ///   ]
   /// ];
   ///
-  /// When [includeMachineName] is set true the output will include the name of
-  /// the corresponding machines. Note that when this option is used the result
-  /// array will include strings instead of the state type:
+  List<dynamic> getActiveStateRecursive() {
+    final result = <dynamic>[];
+    for (final stateId in states.keys) {
+      final stateData = <dynamic>[];
+      if (stateId == activeStateId) {
+        stateData.add(stateId);
+        final state = states[stateId];
+        if (state is State<E, T, S>) {
+          for (final region in state.regions) {
+            if (region.machine.activeStateId != null) {
+              final regionData = region.machine.getActiveStateRecursive();
+              if (regionData.isNotEmpty) stateData.add(regionData);
+            }
+          }
+        }
+        result.addAll(stateData);
+      }
+    }
+    return result;
+  }
+
+  /// Creates an array representing the structure of the machine along with its
+  /// states and recursively all compounded state machines with their respective
+  /// states. Active states are represented by (*) after their state id.
+  ///
   /// [
-  ///   'RootMachine: StateID.s2',
+  ///   ('rootMachine'),
+  ///   ['S.a'],
   ///   [
-  ///     'SubMachineA: SubStateID.s1',
-  ///     ['SubSubMachineA: SubSubStateID.work'],
-  ///     ['SubSubMachineB: SubSubStateID.work'],
-  ///   ],
-  ///   ...
+  ///     'S.b (*)',
+  ///     [
+  ///       ('subMachine'),
+  ///       ['S.a (*)'],
+  ///       [
+  ///         'S.b',
+  ///         [
+  ///           ('subSubMachine'),
+  ///  ...
   /// ]
   ///
-  /// When [includeStopped] is set to true the output will include stopped
-  /// machines as well:
-  ///
-  /// [
-  ///   StateID.s2,
-  ///   [
-  ///     SubStateID.s1,
-  ///     null
-  ///     null,
-  ///     [SubSubStateID.work],
-  ///     [SubSubStateID.work],
-  ///   ],
-  ///   ...
-  /// ]
-  ///
-  /// When both [includeStopped] and [includeMachineName] is set to true the
-  /// output will include machine names and stopped machines where their stopped
-  /// status is indicated by the '-' character:
-  /// [
-  ///   'RootMachine: StateID.s2',
-  ///   [
-  ///     'SubMachineA: SubStateID.s1',
-  ///     'SubMachineB: -',
-  ///     'SubMachineC: -',
-  ///     ['SubSubMachineA: SubSubStateID.work'],
-  ///     ['SubSubMachineB: SubSubStateID.work'],
-  ///   ],
-  ///   ...
-  /// ]
-  List<dynamic> getActiveStateRecursive({
-    bool includeMachineName = false,
-    bool includeStopped = false,
+  /// When [includeInactive] is set to false the output will only include active
+  /// machines and their active states (without the (*) indication).
+  List<dynamic> getStructureRecursive({
+    bool includeInactive = true,
   }) {
     final result = <dynamic>[];
-    if (_activeStateId == null && !includeStopped) return [];
-    result.add(
-      includeMachineName ? '$name: ${_activeStateId ?? '-'}' : _activeStateId,
-    );
-    for (final key in states.keys) {
-      if (key == _activeStateId || includeStopped) {
-        final state = states[key];
+    if (activeStateId == null && !includeInactive) return [];
+    result.add('($name)');
+    for (final stateId in states.keys) {
+      final stateData = <dynamic>[];
+      if (stateId == activeStateId || includeInactive) {
+        stateData.add(
+          includeInactive
+              ? stateId == activeStateId
+                  ? '$stateId (*)'
+                  : stateId
+              : stateId,
+        );
+        final state = states[stateId];
         if (state is State<E, T, S>) {
-          final regions = <dynamic>[];
           for (final region in state.regions) {
-            final r = region.machine.getActiveStateRecursive(
-              includeMachineName: includeMachineName,
-              includeStopped: includeStopped,
-            );
-            if (r.isNotEmpty) regions.add(r);
+            if (region.machine.activeStateId != null || includeInactive) {
+              final regionData = region.machine.getStructureRecursive(
+                includeInactive: includeInactive,
+              );
+              if (regionData.isNotEmpty) stateData.add(regionData);
+            }
           }
-          if (regions.isNotEmpty) result.addAll(regions);
         }
+        result.add(stateData);
       }
     }
     return result;
@@ -495,7 +499,7 @@ class Machine<S, E, T> {
     _log.fine(() => '$name  stop, state:$activeStateId, arg:$arg');
     await _exitState(arg: arg);
     _activeStateId = null;
-    _notifyMonitors();
+    await _notifyMonitors();
   }
 
   /// Enters state machine to the given state, executes onEntry() and
@@ -541,7 +545,7 @@ class Machine<S, E, T> {
     );
 
     _log.fine(() => '< $name  _enterState');
-    _notifyMonitors();
+    await _notifyMonitors();
   }
 
   /// For each region of [state] the state machine of a specific region is
@@ -657,7 +661,7 @@ class Machine<S, E, T> {
 
   Future<void> _processMachineNotification() async {
     _log.fine(() => '$name  call _processMachineNotification');
-    _notifyMonitors();
+    await _notifyMonitors();
     await parent?._processMachineNotification();
   }
 

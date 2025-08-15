@@ -1,31 +1,75 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, constant_identifier_names
 
 import 'package:hisma/hisma.dart';
 import 'package:hisma_console_monitor/hisma_console_monitor.dart';
 import 'package:test/test.dart';
 
 void main() {
-  Machine.monitorCreators = [
-    (m) => ConsoleMonitor(m),
-  ];
-  group('A group of tests', () {
-    setUp(() {
-      // Additional setup goes here.
+  final buff = StringBuffer();
+
+  group('ConsoleMonitor tests', () {
+    setUp(() {});
+
+    test(
+        'Test default ConsoleMonitor configuration (with includeInactive=true)',
+        () async {
+      Machine.monitorCreators = [
+        (m) => ConsoleMonitor(
+              m,
+              // includeInactive: false,
+              printer: (output) => buff.write(output),
+            ),
+      ];
+
+      late Machine<S, E, T> m;
+      m = getMachine();
+      expect(buff.takeString(), equals(_created));
+
+      await m.start();
+      expect(buff.takeString(), equals(_started));
+
+      await m.fire(E.forward);
+      expect(buff.takeString(), equals(_l0_fire));
+
+      await m.find<S, E, T>('l0.l1a').fire(E.forward);
+      expect(buff.takeString(), equals(_l0l1a_fire));
+
+      await m.find<S, E, T>('l0.l1a.l2a').fire(E.forward);
+      expect(buff.takeString(), equals(_l0l1al2a_fire));
+
+      await m.find<S, E, T>('l0.l1a.l2a.l3a').fire(E.forward);
+      expect(buff.takeString(), equals(_l0l1al2al3a_fire));
     });
 
-    test('First Test', () async {
-      print('getMachine() ---------------------------------------------------');
-      final m = getMachine();
-      print('m.start() ------------------------------------------------------');
+    test('Test ConsoleMonitor configuration with includeInactive=false',
+        () async {
+      Machine.monitorCreators = [
+        (m) => ConsoleMonitor(
+              m,
+              includeInactive: false,
+              printer: (output) => buff.write(output),
+            ),
+      ];
+
+      late Machine<S, E, T> m;
+      m = getMachine();
+      expect(buff.takeString(), equals(_created_active));
+
       await m.start();
-      print('m.fire(E.forward) ----------------------------------------------');
+      expect(buff.takeString(), equals(_l0_start_active));
+
       await m.fire(E.forward);
-      print("m.find<S, E, T>('l0.l1a').fire(E.forward) ----------------------");
+      expect(buff.takeString(), equals(_l0_fire_active));
+
       await m.find<S, E, T>('l0.l1a').fire(E.forward);
-      print("m.find<S, E, T>('l0.l1a.l2a').fire(E.forward) ------------------");
+      expect(buff.takeString(), equals(_l0l1a_fire_active));
+
       await m.find<S, E, T>('l0.l1a.l2a').fire(E.forward);
-      print("m.find<S, E, T>('l0.l1a.l2a.l3a').fire(E.forward) --------------");
+      expect(buff.takeString(), equals(_l0l1al2a_fire_active));
+
       await m.find<S, E, T>('l0.l1a.l2a.l3a').fire(E.forward);
+      expect(buff.takeString(), equals(_l0l1al2al3a_fire_active));
+      return 0;
     });
   });
 }
@@ -74,3 +118,731 @@ Machine<S, E, T> getMachine([
         T.toB: Transition(to: S.b),
       },
     );
+
+extension StringBufferExtension on StringBuffer {
+  String takeString() {
+    final result = toString();
+    clear();
+    return result;
+  }
+}
+
+const _created = '''
+Machine l0.l1a.l2a.l3a monitoring> created:
+(l0.l1a.l2a.l3a)
+    ├─S.a
+    └─S.b
+Machine l0.l1a.l2a.l3b monitoring> created:
+(l0.l1a.l2a.l3b)
+    ├─S.a
+    └─S.b
+Machine l0.l1a.l2a monitoring> created:
+(l0.l1a.l2a)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1a.l2a.l3a)
+        │   ├─S.a
+        │   └─S.b
+        └─(l0.l1a.l2a.l3b)
+            ├─S.a
+            └─S.b
+Machine l0.l1a.l2b.l3a monitoring> created:
+(l0.l1a.l2b.l3a)
+    ├─S.a
+    └─S.b
+Machine l0.l1a.l2b.l3b monitoring> created:
+(l0.l1a.l2b.l3b)
+    ├─S.a
+    └─S.b
+Machine l0.l1a.l2b monitoring> created:
+(l0.l1a.l2b)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1a.l2b.l3a)
+        │   ├─S.a
+        │   └─S.b
+        └─(l0.l1a.l2b.l3b)
+            ├─S.a
+            └─S.b
+Machine l0.l1a monitoring> created:
+(l0.l1a)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1a.l2a)
+        │   ├─S.a
+        │   └─S.b
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       └─(l0.l1a.l2a.l3b)
+        │           ├─S.a
+        │           └─S.b
+        └─(l0.l1a.l2b)
+            ├─S.a
+            └─S.b
+                ├─(l0.l1a.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1a.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0.l1b.l2a.l3a monitoring> created:
+(l0.l1b.l2a.l3a)
+    ├─S.a
+    └─S.b
+Machine l0.l1b.l2a.l3b monitoring> created:
+(l0.l1b.l2a.l3b)
+    ├─S.a
+    └─S.b
+Machine l0.l1b.l2a monitoring> created:
+(l0.l1b.l2a)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1b.l2a.l3a)
+        │   ├─S.a
+        │   └─S.b
+        └─(l0.l1b.l2a.l3b)
+            ├─S.a
+            └─S.b
+Machine l0.l1b.l2b.l3a monitoring> created:
+(l0.l1b.l2b.l3a)
+    ├─S.a
+    └─S.b
+Machine l0.l1b.l2b.l3b monitoring> created:
+(l0.l1b.l2b.l3b)
+    ├─S.a
+    └─S.b
+Machine l0.l1b.l2b monitoring> created:
+(l0.l1b.l2b)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1b.l2b.l3a)
+        │   ├─S.a
+        │   └─S.b
+        └─(l0.l1b.l2b.l3b)
+            ├─S.a
+            └─S.b
+Machine l0.l1b monitoring> created:
+(l0.l1b)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1b.l2a)
+        │   ├─S.a
+        │   └─S.b
+        │       ├─(l0.l1b.l2a.l3a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       └─(l0.l1b.l2a.l3b)
+        │           ├─S.a
+        │           └─S.b
+        └─(l0.l1b.l2b)
+            ├─S.a
+            └─S.b
+                ├─(l0.l1b.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1b.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0 monitoring> created:
+(l0)
+    ├─S.a
+    └─S.b
+        ├─(l0.l1a)
+        │   ├─S.a
+        │   └─S.b
+        │       ├─(l0.l1a.l2a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   ├─S.a
+        │       │       │   └─S.b
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           ├─S.a
+        │       │           └─S.b
+        │       └─(l0.l1a.l2b)
+        │           ├─S.a
+        │           └─S.b
+        │               ├─(l0.l1a.l2b.l3a)
+        │               │   ├─S.a
+        │               │   └─S.b
+        │               └─(l0.l1a.l2b.l3b)
+        │                   ├─S.a
+        │                   └─S.b
+        └─(l0.l1b)
+            ├─S.a
+            └─S.b
+                ├─(l0.l1b.l2a)
+                │   ├─S.a
+                │   └─S.b
+                │       ├─(l0.l1b.l2a.l3a)
+                │       │   ├─S.a
+                │       │   └─S.b
+                │       └─(l0.l1b.l2a.l3b)
+                │           ├─S.a
+                │           └─S.b
+                └─(l0.l1b.l2b)
+                    ├─S.a
+                    └─S.b
+                        ├─(l0.l1b.l2b.l3a)
+                        │   ├─S.a
+                        │   └─S.b
+                        └─(l0.l1b.l2b.l3b)
+                            ├─S.a
+                            └─S.b
+''';
+
+const _started = '''
+Machine l0 monitoring> state changed:
+(l0)
+    ├─S.a (*)
+    └─S.b
+        ├─(l0.l1a)
+        │   ├─S.a
+        │   └─S.b
+        │       ├─(l0.l1a.l2a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   ├─S.a
+        │       │       │   └─S.b
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           ├─S.a
+        │       │           └─S.b
+        │       └─(l0.l1a.l2b)
+        │           ├─S.a
+        │           └─S.b
+        │               ├─(l0.l1a.l2b.l3a)
+        │               │   ├─S.a
+        │               │   └─S.b
+        │               └─(l0.l1a.l2b.l3b)
+        │                   ├─S.a
+        │                   └─S.b
+        └─(l0.l1b)
+            ├─S.a
+            └─S.b
+                ├─(l0.l1b.l2a)
+                │   ├─S.a
+                │   └─S.b
+                │       ├─(l0.l1b.l2a.l3a)
+                │       │   ├─S.a
+                │       │   └─S.b
+                │       └─(l0.l1b.l2a.l3b)
+                │           ├─S.a
+                │           └─S.b
+                └─(l0.l1b.l2b)
+                    ├─S.a
+                    └─S.b
+                        ├─(l0.l1b.l2b.l3a)
+                        │   ├─S.a
+                        │   └─S.b
+                        └─(l0.l1b.l2b.l3b)
+                            ├─S.a
+                            └─S.b
+''';
+
+const _l0_fire = '''
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    ├─S.a (*)
+    └─S.b
+        ├─(l0.l1a.l2a)
+        │   ├─S.a
+        │   └─S.b
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       └─(l0.l1a.l2a.l3b)
+        │           ├─S.a
+        │           └─S.b
+        └─(l0.l1a.l2b)
+            ├─S.a
+            └─S.b
+                ├─(l0.l1a.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1a.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0.l1b monitoring> state changed:
+(l0.l1b)
+    ├─S.a (*)
+    └─S.b
+        ├─(l0.l1b.l2a)
+        │   ├─S.a
+        │   └─S.b
+        │       ├─(l0.l1b.l2a.l3a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       └─(l0.l1b.l2a.l3b)
+        │           ├─S.a
+        │           └─S.b
+        └─(l0.l1b.l2b)
+            ├─S.a
+            └─S.b
+                ├─(l0.l1b.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1b.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0 monitoring> state changed:
+(l0)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a)
+        │   ├─S.a (*)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   ├─S.a
+        │       │       │   └─S.b
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           ├─S.a
+        │       │           └─S.b
+        │       └─(l0.l1a.l2b)
+        │           ├─S.a
+        │           └─S.b
+        │               ├─(l0.l1a.l2b.l3a)
+        │               │   ├─S.a
+        │               │   └─S.b
+        │               └─(l0.l1a.l2b.l3b)
+        │                   ├─S.a
+        │                   └─S.b
+        └─(l0.l1b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1b.l2a)
+                │   ├─S.a
+                │   └─S.b
+                │       ├─(l0.l1b.l2a.l3a)
+                │       │   ├─S.a
+                │       │   └─S.b
+                │       └─(l0.l1b.l2a.l3b)
+                │           ├─S.a
+                │           └─S.b
+                └─(l0.l1b.l2b)
+                    ├─S.a
+                    └─S.b
+                        ├─(l0.l1b.l2b.l3a)
+                        │   ├─S.a
+                        │   └─S.b
+                        └─(l0.l1b.l2b.l3b)
+                            ├─S.a
+                            └─S.b
+''';
+
+const _l0l1a_fire = '''
+Machine l0.l1a.l2a monitoring> state changed:
+(l0.l1a.l2a)
+    ├─S.a (*)
+    └─S.b
+        ├─(l0.l1a.l2a.l3a)
+        │   ├─S.a
+        │   └─S.b
+        └─(l0.l1a.l2a.l3b)
+            ├─S.a
+            └─S.b
+Machine l0.l1a.l2b monitoring> state changed:
+(l0.l1a.l2b)
+    ├─S.a (*)
+    └─S.b
+        ├─(l0.l1a.l2b.l3a)
+        │   ├─S.a
+        │   └─S.b
+        └─(l0.l1a.l2b.l3b)
+            ├─S.a
+            └─S.b
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a.l2a)
+        │   ├─S.a (*)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   ├─S.a
+        │       │   └─S.b
+        │       └─(l0.l1a.l2a.l3b)
+        │           ├─S.a
+        │           └─S.b
+        └─(l0.l1a.l2b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1a.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1a.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0 monitoring> state changed:
+(l0)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a)
+        │   ├─S.a
+        │   └─S.b (*)
+        │       ├─(l0.l1a.l2a)
+        │       │   ├─S.a (*)
+        │       │   └─S.b
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   ├─S.a
+        │       │       │   └─S.b
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           ├─S.a
+        │       │           └─S.b
+        │       └─(l0.l1a.l2b)
+        │           ├─S.a (*)
+        │           └─S.b
+        │               ├─(l0.l1a.l2b.l3a)
+        │               │   ├─S.a
+        │               │   └─S.b
+        │               └─(l0.l1a.l2b.l3b)
+        │                   ├─S.a
+        │                   └─S.b
+        └─(l0.l1b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1b.l2a)
+                │   ├─S.a
+                │   └─S.b
+                │       ├─(l0.l1b.l2a.l3a)
+                │       │   ├─S.a
+                │       │   └─S.b
+                │       └─(l0.l1b.l2a.l3b)
+                │           ├─S.a
+                │           └─S.b
+                └─(l0.l1b.l2b)
+                    ├─S.a
+                    └─S.b
+                        ├─(l0.l1b.l2b.l3a)
+                        │   ├─S.a
+                        │   └─S.b
+                        └─(l0.l1b.l2b.l3b)
+                            ├─S.a
+                            └─S.b
+''';
+
+const _l0l1al2a_fire = '''
+Machine l0.l1a.l2a.l3a monitoring> state changed:
+(l0.l1a.l2a.l3a)
+    ├─S.a (*)
+    └─S.b
+Machine l0.l1a.l2a.l3b monitoring> state changed:
+(l0.l1a.l2a.l3b)
+    ├─S.a (*)
+    └─S.b
+Machine l0.l1a.l2a monitoring> state changed:
+(l0.l1a.l2a)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a.l2a.l3a)
+        │   ├─S.a (*)
+        │   └─S.b
+        └─(l0.l1a.l2a.l3b)
+            ├─S.a (*)
+            └─S.b
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a.l2a)
+        │   ├─S.a
+        │   └─S.b (*)
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   ├─S.a (*)
+        │       │   └─S.b
+        │       └─(l0.l1a.l2a.l3b)
+        │           ├─S.a (*)
+        │           └─S.b
+        └─(l0.l1a.l2b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1a.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1a.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0 monitoring> state changed:
+(l0)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a)
+        │   ├─S.a
+        │   └─S.b (*)
+        │       ├─(l0.l1a.l2a)
+        │       │   ├─S.a
+        │       │   └─S.b (*)
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   ├─S.a (*)
+        │       │       │   └─S.b
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           ├─S.a (*)
+        │       │           └─S.b
+        │       └─(l0.l1a.l2b)
+        │           ├─S.a (*)
+        │           └─S.b
+        │               ├─(l0.l1a.l2b.l3a)
+        │               │   ├─S.a
+        │               │   └─S.b
+        │               └─(l0.l1a.l2b.l3b)
+        │                   ├─S.a
+        │                   └─S.b
+        └─(l0.l1b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1b.l2a)
+                │   ├─S.a
+                │   └─S.b
+                │       ├─(l0.l1b.l2a.l3a)
+                │       │   ├─S.a
+                │       │   └─S.b
+                │       └─(l0.l1b.l2a.l3b)
+                │           ├─S.a
+                │           └─S.b
+                └─(l0.l1b.l2b)
+                    ├─S.a
+                    └─S.b
+                        ├─(l0.l1b.l2b.l3a)
+                        │   ├─S.a
+                        │   └─S.b
+                        └─(l0.l1b.l2b.l3b)
+                            ├─S.a
+                            └─S.b
+''';
+
+const _l0l1al2al3a_fire = '''
+Machine l0.l1a.l2a.l3a monitoring> state changed:
+(l0.l1a.l2a.l3a)
+    ├─S.a
+    └─S.b (*)
+Machine l0.l1a.l2a monitoring> state changed:
+(l0.l1a.l2a)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a.l2a.l3a)
+        │   ├─S.a
+        │   └─S.b (*)
+        └─(l0.l1a.l2a.l3b)
+            ├─S.a (*)
+            └─S.b
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a.l2a)
+        │   ├─S.a
+        │   └─S.b (*)
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   ├─S.a
+        │       │   └─S.b (*)
+        │       └─(l0.l1a.l2a.l3b)
+        │           ├─S.a (*)
+        │           └─S.b
+        └─(l0.l1a.l2b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1a.l2b.l3a)
+                │   ├─S.a
+                │   └─S.b
+                └─(l0.l1a.l2b.l3b)
+                    ├─S.a
+                    └─S.b
+Machine l0 monitoring> state changed:
+(l0)
+    ├─S.a
+    └─S.b (*)
+        ├─(l0.l1a)
+        │   ├─S.a
+        │   └─S.b (*)
+        │       ├─(l0.l1a.l2a)
+        │       │   ├─S.a
+        │       │   └─S.b (*)
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   ├─S.a
+        │       │       │   └─S.b (*)
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           ├─S.a (*)
+        │       │           └─S.b
+        │       └─(l0.l1a.l2b)
+        │           ├─S.a (*)
+        │           └─S.b
+        │               ├─(l0.l1a.l2b.l3a)
+        │               │   ├─S.a
+        │               │   └─S.b
+        │               └─(l0.l1a.l2b.l3b)
+        │                   ├─S.a
+        │                   └─S.b
+        └─(l0.l1b)
+            ├─S.a (*)
+            └─S.b
+                ├─(l0.l1b.l2a)
+                │   ├─S.a
+                │   └─S.b
+                │       ├─(l0.l1b.l2a.l3a)
+                │       │   ├─S.a
+                │       │   └─S.b
+                │       └─(l0.l1b.l2a.l3b)
+                │           ├─S.a
+                │           └─S.b
+                └─(l0.l1b.l2b)
+                    ├─S.a
+                    └─S.b
+                        ├─(l0.l1b.l2b.l3a)
+                        │   ├─S.a
+                        │   └─S.b
+                        └─(l0.l1b.l2b.l3b)
+                            ├─S.a
+                            └─S.b
+''';
+
+const _created_active = '''
+Machine l0.l1a.l2a.l3a monitoring> created:
+Machine l0.l1a.l2a.l3b monitoring> created:
+Machine l0.l1a.l2a monitoring> created:
+Machine l0.l1a.l2b.l3a monitoring> created:
+Machine l0.l1a.l2b.l3b monitoring> created:
+Machine l0.l1a.l2b monitoring> created:
+Machine l0.l1a monitoring> created:
+Machine l0.l1b.l2a.l3a monitoring> created:
+Machine l0.l1b.l2a.l3b monitoring> created:
+Machine l0.l1b.l2a monitoring> created:
+Machine l0.l1b.l2b.l3a monitoring> created:
+Machine l0.l1b.l2b.l3b monitoring> created:
+Machine l0.l1b.l2b monitoring> created:
+Machine l0.l1b monitoring> created:
+Machine l0 monitoring> created:
+''';
+
+const _l0_start_active = '''
+Machine l0 monitoring> state changed:
+(l0)
+    └─S.a
+''';
+
+const _l0_fire_active = '''
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    └─S.a
+Machine l0.l1b monitoring> state changed:
+(l0.l1b)
+    └─S.a
+Machine l0 monitoring> state changed:
+(l0)
+    └─S.b
+        ├─(l0.l1a)
+        │   └─S.a
+        └─(l0.l1b)
+            └─S.a
+''';
+
+const _l0l1a_fire_active = '''
+Machine l0.l1a.l2a monitoring> state changed:
+(l0.l1a.l2a)
+    └─S.a
+Machine l0.l1a.l2b monitoring> state changed:
+(l0.l1a.l2b)
+    └─S.a
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    └─S.b
+        ├─(l0.l1a.l2a)
+        │   └─S.a
+        └─(l0.l1a.l2b)
+            └─S.a
+Machine l0 monitoring> state changed:
+(l0)
+    └─S.b
+        ├─(l0.l1a)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a)
+        │       │   └─S.a
+        │       └─(l0.l1a.l2b)
+        │           └─S.a
+        └─(l0.l1b)
+            └─S.a
+''';
+
+const _l0l1al2a_fire_active = '''
+Machine l0.l1a.l2a.l3a monitoring> state changed:
+(l0.l1a.l2a.l3a)
+    └─S.a
+Machine l0.l1a.l2a.l3b monitoring> state changed:
+(l0.l1a.l2a.l3b)
+    └─S.a
+Machine l0.l1a.l2a monitoring> state changed:
+(l0.l1a.l2a)
+    └─S.b
+        ├─(l0.l1a.l2a.l3a)
+        │   └─S.a
+        └─(l0.l1a.l2a.l3b)
+            └─S.a
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    └─S.b
+        ├─(l0.l1a.l2a)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   └─S.a
+        │       └─(l0.l1a.l2a.l3b)
+        │           └─S.a
+        └─(l0.l1a.l2b)
+            └─S.a
+Machine l0 monitoring> state changed:
+(l0)
+    └─S.b
+        ├─(l0.l1a)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a)
+        │       │   └─S.b
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   └─S.a
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           └─S.a
+        │       └─(l0.l1a.l2b)
+        │           └─S.a
+        └─(l0.l1b)
+            └─S.a
+''';
+
+const _l0l1al2al3a_fire_active = '''
+Machine l0.l1a.l2a.l3a monitoring> state changed:
+(l0.l1a.l2a.l3a)
+    └─S.b
+Machine l0.l1a.l2a monitoring> state changed:
+(l0.l1a.l2a)
+    └─S.b
+        ├─(l0.l1a.l2a.l3a)
+        │   └─S.b
+        └─(l0.l1a.l2a.l3b)
+            └─S.a
+Machine l0.l1a monitoring> state changed:
+(l0.l1a)
+    └─S.b
+        ├─(l0.l1a.l2a)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a.l3a)
+        │       │   └─S.b
+        │       └─(l0.l1a.l2a.l3b)
+        │           └─S.a
+        └─(l0.l1a.l2b)
+            └─S.a
+Machine l0 monitoring> state changed:
+(l0)
+    └─S.b
+        ├─(l0.l1a)
+        │   └─S.b
+        │       ├─(l0.l1a.l2a)
+        │       │   └─S.b
+        │       │       ├─(l0.l1a.l2a.l3a)
+        │       │       │   └─S.b
+        │       │       └─(l0.l1a.l2a.l3b)
+        │       │           └─S.a
+        │       └─(l0.l1a.l2b)
+        │           └─S.a
+        └─(l0.l1b)
+            └─S.a
+''';
