@@ -15,7 +15,7 @@ Simple monitor implementation for the Hisma package.
 
 ## Features
 
-Prints out to console (or onto anything else you define. e.g. a logger) the active states of the hierarchical state machines of the program:
+Prints out to console (or onto anything else you define. e.g. a logger) the machine and state structure of the hierarchical state machines of the program where `(*)` indicates the active states (for a more compact output you can use the [includeInactive] constructor argument set to `false`):
 
 ![hisma_console_monitor_in_action.gif](doc/resources/hisma_console_monitor_in_action.gif)
 
