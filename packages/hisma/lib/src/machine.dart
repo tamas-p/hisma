@@ -112,9 +112,8 @@ class Machine<S, E, T> {
     for (final ms in _monitors) {
       // Before notifying a monitor we make sure that its initialization
       // (notifyCreation) has completed.
-      await ms.completed.then((value) {
-        ms.monitor.notifyStateChange();
-      });
+      await ms.completed;
+      await ms.monitor.notifyStateChange();
     }
   }
 
