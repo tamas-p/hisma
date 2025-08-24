@@ -1,3 +1,7 @@
+## 0.4.1
+
+ - **FEAT**: addMonitors() to add monitors to existing machines.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.
