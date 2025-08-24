@@ -1,3 +1,7 @@
+## 0.4.0+1
+
+ - **DOCS**: overlay argument is referred now in README.md.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.
