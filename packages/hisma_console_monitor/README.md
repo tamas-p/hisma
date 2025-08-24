@@ -25,7 +25,9 @@ Create your state machines with hisma.
 
 ## Usage
 
-You can enable [ConsoleMonitor] by adding a creator function that returns ConsoleMonitor to the list of monitor creators (example code from hisma examples):
+### Class level configuration
+
+You can enable [ConsoleMonitor] by adding a creator function that returns ConsoleMonitor to the list of monitor creators (example code from hisma examples) at class level:
 
 ```dart
 Future<void> main() async {
@@ -38,7 +40,22 @@ Future<void> main() async {
 }
 ```
 
-This will result that state machine creation and active state changes will be monitored by ConsoleMonitor, writing out all active states of all hierarchical state machines of the program.
+This will result that all state machine creation and active state changes will be monitored by ConsoleMonitor, writing out all active states of all hierarchical state machines of the program.
+
+### Instance level configuration
+
+Configuring monitors also possible at instance level by declaring them in the machine constructor:
+
+```dart
+Machine<S, E, T> createColorMachine() => Machine<S, E, T>(
+      monitorCreators: [
+        (m) => ConsoleMonitor(m),
+      ],
+...
+```
+In this case only this machine instance will be monitored. 
+
+### Printer
 
 One can easily modify how [ConsoleMonitor] prints out the active states, e.g. you can use your logger instead of printing to consoles.
 In the following example we add an extra separator line before each output of active states:
