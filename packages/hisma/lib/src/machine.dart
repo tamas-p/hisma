@@ -11,6 +11,7 @@ typedef TransitionMap<T, S> = Map<T, Edge<S>>;
 typedef MonitorGenerator = Monitor Function(
   Machine<dynamic, dynamic, dynamic>,
 );
+typedef MonitorCreators = List<MonitorGenerator>;
 
 /// State machine engine
 ///
@@ -31,7 +32,8 @@ class Machine<S, E, T> {
     this.history,
     this.data,
     bool? strict,
-  }) {
+    MonitorCreators? monitorCreators,
+  }) : _monitorCreators = monitorCreators ?? Machine.monitorCreators {
     _strict = strict ?? Machine.strict;
     _setIt();
   }
@@ -56,7 +58,7 @@ class Machine<S, E, T> {
   }
 
   void _initMonitor() {
-    for (final monitorCreator in monitorCreators) {
+    for (final monitorCreator in _monitorCreators) {
       final monitor = monitorCreator.call(this);
       _log.info(() => 'notifyCreation for $monitor');
       _monitors.add(
@@ -76,7 +78,9 @@ class Machine<S, E, T> {
   final TransitionMap<T, S> transitions;
 
   final _monitors = <MonitorAndStatus>[];
-  static List<MonitorGenerator> monitorCreators = [];
+  static MonitorCreators monitorCreators = [];
+  MonitorCreators get actualMonitorCreators => _monitorCreators;
+  final MonitorCreators _monitorCreators;
   final List<E> events;
   final HistoryLevel? history;
 
