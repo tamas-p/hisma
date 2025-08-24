@@ -57,8 +57,8 @@ class Machine<S, E, T> {
     _log.info(() => 'SM $name created.');
   }
 
-  void addMonitors(MonitorCreators mcs) {
-    for (final monitorCreator in mcs) {
+  void addMonitors(MonitorCreators monitorCreators) {
+    for (final monitorCreator in monitorCreators) {
       final monitor = monitorCreator.call(this);
       _log.info(() => 'notifyCreation for $monitor');
       _monitors.add(
