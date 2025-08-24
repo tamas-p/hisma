@@ -76,55 +76,112 @@ void main() {
         Machine.monitorCreators = [];
       },
     );
-    test(
-      'Test default ConsoleMonitor configuration (with includeInactive=true)',
-      () async {
-        final m = getMachineWithMonitor([
-          (m) => ConsoleMonitor(
-                m,
-                // includeInactive: false,
-                printer: (output) => buff.write(output),
-              ),
-        ]);
-        await runTest(
-          buff,
-          m,
-          Stage(
-            created: _created_instance,
-            started: _started_instance,
-            l0_fire: _l0_fire_instance,
-            l0l1a_fire: _l0l1a_fire_instance,
-            l0l1al2a_fire: _l0l1al2a_fire_instance,
-            l0l1al2al3a_fire: _l0l1al2al3a_fire_instance,
-          ),
-        );
-      },
-    );
 
-    test(
-      'Test ConsoleMonitor configuration with includeInactive=false',
-      () async {
-        final m = getMachineWithMonitor([
-          (m) => ConsoleMonitor(
-                m,
-                includeInactive: false,
-                printer: (output) => buff.write(output),
-              ),
-        ]);
-        await runTest(
-          buff,
-          m,
-          Stage(
-            created: _created_active_instance,
-            started: _started_active_instance,
-            l0_fire: _l0_fire_active_instance,
-            l0l1a_fire: _l0l1a_fire_active_instance,
-            l0l1al2a_fire: _l0l1al2a_fire_active_instance,
-            l0l1al2al3a_fire: _l0l1al2al3a_fire_active_instance,
-          ),
-        );
-      },
-    );
+    group('Constructor configuration', () {
+      test(
+        'Test default ConsoleMonitor configuration (with includeInactive=true)',
+        () async {
+          final m = getMachineWithMonitor([
+            (m) => ConsoleMonitor(
+                  m,
+                  // includeInactive: false,
+                  printer: (output) => buff.write(output),
+                ),
+          ]);
+          await runTest(
+            buff,
+            m,
+            Stage(
+              created: _created_instance,
+              started: _started_instance,
+              l0_fire: _l0_fire_instance,
+              l0l1a_fire: _l0l1a_fire_instance,
+              l0l1al2a_fire: _l0l1al2a_fire_instance,
+              l0l1al2al3a_fire: _l0l1al2al3a_fire_instance,
+            ),
+          );
+        },
+      );
+
+      test(
+        'Test ConsoleMonitor configuration with includeInactive=false',
+        () async {
+          final m = getMachineWithMonitor([
+            (m) => ConsoleMonitor(
+                  m,
+                  includeInactive: false,
+                  printer: (output) => buff.write(output),
+                ),
+          ]);
+          await runTest(
+            buff,
+            m,
+            Stage(
+              created: _created_active_instance,
+              started: _started_active_instance,
+              l0_fire: _l0_fire_active_instance,
+              l0l1a_fire: _l0l1a_fire_active_instance,
+              l0l1al2a_fire: _l0l1al2a_fire_active_instance,
+              l0l1al2al3a_fire: _l0l1al2al3a_fire_active_instance,
+            ),
+          );
+        },
+      );
+    });
+    group('addMonitorCreators configuration', () {
+      test(
+        'Test default ConsoleMonitor configuration (with includeInactive=true)',
+        () async {
+          final m = getMachine();
+          m.addMonitors([
+            (m) => ConsoleMonitor(
+                  m,
+                  // includeInactive: false,
+                  printer: (output) => buff.write(output),
+                ),
+          ]);
+
+          await runTest(
+            buff,
+            m,
+            Stage(
+              created: _created_instance,
+              started: _started_instance,
+              l0_fire: _l0_fire_instance,
+              l0l1a_fire: _l0l1a_fire_instance,
+              l0l1al2a_fire: _l0l1al2a_fire_instance,
+              l0l1al2al3a_fire: _l0l1al2al3a_fire_instance,
+            ),
+          );
+        },
+      );
+
+      test(
+        'Test ConsoleMonitor configuration with includeInactive=false',
+        () async {
+          final m = getMachine();
+          m.addMonitors([
+            (m) => ConsoleMonitor(
+                  m,
+                  includeInactive: false,
+                  printer: (output) => buff.write(output),
+                ),
+          ]);
+          await runTest(
+            buff,
+            m,
+            Stage(
+              created: _created_active_instance,
+              started: _started_active_instance,
+              l0_fire: _l0_fire_active_instance,
+              l0l1a_fire: _l0l1a_fire_active_instance,
+              l0l1al2a_fire: _l0l1al2a_fire_active_instance,
+              l0l1al2al3a_fire: _l0l1al2al3a_fire_active_instance,
+            ),
+          );
+        },
+      );
+    });
   });
 }
 
