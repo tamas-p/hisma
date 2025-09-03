@@ -1,3 +1,11 @@
+## 0.4.0+2
+
+ - Update a dependency to the latest release.
+
+## 0.4.0+1
+
+ - **DOCS**: overlay argument is referred now in README.md.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.

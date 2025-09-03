@@ -57,8 +57,8 @@ class Machine<S, E, T> {
     _log.info(() => 'SM $name created.');
   }
 
-  void _initMonitor() {
-    for (final monitorCreator in _monitorCreators) {
+  void addMonitors(MonitorCreators monitorCreators) {
+    for (final monitorCreator in monitorCreators) {
       final monitor = monitorCreator.call(this);
       _log.info(() => 'notifyCreation for $monitor');
       _monitors.add(
@@ -66,6 +66,8 @@ class Machine<S, E, T> {
       );
     }
   }
+
+  void _initMonitor() => addMonitors(_monitorCreators);
 
   /// State machine name.
   final String name;

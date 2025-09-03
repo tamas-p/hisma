@@ -1,3 +1,16 @@
+## 0.5.1
+
+ - **FEAT**: addMonitors() to add monitors to existing machines.
+
+## 0.5.0
+
+> Note: This release has breaking changes.
+
+ - **FEAT**: Added instance level configuration of monitorCreators.
+ - **DOCS**: added link to hisma itself on pub.dev in README.md.
+ - **BREAKING** **FEAT**: Introduced getStructureRecursive.
+ - **BREAKING** **FEAT**: ConsoleMonitor includes machine name now.
+
 ## 0.4.0
 
 > Note: This release has breaking changes.

@@ -1,3 +1,17 @@
+## 0.4.1
+
+ - **FEAT**: addMonitors() to add monitors to existing machines.
+
+## 0.4.0
+
+> Note: This release has breaking changes.
+
+ - **FIX**: machine naming to include hierarchy.
+ - **FEAT**: Added instance level configuration of monitorCreators.
+ - **DOCS**: Added section on instance level monitor configuration.
+ - **BREAKING** **FEAT**: Introduced getStructureRecursive.
+ - **BREAKING** **FEAT**: ConsoleMonitor includes machine name now.
+
 ## 0.3.0
 
 > Note: This release has breaking changes.
