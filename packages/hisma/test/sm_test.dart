@@ -118,33 +118,5 @@ void main() {
       await fireAndCheck(sm, L1E.e1, [L1S.s2]);
       await fireAndCheck(sm, L1E.e2, [L1S.s1]);
     });
-
-    test(
-      'Simple state check 2.',
-      () async {
-        _log.info('<1>');
-        await expectLater(
-          // Future<void>.delayed(const Duration(seconds: 1)),
-          Future<void>.delayed(const Duration(seconds: 5), () => 12),
-          // Future<int>.value(12),
-          // completion(equals(null)),
-          completion(equals(12)),
-          // equals(12),
-          // completion(returnsNormally),
-        );
-        _log.info('<2>');
-        expect(
-          // Future<void>.delayed(const Duration(seconds: 1)),
-          Future<void>.delayed(const Duration(seconds: 5), () => 12),
-          // Future<int>.value(12),
-          // completion(equals(null)),
-          completion(equals(12)),
-          // equals(12),
-          // completion(returnsNormally),
-        );
-        _log.info('<3>');
-      },
-      skip: true,
-    );
   });
 }

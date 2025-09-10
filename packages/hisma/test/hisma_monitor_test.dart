@@ -34,169 +34,172 @@ void main() {
         await m1.fire(E1.finish);
         checker(mn, 1, 103);
       },
-      skip: true,
     );
   });
 
-  test('Monitor compound', () async {
-    final checker = Checker();
-    Machine.monitorCreators = [
-      (machine) => TestMonitor(machine, checker),
-    ];
+  test(
+    'Monitor compound',
+    () async {
+      final checker = Checker();
+      Machine.monitorCreators = [
+        (machine) => TestMonitor(machine, checker),
+        // (m) => VisualMonitor(m),
+      ];
 
-    const l0 = 'l0';
-    const l1 = 'l1';
-    const l2 = 'l2';
-    const l3 = 'l3';
+      const l0 = 'l0';
+      const l1 = 'l1';
+      const l2 = 'l2';
+      const l3 = 'l3';
 
-    final m = createMachine(
-      name: l0,
-      child: createMachine(
-        name: l1,
+      final m = createMachine(
+        name: l0,
         child: createMachine(
-          name: l2,
+          name: l1,
           child: createMachine(
-            name: l3,
+            name: l2,
+            child: createMachine(
+              name: l3,
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    checker(l0, 1, null);
-    checker(l1, 1, null);
-    checker(l2, 1, null);
-    checker(l3, 1, null);
+      checker(l0, 1, null);
+      checker(l1, 1, null);
+      checker(l2, 1, null);
+      checker(l3, 1, null);
 
-    await m.start();
+      await m.start();
 
-    // Only to ensure that the event loop processed the ongoing notifications.
-    // This is needed since Machine do not wait the notifyStateChange.
-    await Future<void>.delayed(Duration.zero);
+      // Only to ensure that the event loop processed the ongoing notifications.
+      // This is needed since Machine do not wait the notifyStateChange.
+      // await Future<void>.delayed(Duration.zero);
 
-    checker(l0, 1, 1);
-    checker(l1, 1, null);
-    checker(l2, 1, null);
-    checker(l3, 1, null);
+      checker(l0, 1, 1);
+      checker(l1, 1, null);
+      checker(l2, 1, null);
+      checker(l3, 1, null);
 
-    await m.fire(E.deep);
-    checker(l0, 1, 2);
-    checker(l1, 1, 1);
-    checker(l2, 1, 1);
-    checker(l3, 1, 1);
+      await m.fire(E.deep);
+      checker(l0, 1, 5);
+      checker(l1, 1, 3);
+      checker(l2, 1, 2);
+      checker(l3, 1, 1);
 
-    await m.find<S, E, T>(l3).fire(E.next);
-    checker(l0, 1, 3);
-    checker(l1, 1, 2);
-    checker(l2, 1, 2);
-    checker(l3, 1, 2);
+      await m.find<S, E, T>(l3).fire(E.next);
+      checker(l0, 1, 6);
+      checker(l1, 1, 4);
+      checker(l2, 1, 3);
+      checker(l3, 1, 2);
 
-    await m.find<S, E, T>(l2).fire(E.next);
-    checker(l0, 1, 4);
-    checker(l1, 1, 3);
-    checker(l2, 1, 3);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l2).fire(E.next);
+      checker(l0, 1, 8);
+      checker(l1, 1, 6);
+      checker(l2, 1, 5);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l2).fire(E.next);
-    checker(l0, 1, 5);
-    checker(l1, 1, 4);
-    checker(l2, 1, 4);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l2).fire(E.next);
+      checker(l0, 1, 9);
+      checker(l1, 1, 7);
+      checker(l2, 1, 6);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    checker(l0, 1, 6);
-    checker(l1, 1, 5);
-    checker(l2, 1, 5);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.next);
+      checker(l0, 1, 11);
+      checker(l1, 1, 9);
+      checker(l2, 1, 7);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    checker(l0, 1, 7);
-    checker(l1, 1, 6);
-    checker(l2, 1, 5);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.next);
+      checker(l0, 1, 12);
+      checker(l1, 1, 10);
+      checker(l2, 1, 7);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.exit);
-    checker(l0, 1, 8);
-    checker(l1, 1, 8); // S.a -> S.b, S.b -> S.c
-    checker(l2, 1, 6); // S.ep4 -> S.ex
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.exit);
+      checker(l0, 1, 15);
+      checker(l1, 1, 13); // S.a -> S.b, S.b -> S.c
+      checker(l2, 1, 8); // S.ep4 -> S.ex
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    checker(l0, 1, 9);
-    checker(l1, 1, 9);
-    checker(l2, 1, 6);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.next);
+      checker(l0, 1, 16);
+      checker(l1, 1, 14);
+      checker(l2, 1, 8);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    checker(l0, 1, 10);
-    checker(l1, 1, 10);
-    checker(l2, 1, 7);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.next);
+      checker(l0, 1, 18);
+      checker(l1, 1, 16);
+      checker(l2, 1, 9);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    expect(m.find<S, E, T>(l1).activeStateId, equals(S.c));
-    checker(l0, 1, 11);
-    checker(l1, 1, 11);
-    checker(l2, 1, 8);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.next);
+      expect(m.find<S, E, T>(l1).activeStateId, equals(S.c));
+      checker(l0, 1, 20);
+      checker(l1, 1, 18);
+      checker(l2, 1, 10);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    expect(m.find<S, E, T>(l1).activeStateId, equals(S.a));
-    checker(l0, 1, 12);
-    checker(l1, 1, 12);
-    checker(l2, 1, 8);
-    checker(l3, 1, 3);
+      await m.find<S, E, T>(l1).fire(E.next);
+      expect(m.find<S, E, T>(l1).activeStateId, equals(S.a));
+      checker(l0, 1, 21);
+      checker(l1, 1, 19);
+      checker(l2, 1, 10);
+      checker(l3, 1, 3);
 
-    await m.find<S, E, T>(l1).fire(E.inside);
-    expect(m.find<S, E, T>(l1).activeStateId, equals(S.b));
-    checker(l0, 1, 13);
-    checker(l1, 1, 13);
-    checker(l2, 1, 9);
-    checker(l3, 1, 4);
+      await m.find<S, E, T>(l1).fire(E.inside);
+      expect(m.find<S, E, T>(l1).activeStateId, equals(S.b));
+      checker(l0, 1, 24);
+      checker(l1, 1, 22);
+      checker(l2, 1, 12);
+      checker(l3, 1, 4);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    expect(m.find<S, E, T>(l1).activeStateId, equals(S.c));
-    checker(l0, 1, 14);
-    checker(l1, 1, 14);
-    checker(l2, 1, 10);
-    checker(l3, 1, 5);
+      await m.find<S, E, T>(l1).fire(E.next);
+      expect(m.find<S, E, T>(l1).activeStateId, equals(S.c));
+      checker(l0, 1, 27);
+      checker(l1, 1, 25);
+      checker(l2, 1, 14);
+      checker(l3, 1, 5);
 
-    await m.find<S, E, T>(l1).fire(E.next);
-    expect(m.find<S, E, T>(l1).activeStateId, equals(S.a));
-    checker(l0, 1, 15);
-    checker(l1, 1, 15);
-    checker(l2, 1, 10);
-    checker(l3, 1, 5);
+      await m.find<S, E, T>(l1).fire(E.next);
+      expect(m.find<S, E, T>(l1).activeStateId, equals(S.a));
+      checker(l0, 1, 28);
+      checker(l1, 1, 26);
+      checker(l2, 1, 14);
+      checker(l3, 1, 5);
 
-    await m.find<S, E, T>(l1).fire(E.finish);
-    expect(m.find<S, E, T>(l0).activeStateId, equals(S.b));
-    expect(m.find<S, E, T>(l1).activeStateId, equals(S.b));
-    expect(m.find<S, E, T>(l2).activeStateId, equals(null));
-    expect(m.find<S, E, T>(l3).activeStateId, equals(null));
-    checker(l0, 1, 16);
-    checker(l1, 1, 16);
-    checker(l2, 1, 11);
-    checker(l3, 1, 5);
+      await m.find<S, E, T>(l1).fire(E.finish);
+      expect(m.find<S, E, T>(l0).activeStateId, equals(S.b));
+      expect(m.find<S, E, T>(l1).activeStateId, equals(S.b));
+      expect(m.find<S, E, T>(l2).activeStateId, equals(null));
+      expect(m.find<S, E, T>(l3).activeStateId, equals(null));
+      checker(l0, 1, 30);
+      checker(l1, 1, 28);
+      checker(l2, 1, 15);
+      checker(l3, 1, 5);
 
-    await m.find<S, E, T>(l0).fire(E.next);
-    expect(m.find<S, E, T>(l0).activeStateId, equals(S.c));
-    expect(m.find<S, E, T>(l1).activeStateId, equals(null));
-    expect(m.find<S, E, T>(l2).activeStateId, equals(null));
-    expect(m.find<S, E, T>(l3).activeStateId, equals(null));
-    checker(l0, 1, 17);
-    checker(l1, 1, 17);
-    checker(l2, 1, 11);
-    checker(l3, 1, 5);
+      await m.find<S, E, T>(l0).fire(E.next);
+      expect(m.find<S, E, T>(l0).activeStateId, equals(S.c));
+      expect(m.find<S, E, T>(l1).activeStateId, equals(null));
+      expect(m.find<S, E, T>(l2).activeStateId, equals(null));
+      expect(m.find<S, E, T>(l3).activeStateId, equals(null));
+      checker(l0, 1, 32);
+      checker(l1, 1, 29);
+      checker(l2, 1, 15);
+      checker(l3, 1, 5);
 
-    await m.find<S, E, T>(l0).fire(E.done);
-    expect(m.find<S, E, T>(l0).activeStateId, equals(null));
-    expect(m.find<S, E, T>(l1).activeStateId, equals(null));
-    expect(m.find<S, E, T>(l2).activeStateId, equals(null));
-    expect(m.find<S, E, T>(l3).activeStateId, equals(null));
-    checker(l0, 1, 18);
-    checker(l1, 1, 17);
-    checker(l2, 1, 11);
-    checker(l3, 1, 5);
-  });
+      await m.find<S, E, T>(l0).fire(E.done);
+      expect(m.find<S, E, T>(l0).activeStateId, equals(null));
+      expect(m.find<S, E, T>(l1).activeStateId, equals(null));
+      expect(m.find<S, E, T>(l2).activeStateId, equals(null));
+      expect(m.find<S, E, T>(l3).activeStateId, equals(null));
+      checker(l0, 1, 33);
+      checker(l1, 1, 29);
+      checker(l2, 1, 15);
+      checker(l3, 1, 5);
+    },
+  );
 }
 
 void initLogging() {

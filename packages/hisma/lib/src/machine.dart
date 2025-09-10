@@ -214,7 +214,9 @@ class Machine<S, E, T> {
     if (changed && arg is! _Internal) {
       // Notify parent that active state of this machine was changed.
       _log.fine(() => '$name call _processMachineNotification');
-      await parent?._processMachineNotification();
+      // TODO: eliminate _Internal as we send notification for internally
+      // triggered fire as well.
+      // await parent?._processMachineNotification();
     }
   }
 
@@ -505,6 +507,7 @@ class Machine<S, E, T> {
     await _exitState(arg: arg);
     _activeStateId = null;
     await _notifyMonitors();
+    await parent?._processMachineNotification();
   }
 
   /// Enters state machine to the given state, executes onEntry() and
@@ -534,14 +537,13 @@ class Machine<S, E, T> {
     if (state is! State<E, T, S>) return;
 
     _activeStateId = stateId;
+    // We notify monitors and parent right after the active state changed.
+    await _notifyMonitors();
+    await parent?._processMachineNotification();
+
     _historyStateId = _activeStateId;
 
     _log.fine(() => 'fire arg: $arg');
-    try {
-      await state.onEntry?.action.call(this, arg);
-    } on Exception catch (e) {
-      _log.severe(() => 'Exception during onEntry: $e');
-    }
     await _enterRegions(
       trigger: trigger,
       state: state,
@@ -549,8 +551,18 @@ class Machine<S, E, T> {
       historyFlowDown: historyFlowDown,
     );
 
+    // onEntry shall be called as the last step after entered to regions as
+    // that is part of the process of entering into a state. If onEntry would
+    // be called before entering to regions it could happen that onEntry
+    // changes state of the machine but this states regions would be still
+    // initialized after the machine left this state resulting an erroneous
+    // situation that an inactive state will have an active chid machine.
+    try {
+      await state.onEntry?.action.call(this, arg);
+    } on Exception catch (e) {
+      _log.severe(() => 'Exception during onEntry: $e');
+    }
     _log.fine(() => '< $name  _enterState');
-    await _notifyMonitors();
   }
 
   /// For each region of [state] the state machine of a specific region is
@@ -664,6 +676,7 @@ class Machine<S, E, T> {
     }
   }
 
+  /// Called by child machine to notify parent about its state change.
   Future<void> _processMachineNotification() async {
     _log.fine(() => '$name  call _processMachineNotification');
     await _notifyMonitors();
