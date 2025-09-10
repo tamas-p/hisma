@@ -121,6 +121,10 @@ class Machine<S, E, T> {
       await ms.completed;
       await ms.monitor.notifyStateChange();
     }
+    // Besides notifying the monitors of this state machine we also notify the
+    // parent machine about this state change as this machine is part of the
+    // compound state of the parent machine.
+    await parent?._processMachineNotification();
   }
 
   //----------------------------------------------------------------------------
@@ -216,7 +220,6 @@ class Machine<S, E, T> {
       _log.fine(() => '$name call _processMachineNotification');
       // TODO: eliminate _Internal as we send notification for internally
       // triggered fire as well.
-      // await parent?._processMachineNotification();
     }
   }
 
@@ -507,7 +510,6 @@ class Machine<S, E, T> {
     await _exitState(arg: arg);
     _activeStateId = null;
     await _notifyMonitors();
-    await parent?._processMachineNotification();
   }
 
   /// Enters state machine to the given state, executes onEntry() and
@@ -537,9 +539,8 @@ class Machine<S, E, T> {
     if (state is! State<E, T, S>) return;
 
     _activeStateId = stateId;
-    // We notify monitors and parent right after the active state changed.
+    // We notify monitors (and parent) right after the active state changed.
     await _notifyMonitors();
-    await parent?._processMachineNotification();
 
     _historyStateId = _activeStateId;
 
@@ -680,7 +681,6 @@ class Machine<S, E, T> {
   Future<void> _processMachineNotification() async {
     _log.fine(() => '$name  call _processMachineNotification');
     await _notifyMonitors();
-    await parent?._processMachineNotification();
   }
 
   /// Machine operations can throw [AssertionError] exceptions as a result
