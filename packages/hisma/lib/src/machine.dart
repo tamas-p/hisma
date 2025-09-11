@@ -203,51 +203,31 @@ class Machine<S, E, T> {
     _log.info(
       () =>
           'fire start: machine: $name, state: $_activeStateId, event: $eventId, '
-          'arg: $arg, external: ${arg is _Internal}',
+          'arg: $arg',
     );
-    final changed = await _fire(eventId, arg: arg is _Internal ? arg.arg : arg);
-    _log.info(
-      () => 'fire stop: machine: $name, event: $eventId, arg: $arg, '
-          'external: ${arg is _Internal}',
+    _cAssert(_activeStateId != null, 'Machine "$name" has not been started.');
+    if (_activeStateId == null) return;
+
+    final transitionWithId = await _getTransitionByEvent(eventId, arg);
+    await _executeTransition(
+      transitionWithId: transitionWithId,
+      eventId: eventId,
+      arg: arg,
     );
-    _log.fine(
-      () => 'Changed: $changed '
-          'monitors: $_monitors '
-          'external: ${arg is _Internal}',
-    );
-    if (changed && arg is! _Internal) {
-      // Notify parent that active state of this machine was changed.
-      _log.fine(() => '$name call _processMachineNotification');
-      // TODO: eliminate _Internal as we send notification for internally
-      // triggered fire as well.
-    }
+
+    _log.info(() => 'fire done: machine: $name, event: $eventId, arg: $arg, ');
   }
 
   /// Holds data arrived with [fire].
   /// TODO: Is it the best way to access data from the machine?
   dynamic data;
 
-  /// Manages potential state transition based on the eventId parameter.
-  /// It returns true if state change occurred, false otherwise.
-  Future<bool> _fire(E eventId, {required dynamic arg}) async {
-    _log.fine('START _internalFire');
-    _cAssert(_activeStateId != null, 'Machine "$name" has not been started.');
-    if (_activeStateId == null) return false;
-
-    final transitionWithId = await _getTransitionByEvent(eventId, arg);
-    return _executeTransition(
-      transitionWithId: transitionWithId,
-      eventId: eventId,
-      arg: arg,
-    );
-  }
-
-  Future<bool> _executeTransition({
+  Future<void> _executeTransition({
     required _TransitionWithId<T, S>? transitionWithId,
     E? eventId,
     required dynamic arg,
   }) async {
-    if (transitionWithId == null) return false;
+    if (transitionWithId == null) return;
 
     await transitionWithId.edge.onAction?.action.call(this, arg);
 
@@ -257,7 +237,7 @@ class Machine<S, E, T> {
     if (eventId != null && _activeStateId == null) {
       _log.fine('Another asynchronous operation stopped our machine, '
           'we stop the transition.');
-      return false;
+      return;
     }
 
     if (transitionWithId.edge is Transition<S>) {
@@ -267,7 +247,7 @@ class Machine<S, E, T> {
         targetState != null,
         'Target state is null identified by "${transition.to}"',
       );
-      if (targetState == null) return false;
+      if (targetState == null) return;
 
       // From here we know active state will change.
 
@@ -305,18 +285,14 @@ class Machine<S, E, T> {
           'ExitState or State but it is ${targetState.runtimeType}',
         );
       }
-
       // If we get to this point the activeState has changed.
-      return true;
     } else if (transitionWithId.edge is InternalTransition) {
       // Since it is an internal transition the active state does not change.
-      return false;
     } else {
       assert(
         false,
         '${transitionWithId.edge} is neither Transition nor TransitionInt',
       );
-      return false;
     }
   }
 
@@ -673,7 +649,7 @@ class Machine<S, E, T> {
             '$name _processNotification: Notification event=${notification.event} '
             'arg=${notification.arg}',
       );
-      await fire(notification.event, arg: _Internal(notification.arg));
+      await fire(notification.event, arg: notification.arg);
     }
   }
 
@@ -729,17 +705,6 @@ class MonitorAndStatus {
 
   Monitor monitor;
   Future<void> completed;
-}
-
-/// Indicates if caller was internal. This saves us from having an only
-/// internally used bool argument on the public API.
-/// Internal fire invocations from Machine will use it
-/// to avoid notifying parent state machines about a state change as
-/// the original external fire will do that and this way we avoid sending
-/// multiple notifications for parent machine about a state change.
-class _Internal {
-  _Internal(this.arg);
-  dynamic arg;
 }
 
 /// Indicates that history flow down is needed. This saves us from having an
