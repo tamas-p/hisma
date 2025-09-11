@@ -221,8 +221,6 @@ Future<void> runTest(StringBuffer buff, Machine<S, E, T> m, Stage stage) async {
 
   await m.find<S, E, T>('l0.l1a.l2a.l3a').fire(E.forward);
   expect(buff.takeString(), equals(stage.l0l1al2al3a_fire));
-  print(buff.takeString());
-  return;
 }
 
 enum S { a, b }
