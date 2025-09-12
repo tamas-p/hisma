@@ -1,3 +1,9 @@
+## 0.5.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **REFACTOR**: monitor notification for all state entry.
+
 ## 0.4.1
 
  - **FEAT**: addMonitors() to add monitors to existing machines.
