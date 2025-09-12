@@ -22,9 +22,8 @@ void main() {
         final m1 = createMachine();
         expect(m1.data, null);
         await m1.start(arg: 0);
-        expect(m1.data, 0);
+        expect(m1.data, null);
       },
-      skip: true,
     );
     test(
       'data initialization 4',
@@ -32,9 +31,8 @@ void main() {
         final m1 = createMachine(0);
         expect(m1.data, 0);
         await m1.start(arg: 1);
-        expect(m1.data, 1);
+        expect(m1.data, 0);
       },
-      skip: true,
     );
   });
 

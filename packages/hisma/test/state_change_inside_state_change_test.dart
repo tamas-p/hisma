@@ -34,7 +34,6 @@ Future<void> main() async {
         _log.finest('main finished.');
       });
     },
-    skip: true,
   );
 
   test('B1', () async {
