@@ -44,6 +44,8 @@ This will result that all state machine creation and active state changes will b
 
 ### Instance level configuration
 
+#### Instance level configuration during machine construction
+
 Configuring monitors also possible at instance level by declaring them in the machine constructor:
 
 ```dart
@@ -54,6 +56,19 @@ Machine<S, E, T> createColorMachine() => Machine<S, E, T>(
 ...
 ```
 In this case only this machine instance will be monitored. 
+
+#### Instance level configuration of an already constructed machine
+
+You can add monitors to an already existing machine using the `addMonitors` method:
+
+```dart
+final colorMachine = createColorMachine();
+colorMachine.addMonitors([
+  (m) => ConsoleMonitor(m),
+  (m) => VisualMonitor(m),
+]);
+```
+With this approach, just like in the previous case with configuring monitors in the machine constructor, only this machine instance will be monitored.
 
 ### Printer
 
