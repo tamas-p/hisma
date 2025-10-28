@@ -139,6 +139,8 @@ abstract class ImperativeCreator<E, R> extends Creator<E> {
   Future<R?> open(
     BuildContext? context,
     NavigationMachine<dynamic, E, dynamic> machine,
+    E fireEvent,
+    dynamic fireArg,
   );
   void close([R? result]);
 }
@@ -154,6 +156,8 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     required bool rootNavigator,
     required Close<R> close,
     required NavigationMachine<dynamic, E, dynamic> machine,
+    required E fireEvent,
+    required dynamic fireArg,
   }) present;
   bool rootNavigator;
 
@@ -177,6 +181,8 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   Future<R?> open(
     BuildContext? context,
     NavigationMachine<dynamic, E, dynamic> machine2,
+    E fireEvent,
+    dynamic fireArg,
   ) async {
     assert(
       !_opened,
@@ -194,6 +200,8 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
       rootNavigator: rootNavigator,
       close: close,
       machine: machine2,
+      fireEvent: fireEvent,
+      fireArg: fireArg,
     );
     _opened = false;
     return result;
@@ -265,6 +273,8 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
   Future<SnackBarClosedReason?> open(
     BuildContext? context,
     NavigationMachine<dynamic, E, dynamic> machine,
+    E fireEvent,
+    dynamic fireArg,
   ) async {
     assert(
       !_opened,

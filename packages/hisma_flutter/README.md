@@ -330,6 +330,8 @@ Future<bool?> b1({
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDialog<bool>(
       useRootNavigator: rootNavigator,
@@ -359,6 +361,8 @@ Future<DateTime?> c1({
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDatePicker(
       useRootNavigator: rootNavigator,
@@ -366,9 +370,11 @@ Future<DateTime?> c1({
       firstDate: DateTime(2021),
       initialDate: DateTime.now(),
       currentDate: DateTime.now(),
-      lastDate: DateTime(2118),
+      lastDate: DateTime(2028),
     );
 ```
+
+> **_NOTE:_** hisma_flutter will call these functions with all the useful arguments that might be required to build your pageless UI component (typically a dialog) including the corresponding machine and the event that triggered showing this UI component, together with the argument that was given during firing this event.
 
 and finally we extend our ui to state mapping:
 

@@ -25,6 +25,8 @@ final l2aRouterProvider = Provider(
           required bool rootNavigator,
           required Close<DateTime> close,
           required NavigationMachine<dynamic, dynamic, dynamic> machine,
+          required E fireEvent,
+          required dynamic fireArg,
         }) =>
             generateDialog<E, void>(
           context: context,

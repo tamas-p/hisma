@@ -79,6 +79,8 @@ Future<Returned?> dialog({
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDialog<Returned>(
       useRootNavigator: rootNavigator,
@@ -86,7 +88,16 @@ Future<Returned?> dialog({
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Simple AlertDialog'),
-          content: const Text('Hello'),
+          content: IntrinsicHeight(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Hello'),
+                Text('Fire event: $fireEvent'),
+                Text('Fire arg: $fireArg'),
+              ],
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
@@ -116,6 +127,8 @@ Future<DateTime?> datePicker({
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDatePicker(
       useRootNavigator: rootNavigator,

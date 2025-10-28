@@ -12,13 +12,15 @@ final registrationRouterGenerator = HismaRouterGenerator<SRM, ERM>(
         MaterialPageCreator<ERM, void>(widget: const RegistrationScreen()),
     SRM.failed: PagelessCreator<ERM, void>(
       event: ERM.ok,
-      present: ({
+      present: <E>({
         required BuildContext context,
         required bool rootNavigator,
         required Close<DateTime> close,
         required NavigationMachine<dynamic, dynamic, dynamic> machine,
+        required E fireEvent,
+        required dynamic fireArg,
       }) =>
-          showDialog(
+          showDialog<E>(
         useRootNavigator: rootNavigator,
         context: context,
         builder: (BuildContext context) {

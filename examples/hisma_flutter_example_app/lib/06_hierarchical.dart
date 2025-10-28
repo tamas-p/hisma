@@ -195,6 +195,8 @@ Future<bool?> b1({
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDialog<bool>(
       useRootNavigator: rootNavigator,
@@ -241,6 +243,8 @@ Future<DateTime?> c1({
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDatePicker(
       useRootNavigator: rootNavigator,

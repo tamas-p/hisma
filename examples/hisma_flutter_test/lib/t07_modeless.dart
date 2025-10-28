@@ -143,6 +143,8 @@ HismaRouterGenerator<S, E> createGenerator({
             required rootNavigator,
             required close,
             required machine,
+            required E fireEvent,
+            required dynamic fireArg,
           }) =>
               showModalBottomSheet<int>(
             context: context,

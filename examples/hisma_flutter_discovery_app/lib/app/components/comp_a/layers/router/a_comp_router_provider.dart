@@ -26,6 +26,8 @@ final aRouterProvider = Provider(
           required bool rootNavigator,
           required Close<DateTime> close,
           required NavigationMachine<dynamic, dynamic, dynamic> machine,
+          required E fireEvent,
+          required dynamic fireArg,
         }) =>
             generateDialog<void, E>(
           context: context,

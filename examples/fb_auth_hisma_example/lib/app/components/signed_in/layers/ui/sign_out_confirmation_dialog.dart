@@ -4,11 +4,13 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 
 import '../../../../layers/machine/auth_machine.dart';
 
-Future<void> signOutConfirmationDialog({
+Future<void> signOutConfirmationDialog<E>({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) {
   final signedInMachine =
       authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);

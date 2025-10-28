@@ -105,11 +105,13 @@ class _MyDialogState extends State<MyDialog> {
   }
 }
 
-Future<void> showTestDialog({
+Future<void> showTestDialog<E>({
   required BuildContext context,
   required bool rootNavigator,
   required Close<void> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDialog<void>(
       context: context,
@@ -136,11 +138,13 @@ Future<void> showTestDialogMini(
       },
     );
 
-Future<DateTime?> showTestDatePicker({
+Future<DateTime?> showTestDatePicker<E>({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     showDatePicker(
       useRootNavigator: rootNavigator,
@@ -279,6 +283,9 @@ class SnackbarPagelessRouteManager<S, E, T>
   }
 }
 */
+
+String getArgString(dynamic arg) => 'Arg=$arg';
+
 List<Widget> createButtonsFromState<S, E, T>(
   NavigationMachine<S, E, T> machine,
 ) {
@@ -296,7 +303,7 @@ List<Widget> createButtonsFromState<S, E, T>(
             );
             await machine.fire(
               eventId,
-              // arg: context,
+              arg: getArgString(eventId),
             );
           },
           child: Text(getButtonTitle(machine, eventId)),

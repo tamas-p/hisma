@@ -5,11 +5,13 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
-Future<void> failedEmailVerifiedDialog({
+Future<void> failedEmailVerifiedDialog<E>({
   required BuildContext context,
   required bool rootNavigator,
   required Close<DateTime> close,
   required NavigationMachine<dynamic, dynamic, dynamic> machine,
+  required E fireEvent,
+  required dynamic fireArg,
 }) =>
     createDialog(
       useRootNavigator: rootNavigator,
