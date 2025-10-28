@@ -1,3 +1,9 @@
+## 0.5.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: provide fire event and argument to presenter.
+
 ## 0.4.0+3
 
  - Update a dependency to the latest release.

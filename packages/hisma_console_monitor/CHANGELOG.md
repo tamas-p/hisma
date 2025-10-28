@@ -1,3 +1,7 @@
+## 0.5.0+1
+
+ - **DOCS**: added description of addMonitors to README.md.
+
 ## 0.5.0
 
 > Note: This release has breaking changes.

@@ -10,7 +10,7 @@ environment:
 dependencies:
   hisma: ^0.6.0
 dev_dependencies:  
-  hisma_console_monitor: ^0.5.0
+  hisma_console_monitor: ^0.5.0+1
   hisma_visual_monitor: ^0.4.0+3
   lint: ^2.0.1
   test: ^1.16.0
