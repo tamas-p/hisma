@@ -322,59 +322,62 @@ As we see we introduced the new b1 and c1 states, added a new `show` event that 
 
 Action objects are added to `b` and `c` states as `onEntry` actions. This is to print out the argument passed as return values from the AboutDialog or the DatePicker.
 
-Our screens remain the same as before. We add two new functions that are responsible to create the two dialogs, first the AboutDialog:
+Our screens remain the same as before. We create two new classes implementing the [Presenter] abstract class. Their present methods are responsible to create the two dialogs, first the AboutDialog:
 
 ```dart
-Future<bool?> b1({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDialog<bool>(
-      useRootNavigator: rootNavigator,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Simple AlertDialog'),
-          content: const Text('Hello'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
-      },
-    );
+class PresentB1 implements Presenter<bool> {
+  @override
+  Future<bool?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<bool> close,
+    required dynamic arg,
+  }) =>
+      showDialog<bool>(
+        useRootNavigator: rootNavigator,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Simple AlertDialog'),
+            content: const Text('Hello'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+}
 ```
 
 then the DatePicker:
 
 ```dart
-Future<DateTime?> c1({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDatePicker(
-      useRootNavigator: rootNavigator,
-      context: context,
-      firstDate: DateTime(2021),
-      initialDate: DateTime.now(),
-      currentDate: DateTime.now(),
-      lastDate: DateTime(2028),
-    );
+class PresentC1 implements Presenter<DateTime> {
+  @override
+  Future<DateTime?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic arg,
+  }) =>
+      showDatePicker(
+        useRootNavigator: rootNavigator,
+        context: context,
+        firstDate: DateTime(2021),
+        initialDate: DateTime.now(),
+        currentDate: DateTime.now(),
+        lastDate: DateTime(2028),
+      );
+}
 ```
 
-> **_NOTE:_** hisma_flutter will call these functions with all the useful arguments that might be required to build your pageless UI component (typically a dialog) including the corresponding machine and the event that triggered showing this UI component, together with the argument that was given during firing this event.
+> **_NOTE:_** hisma_flutter will call the `present` methods with all the useful arguments that might be required to build your pageless UI component (typically a dialog) including the argument that was given during firing the event that led to
+this state.
 
 and finally we extend our ui to state mapping:
 
@@ -388,7 +391,7 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       event: E.backward,
     ),
     S.b1: PagelessCreator<E, void>(
-      present: b1,
+      presenter: PresentB1(),
       rootNavigator: true,
       event: E.backward,
     ),
@@ -398,7 +401,7 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       overlay: true,
     ),
     S.c1: PagelessCreator(
-      present: c1,
+      presenter: PresentC1(),
       rootNavigator: true,
       event: E.backward,
     ),
@@ -406,7 +409,8 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
 );
 ```
 
-We are using a new creator, the [PagelessCreator]. It expects a *present* function and an *event* that will be fired in case of the pageless route is popped alongside with the return value of the function as the *arg* argument. 
+We are using a new creator, the [PagelessCreator]. It expects the [Presenter] object and an *event* that will be fired in case of the pageless route is popped alongside with the return value of the method as the *arg* argument. The [rootNavigator] argument indicates to hisma_flutter if the present method will use
+the root navigator (this allows the framework to properly close the pageless component if needed). 
 
 Run the app and if you also use `visma` you will see something similar:
 
