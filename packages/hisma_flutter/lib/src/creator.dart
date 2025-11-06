@@ -253,12 +253,14 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
 }
 */
 
+/// See [Presenter] for more info.
 abstract class SnackBarPresenter {
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> present(
-    BuildContext? context,
-    ScaffoldMessengerState scaffoldMessengerState,
-    Close<SnackBarClosedReason> close,
-  );
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> present({
+    required BuildContext? context,
+    required ScaffoldMessengerState scaffoldMessengerState,
+    required Close<SnackBarClosedReason> close,
+    required dynamic arg,
+  });
 }
 
 /// Experimental class to manage the modeless SnackBar created by invoking
@@ -290,8 +292,12 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
     _opened = true;
     assert(context != null);
     _scaffoldMessengerState = ScaffoldMessenger.of(context!);
-    final scaffoldFeatureController =
-        presenter.present(context, _scaffoldMessengerState, close);
+    final scaffoldFeatureController = presenter.present(
+      context: context,
+      scaffoldMessengerState: _scaffoldMessengerState,
+      close: close,
+      arg: arg,
+    );
     final reason = await scaffoldFeatureController.closed;
     _opened = false;
     return reason;

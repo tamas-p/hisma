@@ -231,11 +231,12 @@ class PresentModalBottomSheet implements Presenter<int> {
 
 class SnackBarPresenterTest implements SnackBarPresenter {
   @override
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> present(
-    BuildContext? context,
-    ScaffoldMessengerState scaffoldMessengerState,
-    Close<SnackBarClosedReason> close,
-  ) =>
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> present({
+    required BuildContext? context,
+    required ScaffoldMessengerState scaffoldMessengerState,
+    required Close<SnackBarClosedReason> close,
+    required dynamic arg,
+  }) =>
       scaffoldMessengerState.showSnackBar(
         SnackBar(
           content: const Text(snackBarText),
