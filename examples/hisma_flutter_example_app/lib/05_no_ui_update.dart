@@ -131,7 +131,7 @@ class PresentB1 implements Presenter<bool> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<bool> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showDialog<bool>(
         context: context,
@@ -177,7 +177,7 @@ class PresentC1 implements Presenter<DateTime> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<DateTime> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showDatePicker(
         useRootNavigator: rootNavigator,

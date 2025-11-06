@@ -203,7 +203,7 @@ class PresentModalBottomSheet implements Presenter<int> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<int> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showModalBottomSheet<int>(
         context: context,

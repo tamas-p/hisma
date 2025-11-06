@@ -98,7 +98,7 @@ class PresentDialogLogin2 implements Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<void> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       generateDialog<E, void>(
         context: context,
@@ -114,7 +114,7 @@ class PresentDatePicker implements Presenter<DateTime> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<DateTime> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       generateDatePicker<E>(
         context: context,
@@ -128,7 +128,7 @@ class PresentDialogLogin implements Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<void> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       generateDialog<E, void>(
         context: context,

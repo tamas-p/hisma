@@ -30,7 +30,7 @@ class PresentDialogTest1 implements Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<void> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       generateDialog<void, E>(
         context: context,

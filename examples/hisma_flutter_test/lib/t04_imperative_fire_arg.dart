@@ -124,7 +124,7 @@ class PresentDialog implements Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<DateTime> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showDialog<void>(
         useRootNavigator: rootNavigator,
@@ -137,7 +137,7 @@ class PresentDialog implements Presenter<void> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Hello'),
-                  Text('Fire arg: $fireArg'),
+                  Text('Fire arg: $arg'),
                 ],
               ),
             ),

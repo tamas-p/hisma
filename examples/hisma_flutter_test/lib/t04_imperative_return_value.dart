@@ -83,7 +83,7 @@ class PresentDialog implements Presenter<Returned?> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<Returned?> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showDialog<Returned>(
         useRootNavigator: rootNavigator,
@@ -96,7 +96,7 @@ class PresentDialog implements Presenter<Returned?> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Hello'),
-                  Text('Fire arg: $fireArg'),
+                  Text('Fire arg: $arg'),
                 ],
               ),
             ),
@@ -131,7 +131,7 @@ class PresentDatePicker implements Presenter<DateTime?> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<DateTime> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showDatePicker(
         useRootNavigator: rootNavigator,

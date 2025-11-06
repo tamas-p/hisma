@@ -10,7 +10,7 @@ class PresentSignOutConfirmationDialog implements Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<void> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) {
     final signedInMachine =
         authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);

@@ -24,7 +24,7 @@ class PresentDialog extends Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<void> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       showDialog<void>(
         useRootNavigator: rootNavigator,

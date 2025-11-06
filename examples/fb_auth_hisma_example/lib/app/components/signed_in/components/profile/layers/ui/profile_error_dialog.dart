@@ -11,7 +11,7 @@ class PresentProfileErrorDialog implements Presenter<void> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<DateTime> close,
-    required dynamic fireArg,
+    required dynamic arg,
   }) =>
       createDialog(
         context: context,

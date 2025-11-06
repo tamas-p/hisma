@@ -19,7 +19,7 @@ abstract class PageCreator<E, R> {
 class MaterialPageCreator<E, R>
 class CupertinoPageCreator<E, R>
 abstract class ImperativeCreator<E, R> {
-  Future<R?> open(BuildContext context, dynamic fireArg)
+  Future<R?> open(BuildContext context, dynamic arg)
   void close([R? value])
 }
 class PagelessCreator<E, R> {
@@ -142,7 +142,7 @@ typedef Close<T> = void Function([T? result]);
 abstract class ImperativeCreator<E, R> extends Creator<E> {
   ImperativeCreator({super.event});
   bool _opened = false;
-  Future<R?> open(BuildContext? context, dynamic fireArg);
+  Future<R?> open(BuildContext? context, dynamic arg);
   void close([R? result]);
 }
 
@@ -156,7 +156,7 @@ abstract class Presenter<R> {
     required BuildContext context,
     required bool rootNavigator,
     required Close<R> close,
-    required dynamic fireArg,
+    required dynamic arg,
   });
 }
 
@@ -187,7 +187,7 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   @override
   Future<R?> open(
     BuildContext? context,
-    dynamic fireArg,
+    dynamic arg,
   ) async {
     assert(
       !_opened,
@@ -204,7 +204,7 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
       context: context ?? _navigatorState.context,
       rootNavigator: rootNavigator,
       close: close,
-      fireArg: fireArg,
+      arg: arg,
     );
     _opened = false;
     return result;
@@ -280,7 +280,7 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
   @override
   Future<SnackBarClosedReason?> open(
     BuildContext? context,
-    dynamic fireArg,
+    dynamic arg,
   ) async {
     assert(
       !_opened,
