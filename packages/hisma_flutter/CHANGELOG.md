@@ -1,3 +1,12 @@
+## 0.6.0
+
+> Note: This release has breaking changes.
+
+ - **DOCS**: updated README.md with the Presenter class usage.
+ - **BREAKING** **REFACTOR**: added arg to SnackBarPresenter.
+ - **BREAKING** **REFACTOR**: replace present function with Presenter class.
+ - **BREAKING** **CHORE**: renamed fireArg to arg.
+
 ## 0.5.0
 
 > Note: This release has breaking changes.
