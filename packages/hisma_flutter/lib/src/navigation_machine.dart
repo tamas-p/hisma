@@ -125,7 +125,7 @@ class NavigationMachine<S, E, T> extends Machine<S, E, T> with ChangeNotifier {
         // We want open to be executed async to the fire.
         unawaited(
           newPres
-              .open(context ?? navigatorState?.context, this, eventId, arg)
+              .open(context ?? navigatorState?.context, arg)
               .then((dynamic result) {
             // test: imperative_closed
             // Signal that imp. was closed shall be removed.

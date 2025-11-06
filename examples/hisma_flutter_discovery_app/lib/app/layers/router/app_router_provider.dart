@@ -54,20 +54,7 @@ final appRouterProvider = Provider(
       ),
       S.a1: PagelessCreator<E, void>(
         event: E.backward,
-        present: ({
-          required BuildContext context,
-          required bool rootNavigator,
-          required Close<DateTime> close,
-          required NavigationMachine<dynamic, dynamic, dynamic> machine,
-          required E fireEvent,
-          required dynamic fireArg,
-        }) =>
-            generateDialog<E, void>(
-          context: context,
-          rootNavigator: rootNavigator,
-          title: 'Problem during login',
-          text: 'Hello.',
-        ),
+        presenter: PresentDialogLogin(),
         rootNavigator: true,
       ),
       S.b: MaterialPageCreator<E, void>(
@@ -82,36 +69,12 @@ final appRouterProvider = Provider(
       ),
       S.c: PagelessCreator<E, DateTime>(
         event: E.backward,
-        present: ({
-          required BuildContext context,
-          required bool rootNavigator,
-          required Close<DateTime> close,
-          required NavigationMachine<dynamic, dynamic, dynamic> machine,
-          required E fireEvent,
-          required dynamic fireArg,
-        }) =>
-            generateDatePicker<E>(
-          context: context,
-          rootNavigator: rootNavigator,
-        ),
+        presenter: PresentDatePicker(),
         rootNavigator: true,
       ),
       S.d: PagelessCreator<E, void>(
         event: E.backward,
-        present: ({
-          required BuildContext context,
-          required bool rootNavigator,
-          required Close<DateTime> close,
-          required NavigationMachine<dynamic, dynamic, dynamic> machine,
-          required E fireEvent,
-          required dynamic fireArg,
-        }) =>
-            generateDialog<E, void>(
-          context: context,
-          rootNavigator: rootNavigator,
-          title: 'Problem during login2',
-          text: 'Hello2.',
-        ),
+        presenter: PresentDialogLogin2(),
         rootNavigator: true,
       ),
       S.e: MaterialPageCreator<E, void>(
@@ -128,3 +91,49 @@ final appRouterProvider = Provider(
     },
   ),
 );
+
+class PresentDialogLogin2 implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) =>
+      generateDialog<E, void>(
+        context: context,
+        rootNavigator: rootNavigator,
+        title: 'Problem during login2',
+        text: 'Hello2.',
+      );
+}
+
+class PresentDatePicker implements Presenter<DateTime> {
+  @override
+  Future<DateTime?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      generateDatePicker<E>(
+        context: context,
+        rootNavigator: rootNavigator,
+      );
+}
+
+class PresentDialogLogin implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) =>
+      generateDialog<E, void>(
+        context: context,
+        rootNavigator: rootNavigator,
+        title: 'Problem during login',
+        text: 'Hello.',
+      );
+}

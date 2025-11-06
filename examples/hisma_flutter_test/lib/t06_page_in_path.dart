@@ -46,7 +46,7 @@ HismaRouterGenerator<S, E> createParentGenerator({
           widget: Screen(machine),
         ),
         S.b: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: rootNavigator,
           event: E.back,
         ),
@@ -97,12 +97,12 @@ HismaRouterGenerator<S, E> createChildGenerator({
           event: E.back,
         ),
         S.c: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: rootNavigator,
           event: E.back,
         ),
         S.d: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: rootNavigator,
           event: E.back,
         ),

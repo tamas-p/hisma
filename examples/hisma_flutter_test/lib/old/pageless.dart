@@ -90,23 +90,23 @@ HismaRouterGenerator<S, E> createPagelessHismaRouterGenerator({
       mapping: {
         S.a: MaterialPageCreator<E, void>(widget: Screen(machine)),
         S.b: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: useRootNavigator,
           event: E.self,
         ),
         S.c: PagelessCreator<E, DateTime?>(
-          present: showTestDatePicker,
+          presenter: PresentDatePicker(),
           rootNavigator: useRootNavigator,
           event: E.forward,
         ),
         S.d: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: useRootNavigator,
           event: E.forward,
         ),
         S.e: MaterialPageCreator<E, void>(widget: Screen(machine)),
         S.f: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: useRootNavigator,
           event: E.back,
         ),

@@ -67,12 +67,12 @@ HismaRouterGenerator<S, E> createConcurrentHismaRouterGenerator({
           widget: DoubleScreen(machine: machine),
         ),
         S.b: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: true,
           event: E.back,
         ),
         S.c: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: true,
           event: E.back,
         )

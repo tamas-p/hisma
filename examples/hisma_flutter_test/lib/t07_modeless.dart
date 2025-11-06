@@ -138,51 +138,11 @@ HismaRouterGenerator<S, E> createGenerator({
         S.c: PagelessCreator<E, int>(
           rootNavigator: false,
           event: E.back,
-          present: ({
-            required context,
-            required rootNavigator,
-            required close,
-            required machine,
-            required E fireEvent,
-            required dynamic fireArg,
-          }) =>
-              showModalBottomSheet<int>(
-            context: context,
-            builder: (context) => Container(
-              height: 200,
-              color: Colors.amber,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const Text(modalBottomSheetText),
-                    ElevatedButton(
-                      child: const Text(closeButtonTitle),
-                      onPressed: () {
-                        close(99);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          presenter: PresentModalBottomSheet(),
         ),
         S.d: SnackBarCreator(
           event: E.back,
-          present: (context, scaffoldMessengerState, close) =>
-              scaffoldMessengerState.showSnackBar(
-            SnackBar(
-              content: const Text(snackBarText),
-              action: SnackBarAction(
-                label: closeButtonTitle,
-                onPressed: () {
-                  close();
-                },
-              ),
-            ),
-          ),
+          presenter: SnackBarPresenterTest(),
         ),
       },
     );
@@ -236,3 +196,55 @@ NavigationMachine<S, E, T> createMachine() => NavigationMachine<S, E, T>(
         T.toD: h.Transition(to: S.d),
       },
     );
+
+class PresentModalBottomSheet implements Presenter<int> {
+  @override
+  Future<int?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<int> close,
+    required dynamic fireArg,
+  }) =>
+      showModalBottomSheet<int>(
+        context: context,
+        builder: (context) => Container(
+          height: 200,
+          color: Colors.amber,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(modalBottomSheetText),
+                ElevatedButton(
+                  child: const Text(closeButtonTitle),
+                  onPressed: () {
+                    close(99);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
+class SnackBarPresenterTest implements SnackBarPresenter {
+  @override
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> present(
+    BuildContext? context,
+    ScaffoldMessengerState scaffoldMessengerState,
+    Close<SnackBarClosedReason> close,
+  ) =>
+      scaffoldMessengerState.showSnackBar(
+        SnackBar(
+          content: const Text(snackBarText),
+          action: SnackBarAction(
+            label: closeButtonTitle,
+            onPressed: () {
+              close();
+            },
+          ),
+        ),
+      );
+}

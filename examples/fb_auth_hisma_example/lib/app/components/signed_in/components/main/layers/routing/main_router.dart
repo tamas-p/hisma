@@ -14,7 +14,7 @@ final mainRouter = HismaRouterGenerator<SMM, EMM>(
       widget: const EmailNotVerifiedScreen(),
     ),
     SMM.error: PagelessCreator<EMM, void>(
-      present: failedEmailVerifiedDialog,
+      presenter: FailedEmailVerifiedDialog(),
       rootNavigator: true,
       event: EMM.back,
     ),

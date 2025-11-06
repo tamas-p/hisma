@@ -5,17 +5,18 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
-Future<void> profileLoadFailed<E>({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    createDialog(
-      context: context,
-      useRootNavigator: rootNavigator,
-      message: 'Problem during loading profile data.',
-      title: '${authMachine.find<SPM, EPM, TPM>(profileMachineName)}',
-    );
+class PresentProfileErrorDialog implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      createDialog(
+        context: context,
+        useRootNavigator: rootNavigator,
+        message: 'Problem during loading profile data.',
+        title: '${authMachine.find<SPM, EPM, TPM>(profileMachineName)}',
+      );
+}

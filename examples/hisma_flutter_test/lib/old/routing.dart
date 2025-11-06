@@ -23,19 +23,19 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         overlay: true,
       ),
       S.d: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: useRootNavigator,
         event: E.self,
       ),
       // S.d: MaterialPageCreator<E, void>(widget: Screen(machine, S.d)),
       S.e: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: useRootNavigator,
         event: E.self,
       ),
       // S.e: MaterialPageCreator<E, void>(widget: Screen(machine, S.e)),
       S.f: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: useRootNavigator,
         event: E.self,
       ),
@@ -46,7 +46,7 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         event: E.back,
       ),
       S.h: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: useRootNavigator,
         event: E.self,
       ),
@@ -99,13 +99,13 @@ HismaRouterGenerator<S, E> createHismaRouterGenerator({
         )
       else
         S.l: PagelessCreator<E, void>(
-          present: showTestDialog,
+          presenter: PresentTestDialog(machine),
           rootNavigator: useRootNavigator,
           event: E.self,
         ),
       // S.l: MaterialPageCreator<E, void>(widget: Screen(machine, S.l)),
       S.m: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: useRootNavigator,
         event: E.self,
       ),

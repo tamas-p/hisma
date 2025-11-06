@@ -102,32 +102,33 @@ class ScreenB extends StatelessWidget {
   }
 }
 
-Future<bool?> b1({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDialog<bool>(
-      useRootNavigator: rootNavigator,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Simple AlertDialog'),
-          content: const Text('Hello'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
-      },
-    );
+class PresentB1 implements Presenter<bool> {
+  @override
+  Future<bool?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<bool> close,
+    required dynamic fireArg,
+  }) =>
+      showDialog<bool>(
+        useRootNavigator: rootNavigator,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Simple AlertDialog'),
+            content: const Text('Hello'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+}
 
 class ScreenC extends StatelessWidget {
   const ScreenC({super.key});
@@ -141,22 +142,23 @@ class ScreenC extends StatelessWidget {
   }
 }
 
-Future<DateTime?> c1({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDatePicker(
-      useRootNavigator: rootNavigator,
-      context: context,
-      firstDate: DateTime(2021),
-      initialDate: DateTime.now(),
-      currentDate: DateTime.now(),
-      lastDate: DateTime(2028),
-    );
+class PresentC1 implements Presenter<DateTime> {
+  @override
+  Future<DateTime?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      showDatePicker(
+        useRootNavigator: rootNavigator,
+        context: context,
+        firstDate: DateTime(2021),
+        initialDate: DateTime.now(),
+        currentDate: DateTime.now(),
+        lastDate: DateTime(2028),
+      );
+}
 
 //------------------------------------------------------------------------------
 
@@ -169,7 +171,7 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       event: E.backward,
     ),
     S.b1: PagelessCreator<E, void>(
-      present: b1,
+      presenter: PresentB1(),
       rootNavigator: true,
       event: E.backward,
     ),
@@ -179,7 +181,7 @@ final hismaRouterGenerator = HismaRouterGenerator<S, E>(
       overlay: true,
     ),
     S.c1: PagelessCreator(
-      present: c1,
+      presenter: PresentC1(),
       rootNavigator: true,
       event: E.backward,
     ),

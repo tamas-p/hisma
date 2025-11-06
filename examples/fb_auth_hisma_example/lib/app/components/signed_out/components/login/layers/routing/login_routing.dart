@@ -11,7 +11,7 @@ final loginRouter = HismaRouterGenerator<SLiM, ELiM>(
     SLiM.login: MaterialPageCreator<ELiM, void>(widget: const LoginScreen()),
     SLiM.failedSignIn: PagelessCreator<ELiM, void>(
       event: ELiM.ok,
-      present: failedSignInDialog,
+      presenter: PresentFailedSignInDialog(),
       rootNavigator: true,
     ),
   },

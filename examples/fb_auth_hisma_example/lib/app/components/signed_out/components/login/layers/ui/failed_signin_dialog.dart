@@ -5,20 +5,21 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 import '../../../../../../layers/machine/auth_machine.dart';
 import '../../../../../../layers/ui/util/ui_util.dart';
 
-Future<void> failedSignInDialog<E>({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    createDialog(
-      context: context,
-      useRootNavigator: rootNavigator,
-      message: 'Problem during login',
-      title: '${authMachine.find<SLiM, ELiM, TLiM>(loginMachineName).data}',
-    );
+class PresentFailedSignInDialog implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      createDialog(
+        context: context,
+        useRootNavigator: rootNavigator,
+        message: 'Problem during login',
+        title: '${authMachine.find<SLiM, ELiM, TLiM>(loginMachineName).data}',
+      );
+}
 
 Future<void> failedSignInDialog2(BuildContext context) => showDialog<void>(
       context: context,

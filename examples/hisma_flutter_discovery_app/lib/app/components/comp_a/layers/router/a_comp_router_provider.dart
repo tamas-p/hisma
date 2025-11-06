@@ -21,20 +21,7 @@ final aRouterProvider = Provider(
       ),
       S.ca1: PagelessCreator<E, void>(
         event: E.int1,
-        present: ({
-          required BuildContext context,
-          required bool rootNavigator,
-          required Close<DateTime> close,
-          required NavigationMachine<dynamic, dynamic, dynamic> machine,
-          required E fireEvent,
-          required dynamic fireArg,
-        }) =>
-            generateDialog<void, E>(
-          context: context,
-          rootNavigator: rootNavigator,
-          title: 'Problem during login ca1',
-          text: 'Hello ca1.',
-        ),
+        presenter: PresentDialogLogin(),
         rootNavigator: true,
       ),
       S.ca2: NoUIChange(),
@@ -43,3 +30,19 @@ final aRouterProvider = Provider(
     },
   ),
 );
+
+class PresentDialogLogin implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) =>
+      generateDialog<void, E>(
+        context: context,
+        rootNavigator: rootNavigator,
+        title: 'Problem during login ca1',
+        text: 'Hello ca1.',
+      );
+}

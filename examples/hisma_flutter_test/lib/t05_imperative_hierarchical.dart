@@ -60,17 +60,17 @@ HismaRouterGenerator<S, E> createHierarchicalImpGenerator({
         event: E.back,
       ),
       S.d: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: rootNavigator,
         event: E.back,
       ),
       S.e: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: rootNavigator,
         event: E.back,
       ),
       S.f: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: rootNavigator,
         event: E.back,
       ),
@@ -97,17 +97,17 @@ HismaRouterGenerator<S, E> createHierarchicalImpGenerator({
               overlay: true,
             ),
       S.h: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: rootNavigator,
         event: E.back,
       ),
       S.i: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: rootNavigator,
         event: E.back,
       ),
       S.j: PagelessCreator<E, void>(
-        present: showTestDialog,
+        presenter: PresentTestDialog(machine),
         rootNavigator: rootNavigator,
         event: E.back,
       ),

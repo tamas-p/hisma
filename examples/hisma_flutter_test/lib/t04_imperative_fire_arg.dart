@@ -50,7 +50,9 @@ HismaRouterGenerator<S, E> createRouterGenerator(
       mapping: {
         S.a: MaterialPageCreator<E, void>(widget: Screen(machine)),
         S.b: PagelessCreator(
-          present: dialog,
+          presenter: PresentDialog(() {
+            machine.fire(E.backward);
+          }),
           rootNavigator: true,
           event: E.backward,
         ),
@@ -113,47 +115,50 @@ class Screen extends StatelessWidget {
   }
 }
 
-Future<void> dialog({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDialog<void>(
-      useRootNavigator: rootNavigator,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Simple AlertDialog'),
-          content: IntrinsicHeight(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Hello'),
-                Text('Fire event: $fireEvent'),
-                Text('Fire arg: $fireArg'),
-              ],
+class PresentDialog implements Presenter<void> {
+  PresentDialog(this.goBack);
+  void Function() goBack;
+
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      showDialog<void>(
+        useRootNavigator: rootNavigator,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Simple AlertDialog'),
+            content: IntrinsicHeight(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Hello'),
+                  Text('Fire arg: $fireArg'),
+                ],
+              ),
             ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Backward'),
-              onPressed: () {
-                machine.fire(E.backward);
-              },
-            ),
-          ],
-        );
-      },
-    );
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Backward'),
+                onPressed: () {
+                  goBack();
+                },
+              ),
+            ],
+          );
+        },
+      );
+}
 
 class ImperativeFireArgApp extends StatelessWidget {
   ImperativeFireArgApp({super.key, required this.machine});

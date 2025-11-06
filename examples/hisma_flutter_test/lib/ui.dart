@@ -105,24 +105,28 @@ class _MyDialogState extends State<MyDialog> {
   }
 }
 
-Future<void> showTestDialog<E>({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<void> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDialog<void>(
-      context: context,
-      // This is to not completely gray out background when manually testing.
-      // This allows visual checks of lower layers in the navigator stack.
-      barrierColor: const Color(0x01000000),
-      useRootNavigator: rootNavigator,
-      builder: (context) {
-        return MyDialog(machine: machine);
-      },
-    );
+class PresentTestDialog implements Presenter<void> {
+  PresentTestDialog(this.machine);
+  NavigationMachine<dynamic, dynamic, dynamic> machine;
+
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) =>
+      showDialog<void>(
+        context: context,
+        // This is to not completely gray out background when manually testing.
+        // This allows visual checks of lower layers in the navigator stack.
+        barrierColor: const Color(0x01000000),
+        useRootNavigator: rootNavigator,
+        builder: (context) {
+          return MyDialog(machine: machine);
+        },
+      );
+}
 
 Future<void> showTestDialogMini(
   BuildContext context,
@@ -138,21 +142,22 @@ Future<void> showTestDialogMini(
       },
     );
 
-Future<DateTime?> showTestDatePicker<E>({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDatePicker(
-      useRootNavigator: rootNavigator,
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1990),
-      lastDate: DateTime(2030),
-    );
+class PresentDatePicker implements Presenter<DateTime> {
+  @override
+  Future<DateTime?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      showDatePicker(
+        useRootNavigator: rootNavigator,
+        context: context,
+        initialDate: DateTime(2000),
+        firstDate: DateTime(1990),
+        lastDate: DateTime(2030),
+      );
+}
 
 //------------------------------------------------------------------------------
 /*

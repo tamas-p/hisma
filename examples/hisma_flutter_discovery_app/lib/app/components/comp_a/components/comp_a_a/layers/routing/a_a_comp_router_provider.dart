@@ -20,20 +20,7 @@ final l2aRouterProvider = Provider(
         overlay: true,
       ),
       S.l2a1: PagelessCreator<E, void>(
-        present: ({
-          required BuildContext context,
-          required bool rootNavigator,
-          required Close<DateTime> close,
-          required NavigationMachine<dynamic, dynamic, dynamic> machine,
-          required E fireEvent,
-          required dynamic fireArg,
-        }) =>
-            generateDialog<E, void>(
-          context: context,
-          rootNavigator: rootNavigator,
-          title: 'Problem during login',
-          text: 'Hello.',
-        ),
+        presenter: PresentDialogLogin(),
         rootNavigator: true,
         event: E.backward,
       ),
@@ -42,3 +29,19 @@ final l2aRouterProvider = Provider(
     },
   ),
 );
+
+class PresentDialogLogin implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) =>
+      generateDialog<E, void>(
+        context: context,
+        rootNavigator: rootNavigator,
+        title: 'Problem during login',
+        text: 'Hello.',
+      );
+}

@@ -19,12 +19,17 @@ abstract class PageCreator<E, R> {
 class MaterialPageCreator<E, R>
 class CupertinoPageCreator<E, R>
 abstract class ImperativeCreator<E, R> {
-  Future<R?> open(BuildContext context)
+  Future<R?> open(BuildContext context, dynamic fireArg)
   void close([R? value])
 }
-class PagelessCreator<E, R>
-class BottomSheetCreator<E, R>
-class SnackBarCreator<E, R>
+class PagelessCreator<E, R> {
+  Presenter<R> presenter
+  bool rootNavigator
+}
+
+class SnackBarCreator<E, R> {
+  SnackBarPresenter presenter
+}
 
 Presentation <|-- NoUIChange
 Presentation <|-- Creator
@@ -35,7 +40,6 @@ PageCreator <|-- MaterialPageCreator
 PageCreator <|-- CupertinoPageCreator
 
 ImperativeCreator <|-- PagelessCreator
-ImperativeCreator <|-- BottomSheetCreator
 ImperativeCreator <|-- SnackBarCreator
 
 @enduml
@@ -47,6 +51,8 @@ abstract class Presentation {}
 /// User interface representation of state machine states.
 abstract class Creator<E> extends Presentation {
   Creator({this.event});
+
+  /// Event to be fired when presentation is dismissed e.g. dialog popped.
   E? event;
 }
 
@@ -136,31 +142,32 @@ typedef Close<T> = void Function([T? result]);
 abstract class ImperativeCreator<E, R> extends Creator<E> {
   ImperativeCreator({super.event});
   bool _opened = false;
-  Future<R?> open(
-    BuildContext? context,
-    NavigationMachine<dynamic, E, dynamic> machine,
-    E fireEvent,
-    dynamic fireArg,
-  );
+  Future<R?> open(BuildContext? context, dynamic fireArg);
   void close([R? result]);
+}
+
+/// You can implement this interface to create your own presentation
+/// mechanism for pageless UI components e.g. dialogs, date pickers, etc.
+/// The [present] method will be called when the state machine arrives to
+/// the corresponding state. This approach allows adding additional members
+/// to the presenter implementations if needed e.g passing the logic object.
+abstract class Presenter<R> {
+  Future<R?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<R> close,
+    required dynamic fireArg,
+  });
 }
 
 class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   PagelessCreator({
-    required this.present,
+    required this.presenter,
     required this.rootNavigator,
     super.event,
   });
-  Future<R?> Function({
-    required BuildContext context,
-    required bool rootNavigator,
-    required Close<R> close,
-    required NavigationMachine<dynamic, E, dynamic> machine,
-    required E fireEvent,
-    required dynamic fireArg,
-  }) present;
+  Presenter<R> presenter;
   bool rootNavigator;
-
   late NavigatorState _navigatorState;
 
   @override
@@ -180,8 +187,6 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
   @override
   Future<R?> open(
     BuildContext? context,
-    NavigationMachine<dynamic, E, dynamic> machine2,
-    E fireEvent,
     dynamic fireArg,
   ) async {
     assert(
@@ -195,12 +200,10 @@ class PagelessCreator<E, R> extends ImperativeCreator<E, R> {
     }
 
     _opened = true;
-    final result = await present(
+    final result = await presenter.present(
       context: context ?? _navigatorState.context,
       rootNavigator: rootNavigator,
       close: close,
-      machine: machine2,
-      fireEvent: fireEvent,
       fireArg: fireArg,
     );
     _opened = false;
@@ -250,18 +253,23 @@ class BottomSheetCreator<E, R> extends ImperativeCreator<E, R> {
 }
 */
 
-/// Experimental class to manage the modeless SnackBar created by invoking
-/// showSnackBar. Since modeless UI can not be well represented by a
-/// state in a state machine (user can interact with other UI representing
-/// other state) the usefulness of this class is questionable.
-class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
-  SnackBarCreator({required this.present, super.event});
-
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> Function(
+abstract class SnackBarPresenter {
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> present(
     BuildContext? context,
     ScaffoldMessengerState scaffoldMessengerState,
     Close<SnackBarClosedReason> close,
-  ) present;
+  );
+}
+
+/// Experimental class to manage the modeless SnackBar created by invoking
+/// showSnackBar. Since modeless UI can not be well represented by a
+/// state in a state machine (user can interact with other UI representing
+/// other state) the usefulness of this class is questionable. Simple approach
+/// instead would be to use an InternalTransition to show SnackBar when it is needed.
+
+class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
+  SnackBarCreator({required this.presenter, super.event});
+  SnackBarPresenter presenter;
   late ScaffoldMessengerState _scaffoldMessengerState;
 
   @override
@@ -272,8 +280,6 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
   @override
   Future<SnackBarClosedReason?> open(
     BuildContext? context,
-    NavigationMachine<dynamic, E, dynamic> machine,
-    E fireEvent,
     dynamic fireArg,
   ) async {
     assert(
@@ -285,7 +291,7 @@ class SnackBarCreator<E> extends ImperativeCreator<E, SnackBarClosedReason> {
     assert(context != null);
     _scaffoldMessengerState = ScaffoldMessenger.of(context!);
     final scaffoldFeatureController =
-        present(context, _scaffoldMessengerState, close);
+        presenter.present(context, _scaffoldMessengerState, close);
     final reason = await scaffoldFeatureController.closed;
     _opened = false;
     return reason;

@@ -4,44 +4,45 @@ import 'package:hisma_flutter/hisma_flutter.dart';
 
 import '../../../../layers/machine/auth_machine.dart';
 
-Future<void> signOutConfirmationDialog<E>({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) {
-  final signedInMachine =
-      authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);
-  return showDialog(
-    useRootNavigator: rootNavigator,
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Please confirm'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: const <Widget>[
-              Text('Are you sure to sign out?'),
-            ],
+class PresentSignOutConfirmationDialog implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) {
+    final signedInMachine =
+        authMachine.find<SSiM, ESiM, TSiM>(signedInMachineName);
+    return showDialog(
+      useRootNavigator: rootNavigator,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Please confirm'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Are you sure to sign out?'),
+              ],
+            ),
           ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              signedInMachine.fire(ESiM.cancel);
-            },
-          ),
-          TextButton(
-            child: const Text('Yes'),
-            onPressed: () {
-              signedInMachine.fire(ESiM.initiateSignOut);
-            },
-          ),
-        ],
-      );
-    },
-  );
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                signedInMachine.fire(ESiM.cancel);
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                signedInMachine.fire(ESiM.initiateSignOut);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

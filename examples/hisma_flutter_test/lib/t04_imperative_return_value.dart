@@ -74,70 +74,74 @@ hisma.Action createAction<T>() => hisma.Action(
       },
     );
 
-Future<Returned?> dialog({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDialog<Returned>(
-      useRootNavigator: rootNavigator,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Simple AlertDialog'),
-          content: IntrinsicHeight(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Hello'),
-                Text('Fire event: $fireEvent'),
-                Text('Fire arg: $fireArg'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop(Returned.okFromDialog);
-              },
-            ),
-            TextButton(
-              child: const Text('Forward'),
-              onPressed: () {
-                machine.fire(E.forward);
-              },
-            ),
-          ],
-        );
-      },
-    );
+class PresentDialog implements Presenter<Returned?> {
+  PresentDialog(this.goForward);
+  void Function() goForward;
 
-Future<DateTime?> datePicker({
-  required BuildContext context,
-  required bool rootNavigator,
-  required Close<DateTime> close,
-  required NavigationMachine<dynamic, dynamic, dynamic> machine,
-  required E fireEvent,
-  required dynamic fireArg,
-}) =>
-    showDatePicker(
-      useRootNavigator: rootNavigator,
-      context: context,
-      firstDate: DateTime(2021),
-      initialDate: DateTime.now(),
-      currentDate: DateTime.now(),
-      lastDate: DateTime(2028),
-    );
+  @override
+  Future<Returned?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<Returned?> close,
+    required dynamic fireArg,
+  }) =>
+      showDialog<Returned>(
+        useRootNavigator: rootNavigator,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Simple AlertDialog'),
+            content: IntrinsicHeight(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Hello'),
+                  Text('Fire arg: $fireArg'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(Returned.okFromDialog);
+                },
+              ),
+              TextButton(
+                child: const Text('Forward'),
+                onPressed: () {
+                  goForward();
+                },
+              ),
+            ],
+          );
+        },
+      );
+}
+
+class PresentDatePicker implements Presenter<DateTime?> {
+  @override
+  Future<DateTime?> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<DateTime> close,
+    required dynamic fireArg,
+  }) =>
+      showDatePicker(
+        useRootNavigator: rootNavigator,
+        context: context,
+        firstDate: DateTime(2021),
+        initialDate: DateTime.now(),
+        currentDate: DateTime.now(),
+        lastDate: DateTime(2028),
+      );
+}
 
 HismaRouterGenerator<S, E> createRouterGenerator(
   NavigationMachine<S, E, T> machine,
@@ -164,12 +168,14 @@ HismaRouterGenerator<S, E> createRouterGenerator(
           event: E.backward,
         ),
         S.c: PagelessCreator(
-          present: dialog,
+          presenter: PresentDialog(() {
+            machine.fire(E.forward);
+          }),
           rootNavigator: true,
           event: E.backward,
         ),
         S.d: PagelessCreator(
-          present: datePicker,
+          presenter: PresentDatePicker(),
           rootNavigator: true,
           event: E.backward,
         ),

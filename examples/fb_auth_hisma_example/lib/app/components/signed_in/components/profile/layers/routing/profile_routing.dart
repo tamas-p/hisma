@@ -10,7 +10,7 @@ final profileRouter = HismaRouterGenerator<SPM, EPM>(
   mapping: {
     SPM.profile: MaterialPageCreator<EPM, void>(widget: const ProfileScreen()),
     SPM.error: PagelessCreator<EPM, void>(
-      present: profileLoadFailed,
+      presenter: PresentProfileErrorDialog(),
       rootNavigator: true,
       event: EPM.back,
     ),

@@ -15,20 +15,7 @@ final fRouterProvider = Provider(
       // S.fb: getPagelessCreator2(),
       S.fb: PagelessCreator<E, void>(
         event: E.backward,
-        present: ({
-          required BuildContext context,
-          required bool rootNavigator,
-          required Close<DateTime> close,
-          required NavigationMachine<dynamic, dynamic, dynamic> machine,
-          required E fireEvent,
-          required dynamic fireArg,
-        }) =>
-            generateDialog<void, E>(
-          context: context,
-          rootNavigator: rootNavigator,
-          title: 'Test1',
-          text: 'Demo test1.',
-        ),
+        presenter: PresentDialogTest1(),
         rootNavigator: true,
       ),
       // S.b: MaterialPageCreator<S>(widget: const CompFScreenB()),
@@ -36,3 +23,19 @@ final fRouterProvider = Provider(
     },
   ),
 );
+
+class PresentDialogTest1 implements Presenter<void> {
+  @override
+  Future<void> present({
+    required BuildContext context,
+    required bool rootNavigator,
+    required Close<void> close,
+    required dynamic fireArg,
+  }) =>
+      generateDialog<void, E>(
+        context: context,
+        rootNavigator: rootNavigator,
+        title: 'Test1',
+        text: 'Demo test1.',
+      );
+}
