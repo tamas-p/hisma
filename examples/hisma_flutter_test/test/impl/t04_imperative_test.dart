@@ -254,6 +254,79 @@ Future<void> main() async {
         );
       });
     });
+    group('Android back button tests', () {
+      testWidgets('Simple Android back button test, rootNavigator: false',
+          (tester) async {
+        final machine = createLongerMachine();
+        await machine.start();
+        final app = ImperativeApp(machine: machine, rootNavigator: false);
+        await tester.pumpWidget(app);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+
+        final c = Checker<S, E, T>(
+          tester: tester,
+          act: Act.androidBack,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
+
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        expect(S.a, machine.activeStateId);
+      });
+      testWidgets('Mixed Android back button test, rootNavigator: false',
+          (tester) async {
+        final machine = createLongerMachine();
+        await machine.start();
+        final app = ImperativeApp(machine: machine, rootNavigator: false);
+        await tester.pumpWidget(app);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+
+        final c = Checker<S, E, T>(
+          tester: tester,
+          act: Act.tap,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
+
+        await c.checkBackButton();
+        await c.check(E.forward);
+        await c.checkBackButton();
+
+        await c.checkBackButton();
+        expect(S.j, machine.activeStateId);
+
+        await c.check(E.jumpBP);
+        expect(S.f, machine.activeStateId);
+        await c.check(E.forward);
+        await c.check(E.forward);
+        await c.check(E.forward);
+        await c.check(E.forward);
+        expect(S.j, machine.activeStateId);
+
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        expect(S.a, machine.activeStateId);
+      });
+    });
   });
 }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:flutter/material.dart' as m;
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma/hisma.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
@@ -76,7 +77,7 @@ void checkTitle<S, E, T>(Machine<S, E, T> machine, [S? stateId]) {
   expect(find.text(path), findsWidgets);
 }
 
-enum Act { fire, tap, back }
+enum Act { fire, tap, back, androidBack }
 
 Future<void> action<S, E, T>(
   NavigationMachine<S, E, T> machine,
@@ -91,6 +92,8 @@ Future<void> action<S, E, T>(
   } else if (act == Act.back) {
     final backButton = find.byType(m.BackButton);
     await tester.tap(backButton);
+  } else if (act == Act.androidBack) {
+    await androidBackButtonPress();
   } else {
     throw Exception('Unsupported trigger: $act');
   }
@@ -162,6 +165,19 @@ class Checker<S, E, T> {
       }
     }
   }
+
+  Future<void> checkBackButton() async {
+    final presentation = mapping[machine.activeStateId];
+    assert(
+      presentation is Creator<E>,
+      'Presentation for ${machine.activeStateId} shall be a Creator<$E>.',
+    );
+    if (presentation is Creator<E>) {
+      final event = presentation.event;
+      if (event == null) return;
+      return check(event, act: Act.androidBack);
+    }
+  }
 }
 
 /// This auxiliary function is required to expect errors or exceptions
@@ -200,4 +216,14 @@ Future<void> expectThrow<T>(
   if (assertText != null) {
     expect(capturedError.toString(), contains(assertText));
   }
+}
+
+Future<void> androidBackButtonPress() async {
+  await ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+    SystemChannels.navigation.name,
+    const JSONMethodCodec().encodeMethodCall(
+      const MethodCall('popRoute'),
+    ),
+    (_) {},
+  );
 }

@@ -41,7 +41,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   @override
   Future<bool> popRoute() async {
     _log.info('popRoute');
-    _fire(null);
+    _fire(result: null, uiClosed: false);
     return SynchronousFuture<bool>(true);
   }
 
@@ -92,23 +92,23 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
         // Being in a different state indicates that there ended up here
         // as a result a previous fire (that moved to another state) hence
         // we shall not trigger another fire.
-        _fire(result);
+        _fire(result: result, uiClosed: true);
       }
     }
     return didPop;
   }
 
-  void _fire(dynamic result) {
+  void _fire({required dynamic result, required bool uiClosed}) {
     final presentation = mapping[machine.activeStateId];
     assert(presentation is Creator<E>, '$presentation is not a Creator<$E>.');
     if (presentation is Creator<E>) {
       final event = presentation.event;
       assert(
-          event != null,
+          !uiClosed || event != null,
           '$presentation defined for ${machine.activeStateId}'
           ' shall have its event set.');
       if (event != null) {
-        machine.fire(event, arg: UiClosed(result));
+        machine.fire(event, arg: uiClosed ? UiClosed(result) : result);
       }
     }
   }
