@@ -1,3 +1,8 @@
+## 0.6.0+1
+
+ - **FIX**: double tap Android back button crash.
+ - **FIX**: for bug of signaling UiClosed when UI was not closed.
+
 ## 0.6.0
 
 > Note: This release has breaking changes.
