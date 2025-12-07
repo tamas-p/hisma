@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t05_imperative_hierarchical.dart';
 
-import '../../test/aux/aux.dart';
+import '../aux/aux.dart';
 import 't04_imperative_test.dart';
 
 Future<void> main() async {

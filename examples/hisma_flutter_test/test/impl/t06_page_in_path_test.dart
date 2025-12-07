@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 import 'package:hisma_flutter_test/t06_page_in_path.dart';
 
-import '../../test/aux/aux.dart';
+import '../aux/aux.dart';
 
 Future<void> main() async {
   // Machine.monitorCreators = [

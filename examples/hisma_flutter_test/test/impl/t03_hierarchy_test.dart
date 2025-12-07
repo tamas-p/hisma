@@ -5,8 +5,6 @@ import 'package:hisma_flutter_test/t03_hierarchical.dart';
 
 import '../aux/aux.dart';
 
-// import '../../test/aux/aux.dart';
-
 void main() {
   // Machine.monitorCreators = [
   //   (m) => VisualMonitor(m, host: '192.168.122.1'),
