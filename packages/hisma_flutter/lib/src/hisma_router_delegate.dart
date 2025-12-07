@@ -81,7 +81,16 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
     );
   }
 
+  Route<dynamic>? _previousRoutePopped;
   bool _onPopPage(Route<dynamic> route, dynamic result) {
+    // We need to make sure that we are not processing the same route
+    // multiple times as _onPopPage can be called multiple times for
+    // the same route e.g. when user presses device back button multiple
+    // times quickly. See t04_imperative_test.dart android double tap
+    // back button test.
+    if (route == _previousRoutePopped) return false;
+    _previousRoutePopped = route;
+
     final didPop = route.didPop(result);
     if (didPop) {
       stack.remove(route.settings.name);

@@ -6,7 +6,7 @@ import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t04_imperative_simple.dart';
 import 'package:hisma_flutter_test/ui.dart';
 
-import '../../test/aux/aux.dart';
+import '../aux/aux.dart';
 
 Future<void> main() async {
   // Machine.monitorCreators = [
@@ -325,6 +325,43 @@ Future<void> main() async {
         await c.checkBackButton();
         await c.checkBackButton();
         expect(S.a, machine.activeStateId);
+      });
+      testWidgets(
+          'Double tap of Android back button test, rootNavigator: false',
+          (tester) async {
+        final machine = createLongerMachine();
+        await machine.start();
+        final app = ImperativeApp(machine: machine, rootNavigator: false);
+        await tester.pumpWidget(app);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+
+        final c = Checker<S, E, T>(
+          tester: tester,
+          act: Act.androidBack,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        await c.checkBackButton();
+        expect(S.c, machine.activeStateId);
+
+        // ignore: invalid_use_of_protected_member
+        await binding.handlePopRoute();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 5));
+        // ignore: invalid_use_of_protected_member
+        await binding.handlePopRoute();
+        await tester.pumpAndSettle();
       });
     });
   });
