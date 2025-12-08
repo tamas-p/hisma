@@ -37,7 +37,6 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   /// Having and event defined for the corresponding Creator it will
   /// be fired on the machine. It is always returns true avoiding the
   /// popping of the entire application.
-  /// TODO: How to auto test Android back button?
   @override
   Future<bool> popRoute() async {
     _log.info('popRoute');
