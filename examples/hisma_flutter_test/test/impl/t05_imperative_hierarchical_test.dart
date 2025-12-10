@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter_test/machine_longer.dart';
 import 'package:hisma_flutter_test/t05_imperative_hierarchical.dart';
+import 'package:hisma_flutter_test/ui.dart';
 
 import '../aux/aux.dart';
 import 't04_imperative_test.dart';
@@ -46,6 +47,74 @@ Future<void> main() async {
       // pages effectively making it impossible to tap on buttons in these
       // child pages.
       skip: true,
+    );
+  });
+  group('Android back button tests', () {
+    testWidgets(
+      'Imperative hierarchical test with back button, rootNavigator: false',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
+
+        final machine = createLongerMachine(hierarchical: true);
+        await machine.start();
+        final app = HierarchicalImperativeApp(
+          machine: machine,
+          rootNavigator: true,
+        );
+        final box = ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 1000, minWidth: 1000),
+          child: app,
+        );
+        await tester.pumpWidget(box);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+
+        final root = Checker<S, E, T>(
+          tester: tester,
+          act: Act.tap,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
+
+        await root.check(E.forward); // a -> b
+        await root.check(E.forward); // b -> c
+        await root.check(E.forward); // c -> d
+        await root.check(E.forward); // d -> e
+        await root.check(E.forward); // e -> f
+        await root.check(E.forward); // f -> g
+        await root.check(E.forward); // g -> h
+        await root.check(E.forward); // h -> i
+        await root.check(E.forward); // i -> j
+        await root.check(E.forward); // j -> k
+        expect(machine.activeStateId, S.k);
+        checkTitle(machine);
+
+        final childMachine =
+            machine.find<S, E, T>(getMachineName<S>('root', S.k));
+        final k = Checker<S, E, T>(
+          tester: tester,
+          act: Act.tap,
+          machine: childMachine,
+          mapping: app.gen.mapping,
+        );
+
+        await k.check(E.forward); // a -> b
+        await k.check(E.forward); // b -> c
+        expect(childMachine.activeStateId, S.c);
+        checkTitle(childMachine);
+
+        await root.check(E.back); // k-> j
+        expect(machine.activeStateId, S.j);
+        checkTitle(machine);
+
+        await root.checkBackButton(); // j -> i
+      },
+    );
+    testWidgets(
+      'Imperative hierarchical test with back button, rootNavigator: true',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1024, 1024));
+      },
     );
   });
 }

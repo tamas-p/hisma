@@ -34,12 +34,16 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   }
 
   /// Handles the back button request from the operating system.
-  /// Having and event defined for the corresponding Creator it will
-  /// be fired on the machine. It is always returns true avoiding the
-  /// popping of the entire application.
+  /// Having an event defined for the corresponding Creator and that the machine
+  /// is active this event will be fired and true returned. If the machine is
+  /// not active false is returned indicating that the popRoute was not handled.
   @override
-  Future<bool> popRoute() async {
+  Future<bool> popRoute() {
     _log.info('popRoute');
+    if (machine.activeStateId == null) {
+      _log.info('popRoute called but machine ${machine.name} is not active.');
+      return SynchronousFuture<bool>(false);
+    }
     _fire(result: null, uiClosed: false);
     return SynchronousFuture<bool>(true);
   }
