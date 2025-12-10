@@ -342,7 +342,6 @@ Future<void> main() async {
           machine: machine,
           mapping: app.gen.mapping,
         );
-        final binding = TestWidgetsFlutterBinding.ensureInitialized();
 
         await c.checkBackButton();
         await c.checkBackButton();
@@ -355,6 +354,7 @@ Future<void> main() async {
         await c.checkBackButton();
         expect(S.c, machine.activeStateId);
 
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
         // ignore: invalid_use_of_protected_member
         await binding.handlePopRoute();
         await tester.pump();
