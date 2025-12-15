@@ -1,3 +1,7 @@
+## 0.6.0+2
+
+ - **FIX**: fix processing back button in inactive machine.
+
 ## 0.6.0+1
 
  - **FIX**: double tap Android back button crash.
