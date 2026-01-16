@@ -38,13 +38,15 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
   /// is active this event will be fired and true returned. If the machine is
   /// not active false is returned indicating that the popRoute was not handled.
   @override
-  Future<bool> popRoute() {
+  Future<bool> popRoute() async {
     _log.info('popRoute');
     if (machine.activeStateId == null) {
       _log.info('popRoute called but machine ${machine.name} is not active.');
       return SynchronousFuture<bool>(false);
     }
-    _fire(result: null, uiClosed: false);
+    // navigatorKey.currentState?.pop();
+    final popped = await navigatorKey.currentState?.maybePop();
+    if (popped != null && !popped) _fire(result: null, uiClosed: false);
     return SynchronousFuture<bool>(true);
   }
 
@@ -86,16 +88,16 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
 
   Route<dynamic>? _previousRoutePopped;
   bool _onPopPage(Route<dynamic> route, dynamic result) {
-    // We need to make sure that we are not processing the same route
-    // multiple times as _onPopPage can be called multiple times for
-    // the same route e.g. when user presses device back button multiple
-    // times quickly. See t04_imperative_test.dart android double tap
-    // back button test.
-    if (route == _previousRoutePopped) return false;
-    _previousRoutePopped = route;
-
     final didPop = route.didPop(result);
     if (didPop) {
+      // We need to make sure that we are not processing the same route
+      // multiple times as _onPopPage can be called multiple times for
+      // the same route e.g. when user presses device back button multiple
+      // times quickly. See t04_imperative_test.dart android double tap
+      // back button test.
+      if (route == _previousRoutePopped) return false;
+      _previousRoutePopped = route;
+
       stack.remove(route.settings.name);
       final activeKey = getKey(machine.name, machine.activeStateId);
       if (route.settings.name == activeKey) {
@@ -104,7 +106,7 @@ class HismaRouterDelegate<S, E> extends RouterDelegate<S> with ChangeNotifier {
         // Being in a different state indicates that there ended up here
         // as a result a previous fire (that moved to another state) hence
         // we shall not trigger another fire.
-        _fire(result: result, uiClosed: true);
+        _fire(result: result, uiClosed: false);
       }
     }
     return didPop;
