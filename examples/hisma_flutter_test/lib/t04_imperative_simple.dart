@@ -8,7 +8,7 @@ import 'ui.dart';
 
 Future<void> main(List<String> args) async {
   hm.Machine.monitorCreators = [
-    (m) => VisualMonitor(m, host: '192.168.122.1'),
+    (m) => VisualMonitor(m, host: '192.168.1.98'),
   ];
   final machine = createLongerMachine();
   await machine.start();

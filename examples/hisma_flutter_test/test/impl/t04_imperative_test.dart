@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hisma_flutter/hisma_flutter.dart';
 
 import 'package:hisma_flutter_test/machine_longer.dart';
+import 'package:hisma_flutter_test/t04_imperative_drawer.dart';
 import 'package:hisma_flutter_test/t04_imperative_simple.dart';
 import 'package:hisma_flutter_test/ui.dart';
 
@@ -271,7 +272,12 @@ Future<void> main() async {
           mapping: app.gen.mapping,
         );
 
-        await c.checkBackButton();
+        expect(S.a, machine.activeStateId);
+        for (var i = 0; i < 10; i++) {
+          await c.check(E.forward, act: Act.fire);
+        }
+        expect(S.k, machine.activeStateId);
+
         await c.checkBackButton();
         await c.checkBackButton();
         await c.checkBackButton();
@@ -300,12 +306,19 @@ Future<void> main() async {
           mapping: app.gen.mapping,
         );
 
+        expect(S.a, machine.activeStateId);
+        for (var i = 0; i < 10; i++) {
+          await c.check(E.forward, act: Act.fire);
+        }
+        expect(S.k, machine.activeStateId);
+
         await c.checkBackButton();
         await c.check(E.forward);
         await c.checkBackButton();
 
         await c.checkBackButton();
-        expect(S.j, machine.activeStateId);
+        expect(S.i, machine.activeStateId);
+        await c.check(E.forward);
 
         await c.check(E.jumpBP);
         expect(S.f, machine.activeStateId);
@@ -343,7 +356,12 @@ Future<void> main() async {
           mapping: app.gen.mapping,
         );
 
-        await c.checkBackButton();
+        expect(S.a, machine.activeStateId);
+        for (var i = 0; i < 10; i++) {
+          await c.check(E.forward, act: Act.fire);
+        }
+        expect(S.k, machine.activeStateId);
+
         await c.checkBackButton();
         await c.checkBackButton();
         await c.checkBackButton();
@@ -362,6 +380,62 @@ Future<void> main() async {
         // ignore: invalid_use_of_protected_member
         await binding.handlePopRoute();
         await tester.pumpAndSettle();
+      });
+      testWidgets('Drawer and Android back button test', (tester) async {
+        final app = DrawerApp();
+        final machine = app.machine;
+        await tester.pumpWidget(app);
+        expect(machine.activeStateId, machine.initialStateId);
+        checkTitle(machine);
+
+        final c = Checker<DS, DE, DT>(
+          tester: tester,
+          act: Act.tap,
+          machine: machine,
+          mapping: app.gen.mapping,
+        );
+
+        expect(DS.a, machine.activeStateId);
+
+        Future<void> openDrawer() async {
+          await tester.tap(find.byTooltip('Open navigation menu'));
+          await tester.pumpAndSettle();
+        }
+
+        Future<void> backButtonPress() async {
+          await androidBackButtonPress();
+          await tester.pumpAndSettle();
+        }
+
+        Future<void> checkDrawer() async {
+          final state =
+              tester.firstState(find.byType(Scaffold)) as ScaffoldState;
+
+          expect(state.isDrawerOpen, isFalse);
+
+          await openDrawer();
+          expect(state.isDrawerOpen, isTrue);
+          await backButtonPress();
+          expect(state.isDrawerOpen, isFalse);
+
+          await openDrawer();
+          expect(state.isDrawerOpen, isTrue);
+          await backButtonPress();
+          expect(state.isDrawerOpen, isFalse);
+
+          await openDrawer();
+          expect(state.isDrawerOpen, isTrue);
+          await backButtonPress();
+          expect(state.isDrawerOpen, isFalse);
+        }
+
+        await checkDrawer();
+
+        await c.check(DE.forward);
+        await checkDrawer();
+
+        await c.check(DE.forward);
+        await checkDrawer();
       });
     });
   });

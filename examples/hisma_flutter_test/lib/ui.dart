@@ -22,10 +22,11 @@ String getButtonTitle<S, E, T>(
     '${machine.name}@${machine.activeStateId}#$event';
 
 class Screen<S, E, T> extends StatefulWidget {
-  Screen(this.machine, {this.extra})
+  Screen(this.machine, {this.extra, this.drawer})
       : super(key: ValueKey(machine.activeStateId));
   final NavigationMachine<S, E, T> machine;
   final Builder? extra;
+  final Widget? drawer;
 
   @override
   State<Screen<S, E, T>> createState() => _ScreenState<S, E, T>();
@@ -46,6 +47,7 @@ class _ScreenState<S, E, T> extends State<Screen<S, E, T>> {
     return Builder(
       builder: (context) {
         return Scaffold(
+          drawer: widget.drawer,
           appBar: AppBar(
             title: Text(_title),
           ),
