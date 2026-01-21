@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   hisma: ^0.6.0
-  hisma_flutter: ^0.6.0+2
+  hisma_flutter: ^0.6.0+3
   hisma_visual_monitor: ^0.4.0+3
   logging: ^1.1.1
 dev_dependencies:

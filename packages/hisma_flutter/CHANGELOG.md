@@ -1,3 +1,7 @@
+## 0.6.0+3
+
+ - **FIX**: drawer close by back button.
+
 ## 0.6.0+2
 
  - **FIX**: fix processing back button in inactive machine.
