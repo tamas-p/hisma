@@ -42,6 +42,11 @@ void main() {
       () async {
         var value = 50;
         final m1 = createMachine(value);
+
+        // m1.addMonitors([
+        //   (m) => VisualMonitor(m),
+        // ]);
+
         expect(m1.data, value);
         await m1.start();
         expect(m1.activeStateId, S.a);
@@ -58,8 +63,8 @@ void main() {
 
         for (var i = 0; i < 100; i++) {
           await m1.fire(E.inc);
-          value = value + 2; // T.toB
           value = value ~/ 2; // S.a onExit
+          value = value + 2; // T.toB
 
           await m1.fire(E.triple); // T.triple
           value = value * 3;
@@ -75,22 +80,72 @@ void main() {
 
           await m1.fire(E.triple); // T.triple
           value = value * 3;
+          expect(m1.data, value);
           await m1.fire(E.trisect); // T.trisect
           value = value ~/ 3;
+          expect(m1.data, value);
 
           expect(m1.activeStateId, S.a);
           expect(m1.data, value);
         }
       },
     );
+
+    test(
+      'Action test - onAction for FinalState',
+      () async {
+        var value = 50;
+        final m1 = createMachine(value);
+
+        // m1.addMonitors([
+        //   (m) => VisualMonitor(m),
+        // ]);
+
+        expect(m1.data, value);
+        await m1.start();
+        value = value * 2; // S.a onEntry
+        expect(m1.data, value);
+        expect(m1.activeStateId, S.a);
+
+        await m1.fire(E.finish);
+        value = value + 10; // T.toFS guard
+        value = value ~/ 2; // S.a onExit
+        value = value ~/ 5; // T.toFS
+        expect(m1.data, value);
+      },
+    );
+
+    test(
+      'Action test - onAction for ExitPoint',
+      () async {
+        var value = 50;
+        final m1 = createMachine(value);
+
+        // m1.addMonitors([
+        //   (m) => VisualMonitor(m),
+        // ]);
+
+        expect(m1.data, value);
+        await m1.start();
+        value = value * 2; // S.a onEntry
+        expect(m1.data, value);
+        expect(m1.activeStateId, S.a);
+
+        await m1.fire(E.exit);
+        value = value + 10; // T.toFS guard
+        value = value ~/ 2; // S.a onExit
+        value = value * 5; // T.toEP
+        expect(m1.data, value);
+      },
+    );
   });
 }
 
-enum S { a, b }
+enum S { a, b, fs, ep }
 
-enum E { inc, dec, triple, trisect }
+enum E { inc, dec, triple, trisect, finish, exit }
 
-enum T { toA, toB, triple, trisect }
+enum T { toA, toB, triple, trisect, toFS, toEP }
 
 Machine<S, E, T> createMachine([dynamic data]) => Machine<S, E, T>(
       name: 'm1',
@@ -102,6 +157,8 @@ Machine<S, E, T> createMachine([dynamic data]) => Machine<S, E, T>(
             E.inc: [T.toB],
             E.triple: [T.triple],
             E.trisect: [T.trisect],
+            E.finish: [T.toFS],
+            E.exit: [T.toEP],
           },
           onEntry: Action(
             description: 'double',
@@ -125,6 +182,8 @@ Machine<S, E, T> createMachine([dynamic data]) => Machine<S, E, T>(
             E.trisect: [T.trisect],
           },
         ),
+        S.fs: FinalState(),
+        S.ep: ExitPoint(),
       },
       transitions: {
         T.toA: Transition(
@@ -162,6 +221,42 @@ Machine<S, E, T> createMachine([dynamic data]) => Machine<S, E, T>(
             action: (machine, arg) {
               final data = machine.data;
               if (data is int) machine.data = data ~/ 3;
+            },
+          ),
+        ),
+        T.toFS: Transition(
+          to: S.fs,
+          guard: Guard(
+            description: 'Add 10',
+            condition: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data + 10;
+              return true;
+            },
+          ),
+          onAction: Action(
+            description: 'Divide by 5',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data ~/ 5;
+            },
+          ),
+        ),
+        T.toEP: Transition(
+          to: S.ep,
+          guard: Guard(
+            description: 'Add 10',
+            condition: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data + 10;
+              return true;
+            },
+          ),
+          onAction: Action(
+            description: 'Multiply by 5',
+            action: (machine, arg) {
+              final data = machine.data;
+              if (data is int) machine.data = data * 5;
             },
           ),
         ),

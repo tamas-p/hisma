@@ -228,9 +228,6 @@ class Machine<S, E, T> {
     required dynamic arg,
   }) async {
     if (transitionWithId == null) return;
-
-    await transitionWithId.edge.onAction?.action.call(this, arg);
-
     // Check if machine was stopped in an asynchronous operation.
     // Null eventId means that method is invoked from machine start()
     // when EntryPoint is used. In this case machine is not yet started.
@@ -248,30 +245,31 @@ class Machine<S, E, T> {
         'Target state is null identified by "${transition.to}"',
       );
       if (targetState == null) return;
-
       // From here we know active state will change.
 
-      if (targetState is FinalState) {
+      if (targetState is FinalState || targetState is ExitPoint) {
         // First we stop this state machine.
         await stop(arg: arg);
-      } else if (targetState is ExitPoint) {
-        // First we stop this state machine.
-        await stop(arg: arg);
-        // Then we notify region that this (child) machine exited due to
-        // reaching an exitPoint.
-        await notifyRegion?.call(
-          ExitNotificationFromMachine(
-            exitPointId: transition.to,
-            arg: arg,
-          ),
-        );
+        if (targetState is ExitPoint) {
+          // Then we notify region that this (child) machine exited due to
+          // reaching an exitPoint.
+          await notifyRegion?.call(
+            ExitNotificationFromMachine(
+              exitPointId: transition.to,
+              arg: arg,
+            ),
+          );
+        }
+        await transitionWithId.edge.onAction?.action.call(this, arg);
       } else if (targetState is State) {
+        await _exitState(arg: arg);
+        await transitionWithId.edge.onAction?.action.call(this, arg);
+
         final trigger = Trigger(
           source: _activeStateId,
           event: eventId,
           transition: transitionWithId.id,
         );
-        await _exitState(arg: arg);
         await _enterState(
           trigger: trigger,
           stateId: transition.to,
@@ -282,12 +280,13 @@ class Machine<S, E, T> {
         assert(
           false,
           'targetState shall be either '
-          'ExitState or State but it is ${targetState.runtimeType}',
+          'FinalState, ExitPoint or State but it is ${targetState.runtimeType}',
         );
       }
       // If we get to this point the activeState has changed.
     } else if (transitionWithId.edge is InternalTransition) {
       // Since it is an internal transition the active state does not change.
+      await transitionWithId.edge.onAction?.action.call(this, arg);
     } else {
       assert(
         false,
