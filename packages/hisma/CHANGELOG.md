@@ -1,3 +1,7 @@
+## 0.6.0+1
+
+ - **FIX**: onAction called earlier than onExit of child.
+
 ## 0.6.0
 
 > Note: This release has breaking changes.
