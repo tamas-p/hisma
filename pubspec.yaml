@@ -1,4 +1,5 @@
-name: hisma
+name: hisma_monorepo
+description: Top level pubspec.yaml to install dev tools locally.
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
