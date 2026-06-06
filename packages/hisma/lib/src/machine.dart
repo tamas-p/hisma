@@ -533,11 +533,7 @@ class Machine<S, E, T> {
     // changes state of the machine but this states regions would be still
     // initialized after the machine left this state resulting an erroneous
     // situation that an inactive state will have an active chid machine.
-    try {
-      await state.onEntry?.action.call(this, arg);
-    } on Exception catch (e) {
-      _log.severe(() => 'Exception during onEntry: $e');
-    }
+    await state.onEntry?.action.call(this, arg);
     _log.fine(() => '< $name  _enterState');
   }
 
