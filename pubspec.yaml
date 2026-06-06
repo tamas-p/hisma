@@ -1,0 +1,11 @@
+name: hisma
+
+environment:
+  sdk: ">=2.15.0 <3.0.0"
+
+dev_dependencies:
+  coverage: 1.6.3
+  lint: ^2.0.1
+  melos: ^2.9.0
+  pana: 0.21.27
+

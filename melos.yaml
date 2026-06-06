@@ -1,4 +1,5 @@
-# FVM support
+# FVM support, when dart or flutter is invoked melos will
+# invoke them in the location fvm defines.
 sdkPath: .fvm/flutter_sdk
 
 name: hisma
@@ -25,7 +26,7 @@ scripts:
       concurrency: 1
   
   pana:
-    run: pana --no-warning --exit-code-threshold=0 .
+    run: cd \$MELOS_ROOT_PATH; dart run pana --no-warning --exit-code-threshold=0 \$MELOS_PACKAGE_PATH
     select-package:
       no-private: true
     exec:
@@ -36,13 +37,15 @@ scripts:
     description: Run all Dart & Flutter tests in this monorepo for all packages.
 
   test:dart:
-    run: melos exec -c 1 "dart pub global run coverage:test_with_coverage"
+    # dart run walks upward to find the active package/workspace context
+    run: melos exec -c 1 "dart run coverage:test_with_coverage"
     description: Run Dart tests for a specific package in this monorepo.
     select-package:
       flutter: false
       dir-exists: test
 
   test:flutter:
+    # flutter test --coverage walks upward to find the active package/workspace context
     run: melos exec --dir-exists="test" -c 1 "flutter test --coverage"
     description: Run Flutter tests for a specific package in this monorepo.
     select-package:
@@ -50,13 +53,13 @@ scripts:
       dir-exists: test
 
   lcov:genhtml:
-    run: melos exec -c 1 "genhtml ./coverage/lcov.info -o coverage/html/"
+    run: melos exec -c 1 "genhtml --ignore-errors source,count,empty ./coverage/lcov.info -o coverage/html/"
     description: Generate code coverage HTML report.
     select-package:
       dir-exists: coverage
 
   lcov:list:
-    run: melos exec -c 1 "lcov --list ./coverage/lcov.info"
+    run: melos exec -c 1 "lcov -ignore-errors empty --list ./coverage/lcov.info"
     description: Generate code coverage report.
     select-package:
       dir-exists: coverage
