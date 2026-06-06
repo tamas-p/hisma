@@ -1,3 +1,7 @@
+## 0.6.0+2
+
+ - **FIX**: exception was swallowed for logging.
+
 ## 0.6.0+1
 
  - **FIX**: onAction called earlier than onExit of child.

@@ -13,10 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^1.0.4
-  hisma: ^0.6.0+1
-  hisma_console_monitor: ^0.5.0+2
-  hisma_flutter: ^0.6.0+4
-  hisma_visual_monitor: ^0.4.0+4
+  hisma: ^0.6.0+2
+  hisma_console_monitor: ^0.5.0+3
+  hisma_flutter: ^0.6.0+5
+  hisma_visual_monitor: ^0.4.0+5
   logging: ^1.1.0
 
 dev_dependencies:
